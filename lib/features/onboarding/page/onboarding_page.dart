@@ -3,6 +3,7 @@ import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../../core/di/locator.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/button/primary_button.dart';
 import '../bloc/onboarding_notifier.dart';
@@ -51,7 +52,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final ts = Theme.of(context).textTheme;
 
     return ChangeNotifierProvider(
-      create: (_) => OnboardingNotifier(),
+      create: (_) => getIt<OnboardingNotifier>(),
       child: Consumer<OnboardingNotifier>(
         builder: (context, vm, _) {
           return Scaffold(
@@ -106,10 +107,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                         /// BUTTON
                         PrimaryButton(
-                          onTap: () => vm.nextPage(data.length),
-                          label: vm.currentIndex == data.length - 1
-                              ? "Get Started"
-                              : "Next",
+                          onTap: () => vm.nextPage(context, data.length),
+                          label: "Next",
                         ),
 
                         /// INDICATOR
@@ -128,7 +127,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                         /// SKIP
                         GestureDetector(
-                          onTap: vm.skip,
+                          onTap: () => vm.skip(context),
                           child: Text(
                             "Skip",
                             style: ts.bodySmall?.copyWith(

@@ -14,6 +14,8 @@ import 'package:health_pal/core/di/register_module.dart' as _i131;
 import 'package:health_pal/core/router/app_router.dart' as _i934;
 import 'package:health_pal/core/services/app_services.dart' as _i605;
 import 'package:health_pal/core/services/shared_prefs.dart' as _i167;
+import 'package:health_pal/features/onboarding/bloc/onboarding_notifier.dart'
+    as _i350;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
@@ -37,6 +39,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
+    );
+    gh.factory<_i350.OnboardingNotifier>(
+      () => _i350.OnboardingNotifier(gh<_i605.AppServices>()),
     );
     return this;
   }
