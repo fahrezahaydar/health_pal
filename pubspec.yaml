@@ -10,11 +10,14 @@ dependencies:
   bloc: ^9.2.0
   flutter:
     sdk: flutter
+  flutter_auto_size_text: ^5.0.0
   flutter_bloc: ^9.1.1
   flutter_native_splash: ^2.4.7
   get_it: ^9.2.1
   go_router: ^17.2.1
+  google_fonts: ^8.0.2
   injectable: ^2.7.1+4
+  provider: ^6.1.5+1
   shared_preferences: ^2.5.5
   smooth_page_indicator: ^2.0.1
 
@@ -27,6 +30,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
 
 flutter_native_splash:
   color: "#1C2A3A"

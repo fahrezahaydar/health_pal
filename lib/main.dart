@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'core/di/locator.dart';
 import 'core/router/app_router.dart';
 import 'core/services/app_services.dart';
+import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      theme: AppTheme.light,
+      themeMode: ThemeMode.light,
+      darkTheme: AppTheme.dark,
     );
   }
 }
