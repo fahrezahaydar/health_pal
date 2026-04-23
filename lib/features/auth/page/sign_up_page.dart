@@ -9,17 +9,26 @@ import '../../../widgets/button/outline_button.dart';
 import '../../../widgets/button/primary_button.dart';
 import '../../../widgets/input/app_input_field.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final ts = AppTextTheme.ts;
@@ -56,13 +65,13 @@ class _LoginPageState extends State<LoginPage> {
                               spacing: 8,
                               children: [
                                 Text(
-                                  "Hi, Welcome Back!",
+                                  "Create Account",
                                   style: ts.headlineLarge?.copyWith(
                                     color: AppTheme.primary,
                                   ),
                                 ),
                                 Text(
-                                  "Hope you’re doing fine.",
+                                  "We are here to help you!",
                                   style: ts.bodySmall?.copyWith(
                                     color: AppTheme.grey500,
                                   ),
@@ -74,13 +83,19 @@ class _LoginPageState extends State<LoginPage> {
                               spacing: 20,
                               children: [
                                 AppInputField(
+                                  hintText: "Your Name",
                                   prefix: Icon(Iconsax.user),
+                                  controller: _nameController,
+                                ),
+                                AppInputField(
                                   hintText: "Your Email",
+                                  prefix: Icon(Iconsax.smsStyle5),
                                   controller: _emailController,
                                 ),
                                 AppInputField(
-                                  prefix: Icon(Iconsax.padlockStyle5),
                                   hintText: "Password",
+                                  prefix: Icon(Iconsax.padlockStyle5),
+
                                   isPassword: true,
                                   controller: _passwordController,
                                 ),
@@ -89,7 +104,10 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
 
-                        LightFilledButton(onTap: () {}, label: "Sign In"),
+                        LightFilledButton(
+                          onTap: () {},
+                          label: "Create Account",
+                        ),
 
                         // Divider Section
                         Row(
@@ -126,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                 width: 20,
                                 height: 20,
                               ),
-                              label: "Sign In with Google",
+                              label: "Continue with Google",
                               onTap: () {},
                             ),
                             LightOutlineButton(
@@ -135,38 +153,28 @@ class _LoginPageState extends State<LoginPage> {
                                 width: 20,
                                 height: 20,
                               ),
-                              label: "Sign In with Facebook",
+                              label: "Continue with Facebook",
                               onTap: () {},
                             ),
                           ],
-                        ),
-                        GestureDetector(
-                          onTap: () => print("Forgot Password Clicked"),
-                          child: Text(
-                            "Forgot password?",
-                            style: ts.bodySmall?.copyWith(
-                              color: AppTheme.blue,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
                         ),
                         Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: "Don’t have an account yet? ",
+                                text: "Do you have an account ? ",
                                 style: ts.bodySmall?.copyWith(
                                   color: AppTheme.grey500,
                                 ),
                               ),
                               TextSpan(
-                                text: "Sign up",
+                                text: "Sign In",
                                 style: ts.bodySmall?.copyWith(
                                   color: AppTheme.blue,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () => context.go('/sign-up'),
+                                  ..onTap = () => context.go('/login'),
                               ),
                             ],
                           ),

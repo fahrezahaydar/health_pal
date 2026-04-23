@@ -368,6 +368,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  iconsax_latest:
+    dependency: "direct main"
+    description:
+      name: iconsax_latest
+      sha256: "6f13d3dd898395f2cf98cad6a8bb142c980edec7e4b8bd9f7fe9acee47b469da"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   image:
     dependency: transitive
     description:
