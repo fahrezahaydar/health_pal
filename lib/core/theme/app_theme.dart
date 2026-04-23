@@ -5,8 +5,8 @@ import 'app_text_theme.dart';
 
 class AppTheme {
   // === MAIN ===
-  static Color primary = Color(0xff1C2A3A);
-  static Color onPrimary = Colors.white;
+  static const Color primary = Color(0xff1C2A3A);
+  static const Color onPrimary = Colors.white;
   static const Color white = Color(0xFFFFFFFF);
 
   // === GREYSCALE ===
@@ -78,7 +78,7 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(minimumSize: Size.fromHeight(48)),
     ),
-    textTheme: AppTextTheme.textTheme,
+    textTheme: AppTextTheme.ts,
   );
 
   static ThemeData dark = ThemeData(
@@ -110,8 +110,6 @@ class AppTheme {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     ),
 
-    
-    textTheme: AppTextTheme.textTheme,
-
+    textTheme: AppTextTheme.ts,
   );
 }

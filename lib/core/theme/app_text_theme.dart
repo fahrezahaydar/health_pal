@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTextTheme {
-  static TextTheme textTheme = TextTheme(
+  static TextTheme ts = TextTheme(
     // ===== HEADINGS =====
     headlineLarge: GoogleFonts.inter(
       fontSize: 20,

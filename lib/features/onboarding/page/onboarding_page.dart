@@ -106,7 +106,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
 
                         /// BUTTON
-                        PrimaryButton(
+                        LightFilledButton(
                           onTap: () => vm.nextPage(context, data.length),
                           label: "Next",
                         ),
