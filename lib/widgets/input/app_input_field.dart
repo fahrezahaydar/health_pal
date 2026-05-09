@@ -68,7 +68,6 @@ class _AppInputFieldState extends State<AppInputField> {
   late final FocusNode _focusNode;
   bool _isInternalFocusNode = false;
 
-  bool _obscure = true;
   String? _internalError;
 
   bool get _hasText => widget.controller.text.isNotEmpty;
@@ -91,7 +90,6 @@ class _AppInputFieldState extends State<AppInputField> {
     }
     widget.controller.addListener(_handleChange);
     _focusNode.addListener(_handleFocus);
-    _obscure = widget.isPassword;
   }
 
   void _handleChange() {
@@ -170,7 +168,7 @@ class _AppInputFieldState extends State<AppInputField> {
                     EditableText(
                       controller: widget.controller,
                       focusNode: _focusNode,
-                      obscureText: _obscure,
+                      obscureText: widget.isPassword,
                       readOnly: widget.readOnly || !widget.enabled,
                       autofocus: widget.autofocus,
                       keyboardType:

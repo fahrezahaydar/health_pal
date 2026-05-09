@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:health_pal/features/auth/page/sign_up_page.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../features/auth/page/forgot_password_page.dart';
 import '../../features/auth/page/login_page.dart';
 import '../../features/home/page/home_page.dart';
 import '../services/app_services.dart';
@@ -24,7 +25,8 @@ class AppRouter {
       final loc = state.matchedLocation;
 
       // Daftar route yang boleh diakses tanpa login
-      final bool isAuthRoute = loc == '/login' || loc == '/sign-up';
+      final bool isAuthRoute =
+          loc == '/login' || loc == '/sign-up' || loc == '/forgot-password';
 
       if (status == AppStatus.onboarding) {
         return loc == '/onboarding' ? null : '/onboarding';
@@ -50,6 +52,10 @@ class AppRouter {
       GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
       GoRoute(path: '/sign-up', builder: (_, _) => const SignUpPage()),
       GoRoute(path: '/home', builder: (_, _) => const HomePage()),
+      GoRoute(
+        path: "/forgot-password",
+        builder: (_, _) => const ForgotPasswordPage(),
+      ),
     ],
   );
 }

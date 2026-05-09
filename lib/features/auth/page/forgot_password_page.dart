@@ -1,0 +1,411 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:iconsax_latest/iconsax_latest.dart';
+
+import '../../../core/theme/app_text_theme.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../widgets/button/primary_button.dart';
+import '../../../widgets/dialog/app_loading_dialog.dart';
+import '../../../widgets/input/app_form.dart';
+import '../../../widgets/input/app_form_field.dart';
+import '../../../widgets/input/app_form_pin_field.dart';
+import '../bloc/forget_password/forget_password_state.dart';
+
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final _formKey = GlobalKey<AppFormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final ts = AppTextTheme.ts;
+    return BlocProvider(
+      create: (context) => ForgotPasswordCubit(),
+      child: Builder(
+        builder: (context) {
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: DefaultTextStyle(
+              style: ts.bodyMedium ?? const TextStyle(color: Color(0xFF000000)),
+              child: ColoredBox(
+                color: AppTheme.white,
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        spacing: 32,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 32),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    final step = context
+                                        .read<ForgotPasswordCubit>()
+                                        .state;
+                                    if (step == ForgotPasswordStep.initial) {
+                                      context.pop();
+                                    } else {
+                                      context
+                                          .read<ForgotPasswordCubit>()
+                                          .back();
+                                    }
+                                  },
+                                  child: Icon(
+                                    Iconsax.arrowLeft01Style4,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Image.asset(
+                            "assets/logo-dark.png",
+                            width: 108,
+                            height: 108,
+                            fit: BoxFit.fitHeight,
+                          ),
+                          AppForm(
+                            key: _formKey,
+
+                            child: Column(
+                              spacing: 24,
+                              children: [
+                                // Header Section
+                                BlocBuilder<
+                                  ForgotPasswordCubit,
+                                  ForgotPasswordStep
+                                >(
+                                  builder: (context, state) {
+                                    switch (state) {
+                                      case ForgotPasswordStep.initial:
+                                        return const ForgetPassword();
+                                      case ForgotPasswordStep.verify:
+                                        return const VerifyCode();
+                                      case ForgotPasswordStep.newPassword:
+                                        return const CreateNewPassword();
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ForgetPassword extends StatelessWidget {
+  const ForgetPassword({super.key});
+  bool _isValidEmail(String value) {
+    return RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ts = AppTextTheme.ts;
+
+    return Column(
+      spacing: 24,
+      children: [
+        Column(
+          spacing: 32,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 8,
+              children: [
+                Text(
+                  "Forget Password?",
+                  style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+                ),
+                Text(
+                  "Hope you're doing fine.",
+                  style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+                ),
+              ],
+            ),
+            AppFormField(
+              name: "Email",
+              controller: TextEditingController(),
+              prefix: const Icon(Iconsax.smsStyle5),
+              hintText: "Your Email",
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Email wajib diisi';
+                }
+                if (!_isValidEmail(value)) {
+                  return 'Format email tidak valid';
+                }
+                return null;
+              },
+            ),
+            LightFilledButton(
+              onTap: () async {
+                final form = AppForm.of(context);
+                if (form.validate()) {
+                  final email = form.values['Email']!;
+                  print("Email : $email");
+                  AppLoadingDialog.show(context);
+                  await context.read<ForgotPasswordCubit>().sendEmail(
+                    email,
+                    onSuccess: (value) {
+                      AppLoadingDialog.dismiss(context);
+                    },
+                  );
+                } else {
+                  Map<String, String>? errors = form.errors;
+                  if (errors != null) {
+                    print("Validation Errors: $errors");
+                  }
+                }
+              },
+              label: "Send Code",
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class VerifyCode extends StatelessWidget {
+  const VerifyCode({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ts = AppTextTheme.ts;
+
+    return Column(
+      spacing: 32,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
+            Text(
+              "Verify Code",
+              style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+            ),
+            Text(
+              "Enter the the code\nwe just sent you on your registered Email",
+              style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        // Input Section
+        AppFormPinField(
+          name: "Code",
+          controller: TextEditingController(),
+          length: 5,
+
+          validator: (value) {
+            if (value.length < 5) {
+              return 'OTP tidak valid';
+            }
+            return null;
+          },
+        ),
+        LightFilledButton(
+          onTap: () async {
+            final form = AppForm.of(context);
+            if (form.validate()) {
+              final code = form.values['Code']!;
+              print("Code : $code");
+              AppLoadingDialog.show(context);
+              await context.read<ForgotPasswordCubit>().verifyCode(
+                code,
+                onSuccess: (value) {
+                  AppLoadingDialog.dismiss(context);
+                },
+              );
+            } else {
+              Map<String, String>? errors = form.errors;
+              if (errors != null) {
+                print("Validation Errors: $errors");
+              }
+            }
+          },
+          label: "Verify Code",
+        ),
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: "Didn’t get the Code? ",
+                style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+              ),
+              TextSpan(
+                text: "Resend",
+                style: ts.bodySmall?.copyWith(
+                  color: AppTheme.blue,
+                  fontWeight: FontWeight.w500,
+                ),
+                recognizer: TapGestureRecognizer()..onTap = () => {},
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CreateNewPassword extends StatefulWidget {
+  const CreateNewPassword({super.key});
+
+  @override
+  State<CreateNewPassword> createState() => _CreateNewPasswordState();
+}
+
+class _CreateNewPasswordState extends State<CreateNewPassword> {
+  final _isShowNewPassword = ValueNotifier(false);
+  final _newPasswordController = TextEditingController();
+  final _confirmNewPasswordController = TextEditingController();
+  final _isShowConfirmNewPassword = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    _isShowConfirmNewPassword.dispose();
+    _isShowNewPassword.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ts = AppTextTheme.ts;
+
+    return Column(
+      spacing: 32,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
+            Text(
+              "Create new password",
+              style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+            ),
+            Text(
+              "Your new password must be different form previously used password",
+              style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+              textAlign: .center,
+            ),
+          ],
+        ),
+        // Input Section
+        Column(
+          spacing: 20,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _isShowNewPassword,
+              builder: (context, value, child) {
+                return AppFormField(
+                  name: "New Password",
+                  controller: _newPasswordController,
+                  prefix: const Icon(Iconsax.padlockStyle5),
+                  hintText: "Password",
+                  isPassword: !value,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Password wajib diisi';
+                    }
+                    return null;
+                  },
+                  suffix: GestureDetector(
+                    onTap: () {
+                      _isShowNewPassword.value = !_isShowNewPassword.value;
+                    },
+                    child: Icon(
+                      value ? Iconsax.eyeSlash : Iconsax.eye,
+                      color: AppTheme.grey500,
+                      size: 20,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ValueListenableBuilder(
+              valueListenable: _isShowConfirmNewPassword,
+              builder: (context, value, child) {
+                return AppFormField(
+                  name: "Confirm New Password",
+                  controller: _confirmNewPasswordController,
+                  prefix: const Icon(Iconsax.padlockStyle5),
+                  hintText: "Confirm Password",
+                  isPassword: !value,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Password wajib diisi';
+                    }
+                    if (value != _newPasswordController.text) {
+                      return 'Invalid Confirm Password';
+                    }
+                    return null;
+                  },
+                  suffix: GestureDetector(
+                    onTap: () {
+                      _isShowConfirmNewPassword.value =
+                          !_isShowConfirmNewPassword.value;
+                    },
+                    child: Icon(
+                      value ? Iconsax.eyeSlash : Iconsax.eye,
+                      color: AppTheme.grey500,
+                      size: 20,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        LightFilledButton(
+          onTap: () async {
+            final form = AppForm.of(context);
+            if (form.validate()) {
+              final password = form.values["New Password"]!;
+              AppLoadingDialog.show(context);
+              await context.read<ForgotPasswordCubit>().resetPassword(
+                password,
+                onSuccess: (value) async {
+                  await AppLoadingDialog.dismiss(context);
+                  if (context.mounted) {
+                    context.pop();
+                  }
+                },
+              );
+            } else {
+              Map<String, String>? errors = form.errors;
+              if (errors != null) {
+                print("Validation Errors: $errors");
+              }
+            }
+          },
+          label: "Reset Password",
+        ),
+      ],
+    );
+  }
+}
