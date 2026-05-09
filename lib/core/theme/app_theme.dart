@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import 'app_text_theme.dart';
+import 'package:flutter/widgets.dart';
 
 class AppTheme {
   // === MAIN ===
   static const Color primary = Color(0xff1C2A3A);
-  static const Color onPrimary = Colors.white;
+  static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color white = Color(0xFFFFFFFF);
 
   // === GREYSCALE ===
@@ -38,78 +35,4 @@ class AppTheme {
   static const Color paleBlue = Color(0xFF89CCDB);
   static const Color purple = Color(0xFF352261);
   static const Color orange = Color(0xFFF5AD7E);
-
-  static ThemeData light = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.light,
-
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Color(0xff1C2A3A),
-      brightness: Brightness.light,
-    ),
-
-    scaffoldBackgroundColor: Colors.white,
-
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-
-    cardTheme: CardThemeData(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-    ),
-
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    fontFamily: GoogleFonts.inter().fontFamily,
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(
-        backgroundColor: primary,
-        foregroundColor: onPrimary,
-        minimumSize: Size.fromHeight(48),
-      ),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(minimumSize: Size.fromHeight(48)),
-    ),
-    textTheme: AppTextTheme.ts,
-  );
-
-  static ThemeData dark = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Color(0xff1C2A3A),
-      brightness: Brightness.dark,
-    ),
-
-    scaffoldBackgroundColor: Colors.black,
-
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-
-    cardTheme: CardThemeData(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-    ),
-
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-
-    textTheme: AppTextTheme.ts,
-  );
 }

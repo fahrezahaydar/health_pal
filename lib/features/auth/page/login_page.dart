@@ -42,212 +42,207 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _isShowPassword.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ts = AppTextTheme.ts;
     return Directionality(
       textDirection: TextDirection.ltr,
-      child: DefaultTextStyle(
-        style: ts.bodyMedium ?? const TextStyle(color: Color(0xFF000000)),
-        child: ColoredBox(
-          color: AppTheme.white,
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.asset(
-                      "assets/logo-dark.png",
-                      width: 108,
-                      height: 108,
-                      fit: BoxFit.fitHeight,
-                    ),
+      child: ColoredBox(
+        color: AppTheme.white,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Image.asset(
+                    "assets/logo-dark.png",
+                    width: 108,
+                    height: 108,
+                    fit: BoxFit.fitHeight,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: AppForm(
-                      key: _formKey,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: Column(
-                        spacing: 24,
-                        children: [
-                          // Header Section
-                          Column(
-                            spacing: 32,
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                spacing: 8,
-                                children: [
-                                  Text(
-                                    "Hi, Welcome Back!",
-                                    style: ts.headlineLarge?.copyWith(
-                                      color: AppTheme.primary,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Hope you're doing fine.",
-                                    style: ts.bodySmall?.copyWith(
-                                      color: AppTheme.grey500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Input Section
-                              Column(
-                                spacing: 20,
-                                children: [
-                                  AppFormField(
-                                    name: "Email",
-                                    controller: _emailController,
-                                    prefix: const Icon(Iconsax.user),
-                                    hintText: "Your Email",
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value.isEmpty) {
-                                        return 'Email wajib diisi';
-                                      }
-                                      if (!_isValidEmail(value)) {
-                                        return 'Format email tidak valid';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  ValueListenableBuilder(
-                                    valueListenable: _isShowPassword,
-                                    builder: (context, value, child) {
-                                      return AppFormField(
-                                        name: "Password",
-                                        controller: _passwordController,
-                                        prefix: const Icon(
-                                          Iconsax.padlockStyle5,
-                                        ),
-                                        hintText: "Password",
-                                        isPassword: !value,
-                                        validator: (value) {
-                                          if (value.isEmpty) {
-                                            return 'Password wajib diisi';
-                                          }
-                                          return null;
-                                        },
-                                        suffix: GestureDetector(
-                                          onTap: () {
-                                            _isShowPassword.value =
-                                                !_isShowPassword.value;
-                                          },
-                                          child: Icon(
-                                            value
-                                                ? Iconsax.eyeSlash
-                                                : Iconsax.eye,
-                                            color: AppTheme.grey500,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          LightFilledButton(
-                            onTap: () {
-                              _onSignIn(context);
-                            },
-                            label: "Sign In",
-                          ),
-
-                          // Divider Section
-                          Row(
-                            spacing: 24,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 1,
-                                  child: ColoredBox(color: AppTheme.grey200),
-                                ),
-                              ),
-                              Text(
-                                "or",
-                                style: ts.bodySmall?.copyWith(
-                                  color: AppTheme.grey500,
-                                ),
-                              ),
-                              Expanded(
-                                child: SizedBox(
-                                  height: 1,
-                                  child: ColoredBox(color: AppTheme.grey200),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          // Social Login Section
-                          Column(
-                            spacing: 16,
-                            children: [
-                              LightOutlineButton(
-                                icon: Image.asset(
-                                  "assets/icon/google.png",
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                label: "Sign In with Google",
-                                onTap: () {},
-                              ),
-                              LightOutlineButton(
-                                icon: Image.asset(
-                                  "assets/icon/facebook.png",
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                label: "Sign In with Facebook",
-                                onTap: () {},
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () => context.push('/forgot-password'),
-                            child: Text(
-                              "Forgot password?",
-                              style: ts.bodySmall?.copyWith(
-                                color: AppTheme.blue,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          Text.rich(
-                            TextSpan(
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: AppForm(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      spacing: 24,
+                      children: [
+                        // Header Section
+                        Column(
+                          spacing: 32,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 8,
                               children: [
-                                TextSpan(
-                                  text: "Don't have an account yet? ",
-                                  style: ts.bodySmall?.copyWith(
+                                Text(
+                                  "Hi, Welcome Back!",
+                                  style: AppTextTheme.headlineLarge.copyWith(
+                                    color: AppTheme.primary,
+                                  ),
+                                ),
+                                Text(
+                                  "Hope you're doing fine.",
+                                  style: AppTextTheme.bodySmall.copyWith(
                                     color: AppTheme.grey500,
                                   ),
                                 ),
-                                TextSpan(
-                                  text: "Sign up",
-                                  style: ts.bodySmall?.copyWith(
-                                    color: AppTheme.blue,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () => context.go('/sign-up'),
+                              ],
+                            ),
+                            // Input Section
+                            Column(
+                              spacing: 20,
+                              children: [
+                                AppFormField(
+                                  name: "Email",
+                                  controller: _emailController,
+                                  prefix: const Icon(Iconsax.smsStyle5),
+                                  hintText: "Your Email",
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Email wajib diisi';
+                                    }
+                                    if (!_isValidEmail(value)) {
+                                      return 'Format email tidak valid';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                ValueListenableBuilder(
+                                  valueListenable: _isShowPassword,
+                                  builder: (context, value, child) {
+                                    return AppFormField(
+                                      name: "Password",
+                                      controller: _passwordController,
+                                      prefix: const Icon(Iconsax.padlockStyle5),
+                                      hintText: "Password",
+                                      isPassword: !value,
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return 'Password wajib diisi';
+                                        }
+                                        return null;
+                                      },
+                                      suffix: GestureDetector(
+                                        onTap: () {
+                                          _isShowPassword.value =
+                                              !_isShowPassword.value;
+                                        },
+                                        child: Icon(
+                                          value
+                                              ? Iconsax.eyeSlash
+                                              : Iconsax.eye,
+                                          color: AppTheme.grey500,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
+                          ],
+                        ),
+
+                        LightFilledButton(
+                          onTap: () {
+                            _onSignIn(context);
+                          },
+                          label: "Sign In",
+                        ),
+
+                        // Divider Section
+                        Row(
+                          spacing: 24,
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 1,
+                                child: ColoredBox(color: AppTheme.grey200),
+                              ),
+                            ),
+                            Text(
+                              "or",
+                              style: AppTextTheme.bodySmall.copyWith(
+                                color: AppTheme.grey500,
+                              ),
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 1,
+                                child: ColoredBox(color: AppTheme.grey200),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Social Login Section
+                        Column(
+                          spacing: 16,
+                          children: [
+                            LightOutlineButton(
+                              icon: Image.asset(
+                                "assets/icon/google.png",
+                                width: 20,
+                                height: 20,
+                              ),
+                              label: "Sign In with Google",
+                              onTap: () {},
+                            ),
+                            LightOutlineButton(
+                              icon: Image.asset(
+                                "assets/icon/facebook.png",
+                                width: 20,
+                                height: 20,
+                              ),
+                              label: "Sign In with Facebook",
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () => context.push('/forgot-password'),
+                          child: Text(
+                            "Forgot password?",
+                            style: AppTextTheme.bodySmall.copyWith(
+                              color: AppTheme.blue,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Don't have an account yet? ",
+                                style: AppTextTheme.bodySmall.copyWith(
+                                  color: AppTheme.grey500,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "Sign up",
+                                style: AppTextTheme.bodySmall.copyWith(
+                                  color: AppTheme.blue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => context.go('/sign-up'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

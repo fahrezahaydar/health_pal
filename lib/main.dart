@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'core/di/locator.dart';
 import 'core/router/app_router.dart';
 import 'core/services/app_services.dart';
+import 'core/theme/app_text_theme.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
@@ -27,12 +28,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = GetIt.instance<AppRouter>().router;
 
-    return MaterialApp.router(
+    return WidgetsApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      theme: AppTheme.light,
-      themeMode: ThemeMode.light,
-      darkTheme: AppTheme.dark,
+      color: AppTheme.primary, // Wajib diisi di WidgetsApp
+      textStyle: AppTextTheme.bodyMedium,
     );
   }
 }

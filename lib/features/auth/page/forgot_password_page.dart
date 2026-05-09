@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
@@ -25,82 +25,76 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ts = AppTextTheme.ts;
     return BlocProvider(
       create: (context) => ForgotPasswordCubit(),
       child: Builder(
         builder: (context) {
           return Directionality(
             textDirection: TextDirection.ltr,
-            child: DefaultTextStyle(
-              style: ts.bodyMedium ?? const TextStyle(color: Color(0xFF000000)),
-              child: ColoredBox(
-                color: AppTheme.white,
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        spacing: 32,
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 32),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    final step = context
-                                        .read<ForgotPasswordCubit>()
-                                        .state;
-                                    if (step == ForgotPasswordStep.initial) {
-                                      context.pop();
-                                    } else {
-                                      context
-                                          .read<ForgotPasswordCubit>()
-                                          .back();
-                                    }
-                                  },
-                                  child: Icon(
-                                    Iconsax.arrowLeft01Style4,
-                                    size: 24,
-                                  ),
+            child: ColoredBox(
+              color: AppTheme.white,
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      spacing: 32,
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 32),
+                              child: GestureDetector(
+                                onTap: () {
+                                  final step = context
+                                      .read<ForgotPasswordCubit>()
+                                      .state;
+                                  if (step == ForgotPasswordStep.initial) {
+                                    context.pop();
+                                  } else {
+                                    context.read<ForgotPasswordCubit>().back();
+                                  }
+                                },
+                                child: Icon(
+                                  Iconsax.arrowLeft01Style4,
+                                  size: 24,
                                 ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Image.asset(
+                          "assets/logo-dark.png",
+                          width: 108,
+                          height: 108,
+                          fit: BoxFit.fitHeight,
+                        ),
+                        AppForm(
+                          key: _formKey,
+
+                          child: Column(
+                            spacing: 24,
+                            children: [
+                              // Header Section
+                              BlocBuilder<
+                                ForgotPasswordCubit,
+                                ForgotPasswordStep
+                              >(
+                                builder: (context, state) {
+                                  switch (state) {
+                                    case ForgotPasswordStep.initial:
+                                      return const ForgetPassword();
+                                    case ForgotPasswordStep.verify:
+                                      return const VerifyCode();
+                                    case ForgotPasswordStep.newPassword:
+                                      return const CreateNewPassword();
+                                  }
+                                },
                               ),
                             ],
                           ),
-                          Image.asset(
-                            "assets/logo-dark.png",
-                            width: 108,
-                            height: 108,
-                            fit: BoxFit.fitHeight,
-                          ),
-                          AppForm(
-                            key: _formKey,
-
-                            child: Column(
-                              spacing: 24,
-                              children: [
-                                // Header Section
-                                BlocBuilder<
-                                  ForgotPasswordCubit,
-                                  ForgotPasswordStep
-                                >(
-                                  builder: (context, state) {
-                                    switch (state) {
-                                      case ForgotPasswordStep.initial:
-                                        return const ForgetPassword();
-                                      case ForgotPasswordStep.verify:
-                                        return const VerifyCode();
-                                      case ForgotPasswordStep.newPassword:
-                                        return const CreateNewPassword();
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -121,8 +115,6 @@ class ForgetPassword extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ts = AppTextTheme.ts;
-
     return Column(
       spacing: 24,
       children: [
@@ -135,11 +127,15 @@ class ForgetPassword extends StatelessWidget {
               children: [
                 Text(
                   "Forget Password?",
-                  style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+                  style: AppTextTheme.headlineLarge.copyWith(
+                    color: AppTheme.primary,
+                  ),
                 ),
                 Text(
                   "Hope you're doing fine.",
-                  style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+                  style: AppTextTheme.bodySmall.copyWith(
+                    color: AppTheme.grey500,
+                  ),
                 ),
               ],
             ),
@@ -193,8 +189,6 @@ class VerifyCode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ts = AppTextTheme.ts;
-
     return Column(
       spacing: 32,
       children: [
@@ -204,11 +198,13 @@ class VerifyCode extends StatelessWidget {
           children: [
             Text(
               "Verify Code",
-              style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+              style: AppTextTheme.headlineLarge.copyWith(
+                color: AppTheme.primary,
+              ),
             ),
             Text(
               "Enter the the code\nwe just sent you on your registered Email",
-              style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               textAlign: TextAlign.center,
             ),
           ],
@@ -253,11 +249,11 @@ class VerifyCode extends StatelessWidget {
             children: [
               TextSpan(
                 text: "Didn’t get the Code? ",
-                style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               ),
               TextSpan(
                 text: "Resend",
-                style: ts.bodySmall?.copyWith(
+                style: AppTextTheme.bodySmall.copyWith(
                   color: AppTheme.blue,
                   fontWeight: FontWeight.w500,
                 ),
@@ -295,8 +291,6 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final ts = AppTextTheme.ts;
-
     return Column(
       spacing: 32,
       children: [
@@ -306,11 +300,13 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
           children: [
             Text(
               "Create new password",
-              style: ts.headlineLarge?.copyWith(color: AppTheme.primary),
+              style: AppTextTheme.headlineLarge.copyWith(
+                color: AppTheme.primary,
+              ),
             ),
             Text(
               "Your new password must be different form previously used password",
-              style: ts.bodySmall?.copyWith(color: AppTheme.grey500),
+              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               textAlign: .center,
             ),
           ],

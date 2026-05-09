@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   bloc: ^9.2.0
+  equatable: ^2.0.8
   flutter:
     sdk: flutter
   flutter_auto_size_text: ^5.0.0

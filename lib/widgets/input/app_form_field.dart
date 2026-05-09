@@ -74,6 +74,7 @@ class AppFormField extends StatefulWidget {
     this.autocorrect = true,
     this.enableSuggestions = true,
     this.initialValue,
+    this.isShowError = true,
   });
 
   /// Nama unik field dalam form. Wajib diisi.
@@ -108,6 +109,7 @@ class AppFormField extends StatefulWidget {
   final TextAlign textAlign;
   final bool autocorrect;
   final bool enableSuggestions;
+  final bool isShowError;
 
   /// Nilai awal; diset ke controller saat [AppFormState.reset()] dipanggil.
   final String? initialValue;
@@ -233,6 +235,7 @@ class _AppFormFieldState extends State<AppFormField>
       suffix: widget.suffix,
       isPassword: widget.isPassword,
       errorText: _errorText,
+      isShowError: widget.isShowError,
       onChanged: _handleChanged,
       onSubmitted: widget.onSubmitted,
       keyboardType: widget.keyboardType,

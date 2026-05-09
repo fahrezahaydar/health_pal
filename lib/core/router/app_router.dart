@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:health_pal/features/auth/page/sign_up_page.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../features/auth/page/create_profile_page.dart';
 import '../../features/auth/page/forgot_password_page.dart';
 import '../../features/auth/page/login_page.dart';
 import '../../features/home/page/home_page.dart';
@@ -49,13 +50,27 @@ class AppRouter {
 
     routes: [
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingPage()),
-      GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
-      GoRoute(path: '/sign-up', builder: (_, _) => const SignUpPage()),
-      GoRoute(path: '/home', builder: (_, _) => const HomePage()),
       GoRoute(
-        path: "/forgot-password",
-        builder: (_, _) => const ForgotPasswordPage(),
+        path: '/login',
+        builder: (_, _) => const LoginPage(),
+        routes: [
+          GoRoute(
+            path: "/forgot-password",
+            builder: (_, _) => const ForgotPasswordPage(),
+          ),
+        ],
       ),
+      GoRoute(
+        path: '/sign-up',
+        builder: (_, _) => const SignUpPage(),
+        routes: [
+          GoRoute(
+            path: "/create-profile",
+            builder: (_, _) => const CreateProfilePage(),
+          ),
+        ],
+      ),
+      GoRoute(path: '/home', builder: (_, _) => const HomePage()),
     ],
   );
 }

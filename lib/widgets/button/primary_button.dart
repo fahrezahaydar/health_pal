@@ -5,7 +5,7 @@ class LightFilledButton extends StatefulWidget {
   const LightFilledButton({
     super.key,
     required this.label,
-    required this.onTap,
+    this.onTap,
     this.backgroundColor = AppTheme.primary,
     this.pressedColor,
     this.textColor = AppTheme.onPrimary,
@@ -22,7 +22,7 @@ class LightFilledButton extends StatefulWidget {
   });
 
   final String label;
-  final VoidCallback onTap;
+  final void Function()? onTap;
 
   final Color backgroundColor;
 

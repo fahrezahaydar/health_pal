@@ -30,6 +30,7 @@ class AppInputField extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.autocorrect = true,
     this.enableSuggestions = true,
+    this.isShowError = true,
   });
 
   final TextEditingController controller;
@@ -59,6 +60,7 @@ class AppInputField extends StatefulWidget {
   final TextAlign textAlign;
   final bool autocorrect;
   final bool enableSuggestions;
+  final bool isShowError;
 
   @override
   State<AppInputField> createState() => _AppInputFieldState();
@@ -134,7 +136,11 @@ class _AppInputFieldState extends State<AppInputField> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: AppTheme.grey50,
-            border: Border.all(color: AppTheme.grey300),
+            border: Border.all(
+              color: _error != null
+                  ? const Color(0xFFD32F2F)
+                  : AppTheme.grey300,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -216,7 +222,7 @@ class _AppInputFieldState extends State<AppInputField> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (_error != null)
+              if (_error != null && widget.isShowError)
                 Expanded(
                   child: Text(
                     _error!,
