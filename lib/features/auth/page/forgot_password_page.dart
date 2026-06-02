@@ -139,7 +139,7 @@ class ForgetPassword extends StatelessWidget {
                 ),
               ],
             ),
-            AppFormField(
+            AppTextFormField(
               name: "Email",
               controller: TextEditingController(),
               prefix: const Icon(Iconsax.smsStyle5),
@@ -318,7 +318,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
             ValueListenableBuilder(
               valueListenable: _isShowNewPassword,
               builder: (context, value, child) {
-                return AppFormField(
+                return AppTextFormField(
                   name: "New Password",
                   controller: _newPasswordController,
                   prefix: const Icon(Iconsax.padlockStyle5),
@@ -346,7 +346,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
             ValueListenableBuilder(
               valueListenable: _isShowConfirmNewPassword,
               builder: (context, value, child) {
-                return AppFormField(
+                return AppTextFormField(
                   name: "Confirm New Password",
                   controller: _confirmNewPasswordController,
                   prefix: const Icon(Iconsax.padlockStyle5),

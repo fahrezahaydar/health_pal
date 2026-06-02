@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                             Column(
                               spacing: 20,
                               children: [
-                                AppFormField(
+                                AppTextFormField(
                                   name: "Email",
                                   controller: _emailController,
                                   prefix: const Icon(Iconsax.smsStyle5),
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ValueListenableBuilder(
                                   valueListenable: _isShowPassword,
                                   builder: (context, value, child) {
-                                    return AppFormField(
+                                    return AppTextFormField(
                                       name: "Password",
                                       controller: _passwordController,
                                       prefix: const Icon(Iconsax.padlockStyle5),
@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         GestureDetector(
-                          onTap: () => context.push('/forgot-password'),
+                          onTap: () => context.go('/login/forgot-password'),
                           child: Text(
                             "Forgot password?",
                             style: AppTextTheme.bodySmall.copyWith(

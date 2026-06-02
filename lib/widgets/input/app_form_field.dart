@@ -1,71 +1,51 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import 'app_form.dart';
-import 'app_input_field.dart'; // ganti dengan path yang sesuai
+import 'app_input_field.dart';
 
-// ---------------------------------------------------------------------------
-// AppFormField
-// ---------------------------------------------------------------------------
-/// Wrapper di atas [AppInputField] yang auto-register ke [AppForm].
+// -----------------------------------------------------------------------------
+// APP TEXT FORM FIELD
+// -----------------------------------------------------------------------------
+/// Wrapper AppInputField + AppFormField.
 ///
-/// [name] wajib diisi dan harus unik dalam satu [AppForm].
-/// Digunakan sebagai key di [AppFormState.errors].
+/// Sudah:
+/// - auto register ke AppForm
+/// - auto validate
+/// - auto save/reset
+/// - support initial value
+/// - support autovalidate
+/// - reusable
 ///
-/// Contoh:
-/// ```dart
-/// final _formKey = GlobalKey<AppFormState>();
-///
-/// AppForm(
-///   key: _formKey,
-///   child: Column(
-///     children: [
-///       AppFormField(
-///         name: 'Email',
-///         controller: _emailController,
-///         hintText: 'Email',
-///         validator: (v) => v.isEmpty ? 'Email wajib diisi' : null,
-///       ),
-///       AppFormField(
-///         name: 'Password',
-///         controller: _passwordController,
-///         hintText: 'Password',
-///         isPassword: true,
-///         validator: (v) => v.isEmpty ? 'Password wajib diisi' : null,
-///       ),
-///       GestureDetector(
-///         onTap: () {
-///           if (!_formKey.currentState!.validate()) {
-///             final errors = _formKey.currentState!.errors;
-///             // errors == {"Email": "...", "Password": "..."}
-///           }
-///         },
-///         child: const Text('Submit'),
-///       ),
-///     ],
-///   ),
-/// );
-/// ```
-class AppFormField extends StatefulWidget {
-  const AppFormField({
+/// NOTE:
+/// Widget ini khusus String/Text.
+/// Untuk custom value gunakan generic AppFormField<T>.
+class AppTextFormField extends StatefulWidget {
+  const AppTextFormField({
     super.key,
     required this.name,
-    required this.controller,
+
+    // value
+    this.controller,
+    this.initialValue,
+
+    // ui
     this.hintText,
     this.prefix,
     this.suffix,
+
+    // behavior
     this.isPassword = false,
-    this.validator,
-    this.onSaved,
-    this.onChanged,
-    this.onSubmitted,
+    this.readOnly = false,
+    this.autofocus = false,
+    this.enabled = true,
+    this.isShowError = true,
+
+    // input
     this.keyboardType,
     this.textInputAction,
     this.maxLines = 1,
     this.minLines,
-    this.readOnly = false,
-    this.autofocus = false,
-    this.enabled = true,
     this.inputFormatters,
     this.maxLength,
     this.focusNode,
@@ -73,61 +53,120 @@ class AppFormField extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.autocorrect = true,
     this.enableSuggestions = true,
-    this.initialValue,
-    this.isShowError = true,
+
+    // callbacks
+    this.validator,
+    this.onSaved,
+    this.onChanged,
+    this.onSubmitted,
   });
 
-  /// Nama unik field dalam form. Wajib diisi.
-  /// Digunakan sebagai key di [AppFormState.errors].
+  // ---------------------------------------------------------------------------
+  // IDENTIFIER
+  // ---------------------------------------------------------------------------
+
   final String name;
 
-  final TextEditingController controller;
+  // ---------------------------------------------------------------------------
+  // VALUE
+  // ---------------------------------------------------------------------------
+
+  /// Optional external controller.
+  ///
+  /// Jika null maka internal controller akan dibuat otomatis.
+  final TextEditingController? controller;
+
+  /// Initial value.
+  ///
+  /// Prioritas:
+  /// 1. AppForm.initialValues
+  /// 2. initialValue
+  /// 3. controller.text
+  final String? initialValue;
+
+  // ---------------------------------------------------------------------------
+  // UI
+  // ---------------------------------------------------------------------------
+
   final String? hintText;
+
   final Widget? prefix;
+
   final Widget? suffix;
+
+  // ---------------------------------------------------------------------------
+  // BEHAVIOR
+  // ---------------------------------------------------------------------------
+
   final bool isPassword;
 
-  /// Validator dipanggil saat [AppFormState.validate()] atau autovalidate aktif.
+  final bool readOnly;
+
+  final bool autofocus;
+
+  final bool enabled;
+
+  final bool isShowError;
+
+  // ---------------------------------------------------------------------------
+  // INPUT
+  // ---------------------------------------------------------------------------
+
+  final TextInputType? keyboardType;
+
+  final TextInputAction? textInputAction;
+
+  final int? maxLines;
+
+  final int? minLines;
+
+  final List<TextInputFormatter>? inputFormatters;
+
+  final int? maxLength;
+
+  final FocusNode? focusNode;
+
+  final TextCapitalization textCapitalization;
+
+  final TextAlign textAlign;
+
+  final bool autocorrect;
+
+  final bool enableSuggestions;
+
+  // ---------------------------------------------------------------------------
+  // CALLBACKS
+  // ---------------------------------------------------------------------------
+
   final String? Function(String value)? validator;
 
-  /// Dipanggil saat [AppFormState.save()].
   final ValueChanged<String>? onSaved;
 
   final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final int? maxLines;
-  final int? minLines;
-  final bool readOnly;
-  final bool autofocus;
-  final bool enabled;
-  final List<TextInputFormatter>? inputFormatters;
-  final int? maxLength;
-  final FocusNode? focusNode;
-  final TextCapitalization textCapitalization;
-  final TextAlign textAlign;
-  final bool autocorrect;
-  final bool enableSuggestions;
-  final bool isShowError;
 
-  /// Nilai awal; diset ke controller saat [AppFormState.reset()] dipanggil.
-  final String? initialValue;
+  final ValueChanged<String>? onSubmitted;
 
   @override
-  State<AppFormField> createState() => _AppFormFieldState();
+  State<AppTextFormField> createState() => _AppTextFormFieldState();
 }
 
-class _AppFormFieldState extends State<AppFormField>
-    implements AppFormFieldState {
+class _AppTextFormFieldState extends State<AppTextFormField>
+    implements AppFormFieldState<String> {
   AppFormState? _form;
+
+  late final TextEditingController _controller;
+
+  bool _isInternalController = false;
+
   String? _errorText;
+
   bool _hasInteracted = false;
+
   late String _initialValue;
 
-  // -------------------------------------------------------------------------
-  // AppFormFieldState impl
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // GETTERS
+  // ---------------------------------------------------------------------------
 
   @override
   String get name => widget.name;
@@ -136,40 +175,31 @@ class _AppFormFieldState extends State<AppFormField>
   String? get currentError => _errorText;
 
   @override
-  String get value => widget.controller.text;
+  String get value => _controller.text;
 
-  @override
-  bool validate() {
-    final error = widget.validator?.call(widget.controller.text);
-    if (error != _errorText) {
-      setState(() => _errorText = error);
-    }
-    return error == null;
-  }
-
-  @override
-  void reset() {
-    setState(() {
-      _errorText = null;
-      _hasInteracted = false;
-      widget.controller.text = _initialValue;
-    });
-  }
-
-  @override
-  void save() {
-    widget.onSaved?.call(widget.controller.text);
-  }
-
-  // -------------------------------------------------------------------------
-  // Lifecycle
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // LIFECYCLE
+  // ---------------------------------------------------------------------------
 
   @override
   void initState() {
     super.initState();
-    assert(widget.name.isNotEmpty, 'AppFormField: name tidak boleh kosong.');
-    _initialValue = widget.initialValue ?? widget.controller.text;
+
+    assert(
+      widget.name.isNotEmpty,
+      'AppTextFormField: name tidak boleh kosong.',
+    );
+
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+    } else {
+      _controller = TextEditingController();
+      _isInternalController = true;
+    }
+
+    _initialValue = widget.initialValue ?? _controller.text;
+
+    _controller.text = _initialValue;
   }
 
   @override
@@ -183,16 +213,33 @@ class _AppFormFieldState extends State<AppFormField>
 
       _form = newForm;
 
+      // ---------------------------------------------------------------------
+      // PRIORITY:
+      // form.initialValues
+      // -> widget.initialValue
+      // -> controller.text
+      // ---------------------------------------------------------------------
+
+      final formInitialValue = _form?.value<String>(widget.name);
+
+      if (formInitialValue != null) {
+        _initialValue = formInitialValue;
+
+        if (_controller.text != formInitialValue) {
+          _controller.text = formInitialValue;
+        }
+      }
+
       _form?.register(this);
     }
   }
 
   @override
-  void didUpdateWidget(covariant AppFormField oldWidget) {
+  void didUpdateWidget(covariant AppTextFormField oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.name != widget.name) {
-      assert(widget.name.isNotEmpty, 'AppFormField: name cannot be empty.');
+      assert(widget.name.isNotEmpty, 'AppTextFormField: name cannot be empty.');
 
       _form?.renameField(oldName: oldWidget.name, field: this);
     }
@@ -201,50 +248,121 @@ class _AppFormFieldState extends State<AppFormField>
   @override
   void dispose() {
     _form?.unregister(this);
+
+    if (_isInternalController) {
+      _controller.dispose();
+    }
+
     super.dispose();
   }
 
-  // -------------------------------------------------------------------------
-  // Handlers
-  // -------------------------------------------------------------------------
+  @override
+  void didChange(String? value) {
+    final newValue = value ?? '';
+
+    if (_controller.text != newValue) {
+      _controller.text = newValue;
+
+      _controller.selection = TextSelection.collapsed(
+        offset: _controller.text.length,
+      );
+    }
+
+    _handleChanged(newValue);
+  }
+
+  // ---------------------------------------------------------------------------
+  // VALIDATION
+  // ---------------------------------------------------------------------------
+
+  @override
+  bool validate() {
+    final error = widget.validator?.call(_controller.text);
+
+    if (error != _errorText) {
+      setState(() {
+        _errorText = error;
+      });
+    }
+
+    return error == null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // RESET
+  // ---------------------------------------------------------------------------
+
+  @override
+  void reset() {
+    setState(() {
+      _errorText = null;
+      _hasInteracted = false;
+
+      _controller.text = _initialValue;
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // SAVE
+  // ---------------------------------------------------------------------------
+
+  @override
+  void save() {
+    widget.onSaved?.call(_controller.text);
+  }
+
+  // ---------------------------------------------------------------------------
+  // CHANGE
+  // ---------------------------------------------------------------------------
 
   void _handleChanged(String value) {
     _hasInteracted = true;
-    _form?.fieldDidChange();
+
+    _form?.setValue(name, value);
 
     final mode = _form?.autovalidateMode ?? AutovalidateMode.disabled;
+
     if (mode == AutovalidateMode.always ||
         (mode == AutovalidateMode.onUserInteraction && _hasInteracted)) {
       final error = widget.validator?.call(value);
-      if (error != _errorText) setState(() => _errorText = error);
+
+      if (error != _errorText) {
+        setState(() {
+          _errorText = error;
+        });
+      }
     }
 
     widget.onChanged?.call(value);
-  }
-
-  // -------------------------------------------------------------------------
-  // Build
-  // -------------------------------------------------------------------------
+  } // ---------------------------------------------------------------------------
+  // BUILD
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return AppInputField(
-      controller: widget.controller,
+      controller: _controller,
+
+      // ui
       hintText: widget.hintText,
       prefix: widget.prefix,
       suffix: widget.suffix,
-      isPassword: widget.isPassword,
+
+      // state
       errorText: _errorText,
       isShowError: widget.isShowError,
-      onChanged: _handleChanged,
-      onSubmitted: widget.onSubmitted,
+
+      // behavior
+      isPassword: widget.isPassword,
+      readOnly: widget.readOnly,
+      autofocus: widget.autofocus,
+      enabled: widget.enabled,
+
+      // input
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       maxLines: widget.maxLines,
       minLines: widget.minLines,
-      readOnly: widget.readOnly,
-      autofocus: widget.autofocus,
-      enabled: widget.enabled,
       inputFormatters: widget.inputFormatters,
       maxLength: widget.maxLength,
       focusNode: widget.focusNode,
@@ -252,6 +370,10 @@ class _AppFormFieldState extends State<AppFormField>
       textAlign: widget.textAlign,
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
+
+      // callbacks
+      onChanged: _handleChanged,
+      onSubmitted: widget.onSubmitted,
     );
   }
 }

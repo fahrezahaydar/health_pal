@@ -23,11 +23,11 @@ class AppRouter {
 
     redirect: (context, state) {
       final status = _onboardingService.status;
-      final loc = state.matchedLocation;
+      final loc = state.uri.path;
+      print("GoRouter redirect: status=$status, loc=$loc");
 
-      // Daftar route yang boleh diakses tanpa login
-      final bool isAuthRoute =
-          loc == '/login' || loc == '/sign-up' || loc == '/forgot-password';
+      final isAuthRoute =
+          loc.startsWith('/login') || loc.startsWith('/sign-up');
 
       if (status == AppStatus.onboarding) {
         return loc == '/onboarding' ? null : '/onboarding';
@@ -36,7 +36,7 @@ class AppRouter {
       if (status == AppStatus.unauthenticated) {
         // Jika user mau ke login atau sign-up, ijinkan (return null).
         // Jika mau ke halaman lain (misal /home), paksa ke /login.
-        return isAuthRoute ? null : '/login';
+        return isAuthRoute ? null : '/sign-up/create-profile';
       }
 
       if (status == AppStatus.authenticated) {
@@ -55,7 +55,7 @@ class AppRouter {
         builder: (_, _) => const LoginPage(),
         routes: [
           GoRoute(
-            path: "/forgot-password",
+            path: "forgot-password",
             builder: (_, _) => const ForgotPasswordPage(),
           ),
         ],
@@ -65,8 +65,21 @@ class AppRouter {
         builder: (_, _) => const SignUpPage(),
         routes: [
           GoRoute(
-            path: "/create-profile",
-            builder: (_, _) => const CreateProfilePage(),
+            path: "create-profile",
+            builder: (context, state) {
+              // Mengambil parameter 'email'
+              final data = state.extra as Map<String, dynamic>?;
+              final email = data?['email'] ?? "";
+              // Mengambil parameter 'source'
+              final name = data?['name'] ?? "";
+              final password = data?['password'] ?? "";
+
+              return CreateProfilePage(
+                email: email ?? '',
+                password: password ?? '',
+                fullname: name ?? '',
+              );
+            },
           ),
         ],
       ),

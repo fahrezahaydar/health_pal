@@ -1,1 +1,14 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  # Mengabaikan file hasil generator dari proses linter static analysis
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.mocks.dart" # Jika menggunakan Mockito
+    - "**/*.config.dart" # Jika menggunakan Injectable
+    - "lib/generated_plugin_registrant.dart" # Generated oleh Flutter untuk web
+
+linter:
+  rules:
+    # Aturan linter kustom Anda di sini

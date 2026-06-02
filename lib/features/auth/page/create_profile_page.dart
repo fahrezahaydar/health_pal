@@ -1,17 +1,28 @@
-import 'package:flutter/gestures.dart';
+import 'dart:io';
+
+import 'package:flutter/widget_previews.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
-import '../../../core/theme/app_text_theme.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../widgets/button/outline_button.dart';
-import '../../../widgets/button/primary_button.dart';
+import '../../../widgets/input/app_dropdown_field.dart';
 import '../../../widgets/input/app_form.dart';
 import '../../../widgets/input/app_form_field.dart';
+import '../../../widgets/picker/app_image_picker.dart';
 
 class CreateProfilePage extends StatefulWidget {
-  const CreateProfilePage({super.key});
+  @Preview(name: 'My Create Profile Page', size: Size(390, 844))
+  const CreateProfilePage({
+    super.key,
+    this.email = "",
+    this.password = "",
+    this.fullname = "",
+  });
+
+  final String email;
+  final String password;
+  final String fullname;
 
   @override
   State<CreateProfilePage> createState() => _CreateProfilePageState();
@@ -22,9 +33,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
 
-  final _isShowPassword = ValueNotifier(false);
+  File? _localPhoto;
+  String? _remotePhotoUrl;
 
   bool _isValidEmail(String value) {
     return RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value);
@@ -34,8 +46,6 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
-    _isShowPassword.dispose();
     super.dispose();
   }
 
@@ -47,125 +57,113 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
         color: AppTheme.white,
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Image.asset(
-                    "assets/logo-dark.png",
-                    width: 108,
-                    height: 108,
-                    fit: BoxFit.fitHeight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                spacing: 16,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Icon(Iconsax.arrowLeft01Style4, size: 24),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
+                  Column(
                     spacing: 24,
                     children: [
-                      // Header Section
-                      Column(
-                        spacing: 32,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            spacing: 8,
-                            children: [
-                              Text(
-                                "Create Account",
-                                style: AppTextTheme.headlineLarge?.copyWith(
-                                  color: AppTheme.primary,
-                                ),
-                              ),
-                              Text(
-                                "We are here to help you!",
-                                style: AppTextTheme.bodySmall?.copyWith(
-                                  color: AppTheme.grey500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          // Input Section
-                          AppForm(
-                            key: _formKey,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            child: Column(
-                              spacing: 20,
-                              children: [
-                                AppFormField(
-                                  name: "Name",
-                                  hintText: "Your Name",
-                                  isShowError: false,
-                                  prefix: Icon(Iconsax.user),
-                                  controller: _nameController,
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Nama wajib diisi';
-                                    }
+                      Center(
+                        child: AppPhotoPicker(
+                          size: 160,
+                          localFile: _localPhoto,
+                          remoteUrl: _remotePhotoUrl,
+                          onPhotoSelected: (f) =>
+                              setState(() => _localPhoto = f),
+                          onPhotoRemoved: () =>
+                              setState(() => _localPhoto = null),
+                        ),
+                      ),
+                      AppForm(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: Column(
+                          spacing: 16,
+                          children: [
+                            AppTextFormField(
+                              name: "Name",
+                              hintText: "Your Name",
+                              isShowError: false,
+                              controller: _nameController,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Nama wajib diisi';
+                                }
 
-                                    return null;
-                                  },
+                                return null;
+                              },
+                            ),
+                            AppTextFormField(
+                              name: "Email",
+                              controller: _emailController,
+                              hintText: "Your Email",
+                              keyboardType: TextInputType.emailAddress,
+                              isShowError: false,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Email wajib diisi';
+                                }
+                                if (!_isValidEmail(value)) {
+                                  return 'Format email tidak valid';
+                                }
+                                return null;
+                              },
+                            ),
+                            AppTextFormField(
+                              name: "Nickname",
+                              controller: _nicknameController,
+                              hintText: "Your Nickname",
+                              isShowError: false,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Nickname wajib diisi';
+                                }
+                                return null;
+                              },
+                            ),
+                            AppDropdownFormField<String>(
+                              name: 'gender',
+                              hintText: 'Pilih Gender',
+                              items: const [
+                                AppDropdownItem(
+                                  label: 'Laki-Laki',
+                                  value: 'male',
                                 ),
-                                AppFormField(
-                                  name: "Email",
-                                  controller: _emailController,
-                                  prefix: const Icon(Iconsax.user),
-                                  hintText: "Your Email",
-                                  keyboardType: TextInputType.emailAddress,
-                                  isShowError: false,
-
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Email wajib diisi';
-                                    }
-                                    if (!_isValidEmail(value)) {
-                                      return 'Format email tidak valid';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                ValueListenableBuilder(
-                                  valueListenable: _isShowPassword,
-                                  builder: (context, value, child) {
-                                    return AppFormField(
-                                      name: "Password",
-                                      controller: _passwordController,
-                                      isShowError: false,
-                                      prefix: const Icon(Iconsax.padlockStyle5),
-                                      hintText: "Password",
-                                      isPassword: !value,
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return 'Password wajib diisi';
-                                        }
-                                        return null;
-                                      },
-                                      suffix: GestureDetector(
-                                        onTap: () {
-                                          _isShowPassword.value =
-                                              !_isShowPassword.value;
-                                        },
-                                        child: Icon(
-                                          value
-                                              ? Iconsax.eyeSlash
-                                              : Iconsax.eye,
-                                          color: AppTheme.grey500,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                AppDropdownItem(
+                                  label: 'Perempuan',
+                                  value: 'female',
                                 ),
                               ],
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Gender wajib dipilih';
+                                }
+
+                                return null;
+                              },
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

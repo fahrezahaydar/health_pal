@@ -94,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             child: Column(
                               spacing: 20,
                               children: [
-                                AppFormField(
+                                AppTextFormField(
                                   name: "Name",
                                   isShowError: false,
 
@@ -109,7 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     return null;
                                   },
                                 ),
-                                AppFormField(
+                                AppTextFormField(
                                   name: "Email",
                                   isShowError: false,
 
@@ -130,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ValueListenableBuilder(
                                   valueListenable: _isShowPassword,
                                   builder: (context, value, child) {
-                                    return AppFormField(
+                                    return AppTextFormField(
                                       name: "Password",
                                       isShowError: false,
 
@@ -169,7 +169,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       LightFilledButton(
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
-                            // TODO: submit login
+                            var val = _formKey.currentState?.values;
+                            context.go(
+                              '/sign-up/create-profile',
+                              extra: {
+                                'email': val?['Email'],
+                                'password': val?['Password'],
+                                'name': val?['Name'],
+                              },
+                            );
                           } else {
                             Map<String, String>? errors =
                                 _formKey.currentState!.errors;

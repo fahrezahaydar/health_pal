@@ -18,6 +18,7 @@ dependencies:
   go_router: ^17.2.1
   google_fonts: ^8.0.2
   iconsax_latest: ^1.0.0
+  image_picker: ^1.2.2
   injectable: ^2.7.1+4
   provider: ^6.1.5+1
   shared_preferences: ^2.5.5
