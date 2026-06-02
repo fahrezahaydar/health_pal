@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../input/app_pin_field.dart';
 import 'app_form.dart';
-import 'app_pin_field.dart';
 
 class AppFormPinField extends StatefulWidget {
   const AppFormPinField({
@@ -23,29 +23,13 @@ class AppFormPinField extends StatefulWidget {
     this.onCompleted,
   });
 
-  // ---------------------------------------------------------------------------
-  // IDENTIFIER
-  // ---------------------------------------------------------------------------
-
   final String name;
-
-  // ---------------------------------------------------------------------------
-  // VALUE
-  // ---------------------------------------------------------------------------
 
   final TextEditingController? controller;
 
   final String? initialValue;
 
-  // ---------------------------------------------------------------------------
-  // PIN
-  // ---------------------------------------------------------------------------
-
   final int length;
-
-  // ---------------------------------------------------------------------------
-  // CALLBACKS
-  // ---------------------------------------------------------------------------
 
   final String? Function(String value)? validator;
 
@@ -73,10 +57,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
 
   late String _initialValue;
 
-  // ---------------------------------------------------------------------------
-  // GETTERS
-  // ---------------------------------------------------------------------------
-
   @override
   String get name => widget.name;
 
@@ -85,10 +65,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
 
   @override
   String? get currentError => _errorText;
-
-  // ---------------------------------------------------------------------------
-  // LIFECYCLE
-  // ---------------------------------------------------------------------------
 
   @override
   void initState() {
@@ -155,10 +131,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
     super.dispose();
   }
 
-  // ---------------------------------------------------------------------------
-  // VALIDATION
-  // ---------------------------------------------------------------------------
-
   @override
   bool validate() {
     final error = widget.validator?.call(_controller.text);
@@ -172,10 +144,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
     return error == null;
   }
 
-  // ---------------------------------------------------------------------------
-  // RESET
-  // ---------------------------------------------------------------------------
-
   @override
   void reset() {
     _controller.text = _initialValue;
@@ -188,18 +156,10 @@ class _AppFormPinFieldState extends State<AppFormPinField>
     _form?.setValue(name, _controller.text);
   }
 
-  // ---------------------------------------------------------------------------
-  // SAVE
-  // ---------------------------------------------------------------------------
-
   @override
   void save() {
     widget.onSaved?.call(_controller.text);
   }
-
-  // ---------------------------------------------------------------------------
-  // DID CHANGE
-  // ---------------------------------------------------------------------------
 
   @override
   void didChange(String? value) {
@@ -211,10 +171,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
 
     _handleChanged(newValue);
   }
-
-  // ---------------------------------------------------------------------------
-  // HANDLE CHANGE
-  // ---------------------------------------------------------------------------
 
   void _handleChanged(String value) {
     _hasInteracted = true;
@@ -236,10 +192,6 @@ class _AppFormPinFieldState extends State<AppFormPinField>
 
     widget.onChanged?.call(value);
   }
-
-  // ---------------------------------------------------------------------------
-  // BUILD
-  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {

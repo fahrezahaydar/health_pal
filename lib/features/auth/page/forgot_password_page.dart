@@ -8,9 +8,9 @@ import '../../../core/theme/app_text_theme.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/button/primary_button.dart';
 import '../../../widgets/dialog/app_loading_dialog.dart';
-import '../../../widgets/input/app_form.dart';
-import '../../../widgets/input/app_form_field.dart';
-import '../../../widgets/input/app_form_pin_field.dart';
+import '../../../widgets/form/app_form.dart';
+import '../../../widgets/form/app_form_field.dart';
+import '../../../widgets/form/app_form_pin_field.dart';
 import '../bloc/forget_password/forget_password_state.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

@@ -1,25 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../input/app_input_field.dart';
 import 'app_form.dart';
-import 'app_input_field.dart';
 
 // -----------------------------------------------------------------------------
 // APP TEXT FORM FIELD
 // -----------------------------------------------------------------------------
-/// Wrapper AppInputField + AppFormField.
-///
-/// Sudah:
-/// - auto register ke AppForm
-/// - auto validate
-/// - auto save/reset
-/// - support initial value
-/// - support autovalidate
-/// - reusable
-///
-/// NOTE:
-/// Widget ini khusus String/Text.
-/// Untuk custom value gunakan generic AppFormField<T>.
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     super.key,
@@ -61,42 +48,17 @@ class AppTextFormField extends StatefulWidget {
     this.onSubmitted,
   });
 
-  // ---------------------------------------------------------------------------
-  // IDENTIFIER
-  // ---------------------------------------------------------------------------
-
   final String name;
 
-  // ---------------------------------------------------------------------------
-  // VALUE
-  // ---------------------------------------------------------------------------
-
-  /// Optional external controller.
-  ///
-  /// Jika null maka internal controller akan dibuat otomatis.
   final TextEditingController? controller;
 
-  /// Initial value.
-  ///
-  /// Prioritas:
-  /// 1. AppForm.initialValues
-  /// 2. initialValue
-  /// 3. controller.text
   final String? initialValue;
-
-  // ---------------------------------------------------------------------------
-  // UI
-  // ---------------------------------------------------------------------------
 
   final String? hintText;
 
   final Widget? prefix;
 
   final Widget? suffix;
-
-  // ---------------------------------------------------------------------------
-  // BEHAVIOR
-  // ---------------------------------------------------------------------------
 
   final bool isPassword;
 
@@ -107,10 +69,6 @@ class AppTextFormField extends StatefulWidget {
   final bool enabled;
 
   final bool isShowError;
-
-  // ---------------------------------------------------------------------------
-  // INPUT
-  // ---------------------------------------------------------------------------
 
   final TextInputType? keyboardType;
 
@@ -133,10 +91,6 @@ class AppTextFormField extends StatefulWidget {
   final bool autocorrect;
 
   final bool enableSuggestions;
-
-  // ---------------------------------------------------------------------------
-  // CALLBACKS
-  // ---------------------------------------------------------------------------
 
   final String? Function(String value)? validator;
 
@@ -164,10 +118,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
 
   late String _initialValue;
 
-  // ---------------------------------------------------------------------------
-  // GETTERS
-  // ---------------------------------------------------------------------------
-
   @override
   String get name => widget.name;
 
@@ -176,10 +126,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
 
   @override
   String get value => _controller.text;
-
-  // ---------------------------------------------------------------------------
-  // LIFECYCLE
-  // ---------------------------------------------------------------------------
 
   @override
   void initState() {
@@ -212,13 +158,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
       _form?.unregister(this);
 
       _form = newForm;
-
-      // ---------------------------------------------------------------------
-      // PRIORITY:
-      // form.initialValues
-      // -> widget.initialValue
-      // -> controller.text
-      // ---------------------------------------------------------------------
 
       final formInitialValue = _form?.value<String>(widget.name);
 
@@ -271,10 +210,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
     _handleChanged(newValue);
   }
 
-  // ---------------------------------------------------------------------------
-  // VALIDATION
-  // ---------------------------------------------------------------------------
-
   @override
   bool validate() {
     final error = widget.validator?.call(_controller.text);
@@ -288,10 +223,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
     return error == null;
   }
 
-  // ---------------------------------------------------------------------------
-  // RESET
-  // ---------------------------------------------------------------------------
-
   @override
   void reset() {
     setState(() {
@@ -302,18 +233,10 @@ class _AppTextFormFieldState extends State<AppTextFormField>
     });
   }
 
-  // ---------------------------------------------------------------------------
-  // SAVE
-  // ---------------------------------------------------------------------------
-
   @override
   void save() {
     widget.onSaved?.call(_controller.text);
   }
-
-  // ---------------------------------------------------------------------------
-  // CHANGE
-  // ---------------------------------------------------------------------------
 
   void _handleChanged(String value) {
     _hasInteracted = true;
@@ -334,31 +257,25 @@ class _AppTextFormFieldState extends State<AppTextFormField>
     }
 
     widget.onChanged?.call(value);
-  } // ---------------------------------------------------------------------------
-  // BUILD
-  // ---------------------------------------------------------------------------
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppInputField(
       controller: _controller,
 
-      // ui
       hintText: widget.hintText,
       prefix: widget.prefix,
       suffix: widget.suffix,
 
-      // state
       errorText: _errorText,
       isShowError: widget.isShowError,
 
-      // behavior
       isPassword: widget.isPassword,
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
       enabled: widget.enabled,
 
-      // input
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       maxLines: widget.maxLines,
@@ -371,7 +288,6 @@ class _AppTextFormFieldState extends State<AppTextFormField>
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
 
-      // callbacks
       onChanged: _handleChanged,
       onSubmitted: widget.onSubmitted,
     );

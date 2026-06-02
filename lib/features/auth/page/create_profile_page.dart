@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../widgets/input/app_dropdown_field.dart';
-import '../../../widgets/input/app_form.dart';
-import '../../../widgets/input/app_form_field.dart';
+import '../../../widgets/form/app_dropdown_field.dart';
+import '../../../widgets/form/app_form.dart';
+import '../../../widgets/form/app_form_field.dart';
 import '../../../widgets/picker/app_image_picker.dart';
 
 class CreateProfilePage extends StatefulWidget {
