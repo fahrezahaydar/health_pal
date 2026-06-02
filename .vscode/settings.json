@@ -1,2 +1,26 @@
 {
+ "material-icon-theme.folders.associations": {
+    "datasources": "database",
+    "datasource": "database",
+  },
+  "material-icon-theme.folders.customClones": [
+    {
+      "name": "entity-model",
+      "base": "interface",
+      "color": "purple-400",
+      "folderNames": [
+        "entity"
+      ]
+    },
+    {
+      "name": "usecase-function",
+      "base": "functions",
+      "color": "light-green-500",
+      "lightColor": "light-green-700",
+      "folderNames": [
+        "usecase",
+        "usecases"
+      ]
+    }
+  ]
 }
