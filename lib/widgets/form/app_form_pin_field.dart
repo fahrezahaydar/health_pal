@@ -210,7 +210,7 @@ class _AppFormPinFieldState extends State<AppFormPinField>
 
       deleteMode: PinDeleteMode.currentAndAfter,
 
-      textStyle: TextStyle(
+      textStyle: const TextStyle(
         fontSize: 20,
         color: AppTheme.primary,
         fontWeight: FontWeight.bold,

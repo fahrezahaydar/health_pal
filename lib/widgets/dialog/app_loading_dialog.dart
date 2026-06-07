@@ -16,7 +16,7 @@ class AppLoadingDialog extends StatelessWidget {
     await showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierLabel: "Loading",
+      barrierLabel: 'Loading',
       barrierColor: const Color(0x80000000), // Warna overlay (hitam transparan)
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -43,9 +43,9 @@ class AppLoadingDialog extends StatelessWidget {
           color: const Color(0xFFFFFFFF), // Manual hex untuk putih
           borderRadius: BorderRadius.circular(16),
           // Opsional: tambahkan bayangan karena Dialog material punya elevation bawaan
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color(0x1A000000),
+              color: Color(0x1A000000),
               blurRadius: 10,
               spreadRadius: 2,
             ),

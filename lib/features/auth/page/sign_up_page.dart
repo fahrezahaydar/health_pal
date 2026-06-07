@@ -53,7 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Image.asset(
-                    "assets/logo-dark.png",
+                    'assets/logo-dark.png',
                     width: 108,
                     height: 108,
                     fit: BoxFit.fitHeight,
@@ -73,13 +73,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             spacing: 8,
                             children: [
                               Text(
-                                "Create Account",
+                                'Create Account',
                                 style: AppTextTheme.headlineLarge.copyWith(
                                   color: AppTheme.primary,
                                 ),
                               ),
                               Text(
-                                "We are here to help you!",
+                                'We are here to help you!',
                                 style: AppTextTheme.bodySmall.copyWith(
                                   color: AppTheme.grey500,
                                 ),
@@ -95,11 +95,11 @@ class _SignUpPageState extends State<SignUpPage> {
                               spacing: 20,
                               children: [
                                 AppTextFormField(
-                                  name: "Name",
+                                  name: 'Name',
                                   isShowError: false,
 
-                                  hintText: "Your Name",
-                                  prefix: Icon(Iconsax.user),
+                                  hintText: 'Your Name',
+                                  prefix: const Icon(Iconsax.user),
                                   controller: _nameController,
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -110,12 +110,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                   },
                                 ),
                                 AppTextFormField(
-                                  name: "Email",
+                                  name: 'Email',
                                   isShowError: false,
 
                                   controller: _emailController,
                                   prefix: const Icon(Iconsax.smsStyle5),
-                                  hintText: "Your Email",
+                                  hintText: 'Your Email',
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -131,12 +131,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                   valueListenable: _isShowPassword,
                                   builder: (context, value, child) {
                                     return AppTextFormField(
-                                      name: "Password",
+                                      name: 'Password',
                                       isShowError: false,
 
                                       controller: _passwordController,
                                       prefix: const Icon(Iconsax.padlockStyle5),
-                                      hintText: "Password",
+                                      hintText: 'Password',
                                       isPassword: !value,
                                       validator: (value) {
                                         if (value.isEmpty) {
@@ -182,37 +182,37 @@ class _SignUpPageState extends State<SignUpPage> {
                             Map<String, String>? errors =
                                 _formKey.currentState!.errors;
                             if (errors != null) {
-                              print("Validation Errors: $errors");
+                              print('Validation Errors: $errors');
                               await AppCustomDialog.show(
                                 context,
                                 type: AppDialogType.error,
-                                title: "Validation Error",
+                                title: 'Validation Error',
                                 subtitle:
-                                    "Please correct the highlighted fields",
+                                    'Please correct the highlighted fields',
                               );
                             }
                           }
                         },
-                        label: "Create Account",
+                        label: 'Create Account',
                       ),
 
                       // Divider Section
                       Row(
                         spacing: 24,
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: SizedBox(
                               height: 1,
                               child: ColoredBox(color: AppTheme.grey200),
                             ),
                           ),
                           Text(
-                            "or",
+                            'or',
                             style: AppTextTheme.bodySmall.copyWith(
                               color: AppTheme.grey500,
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             child: SizedBox(
                               height: 1,
                               child: ColoredBox(color: AppTheme.grey200),
@@ -227,20 +227,20 @@ class _SignUpPageState extends State<SignUpPage> {
                         children: [
                           LightOutlineButton(
                             icon: Image.asset(
-                              "assets/icon/google.png",
+                              'assets/icon/google.png',
                               width: 20,
                               height: 20,
                             ),
-                            label: "Continue with Google",
+                            label: 'Continue with Google',
                             onTap: () {},
                           ),
                           LightOutlineButton(
                             icon: Image.asset(
-                              "assets/icon/facebook.png",
+                              'assets/icon/facebook.png',
                               width: 20,
                               height: 20,
                             ),
-                            label: "Continue with Facebook",
+                            label: 'Continue with Facebook',
                             onTap: () {},
                           ),
                         ],
@@ -249,13 +249,13 @@ class _SignUpPageState extends State<SignUpPage> {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: "Do you have an account ? ",
+                              text: 'Do you have an account ? ',
                               style: AppTextTheme.bodySmall.copyWith(
                                 color: AppTheme.grey500,
                               ),
                             ),
                             TextSpan(
-                              text: "Sign In",
+                              text: 'Sign In',
                               style: AppTextTheme.bodySmall.copyWith(
                                 color: AppTheme.blue,
                                 fontWeight: FontWeight.w500,

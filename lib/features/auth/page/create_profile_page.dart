@@ -15,9 +15,9 @@ class CreateProfilePage extends StatefulWidget {
   @Preview(name: 'My Create Profile Page', size: Size(390, 844))
   const CreateProfilePage({
     super.key,
-    this.email = "",
-    this.password = "",
-    this.fullname = "",
+    this.email = '',
+    this.password = '',
+    this.fullname = '',
   });
 
   final String email;
@@ -70,7 +70,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                           onTap: () {
                             context.pop();
                           },
-                          child: Icon(Iconsax.arrowLeft01Style4, size: 24),
+                          child: const Icon(Iconsax.arrowLeft01Style4, size: 24),
                         ),
                       ],
                     ),
@@ -96,8 +96,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                           spacing: 16,
                           children: [
                             AppTextFormField(
-                              name: "Name",
-                              hintText: "Your Name",
+                              name: 'Name',
+                              hintText: 'Your Name',
                               isShowError: false,
                               controller: _nameController,
                               validator: (value) {
@@ -109,9 +109,9 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                               },
                             ),
                             AppTextFormField(
-                              name: "Email",
+                              name: 'Email',
                               controller: _emailController,
-                              hintText: "Your Email",
+                              hintText: 'Your Email',
                               keyboardType: TextInputType.emailAddress,
                               isShowError: false,
                               validator: (value) {
@@ -125,9 +125,9 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                               },
                             ),
                             AppTextFormField(
-                              name: "Nickname",
+                              name: 'Nickname',
                               controller: _nicknameController,
-                              hintText: "Your Nickname",
+                              hintText: 'Your Nickname',
                               isShowError: false,
                               validator: (value) {
                                 if (value.isEmpty) {

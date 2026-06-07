@@ -450,9 +450,9 @@ class _SheetTileState extends State<_SheetTile> {
 class _SheetDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
+    return const ColoredBox(
       color: AppTheme.grey100,
-      child: const SizedBox(height: 1, width: double.infinity),
+      child: SizedBox(height: 1, width: double.infinity),
     );
   }
 }

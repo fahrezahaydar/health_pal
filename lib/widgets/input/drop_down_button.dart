@@ -7,7 +7,7 @@ import '../../core/theme/app_theme.dart';
 
 @Preview(name: 'Preview Dropdown Button')
 Widget previewDatePickerSelected() {
-  return Center(
+  return const Center(
     child: Padding(
       padding: EdgeInsets.all(16.0),
       child: AppDropdownButton<String>(

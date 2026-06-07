@@ -19,22 +19,22 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final List<Map<String, String>> data = [
     {
-      "image": "assets/onboarding-1.png",
-      "title": "Meet Doctors Online",
-      "description":
-          "Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.",
+      'image': 'assets/onboarding-1.png',
+      'title': 'Meet Doctors Online',
+      'description':
+          'Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.',
     },
     {
-      "image": "assets/onboarding-2.png",
-      "title": "Connect with Specialists",
-      "description":
-          "Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.",
+      'image': 'assets/onboarding-2.png',
+      'title': 'Connect with Specialists',
+      'description':
+          'Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.',
     },
     {
-      "image": "assets/onboarding-3.png",
-      "title": "Thousands of Online Specialists",
-      "description":
-          "Explore a Vast Array of Online Medical Specialists, Offering an Extensive Range of Expertise Tailored to Your Healthcare Needs.",
+      'image': 'assets/onboarding-3.png',
+      'title': 'Thousands of Online Specialists',
+      'description':
+          'Explore a Vast Array of Online Medical Specialists, Offering an Extensive Range of Expertise Tailored to Your Healthcare Needs.',
     },
   ];
 
@@ -44,7 +44,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     // 🔥 PRECACHE IMAGE
     for (var item in data) {
-      precacheImage(AssetImage(item["image"]!), context);
+      precacheImage(AssetImage(item['image']!), context);
     }
   }
 
@@ -64,7 +64,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     onPageChanged: vm.onPageChanged,
                     children: data.map((item) {
                       return Image.asset(
-                        item["image"]!,
+                        item['image']!,
                         fit: BoxFit.fitHeight,
                         gaplessPlayback: true,
                       );
@@ -82,7 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         spacing: 16,
                         children: [
                           Text(
-                            data[vm.currentIndex]["title"]!,
+                            data[vm.currentIndex]['title']!,
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -92,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             ),
                           ),
                           AutoSizeText(
-                            data[vm.currentIndex]["description"]!,
+                            data[vm.currentIndex]['description']!,
                             textAlign: TextAlign.center,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
@@ -106,20 +106,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       /// BUTTON
                       LightFilledButton(
                         onTap: () => vm.nextPage(context, data.length),
-                        label: "Next",
+                        label: 'Next',
                       ),
 
                       /// INDICATOR
                       SmoothPageIndicator(
                         controller: vm.controller,
                         count: data.length,
-                        effect: ExpandingDotsEffect(
+                        effect: const ExpandingDotsEffect(
                           expansionFactor: 4,
                           dotHeight: 8,
                           dotWidth: 8,
                           spacing: 6,
                           activeDotColor: AppTheme.primary,
-                          dotColor: const Color(0xff9B9B9B),
+                          dotColor: Color(0xff9B9B9B),
                         ),
                       ),
 
@@ -127,7 +127,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       GestureDetector(
                         onTap: () => vm.skip(context),
                         child: Text(
-                          "Skip",
+                          'Skip',
                           style: AppTextTheme.bodySmall.copyWith(
                             color: AppTheme.grey500,
                           ),

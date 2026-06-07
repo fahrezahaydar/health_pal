@@ -12,7 +12,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordStep> {
     ValueSetter<String>? onSuccess,
   }) async {
     await Future.delayed(const Duration(seconds: 5));
-    onSuccess?.call("Verification code sent to $email");
+    onSuccess?.call('Verification code sent to $email');
     emit(ForgotPasswordStep.verify);
   }
 
@@ -22,7 +22,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordStep> {
     ValueSetter<String>? onSuccess,
   }) async {
     await Future.delayed(const Duration(seconds: 5));
-    onSuccess?.call("Code verified successfully");
+    onSuccess?.call('Code verified successfully');
     emit(ForgotPasswordStep.newPassword);
   }
 
@@ -32,7 +32,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordStep> {
     ValueSetter<String>? onSuccess,
   }) async {
     await Future.delayed(const Duration(seconds: 5));
-    onSuccess?.call("Password reset successfully");
+    onSuccess?.call('Password reset successfully');
   }
 
   void back() {

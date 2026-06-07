@@ -64,7 +64,7 @@ class _LightOutlineButtonState extends State<LightOutlineButton> {
         decoration: BoxDecoration(
           color: _pressed
               ? widget.pressedColor ?? AppTheme.primary.withValues(alpha: 0.16)
-              : Color(0x00000000),
+              : const Color(0x00000000),
           borderRadius: BorderRadius.circular(widget.borderRadius),
           border: Border.all(
             color: widget.borderColor,

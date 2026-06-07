@@ -1,4 +1,3 @@
-import 'package:flutter/widget_previews.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';

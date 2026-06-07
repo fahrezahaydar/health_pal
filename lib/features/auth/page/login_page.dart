@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       Map<String, String>? errors = _formKey.currentState!.errors;
       if (errors != null) {
-        print("Validation Errors: $errors");
+        print('Validation Errors: $errors');
       }
     }
   }
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Image.asset(
-                    "assets/logo-dark.png",
+                    'assets/logo-dark.png',
                     width: 108,
                     height: 108,
                     fit: BoxFit.fitHeight,
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                               spacing: 8,
                               children: [
                                 Text(
-                                  "Hi, Welcome Back!",
+                                  'Hi, Welcome Back!',
                                   style: AppTextTheme.headlineLarge.copyWith(
                                     color: AppTheme.primary,
                                   ),
@@ -100,10 +100,10 @@ class _LoginPageState extends State<LoginPage> {
                               spacing: 20,
                               children: [
                                 AppTextFormField(
-                                  name: "Email",
+                                  name: 'Email',
                                   controller: _emailController,
                                   prefix: const Icon(Iconsax.smsStyle5),
-                                  hintText: "Your Email",
+                                  hintText: 'Your Email',
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -119,10 +119,10 @@ class _LoginPageState extends State<LoginPage> {
                                   valueListenable: _isShowPassword,
                                   builder: (context, value, child) {
                                     return AppTextFormField(
-                                      name: "Password",
+                                      name: 'Password',
                                       controller: _passwordController,
                                       prefix: const Icon(Iconsax.padlockStyle5),
-                                      hintText: "Password",
+                                      hintText: 'Password',
                                       isPassword: !value,
                                       validator: (value) {
                                         if (value.isEmpty) {
@@ -155,26 +155,26 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: () {
                             _onSignIn(context);
                           },
-                          label: "Sign In",
+                          label: 'Sign In',
                         ),
 
                         // Divider Section
                         Row(
                           spacing: 24,
                           children: [
-                            Expanded(
+                            const Expanded(
                               child: SizedBox(
                                 height: 1,
                                 child: ColoredBox(color: AppTheme.grey200),
                               ),
                             ),
                             Text(
-                              "or",
+                              'or',
                               style: AppTextTheme.bodySmall.copyWith(
                                 color: AppTheme.grey500,
                               ),
                             ),
-                            Expanded(
+                            const Expanded(
                               child: SizedBox(
                                 height: 1,
                                 child: ColoredBox(color: AppTheme.grey200),
@@ -189,20 +189,20 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             LightOutlineButton(
                               icon: Image.asset(
-                                "assets/icon/google.png",
+                                'assets/icon/google.png',
                                 width: 20,
                                 height: 20,
                               ),
-                              label: "Sign In with Google",
+                              label: 'Sign In with Google',
                               onTap: () {},
                             ),
                             LightOutlineButton(
                               icon: Image.asset(
-                                "assets/icon/facebook.png",
+                                'assets/icon/facebook.png',
                                 width: 20,
                                 height: 20,
                               ),
-                              label: "Sign In with Facebook",
+                              label: 'Sign In with Facebook',
                               onTap: () {},
                             ),
                           ],
@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                         GestureDetector(
                           onTap: () => context.go('/login/forgot-password'),
                           child: Text(
-                            "Forgot password?",
+                            'Forgot password?',
                             style: AppTextTheme.bodySmall.copyWith(
                               color: AppTheme.blue,
                               fontWeight: FontWeight.w500,
@@ -227,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               TextSpan(
-                                text: "Sign up",
+                                text: 'Sign up',
                                 style: AppTextTheme.bodySmall.copyWith(
                                   color: AppTheme.blue,
                                   fontWeight: FontWeight.w500,

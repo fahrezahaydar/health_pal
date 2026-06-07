@@ -71,7 +71,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Select Date",
+                    'Select Date',
                     style: GoogleFonts.inter(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -84,7 +84,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _button(text: "-", onTap: () => _changeDay(-1)),
+                      _button(text: '-', onTap: () => _changeDay(-1)),
 
                       Text(
                         _format(_date),
@@ -95,7 +95,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                         ),
                       ),
 
-                      _button(text: "+", onTap: () => _changeDay(1)),
+                      _button(text: '+', onTap: () => _changeDay(1)),
                     ],
                   ),
 
@@ -110,7 +110,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                             height: 44,
                             alignment: Alignment.center,
                             child: Text(
-                              "Cancel",
+                              'Cancel',
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -135,7 +135,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              "OK",
+                              'OK',
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

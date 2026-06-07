@@ -24,7 +24,7 @@ class AppRouter {
     redirect: (context, state) {
       final status = _onboardingService.status;
       final loc = state.uri.path;
-      print("GoRouter redirect: status=$status, loc=$loc");
+      print('GoRouter redirect: status=$status, loc=$loc');
 
       final isAuthRoute =
           loc.startsWith('/login') || loc.startsWith('/sign-up');
@@ -55,7 +55,7 @@ class AppRouter {
         builder: (_, _) => const LoginPage(),
         routes: [
           GoRoute(
-            path: "forgot-password",
+            path: 'forgot-password',
             builder: (_, _) => const ForgotPasswordPage(),
           ),
         ],
@@ -65,14 +65,14 @@ class AppRouter {
         builder: (_, _) => const SignUpPage(),
         routes: [
           GoRoute(
-            path: "create-profile",
+            path: 'create-profile',
             builder: (context, state) {
               // Mengambil parameter 'email'
               final data = state.extra as Map<String, dynamic>?;
-              final email = data?['email'] ?? "";
+              final email = data?['email'] ?? '';
               // Mengambil parameter 'source'
-              final name = data?['name'] ?? "";
-              final password = data?['password'] ?? "";
+              final name = data?['name'] ?? '';
+              final password = data?['password'] ?? '';
 
               return CreateProfilePage(
                 email: email ?? '',

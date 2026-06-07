@@ -146,43 +146,43 @@ class AppCustomDialog extends StatelessWidget {
 
     switch (type) {
       case AppDialogType.success:
-        return _DialogVisualData(
-          icon: const Icon(
+        return const _DialogVisualData(
+          icon: Icon(
             Iconsax.shieldTick,
             size: 72,
             color: Color(0xFF1B5E20),
           ),
-          backgroundColor: const Color(0xFFA5D6A7),
+          backgroundColor: Color(0xFFA5D6A7),
         );
 
       case AppDialogType.error:
-        return _DialogVisualData(
-          icon: const Icon(
+        return const _DialogVisualData(
+          icon: Icon(
             Iconsax.closeCircle,
             size: 72,
             color: Color(0xFFB71C1C),
           ),
-          backgroundColor: const Color(0xFFFFCDD2),
+          backgroundColor: Color(0xFFFFCDD2),
         );
 
       case AppDialogType.warning:
-        return _DialogVisualData(
-          icon: const Icon(
+        return const _DialogVisualData(
+          icon: Icon(
             Iconsax.warning2,
             size: 72,
             color: Color(0xFFE65100),
           ),
-          backgroundColor: const Color(0xFFFFE0B2),
+          backgroundColor: Color(0xFFFFE0B2),
         );
 
       case AppDialogType.info:
-        return _DialogVisualData(
-          icon: const Icon(
+        return const _DialogVisualData(
+          icon: Icon(
             Iconsax.infoCircle,
             size: 72,
             color: Color(0xFF0D47A1),
           ),
-          backgroundColor: const Color(0xFFBBDEFB),
+          backgroundColor: Color(0xFFBBDEFB),
         );
     }
   }

@@ -55,7 +55,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     context.read<ForgotPasswordCubit>().back();
                                   }
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Iconsax.arrowLeft01Style4,
                                   size: 24,
                                 ),
@@ -64,7 +64,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ],
                         ),
                         Image.asset(
-                          "assets/logo-dark.png",
+                          'assets/logo-dark.png',
                           width: 108,
                           height: 108,
                           fit: BoxFit.fitHeight,
@@ -126,7 +126,7 @@ class ForgetPassword extends StatelessWidget {
               spacing: 8,
               children: [
                 Text(
-                  "Forget Password?",
+                  'Forget Password?',
                   style: AppTextTheme.headlineLarge.copyWith(
                     color: AppTheme.primary,
                   ),
@@ -140,10 +140,10 @@ class ForgetPassword extends StatelessWidget {
               ],
             ),
             AppTextFormField(
-              name: "Email",
+              name: 'Email',
               controller: TextEditingController(),
               prefix: const Icon(Iconsax.smsStyle5),
-              hintText: "Your Email",
+              hintText: 'Your Email',
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value.isEmpty) {
@@ -160,7 +160,7 @@ class ForgetPassword extends StatelessWidget {
                 final form = AppForm.of(context);
                 if (form.validate()) {
                   final email = form.values['Email']!;
-                  print("Email : $email");
+                  print('Email : $email');
                   AppLoadingDialog.show(context);
                   await context.read<ForgotPasswordCubit>().sendEmail(
                     email,
@@ -171,11 +171,11 @@ class ForgetPassword extends StatelessWidget {
                 } else {
                   Map<String, String>? errors = form.errors;
                   if (errors != null) {
-                    print("Validation Errors: $errors");
+                    print('Validation Errors: $errors');
                   }
                 }
               },
-              label: "Send Code",
+              label: 'Send Code',
             ),
           ],
         ),
@@ -197,13 +197,13 @@ class VerifyCode extends StatelessWidget {
           spacing: 8,
           children: [
             Text(
-              "Verify Code",
+              'Verify Code',
               style: AppTextTheme.headlineLarge.copyWith(
                 color: AppTheme.primary,
               ),
             ),
             Text(
-              "Enter the the code\nwe just sent you on your registered Email",
+              'Enter the the code\nwe just sent you on your registered Email',
               style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               textAlign: TextAlign.center,
             ),
@@ -211,7 +211,7 @@ class VerifyCode extends StatelessWidget {
         ),
         // Input Section
         AppFormPinField(
-          name: "Code",
+          name: 'Code',
           controller: TextEditingController(),
           length: 5,
 
@@ -227,7 +227,7 @@ class VerifyCode extends StatelessWidget {
             final form = AppForm.of(context);
             if (form.validate()) {
               final code = form.values['Code']!;
-              print("Code : $code");
+              print('Code : $code');
               AppLoadingDialog.show(context);
               await context.read<ForgotPasswordCubit>().verifyCode(
                 code,
@@ -238,21 +238,21 @@ class VerifyCode extends StatelessWidget {
             } else {
               Map<String, String>? errors = form.errors;
               if (errors != null) {
-                print("Validation Errors: $errors");
+                print('Validation Errors: $errors');
               }
             }
           },
-          label: "Verify Code",
+          label: 'Verify Code',
         ),
         Text.rich(
           TextSpan(
             children: [
               TextSpan(
-                text: "Didn’t get the Code? ",
+                text: 'Didn’t get the Code? ',
                 style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               ),
               TextSpan(
-                text: "Resend",
+                text: 'Resend',
                 style: AppTextTheme.bodySmall.copyWith(
                   color: AppTheme.blue,
                   fontWeight: FontWeight.w500,
@@ -299,13 +299,13 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
           spacing: 8,
           children: [
             Text(
-              "Create new password",
+              'Create new password',
               style: AppTextTheme.headlineLarge.copyWith(
                 color: AppTheme.primary,
               ),
             ),
             Text(
-              "Your new password must be different form previously used password",
+              'Your new password must be different form previously used password',
               style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
               textAlign: .center,
             ),
@@ -319,10 +319,10 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
               valueListenable: _isShowNewPassword,
               builder: (context, value, child) {
                 return AppTextFormField(
-                  name: "New Password",
+                  name: 'New Password',
                   controller: _newPasswordController,
                   prefix: const Icon(Iconsax.padlockStyle5),
-                  hintText: "Password",
+                  hintText: 'Password',
                   isPassword: !value,
                   validator: (value) {
                     if (value.isEmpty) {
@@ -347,10 +347,10 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
               valueListenable: _isShowConfirmNewPassword,
               builder: (context, value, child) {
                 return AppTextFormField(
-                  name: "Confirm New Password",
+                  name: 'Confirm New Password',
                   controller: _confirmNewPasswordController,
                   prefix: const Icon(Iconsax.padlockStyle5),
-                  hintText: "Confirm Password",
+                  hintText: 'Confirm Password',
                   isPassword: !value,
                   validator: (value) {
                     if (value.isEmpty) {
@@ -381,7 +381,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
           onTap: () async {
             final form = AppForm.of(context);
             if (form.validate()) {
-              final password = form.values["New Password"]!;
+              final password = form.values['New Password']!;
               AppLoadingDialog.show(context);
               await context.read<ForgotPasswordCubit>().resetPassword(
                 password,
@@ -395,11 +395,11 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
             } else {
               Map<String, String>? errors = form.errors;
               if (errors != null) {
-                print("Validation Errors: $errors");
+                print('Validation Errors: $errors');
               }
             }
           },
-          label: "Reset Password",
+          label: 'Reset Password',
         ),
       ],
     );
