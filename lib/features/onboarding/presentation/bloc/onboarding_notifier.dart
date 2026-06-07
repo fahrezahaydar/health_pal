@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/router/route_paths.dart';
 import '../../../../core/services/app_services.dart';
 
 @injectable
@@ -27,13 +28,13 @@ class OnboardingNotifier extends ChangeNotifier {
       );
     } else {
       appServices.completeOnboarding();
-      context.go('/login');
+      context.go(RoutePaths.signIn);
     }
   }
 
   void skip(BuildContext context) {
     appServices.completeOnboarding();
-    context.go('/login');
+    context.go(RoutePaths.signIn);
   }
 
   @override

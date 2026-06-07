@@ -16,6 +16,30 @@ import 'package:health_pal/core/services/app_services.dart' as _i605;
 import 'package:health_pal/core/services/cache_service.dart' as _i861;
 import 'package:health_pal/core/services/fcm_service.dart' as _i357;
 import 'package:health_pal/core/services/shared_prefs.dart' as _i167;
+import 'package:health_pal/features/auth/data/datasource/auth_local_datasource.dart'
+    as _i735;
+import 'package:health_pal/features/auth/data/datasource/auth_remote_datasource.dart'
+    as _i829;
+import 'package:health_pal/features/auth/data/repository/auth_repository_impl.dart'
+    as _i733;
+import 'package:health_pal/features/auth/domain/repository/auth_repository.dart'
+    as _i613;
+import 'package:health_pal/features/auth/domain/usecase/create_profile_usecase.dart'
+    as _i961;
+import 'package:health_pal/features/auth/domain/usecase/forgot_password_usecase.dart'
+    as _i957;
+import 'package:health_pal/features/auth/domain/usecase/login_with_email_usecase.dart'
+    as _i930;
+import 'package:health_pal/features/auth/domain/usecase/sign_up_usecase.dart'
+    as _i722;
+import 'package:health_pal/features/auth/presentation/bloc/create_profile/create_profile_cubit.dart'
+    as _i730;
+import 'package:health_pal/features/auth/presentation/bloc/forget_password/forget_password_state.dart'
+    as _i1000;
+import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.dart'
+    as _i685;
+import 'package:health_pal/features/auth/presentation/bloc/sign_up/sign_up_bloc.dart'
+    as _i245;
 import 'package:health_pal/features/onboarding/presentation/bloc/onboarding_notifier.dart'
     as _i913;
 import 'package:injectable/injectable.dart' as _i526;
@@ -38,17 +62,49 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i357.FcmService>(
       () => _i357.FcmService(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i245.SignUpBloc>(() => _i245.SignUpBloc(gh<InvalidType>()));
+    gh.factory<_i829.AuthRemoteDataSource>(
+      () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i735.AuthLocalDataSource>(
+      () => _i735.AuthLocalDataSource(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i861.CacheService>(
       () => _i861.CacheService(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
     );
+    gh.factory<_i685.SignInBloc>(() => _i685.SignInBloc(gh<InvalidType>()));
+    gh.factory<_i1000.ForgotPasswordCubit>(
+      () => _i1000.ForgotPasswordCubit(gh<InvalidType>()),
+    );
+    gh.factory<_i730.CreateProfileCubit>(
+      () => _i730.CreateProfileCubit(gh<InvalidType>()),
+    );
+    gh.factory<_i613.AuthRepository>(
+      () => _i733.AuthRepositoryImpl(
+        gh<_i829.AuthRemoteDataSource>(),
+        gh<_i735.AuthLocalDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i605.AppServices>(
       () => _i605.AppServices(gh<_i167.SharedPrefService>()),
     );
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
+    );
+    gh.factory<_i961.CreateProfileUseCase>(
+      () => _i961.CreateProfileUseCase(gh<_i613.AuthRepository>()),
+    );
+    gh.factory<_i957.ForgotPasswordUseCase>(
+      () => _i957.ForgotPasswordUseCase(gh<_i613.AuthRepository>()),
+    );
+    gh.factory<_i930.LoginWithEmailUseCase>(
+      () => _i930.LoginWithEmailUseCase(gh<_i613.AuthRepository>()),
+    );
+    gh.factory<_i722.SignUpUseCase>(
+      () => _i722.SignUpUseCase(gh<_i613.AuthRepository>()),
     );
     gh.factory<_i913.OnboardingNotifier>(
       () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),

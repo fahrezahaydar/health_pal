@@ -41,7 +41,8 @@ class AppRouter {
       final status = _appServices.status;
       final loc = state.uri.path;
 
-      final isAuthRoute = loc.startsWith('/sign-in') || loc.startsWith('/sign-up');
+      final isAuthRoute =
+          loc.startsWith('/sign-in') || loc.startsWith('/sign-up');
       final isPublicRoute = loc == '/onboarding' || loc == '/no-internet';
 
       switch (status) {
@@ -65,24 +66,24 @@ class AppRouter {
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (_, __) => const OnboardingPage(),
+        builder: (_, _) => const OnboardingPage(),
       ),
       GoRoute(
         path: '/sign-in',
         name: 'signIn',
-        builder: (_, __) => const LoginPage(),
+        builder: (_, _) => const LoginPage(),
         routes: [
           GoRoute(
             path: 'forgot-password',
             name: 'forgotPassword',
-            builder: (_, __) => const ForgotPasswordPage(),
+            builder: (_, _) => const ForgotPasswordPage(),
           ),
         ],
       ),
       GoRoute(
         path: '/sign-up',
         name: 'signUp',
-        builder: (_, __) => const SignUpPage(),
+        builder: (_, _) => const SignUpPage(),
         routes: [
           GoRoute(
             path: 'create-profile',
@@ -103,28 +104,43 @@ class AppRouter {
       // MAIN SHELL
       // ═══════════════════════════
       StatefulShellRoute.indexedStack(
-        builder: (_, __, navigationShell) => AppShell(
-          navigationShell: navigationShell,
-        ),
+        builder: (_, _, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/home', name: 'home', builder: (_, __) => const HomePage()),
+              GoRoute(
+                path: '/home',
+                name: 'home',
+                builder: (_, _) => const HomePage(),
+              ),
             ],
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/loc', name: 'locationSearch', builder: (_, __) => const LocPage()),
+              GoRoute(
+                path: '/loc',
+                name: 'locationSearch',
+                builder: (_, _) => const LocPage(),
+              ),
             ],
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/booking-history', name: 'bookingHistory', builder: (_, __) => const BookingHistoryPage()),
+              GoRoute(
+                path: '/booking-history',
+                name: 'bookingHistory',
+                builder: (_, _) => const BookingHistoryPage(),
+              ),
             ],
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/profile', name: 'profile', builder: (_, __) => const ProfilePage()),
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (_, _) => const ProfilePage(),
+              ),
             ],
           ),
         ],
@@ -136,14 +152,13 @@ class AppRouter {
       GoRoute(
         path: '/doctor/search',
         name: 'doctorSearch',
-        builder: (_, __) => const DoctorSearchPage(),
+        builder: (_, _) => const DoctorSearchPage(),
       ),
       GoRoute(
         path: '/doctor/:doctorId',
         name: 'doctorDetail',
-        builder: (_, state) => DoctorDetailPage(
-          doctorId: state.pathParameters['doctorId']!,
-        ),
+        builder: (_, state) =>
+            DoctorDetailPage(doctorId: state.pathParameters['doctorId']!),
       ),
 
       // ═══════════════════════════
@@ -152,14 +167,13 @@ class AppRouter {
       GoRoute(
         path: '/booking/:doctorId',
         name: 'bookAppointment',
-        builder: (_, state) => BookAppointmentPage(
-          doctorId: state.pathParameters['doctorId']!,
-        ),
+        builder: (_, state) =>
+            BookAppointmentPage(doctorId: state.pathParameters['doctorId']!),
       ),
       GoRoute(
         path: '/booking/success',
         name: 'bookingSuccess',
-        builder: (_, __) => const BookingSuccessPage(),
+        builder: (_, _) => const BookingSuccessPage(),
       ),
       GoRoute(
         path: '/booking-history/:appointmentId',
@@ -172,21 +186,48 @@ class AppRouter {
       // ═══════════════════════════
       // STACK — PROFILE
       // ═══════════════════════════
-      GoRoute(path: '/profile/edit', name: 'editProfile', builder: (_, __) => const EditProfilePage()),
-      GoRoute(path: '/profile/favorite', name: 'favorite', builder: (_, __) => const FavoritePage()),
-      GoRoute(path: '/profile/notifications', name: 'notifications', builder: (_, __) => const NotificationPage()),
-      GoRoute(path: '/settings', name: 'settings', builder: (_, __) => const SettingsPage()),
-      GoRoute(path: '/help-support', name: 'helpSupport', builder: (_, __) => const HelpSupportPage()),
-      GoRoute(path: '/terms-and-conditions', name: 'termsAndConditions', builder: (_, __) => const TermsAndConditionsPage()),
+      GoRoute(
+        path: '/profile/edit',
+        name: 'editProfile',
+        builder: (_, _) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: '/profile/favorite',
+        name: 'favorite',
+        builder: (_, _) => const FavoritePage(),
+      ),
+      GoRoute(
+        path: '/profile/notifications',
+        name: 'notifications',
+        builder: (_, _) => const NotificationPage(),
+      ),
+      GoRoute(
+        path: '/settings',
+        name: 'settings',
+        builder: (_, _) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: '/help-support',
+        name: 'helpSupport',
+        builder: (_, _) => const HelpSupportPage(),
+      ),
+      GoRoute(
+        path: '/terms-and-conditions',
+        name: 'termsAndConditions',
+        builder: (_, _) => const TermsAndConditionsPage(),
+      ),
 
       // ═══════════════════════════
       // STACK — UTILITY
       // ═══════════════════════════
-      GoRoute(path: '/no-internet', name: 'noInternet', builder: (_, __) => const NoInternetPage()),
+      GoRoute(
+        path: '/no-internet',
+        name: 'noInternet',
+        builder: (_, _) => const NoInternetPage(),
+      ),
     ],
 
-    errorBuilder: (context, state) => NotFoundPage(
-      message: 'Halaman ${state.uri.path} tidak ditemukan',
-    ),
+    errorBuilder: (context, state) =>
+        NotFoundPage(message: 'Halaman ${state.uri.path} tidak ditemukan'),
   );
 }

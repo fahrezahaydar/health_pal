@@ -133,7 +133,7 @@ class _AvatarCircle extends StatelessWidget {
         fit: BoxFit.cover,
         width: size,
         height: size,
-        errorBuilder: (_, __, ___) => _Placeholder(size: size),
+        errorBuilder: (_, _, _) => _Placeholder(size: size),
       );
     }
     if (remoteUrl != null && remoteUrl!.isNotEmpty) {
@@ -144,7 +144,7 @@ class _AvatarCircle extends StatelessWidget {
         height: size,
         loadingBuilder: (_, child, progress) =>
             progress == null ? child : _Shimmer(size: size),
-        errorBuilder: (_, __, ___) => _Placeholder(size: size),
+        errorBuilder: (_, _, _) => _Placeholder(size: size),
       );
     }
     return _Placeholder(size: size);
@@ -206,7 +206,7 @@ class _ShimmerState extends State<_Shimmer>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _ctrl,
-      builder: (_, __) => ColoredBox(
+      builder: (_, _) => ColoredBox(
         color: Color.lerp(AppTheme.grey200, AppTheme.grey300, _ctrl.value)!,
         child: SizedBox.square(dimension: widget.size),
       ),

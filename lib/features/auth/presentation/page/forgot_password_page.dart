@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
 
+import 'package:get_it/get_it.dart';
+
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
@@ -26,7 +28,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ForgotPasswordCubit(),
+      create: (context) => GetIt.instance<ForgotPasswordCubit>(),
       child: Builder(
         builder: (context) {
           return Directionality(
@@ -307,7 +309,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
             Text(
               'Your new password must be different form previously used password',
               style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: .center,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
