@@ -5,11 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
-import '../../../core/theme/app_theme.dart';
-import '../../../widgets/form/app_dropdown_field.dart';
-import '../../../widgets/form/app_form.dart';
-import '../../../widgets/form/app_form_field.dart';
-import '../../../widgets/picker/app_image_picker.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/form/app_dropdown_field.dart';
+import '../../../../widgets/form/app_form.dart';
+import '../../../../widgets/form/app_form_field.dart';
+import '../../../../widgets/picker/app_image_picker.dart';
 
 class CreateProfilePage extends StatefulWidget {
   @Preview(name: 'My Create Profile Page', size: Size(390, 844))

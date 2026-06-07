@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/services/app_services.dart';
+import '../../../../core/services/app_services.dart';
 
 @injectable
 class OnboardingNotifier extends ChangeNotifier {

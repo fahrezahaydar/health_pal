@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:health_pal/widgets/dialog/app_succes_dialog.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
-import '../../../core/theme/app_text_theme.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../widgets/button/outline_button.dart';
-import '../../../widgets/button/primary_button.dart';
-import '../../../widgets/form/app_form.dart';
-import '../../../widgets/form/app_form_field.dart';
+import '../../../../core/theme/app_text_theme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/button/outline_button.dart';
+import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/form/app_form.dart';
+import '../../../../widgets/form/app_form_field.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

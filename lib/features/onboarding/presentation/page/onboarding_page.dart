@@ -3,10 +3,10 @@ import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../core/di/locator.dart';
-import '../../../core/theme/app_text_theme.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../widgets/button/primary_button.dart';
+import '../../../../core/di/locator.dart';
+import '../../../../core/theme/app_text_theme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/button/primary_button.dart';
 import '../bloc/onboarding_notifier.dart';
 
 class OnboardingPage extends StatefulWidget {
