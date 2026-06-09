@@ -1,117 +1,317 @@
 # Home Page
 
-| Field | Detail |
-|---|---|
-| **Route** | `/home` (Shell Tab 0) |
-| **Component** | `HomePage` |
-| **Status** | 🔧 Stub — perlu rebuild total |
+| Field         | Detail                       |
+| ------------- | ---------------------------- |
+| **Route**     | `/home` (Shell Tab 0)        |
+| **Component** | `HomePage`                   |
+| **Status**    | 🆕 Redesigned based on Figma |
 
 ---
 
-## ASCII Layout
+# Purpose
 
-```
-┌─────────────────────────────────────┐
-│ "Halo, Rina!"              👤 (48px)│
-│                                     │
-│  ┌─ Search ─────────────────────┐   │
-│  │ 🔍  Search doctor, special.. │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Banner Carousel ────────────┐   │
-│  │  ┌──────────────────────┐    │   │
-│  │  │   Promo Image #1     │    │   │
-│  │  │   "Konsultasi Gratis"│    │   │
-│  │  └──────────────────────┘    │   │
-│  │      ○ ○ ○ (dots)           │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Upcoming Appointment ───────┐   │
-│  │  👤 dr. Budi Santoso        │   │
-│  │     Spesialis Penyakit Dalam│   │
-│  │     📅 15 Jun 2026 • 09:00  │   │
-│  │     🏥 Klinik Sehat Bersama │   │
-│  │     [🔔 Reminder Aktif]     │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Quick Categories ───────────┐   │
-│  │  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐  │   │
-│  │  │  │ │  │ │  │ │  │ │  │  │   │
-│  │  │Um│ │An│ │Ku│ │Gi│ │Ma│  │   │
-│  │  │um│ │ak│ │lit│ │gi│ │ta│  │   │
-│  │  └──┘ └──┘ └──┘ └──┘ └──┘  │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│──────── Bottom Nav Bar ─────────────│
-│  🏠 Home  📍 Loc  📋 Hist  👤 Prof │
-└─────────────────────────────────────┘
-```
+Halaman utama untuk membantu pengguna:
 
-### Empty State (no upcoming)
-```
+1. Melihat jadwal treatment atau appointment terdekat.
+2. Mencari dokter, klinik, rumah sakit, atau layanan kesehatan.
+3. Menjelajahi kategori spesialisasi.
+4. Menemukan fasilitas kesehatan terdekat.
+
+---
+
+# ASCII Layout
+
+```text
 ┌─────────────────────────────────────┐
-│ "Halo, Rina!"              👤 (48px)│
-│  ┌─ Search ─────────────────────┐   │
-│  │ 🔍  Search doctor, special.. │   │
-│  └──────────────────────────────┘   │
-│  ┌─ Banner Carousel ────────────┐   │
-│  │  ┌──────────────────────┐    │   │
-│  │  │   Promo Image #1     │    │   │
-│  │  └──────────────────────┘    │   │
-│  └──────────────────────────────┘   │
+│ Halo, Andi!                   🔔   │
 │                                     │
-│         📋 Tidak ada jadwal         │
-│           appointment hari ini      │
+│ ┌─────────────────────────────────┐ │
+│ │ 🔍 Search doctor, treatment... │ │
+│ └─────────────────────────────────┘ │
 │                                     │
-│  ┌─────────────────────────────┐    │
-│  │     Cari Dokter Sekarang    │    │
-│  └─────────────────────────────┘    │
+│ ┌──── Promo Carousel ─────────────┐ │
+│ │ Looking for Specialist Doctors │ │
+│ │ Schedule appointment today     │ │
+│ └────────────────────────────────┘ │
+│             ● ○ ○                  │
 │                                     │
-│  ┌─ Quick Categories ───────────┐   │
-│  │  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐  │   │
-│  │  │Um│ │An│ │Ku│ │Gi│ │Ma│  │   │
-│  │  │um│ │ak│ │lit│ │gi│ │ta│  │   │
-│  │  └──┘ └──┘ └──┘ └──┘ └──┘  │   │
-│  └──────────────────────────────┘   │
+│ Upcoming Treatment                  │
+│ ┌────────────────────────────────┐ │
+│ │ Dr. Budi Santoso               │ │
+│ │ Dental Cleaning                │ │
+│ │ 📅 15 Jun 2026 • 09:00         │ │
+│ │ 🏥 Klinik Sehat Bersama        │ │
+│ │ [View Detail]                  │ │
+│ └────────────────────────────────┘ │
+│                                     │
+│ Categories                  See All │
+│                                     │
+│ 🦷      ❤️      🫁      🩺         │
+│ Dentistry Cardio Pulmo General     │
+│                                     │
+│ 🧠      🫃      🧪      💉         │
+│ Neuro   Gastro  Lab     Vaccine    │
+│                                     │
+│ Nearby Medical Centers     See All │
+│                                     │
+│ ┌────────────┐  ┌────────────┐      │
+│ │ Image      │  │ Image      │      │
+│ │ Clinic A   │  │ Hospital B │      │
+│ └────────────┘  └────────────┘      │
+│                                     │
+│──────── Bottom Navigation ──────────│
+│ Home | Explore | Booking | Profile │
 └─────────────────────────────────────┘
 ```
 
 ---
 
-## Component Breakdown
+# Empty State
 
-| Zone | Component | Widget | Data Source |
-|---|---|---|---|
-| Header | Greeting Text | `Text` | `user_profiles.nickname` |
-| Header | Avatar | `AppPhotoPicker` (display only) | `user_profiles.avatar_url` |
-| Search | Search Bar | `TextField` + prefix icon 🔍 | — |
-| Banner | Carousel | `PageView.builder` + `SmoothPageIndicator` | `GET /rest/v1/banners` |
-| Banner Item | Card | `Image.network` + overlay text | `banners.image_url` |
-| Upcoming | Card | `Container` with border radius | `GET /rest/v1/appointments?status=in.(pending,upcoming)` |
-| Categories | Grid | `GridView` / `Wrap` | `specializations` (cached) |
-| Category Item | Icon + Label | `GestureDetector` → `Column(Icon, Text)` | `specializations.name` |
-| Empty State | Illustration + Text | `Column(Icon, Text, Button)` | — |
-| CTA Button | `LightFilledButton` | Navigate ke `/doctor/search` | — |
+## No Upcoming Treatment
+
+```text
+Upcoming Treatment
+
+No upcoming treatment found.
+
+[Book Appointment]
+```
+
+CTA akan mengarahkan user ke halaman pencarian dokter.
 
 ---
 
-## State & Interaction Specs
+# Component Breakdown
 
-| Elemen | Interaksi | Efek |
-|---|---|---|
-| **Greeting** | — | Memuat `nickname` dari `user_profiles` |
-| **Tap search bar** | Tap | Focus keyboard → input → navigasi ke `/doctor/search` |
-| **Banner swipe** | Geser | `PageView` horizontal, auto-scroll tiap 5 detik |
-| **Tap banner** | Tap | Buka `action_url` (deep link / web) |
-| **Tap upcoming card** | Tap | Navigasi ke `/booking-history/:appointmentId` |
-| **Tap category** | Tap | Navigasi ke `/loc` dengan filter spesialisasi ter-preset |
-| **Tap CTA (empty)** | Tap | Navigasi ke `/doctor/search` |
-| **Pull to refresh** | Swipe kebawah | Refresh banner + upcoming + categories |
+| Zone       | Component           | Widget           | Data Source                |
+| ---------- | ------------------- | ---------------- | -------------------------- |
+| Header     | Greeting + Notif    | Text + Icon      | User Profile API           |
+| Header     | Notification        | IconButton       | Notifications API          |
+| Search     | Search Bar          | SearchInput      | Search Service             |
+| Banner     | Promo Carousel      | PageView         | GET /banners               |
+| Upcoming   | Treatment Card      | Card             | GET /appointments/upcoming |
+| Categories | Specialization Grid | GridView         | GET /specializations       |
+| Nearby     | Facility Cards      | Horizontal List  | GET /facilities/nearby     |
+| Navigation | Bottom Navigation   | Shell Navigation | Local                      |
 
-**State Management:** Setiap zone bisa independen:
-- Greeting + avatar → `ProfileCubit` atau `UserCubit`
-- Banner → `BannerCubit` (auto-refresh tiap 5 menit)
-- Upcoming → `AppointmentCubit` (filter `pending` + `upcoming`)
-- Categories → `SpecializationCubit` (cache lokal)
+---
 
-**⚠️ Saat ini:** `HomePage` hanya menampilkan `Center(child: Text('Home Page'))` — belum ada satu pun komponen di atas yang terimplementasi.
+# Sections
+
+## 1. Greeting Header
+
+Menampilkan sapaan ke pengguna berdasarkan profil.
+
+### Layout
+
+```text
+Halo, Andi!                       🔔
+```
+
+### Actions
+
+| Action           | Result                 |
+| ---------------- | ---------------------- |
+| Tap Notification | Open notification page |
+
+---
+
+## 2. Search Bar
+
+### Placeholder
+
+```text
+Search doctor, clinic, treatment...
+```
+
+### Search Scope
+
+* Doctor
+* Specialization
+* Treatment
+* Clinic
+* Hospital
+* Medical Center
+
+### Action
+
+Tap atau submit akan membuka:
+
+```text
+/search
+```
+
+---
+
+## 3. Promo Carousel
+
+Menampilkan promosi dan campaign kesehatan.
+
+### Data Source
+
+```http
+GET /banners
+```
+
+### Behaviour
+
+* Auto scroll 5 detik
+* Swipeable
+* Clickable
+
+---
+
+## 4. Upcoming Treatment
+
+Menampilkan appointment terdekat pengguna.
+
+### Data Source
+
+```http
+GET /appointments/upcoming
+```
+
+### Content
+
+* Doctor Name
+* Treatment Name
+* Date & Time
+* Facility Name
+* Status
+
+### Action
+
+Tap card:
+
+```text
+/booking-history/:appointmentId
+```
+
+---
+
+## 5. Categories
+
+Grid kategori spesialisasi.
+
+### Layout
+
+2 rows × 4 columns
+
+### Initial Categories
+
+| Category         |
+| ---------------- |
+| Dentistry        |
+| Cardiology       |
+| Pulmonology      |
+| General          |
+| Neurology        |
+| Gastroenterology |
+| Laboratory       |
+| Vaccination      |
+
+### Action
+
+Tap category:
+
+```text
+/search?specialization={id}
+```
+
+---
+
+## 6. Nearby Medical Centers
+
+Menampilkan fasilitas kesehatan terdekat berdasarkan lokasi user.
+
+### Data Source
+
+```http
+GET /facilities/nearby
+```
+
+### Query
+
+```json
+{
+  "latitude": "...",
+  "longitude": "...",
+  "radius": 10000
+}
+```
+
+### Card Content
+
+* Cover Image
+* Facility Name
+* Distance
+* Rating
+
+### Actions
+
+Tap card:
+
+```text
+/facilities/:id
+```
+
+See All:
+
+```text
+/facilities
+```
+
+---
+
+# State Management
+
+| Section            | Cubit / Bloc        |
+| ------------------ | ------------------- |
+| Greeting           | HomeCubit           |
+| Notification       | NotificationCubit   |
+| Banner             | BannerCubit         |
+| Upcoming Treatment | AppointmentCubit    |
+| Categories         | SpecializationCubit |
+| Nearby Facilities  | FacilityCubit       |
+
+---
+
+# Pull To Refresh
+
+Refresh:
+
+* Greeting (user profile)
+* Banner
+* Upcoming Treatment
+* Categories
+* Nearby Facilities
+
+---
+
+# Loading State
+
+Order loading:
+
+1. Greeting (user profile)
+2. Banner
+3. Upcoming Treatment
+4. Categories
+5. Nearby Facilities
+
+Setiap section menggunakan skeleton loader secara independen.
+
+---
+
+# Navigation Flow
+
+```text
+Home
+ ├─ Search
+ ├─ Notification
+ ├─ Banner Detail
+ ├─ Appointment Detail
+ ├─ Specialization Search
+ ├─ Facility Detail
+ └─ Facility List
+```

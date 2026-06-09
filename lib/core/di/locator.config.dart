@@ -40,6 +40,20 @@ import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.
     as _i685;
 import 'package:health_pal/features/auth/presentation/bloc/sign_up/sign_up_bloc.dart'
     as _i245;
+import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart'
+    as _i444;
+import 'package:health_pal/features/home/data/datasource/home_remote_datasource.dart'
+    as _i556;
+import 'package:health_pal/features/home/data/repository/home_repository_impl.dart'
+    as _i716;
+import 'package:health_pal/features/home/domain/repository/home_repository.dart'
+    as _i196;
+import 'package:health_pal/features/home/domain/usecase/get_banners_usecase.dart'
+    as _i446;
+import 'package:health_pal/features/home/domain/usecase/get_specializations_usecase.dart'
+    as _i262;
+import 'package:health_pal/features/home/domain/usecase/get_upcoming_appointment_usecase.dart'
+    as _i987;
 import 'package:health_pal/features/onboarding/presentation/bloc/onboarding_notifier.dart'
     as _i913;
 import 'package:injectable/injectable.dart' as _i526;
@@ -62,25 +76,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i357.FcmService>(
       () => _i357.FcmService(gh<_i454.SupabaseClient>()),
     );
-    gh.factory<_i245.SignUpBloc>(() => _i245.SignUpBloc(gh<InvalidType>()));
     gh.factory<_i829.AuthRemoteDataSource>(
       () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i556.HomeRemoteDataSource>(
+      () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i735.AuthLocalDataSource>(
       () => _i735.AuthLocalDataSource(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i444.HomeLocalDataSource>(
+      () => _i444.HomeLocalDataSource(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i861.CacheService>(
       () => _i861.CacheService(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
-    );
-    gh.factory<_i685.SignInBloc>(() => _i685.SignInBloc(gh<InvalidType>()));
-    gh.factory<_i1000.ForgotPasswordCubit>(
-      () => _i1000.ForgotPasswordCubit(gh<InvalidType>()),
-    );
-    gh.factory<_i730.CreateProfileCubit>(
-      () => _i730.CreateProfileCubit(gh<InvalidType>()),
     );
     gh.factory<_i613.AuthRepository>(
       () => _i733.AuthRepositoryImpl(
@@ -94,6 +106,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
     );
+    gh.factory<_i196.HomeRepository>(
+      () => _i716.HomeRepositoryImpl(
+        gh<_i556.HomeRemoteDataSource>(),
+        gh<_i444.HomeLocalDataSource>(),
+      ),
+    );
     gh.factory<_i961.CreateProfileUseCase>(
       () => _i961.CreateProfileUseCase(gh<_i613.AuthRepository>()),
     );
@@ -105,6 +123,27 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i722.SignUpUseCase>(
       () => _i722.SignUpUseCase(gh<_i613.AuthRepository>()),
+    );
+    gh.factory<_i685.SignInBloc>(
+      () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
+    );
+    gh.factory<_i730.CreateProfileCubit>(
+      () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
+    );
+    gh.factory<_i1000.ForgotPasswordCubit>(
+      () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
+    );
+    gh.factory<_i245.SignUpBloc>(
+      () => _i245.SignUpBloc(gh<_i722.SignUpUseCase>()),
+    );
+    gh.factory<_i446.GetBannersUseCase>(
+      () => _i446.GetBannersUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i262.GetSpecializationsUseCase>(
+      () => _i262.GetSpecializationsUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i987.GetUpcomingAppointmentUseCase>(
+      () => _i987.GetUpcomingAppointmentUseCase(gh<_i196.HomeRepository>()),
     );
     gh.factory<_i913.OnboardingNotifier>(
       () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
