@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,11 +16,12 @@ import '../datasource/auth_remote_datasource.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remote;
   final AuthLocalDataSource _local;
+  final SupabaseClient _supabaseClient;
 
-  AuthRepositoryImpl(this._remote, this._local);
+  AuthRepositoryImpl(this._remote, this._local, this._supabaseClient);
 
   @override
-  bool get isLoggedIn => Supabase.instance.client.auth.currentSession != null;
+  bool get isLoggedIn => _supabaseClient.auth.currentSession != null;
 
   @override
   Future<Result<UserEntity>> signInWithEmail(
@@ -45,7 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
       String email, String password) async {
     try {
       await _remote.signUpWithEmail(email, password);
-      final session = Supabase.instance.client.auth.currentSession;
+      final session = _supabaseClient.auth.currentSession;
       return Result.success(
         UserEntity(
           id: '',
@@ -79,18 +82,28 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<UserEntity>> createProfile(Map<String, dynamic> data) async {
+  Future<Result<UserEntity>> createProfile(
+    Map<String, dynamic> data, {
+    File? photo,
+  }) async {
     try {
-      final session = Supabase.instance.client.auth.currentSession;
+      final session = _supabaseClient.auth.currentSession;
       if (session == null) {
         return Result.failure(const ApiException(
           code: FailureCode.unauthorized,
           message: 'No active session',
         ));
       }
+
+      String? avatarUrl;
+      if (photo != null) {
+        avatarUrl = await _remote.uploadAvatar(session.user.id, photo);
+      }
+
       final profile = await _remote.createUserProfile({
         ...data,
         'auth_id': session.user.id,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
       });
       await _local.cacheUser(profile);
       return Result.success(profile.toEntity());
@@ -133,7 +146,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<UserEntity>> getCurrentUser() async {
     try {
-      final session = Supabase.instance.client.auth.currentSession;
+      final session = _supabaseClient.auth.currentSession;
       if (session == null) {
         return Result.failure(const ApiException(
           code: FailureCode.unauthorized,

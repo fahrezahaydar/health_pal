@@ -54,6 +54,16 @@ import 'package:health_pal/features/home/domain/usecase/get_specializations_usec
     as _i262;
 import 'package:health_pal/features/home/domain/usecase/get_upcoming_appointment_usecase.dart'
     as _i987;
+import 'package:health_pal/features/home/domain/usecase/get_user_profile_usecase.dart'
+    as _i511;
+import 'package:health_pal/features/home/presentation/bloc/banner/banner_cubit.dart'
+    as _i15;
+import 'package:health_pal/features/home/presentation/bloc/greeting/greeting_cubit.dart'
+    as _i365;
+import 'package:health_pal/features/home/presentation/bloc/specialization/specialization_cubit.dart'
+    as _i244;
+import 'package:health_pal/features/home/presentation/bloc/upcoming/upcoming_cubit.dart'
+    as _i272;
 import 'package:health_pal/features/onboarding/presentation/bloc/onboarding_notifier.dart'
     as _i913;
 import 'package:injectable/injectable.dart' as _i526;
@@ -98,10 +108,17 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i733.AuthRepositoryImpl(
         gh<_i829.AuthRemoteDataSource>(),
         gh<_i735.AuthLocalDataSource>(),
+        gh<_i454.SupabaseClient>(),
       ),
     );
     gh.lazySingleton<_i605.AppServices>(
-      () => _i605.AppServices(gh<_i167.SharedPrefService>()),
+      () => _i605.AppServices(
+        gh<_i167.SharedPrefService>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
+    gh.factory<_i913.OnboardingNotifier>(
+      () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
     );
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
@@ -145,8 +162,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i987.GetUpcomingAppointmentUseCase>(
       () => _i987.GetUpcomingAppointmentUseCase(gh<_i196.HomeRepository>()),
     );
-    gh.factory<_i913.OnboardingNotifier>(
-      () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
+    gh.factory<_i511.GetUserProfileUseCase>(
+      () => _i511.GetUserProfileUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i244.SpecializationCubit>(
+      () => _i244.SpecializationCubit(gh<_i262.GetSpecializationsUseCase>()),
+    );
+    gh.factory<_i15.BannerCubit>(
+      () => _i15.BannerCubit(gh<_i446.GetBannersUseCase>()),
+    );
+    gh.factory<_i272.UpcomingCubit>(
+      () => _i272.UpcomingCubit(gh<_i987.GetUpcomingAppointmentUseCase>()),
+    );
+    gh.factory<_i365.GreetingCubit>(
+      () => _i365.GreetingCubit(gh<_i511.GetUserProfileUseCase>()),
     );
     return this;
   }

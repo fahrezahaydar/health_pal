@@ -407,6 +407,31 @@
 
 ---
 
+## Fase 9.5: Facility — Nearby Medical Centers (P2)
+
+> **Prioritas:** P2 (Home page section)
+> **Estimasi:** 2 hari / 16 jam
+> **Dependencies:** Fase 0 (Supabase), Fase 4 (Home cubits)
+> **Posisi:** Sebelum Push Notification (Fase 10)
+
+| # | Task | Jam | Output | Depends On |
+|---|---|---|---|---|
+| 9.5.1 | Add `geolocator` + `google_maps_flutter` ke pubspec | 1 | Dependencies | 0.1 |
+| 9.5.2 | PostgreSQL migration: `get_nearby_clinics` function | 2 | `003_nearby_function.sql` | 0.5 |
+| 9.5.3 | Buat `FacilityEntity` + `FacilityModel` | 1 | Entity + Model | 0.1 |
+| 9.5.4 | Tambah `getNearby()` ke `HomeRepository` + `HomeRemoteDataSource` | 2 | RPC call | 9.5.3 |
+| 9.5.5 | Buat `GetNearbyFacilitiesUseCase` | 1 | Use case | 9.5.4 |
+| 9.5.6 | Buat `FacilityCubit` + `FacilityState` | 1 | Sealed state pattern | 9.5.5 |
+| 9.5.7 | Buat `NearbyFacilities` widget | 2 | Horizontal list + card | 9.5.6 |
+| 9.5.8 | Integrasi ke HomePage | 1 | Tambah section | 9.5.7 |
+| 9.5.9 | Route `/facilities/:id` + `FacilityDetailPage` | 3 | Detail page | 9.5.3 |
+| 9.5.10 | Handle: location permission request | 1 | Allow/deny flow | 9.5.1 |
+| 9.5.11 | Handle: empty state — no clinics in radius | 1 | "Tidak ada klinik di sekitar" | 9.5.7 |
+
+**Total Fase 9.5:** 16 jam
+
+---
+
 ## Fase 10: Push Notification (P1)
 
 > **Prioritas:** P1 (PRD — no-show reduction)

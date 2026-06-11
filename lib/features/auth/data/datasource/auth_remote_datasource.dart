@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -71,4 +73,15 @@ class AuthRemoteDataSource {
   }
 
   Future<void> signOut() => _client.auth.signOut();
+
+  Future<String> uploadAvatar(String userId, File photo) async {
+    final bytes = await photo.readAsBytes();
+    final path = 'avatars/$userId/profile.jpg';
+    await _client.storage.from('avatars').uploadBinary(
+      path,
+      bytes,
+      fileOptions: const FileOptions(upsert: true),
+    );
+    return _client.storage.from('avatars').getPublicUrl(path);
+  }
 }

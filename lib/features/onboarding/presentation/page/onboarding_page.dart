@@ -55,88 +55,91 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Consumer<OnboardingNotifier>(
         builder: (context, vm, _) {
           return SafeArea(
-            child: Column(
-              children: [
-                /// IMAGE
-                Expanded(
-                  child: PageView(
-                    controller: vm.controller,
-                    onPageChanged: vm.onPageChanged,
-                    children: data.map((item) {
-                      return Image.asset(
-                        item['image']!,
-                        fit: BoxFit.fitHeight,
-                        gaplessPlayback: true,
-                      );
-                    }).toList(),
+            child: ColoredBox(
+              color: AppTheme.white,
+              child: Column(
+                children: [
+                  /// IMAGE
+                  Expanded(
+                    child: PageView(
+                      controller: vm.controller,
+                      onPageChanged: vm.onPageChanged,
+                      children: data.map((item) {
+                        return Image.asset(
+                          item['image']!,
+                          fit: BoxFit.fitHeight,
+                          gaplessPlayback: true,
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
 
-                /// CONTENT
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(40, 32, 40, 32),
-                  child: Column(
-                    spacing: 24,
-                    children: [
-                      Column(
-                        spacing: 16,
-                        children: [
-                          Text(
-                            data[vm.currentIndex]['title']!,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextTheme.bodyMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.grey700,
+                  /// CONTENT
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 32, 40, 32),
+                    child: Column(
+                      spacing: 24,
+                      children: [
+                        Column(
+                          spacing: 16,
+                          children: [
+                            Text(
+                              data[vm.currentIndex]['title']!,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextTheme.bodyMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.grey700,
+                              ),
                             ),
+                            AutoSizeText(
+                              data[vm.currentIndex]['description']!,
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextTheme.bodySmall.copyWith(
+                                color: AppTheme.grey500,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        /// BUTTON
+                        LightFilledButton(
+                          onTap: () => vm.nextPage(context, data.length),
+                          label: 'Next',
+                        ),
+
+                        /// INDICATOR
+                        SmoothPageIndicator(
+                          controller: vm.controller,
+                          count: data.length,
+                          effect: const ExpandingDotsEffect(
+                            expansionFactor: 4,
+                            dotHeight: 8,
+                            dotWidth: 8,
+                            spacing: 6,
+                            activeDotColor: AppTheme.primary,
+                            dotColor: Color(0xff9B9B9B),
                           ),
-                          AutoSizeText(
-                            data[vm.currentIndex]['description']!,
-                            textAlign: TextAlign.center,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
+                        ),
+
+                        /// SKIP
+                        GestureDetector(
+                          onTap: () => vm.skip(context),
+                          child: Text(
+                            'Skip',
                             style: AppTextTheme.bodySmall.copyWith(
                               color: AppTheme.grey500,
                             ),
                           ),
-                        ],
-                      ),
-
-                      /// BUTTON
-                      LightFilledButton(
-                        onTap: () => vm.nextPage(context, data.length),
-                        label: 'Next',
-                      ),
-
-                      /// INDICATOR
-                      SmoothPageIndicator(
-                        controller: vm.controller,
-                        count: data.length,
-                        effect: const ExpandingDotsEffect(
-                          expansionFactor: 4,
-                          dotHeight: 8,
-                          dotWidth: 8,
-                          spacing: 6,
-                          activeDotColor: AppTheme.primary,
-                          dotColor: Color(0xff9B9B9B),
                         ),
-                      ),
-
-                      /// SKIP
-                      GestureDetector(
-                        onTap: () => vm.skip(context),
-                        child: Text(
-                          'Skip',
-                          style: AppTextTheme.bodySmall.copyWith(
-                            color: AppTheme.grey500,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

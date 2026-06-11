@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/widget_previews.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
+import 'package:get_it/get_it.dart';
+
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
@@ -18,7 +20,6 @@ import '../../../../widgets/picker/app_image_picker.dart';
 import '../../presentation/bloc/create_profile/create_profile_cubit.dart';
 
 class CreateProfilePage extends StatefulWidget {
-  @Preview(name: 'My Create Profile Page', size: Size(390, 844))
   const CreateProfilePage({
     super.key,
     this.email = '',
@@ -71,6 +72,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
             AppLoadingDialog.show(context);
           case CreateProfileSuccess():
             AppLoadingDialog.dismiss(context);
+            GetIt.instance<AppServices>().login();
             context.go(RoutePaths.home);
           case CreateProfileFailure():
             AppLoadingDialog.dismiss(context);
@@ -101,7 +103,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                         children: [
                           GestureDetector(
                             onTap: () => context.pop(),
-                            child: const Icon(Iconsax.arrowLeft01Style4, size: 24),
+                            child: const Icon(
+                              Iconsax.arrowLeft01Style4,
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),
@@ -194,11 +199,11 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                     context
                                         .read<CreateProfileCubit>()
                                         .saveProfile({
-                                      'full_name': values['Name'] ?? '',
-                                      'email': values['Email'] ?? '',
-                                      'nickname': values['Nickname'] ?? '',
-                                      'gender': values['gender'],
-                                    });
+                                          'full_name': values['Name'] ?? '',
+                                          'email': values['Email'] ?? '',
+                                          'nickname': values['Nickname'] ?? '',
+                                          'gender': values['gender'],
+                                        }, photo: _localPhoto);
                                   }
                                 },
                                 label: 'Save Profile',

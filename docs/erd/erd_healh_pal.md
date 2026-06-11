@@ -597,4 +597,69 @@ CREATE UNIQUE INDEX idx_fcm_user_platform ON user_fcm_tokens(user_id, platform);
 
 ---
 
+## 8. PostgreSQL Functions
+
+### `get_nearby_clinics`
+
+Mengembalikan klinik terdekat dari lokasi user menggunakan Haversine formula.
+
+```sql
+CREATE OR REPLACE FUNCTION get_nearby_clinics(
+  user_lat FLOAT8,
+  user_lng FLOAT8,
+  radius_meters INT DEFAULT 10000
+)
+RETURNS TABLE (
+  id UUID,
+  name TEXT,
+  address TEXT,
+  city TEXT,
+  latitude FLOAT8,
+  longitude FLOAT8,
+  phone TEXT,
+  image_url TEXT,
+  distance_meters FLOAT8,
+  doctor_count BIGINT
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    c.id, c.name, c.address, c.city,
+    c.latitude, c.longitude, c.phone, c.image_url,
+    (
+      6371000 * ACOS(
+        COS(RADIANS(user_lat)) * COS(RADIANS(c.latitude)) *
+        COS(RADIANS(c.longitude) - RADIANS(user_lng)) +
+        SIN(RADIANS(user_lat)) * SIN(RADIANS(c.latitude))
+      )
+    )::FLOAT8 AS distance_meters,
+    (SELECT COUNT(*) FROM doctors d WHERE d.clinic_id = c.id AND d.is_active = true)::BIGINT AS doctor_count
+  FROM clinics c
+  WHERE (
+    6371000 * ACOS(
+      COS(RADIANS(user_lat)) * COS(RADIANS(c.latitude)) *
+      COS(RADIANS(c.longitude) - RADIANS(user_lng)) +
+      SIN(RADIANS(user_lat)) * SIN(RADIANS(c.latitude))
+    )
+  ) <= radius_meters
+  ORDER BY distance_meters ASC;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+**Dipanggil via:**
+
+```http
+POST /rest/v1/rpc/get_nearby_clinics
+Content-Type: application/json
+
+{
+  "user_lat": -6.2088,
+  "user_lng": 106.8456,
+  "radius_meters": 10000
+}
+```
+
+---
+
 *Dokumen ini adalah living document. Setiap perubahan skema database harus disertai migrasi SQL dan diupdate di sini.*

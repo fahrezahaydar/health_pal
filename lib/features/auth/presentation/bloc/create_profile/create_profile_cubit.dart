@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
@@ -46,9 +48,9 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
   CreateProfileCubit(this._createProfileUseCase)
       : super(const CreateProfileInitial());
 
-  Future<void> saveProfile(Map<String, dynamic> data) async {
+  Future<void> saveProfile(Map<String, dynamic> data, {File? photo}) async {
     emit(const CreateProfileLoading());
-    final result = await _createProfileUseCase(data);
+    final result = await _createProfileUseCase(data, photo: photo);
     switch (result) {
       case Success<UserEntity>():
         emit(CreateProfileSuccess(result.data));

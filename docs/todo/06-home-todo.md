@@ -69,10 +69,11 @@
 - **Shimmer** — sudah di pubspec (buat skeleton loader)
 
 ### Catatan Penting
-1. **Nearby Medical Centers** — `doctors-by-location` edge function belum dibuat, `google_maps_flutter` didefer ke Fase 9. Bagian ini bisa di-skip dulu atau pakai data dummy.
-2. **HomePage saat ini** — masih stub (`Center(child: Text('Home Page'))`) dengan `MaterialApp` yang salah.
+1. **Nearby Medical Centers** — documented di `docs/todo/08-facility-todo.md`. PostgreSQL function `get_nearby_clinics` (Haversine), dependencies: `geolocator` + `google_maps_flutter`. Implementasi sebelum Push Notification (Fase 10).
+2. **HomePage** — sudah pakai MultiBlocProvider 4 cubits, orchestrate load async: banners + specializations langsung, profile → dpt profileId → upcoming.
 3. **Route `/home`** — sudah terdaftar sebagai Branch 0 StatefulShellRoute.
-4. **Belum ada test** — folder `test/` tidak ada.
+4. **BlocSelector** — tiap widget pakai `BlocSelector` biar hanya rebuild sesuai data yang dibutuhkan.
+5. **Belum ada test** — folder `test/` tidak ada.
 
 ---
 
@@ -95,16 +96,19 @@
 | B.5 | GetBannersUseCase | ✅ |
 | B.6 | GetUpcomingAppointmentUseCase | ✅ |
 | B.7 | GetSpecializationsUseCase | ✅ |
-| **C** | **Presentation Layer (Cubit + Widgets)** | **🔄 On Going** |
-| C.1 | HomeCubit + HomeState | ⬜ |
-| C.2 | GreetingSection widget | ⬜ |
-| C.3 | BannerCarousel widget | ⬜ |
-| C.4 | UpcomingCard widget | ⬜ |
-| C.5 | QuickCategories widget | ⬜ |
-| C.6 | Rebuild HomePage | ⬜ |
-| C.7 | DI Registration + flutter analyze | ⬜ |
+| **C** | **Presentation Layer (Cubits + Widgets)** | **✅ Selesai** |
+| C.1 | GreetingCubit + GreetingState | ✅ |
+| C.2 | BannerCubit + BannerState | ✅ |
+| C.3 | SpecializationCubit + SpecializationState | ✅ |
+| C.4 | UpcomingCubit + UpcomingState | ✅ |
+| C.5 | GreetingSection widget | ✅ |
+| C.6 | BannerCarousel widget | ✅ |
+| C.7 | UpcomingCard widget | ✅ |
+| C.8 | QuickCategories widget | ✅ |
+| C.9 | Rebuild HomePage (MultiBlocProvider) | ✅ |
+| C.10 | DI Registration + flutter analyze | ✅ |
 | **D** | **Refinements (Ditunda)** | **⏸️ Ditunda** |
-| D.1 | Nearby Medical Centers | ⏸️ |
+| D.1 | Nearby Medical Centers | 📋 [08-facility-todo.md](08-facility-todo.md) — documented, awaiting implementation |
 | D.2 | SearchBar → /doctor/search | ⏸️ |
 | D.3 | Shimmer/skeleton loader | ⏸️ |
 | D.4 | Pull-to-refresh | ⏸️ |
@@ -136,17 +140,20 @@
 | B.6 | `GetUpcomingAppointmentUseCase` | `home/domain/usecase/get_upcoming_appointment_usecase.dart` | @injectable |
 | B.7 | `GetSpecializationsUseCase` | `home/domain/usecase/get_specializations_usecase.dart` | @injectable |
 
-### Blok C: Presentation Layer (Cubit + Widgets)
+### Blok C: Presentation Layer (Cubits + Widgets)
 
 | # | Task | File | Keterangan |
 |---|---|---|---|
-| C.1 | `HomeCubit` + `HomeState` | `home/presentation/bloc/home_cubit.dart` | Load paralel (banners + upcoming + specializations + profile). State: `banners`, `upcoming`, `specializations`, `nickname`, `isLoading`, `error`. |
-| C.2 | `GreetingSection` widget | `home/presentation/widget/greeting_section.dart` | "Halo, {nickname}!" + bell 🔔 → `/profile/notifications` |
-| C.3 | `BannerCarousel` widget | `home/presentation/widget/banner_carousel.dart` | PageView + auto-scroll 5s + indicator dots |
-| C.4 | `UpcomingCard` widget | `home/presentation/widget/upcoming_card.dart` | Card + empty state "No upcoming treatment" + CTA |
-| C.5 | `QuickCategories` widget | `home/presentation/widget/quick_categories.dart` | Grid 2×4 specialization. Tap → `/doctor/search?specialization={id}` |
-| C.6 | Rebuild `HomePage` | `home/presentation/page/home_page.dart` | Komposisi semua widget, hapus `MaterialApp` stub |
-| C.7 | DI Registration + `flutter analyze` | `core/di/` | `dart run build_runner build`, 0 errors 0 warnings |
+| C.1 | `GreetingCubit` + `GreetingState` | `home/presentation/bloc/greeting/` | **Sealed state**: `Initial`, `Loading`, `Loaded(nickname)`, `Error`. Pakai `GetUserProfileUseCase`. Return `profileId`. |
+| C.2 | `BannerCubit` + `BannerState` | `home/presentation/bloc/banner/` | **Sealed state**: `Initial`, `Loading`, `Loaded(banners)`, `Error`. Pakai `GetBannersUseCase`. |
+| C.3 | `SpecializationCubit` + `SpecializationState` | `home/presentation/bloc/specialization/` | **Sealed state**: `Initial`, `Loading`, `Loaded(specializations)`, `Error`. Pakai `GetSpecializationsUseCase`. |
+| C.4 | `UpcomingCubit` + `UpcomingState` | `home/presentation/bloc/upcoming/` | **Sealed state**: `Initial`, `Loading`, `Loaded(upcoming?)`, `Error`. Pakai `GetUpcomingAppointmentUseCase`. |
+| C.5 | `GreetingSection` widget | `home/presentation/widget/greeting_section.dart` | "Halo, {nickname}!" + bell 🔔 → `/profile/notifications`. BlocSelector: `.nickname`. |
+| C.6 | `BannerCarousel` widget | `home/presentation/widget/banner_carousel.dart` | PageView + auto-scroll 5s + indicator dots. BlocSelector: `.banners`. |
+| C.7 | `UpcomingCard` widget | `home/presentation/widget/upcoming_card.dart` | Card + empty state + CTA. BlocSelector: `.upcoming`. |
+| C.8 | `QuickCategories` widget | `home/presentation/widget/quick_categories.dart` | Grid 2×4. BlocSelector: `.specializations`. Tap → `/doctor/search?specialization={id}` |
+| C.9 | Rebuild `HomePage` | `home/presentation/page/home_page.dart` | MultiBlocProvider 4 cubits + orchestrate load. Load profile dulu → dpt profileId → trigger upcoming. |
+| C.10 | DI Registration + `flutter analyze` | `core/di/` | `dart run build_runner build`, 0 errors 0 warnings |
 
 ### Blok D: Refinements (Ditunda)
 
@@ -162,5 +169,5 @@
 ## Sequencing (Urutan Eksekusi)
 
 ```
-A.1-A.6 ✅ (Models) → B.1-B.4 (Data + Domain) → B.5-B.7 (Use Cases) → C.1 (Cubit) → C.2-C.5 (Widgets) → C.6 (HomePage) → C.7 (DI + Analyze)
+A.1-A.6 ✅ (Models) → B.1-B.7 ✅ (Repo + Use Cases) → C.1-C.4 ✅ (4 Cubits) → C.5-C.8 (Widgets) → C.9 (HomePage) → C.10 (DI + Analyze)
 ```

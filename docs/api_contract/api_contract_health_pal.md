@@ -1533,4 +1533,100 @@ class ApiException implements Exception {
 
 ---
 
+## 7. Facility Endpoints
+
+### 7.1 Get Nearby Clinics
+
+```
+POST /rest/v1/rpc/get_nearby_clinics
+```
+
+**Description:** Mengembalikan daftar klinik terdekat dari lokasi user. Menggunakan PostgreSQL function dengan Haversine formula. Tidak memerlukan autentikasi (public read).
+
+**Headers:**
+```
+Content-Type: application/json
+apikey: <SUPABASE_ANON_KEY>
+```
+
+**Request Body:**
+```json
+{
+  "user_lat": -6.2088,
+  "user_lng": 106.8456,
+  "radius_meters": 10000
+}
+```
+
+| Field | Tipe | Wajib | Default | Keterangan |
+|---|---|---|---|---|
+| `user_lat` | `float` | Ya | — | Latitude lokasi user |
+| `user_lng` | `float` | Ya | — | Longitude lokasi user |
+| `radius_meters` | `int` | Tidak | `10000` | Radius pencarian dalam meter |
+
+**Response `200`:**
+```json
+[
+  {
+    "id": "c1a2b3c4-d5e6-7890-clinic-000000000001",
+    "name": "Klinik Sehat Bersama",
+    "address": "Jl. Sudirman No. 123, Jakarta Selatan",
+    "city": "Jakarta",
+    "latitude": -6.2100,
+    "longitude": 106.8470,
+    "phone": "021-1234567",
+    "image_url": "https://<ref>.supabase.co/storage/v1/object/public/clinics/klinik1.jpg",
+    "distance_meters": 1200,
+    "doctor_count": 5
+  }
+]
+```
+
+| Field | Tipe | Keterangan |
+|---|---|---|
+| `id` | `string` (UUID) | ID klinik |
+| `name` | `string` | Nama klinik |
+| `address` | `string` | Alamat lengkap |
+| `city` | `string` | Kota |
+| `latitude` | `float` | Koordinat lintang |
+| `longitude` | `float` | Koordinat bujur |
+| `phone` | `string` | Nomor telepon |
+| `image_url` | `string?` | URL foto klinik |
+| `distance_meters` | `float` | Jarak dari lokasi user (meter) |
+| `doctor_count` | `int` | Jumlah dokter aktif di klinik |
+
+---
+
+### 7.2 Get Clinic Detail
+
+```
+GET /rest/v1/clinics?id=eq.<clinic_id>&select=*,doctors(*,specializations(*))
+```
+
+**Description:** Mengambil data lengkap satu klinik beserta daftar dokter dan spesialisasi.
+
+**Response `200`:**
+```json
+{
+  "id": "c1a2b3c4-d5e6-7890-clinic-000000000001",
+  "name": "Klinik Sehat Bersama",
+  "address": "Jl. Sudirman No. 123",
+  "city": "Jakarta",
+  "latitude": -6.2100,
+  "longitude": 106.8470,
+  "phone": "021-1234567",
+  "image_url": "https://...",
+  "doctors": [
+    {
+      "id": "d1a2b3c4-d5e6-7890-doctor-000000000001",
+      "full_name": "Dr. Budi Santoso",
+      "photo_url": "https://...",
+      "specializations": { "name": "Umum" }
+    }
+  ]
+}
+```
+
+---
+
 *Dokumen ini adalah living document. Setiap perubahan endpoint harus didiskusikan dengan tim mobile dan diupdate di sini sebelum implementasi dimulai. Versi API selalu disertakan di base path Edge Function untuk memudahkan backward compatibility.*

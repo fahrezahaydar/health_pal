@@ -354,29 +354,39 @@ class OnboardingNotifier extends ChangeNotifier {
 **Type:** Cubit
 
 ```dart
-// ── State ──
-class HomeState extends Equatable {
-  final List<BannerEntity> banners;
-  final AppointmentEntity? upcoming;
-  final List<SpecializationEntity> specializations;
-  final bool isLoading;
-  final Failure? error;
-}
+// ── Sealed State (masing-masing section punya state sendiri) ──
+sealed class GreetingState extends Equatable { ... }
+class GreetingInitial extends GreetingState { ... }
+class GreetingLoading extends GreetingState { ... }
+class GreetingLoaded extends GreetingState { final String nickname; ... }
+class GreetingError extends GreetingState { final String message; ... }
+
+sealed class BannerState extends Equatable { ... }
+class BannerInitial extends BannerState { ... }
+class BannerLoading extends BannerState { ... }
+class BannerLoaded extends BannerState { final List<BannerEntity> banners; ... }
+class BannerError extends BannerState { final String message; ... }
 
 // ── Methods ──
-class HomeCubit extends Cubit<HomeState> {
-  Future<void> loadData() async { ... }     // load banners + upcoming + categories
-  Future<void> refresh() async { ... }      // pull to refresh
+class GreetingCubit extends Cubit<GreetingState> {
+  Future<String?> loadProfile(String authId) async { ... }
+}
+
+class BannerCubit extends Cubit<BannerState> {
+  Future<void> loadBanners() async { ... }
 }
 ```
 
 **Data Loading:**
 ```
-loadData()
-  → emit(state.copyWith(isLoading: true))
-  → parallel: getBanners, getUpcoming, getSpecializations
-    → success → emit(state.copyWith(data, isLoading: false))
-    → failure → emit(state.copyWith(error, isLoading: false))
+HomePage orchestrate via MultiBlocProvider:
+  GreetingCubit.loadProfile(authId)  → GreetingLoaded(nickname) → return profileId
+  BannerCubit.loadBanners()          → BannerLoaded(banners)
+  SpecializationCubit.loadSpecs()    → SpecializationLoaded(specializations)
+  UpcomingCubit.loadUpcoming(pid)    → UpcomingLoaded(upcoming?)
+
+Semua cubit pakai use case (GetXxxUseCase), bukan repository langsung.
+State pakai sealed class: Initial → Loading → Loaded / Error.
 ```
 
 ---

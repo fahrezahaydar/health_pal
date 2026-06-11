@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/network/result.dart';
@@ -10,7 +12,7 @@ class CreateProfileUseCase {
 
   CreateProfileUseCase(this._repository);
 
-  Future<Result<UserEntity>> call(Map<String, dynamic> data) {
-    return _repository.createProfile(data);
+  Future<Result<UserEntity>> call(Map<String, dynamic> data, {File? photo}) {
+    return _repository.createProfile(data, photo: photo);
   }
 }

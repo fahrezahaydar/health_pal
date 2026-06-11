@@ -1,32 +1,56 @@
 import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../constants/app_constants.dart';
 import '../enums/app_status.dart';
 import 'shared_prefs.dart';
 
 @lazySingleton
 class AppServices extends ChangeNotifier {
   final SharedPrefService prefs;
+  final SupabaseClient _supabaseClient;
 
-  AppServices(this.prefs);
+  AppServices(this.prefs, this._supabaseClient);
 
-  // Private state variable
   AppStatus _status = AppStatus.loading;
-
-  // Getter to access status
   AppStatus get status => _status;
 
   Future<void> init() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    _supabaseClient.auth.onAuthStateChange.listen(_onAuthStateChange);
 
     final onboardingDone = prefs.isOnboardingDone;
     final isLoggedIn = prefs.isLoggedIn;
 
     if (!onboardingDone) {
       _updateStatus(AppStatus.onboarding);
-    } else if (!isLoggedIn) {
-      _updateStatus(AppStatus.unauthenticated);
-    } else {
+      return;
+    }
+
+    if (isLoggedIn) {
+      if (_isSessionExpired()) {
+        await _forceLogout('Sesi habis, silakan login ulang');
+        return;
+      }
       _updateStatus(AppStatus.authenticated);
+    } else {
+      _updateStatus(AppStatus.unauthenticated);
+    }
+  }
+
+  bool _isSessionExpired() {
+    final loginTime = prefs.loginTimestamp;
+    if (loginTime == null) return true;
+    final elapsed =
+        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(loginTime));
+    return elapsed > appSessionDuration;
+  }
+
+  void _onAuthStateChange(AuthState event) {
+    if (event.event == AuthChangeEvent.signedOut) {
+      if (_status == AppStatus.authenticated) {
+        _updateStatus(AppStatus.unauthenticated);
+      }
     }
   }
 
@@ -36,19 +60,26 @@ class AppServices extends ChangeNotifier {
   }
 
   Future<void> login() async {
+    final now = DateTime.now().millisecondsSinceEpoch;
     await prefs.setLoggedIn(true);
+    await prefs.setLoginTimestamp(now);
     _updateStatus(AppStatus.authenticated);
   }
 
   Future<void> logout() async {
-    await prefs.setLoggedIn(false);
+    await _supabaseClient.auth.signOut();
+    await _forceLogout(null);
+  }
+
+  Future<void> _forceLogout(String? message) async {
+    await prefs.clearAuth();
     _updateStatus(AppStatus.unauthenticated);
   }
 
-  // Internal helper to change state and notify listeners
   void _updateStatus(AppStatus newStatus) {
     if (_status == newStatus) return;
     _status = newStatus;
-    notifyListeners(); // This is what triggers GoRouter to refresh
+    notifyListeners();
   }
+
 }
