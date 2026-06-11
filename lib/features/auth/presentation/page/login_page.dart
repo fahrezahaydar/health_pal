@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     return RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value);
   }
 
-  void _onSignIn() {
+  void _onSignIn(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<SignInBloc>().add(
         SignInWithEmail(_emailController.text.trim(), _passwordController.text),
@@ -194,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                                         LightFilledButton(
                                           onTap: state is SignInLoading
                                               ? null
-                                              : _onSignIn,
+                                              : () => _onSignIn(context),
                                           label: state is SignInLoading
                                               ? 'Loading...'
                                               : 'Sign In',

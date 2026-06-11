@@ -22,10 +22,12 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async {
     emit(const SignInLoading());
     final result = await _loginWithEmail(event.email, event.password);
+
     switch (result) {
       case Success<UserEntity>():
         emit(SignInSuccess(result.data));
       case Failure<UserEntity>():
+        print(result.message);
         emit(SignInFailure(result.message));
     }
   }

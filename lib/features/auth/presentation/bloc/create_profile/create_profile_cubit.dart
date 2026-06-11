@@ -46,7 +46,7 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
   final CreateProfileUseCase _createProfileUseCase;
 
   CreateProfileCubit(this._createProfileUseCase)
-      : super(const CreateProfileInitial());
+    : super(const CreateProfileInitial());
 
   Future<void> saveProfile(Map<String, dynamic> data, {File? photo}) async {
     emit(const CreateProfileLoading());
@@ -55,6 +55,7 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
       case Success<UserEntity>():
         emit(CreateProfileSuccess(result.data));
       case Failure<UserEntity>():
+        print(result.message);
         emit(CreateProfileFailure(result.message));
     }
   }

@@ -21,11 +21,14 @@ class GreetingSection extends StatelessWidget {
         children: [
           Text(
             'Halo, ${nickname.isNotEmpty ? nickname : ''}',
-            style: AppTextTheme.headlineMedium,
+            style: AppTextTheme.headlineSmall,
           ),
           LightIconButton(
             onTap: () => context.push(RoutePaths.notificationSettings),
-            icon: const Icon(Iconsax.notification, color: AppTheme.grey900),
+            icon: const Icon(
+              Iconsax.notificationBingStyle5,
+              color: AppTheme.grey900,
+            ),
           ),
         ],
       ),

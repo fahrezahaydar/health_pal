@@ -8,7 +8,7 @@ class LightIconButton extends StatefulWidget {
     this.onTap,
     this.pressedColor,
     this.borderRadius = 8.0,
-    this.padding = const EdgeInsets.all(10),
+    this.padding = const EdgeInsets.all(8),
     this.animationDuration = const Duration(milliseconds: 120),
   });
 
@@ -43,9 +43,10 @@ class _LightIconButtonState extends State<LightIconButton> {
         padding: widget.padding,
         decoration: BoxDecoration(
           color: _pressed
-              ? widget.pressedColor ?? AppTheme.primary.withValues(alpha: 0.16)
-              : const Color(0x00000000),
-          borderRadius: BorderRadius.circular(widget.borderRadius),
+              ? widget.pressedColor ?? AppTheme.grey400
+              : AppTheme.grey100,
+          // borderRadius: BorderRadius.circular(widget.borderRadius),
+          shape: BoxShape.circle,
         ),
         child: widget.icon,
       ),

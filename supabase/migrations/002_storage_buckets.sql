@@ -15,8 +15,14 @@ values (
 on conflict (id) do nothing;
 
 -- 2. ENABLE RLS on storage.objects (if not already)
--- Note: storage.objects RLS is enabled by default on new Supabase projects
-alter table storage.objects enable row level security;
+-- Note: storage.objects RLS is enabled by default on new Supabase projects.
+-- Wrapped in DO block because migration runner may not own storage.objects.
+do $$
+begin
+  alter table storage.objects enable row level security;
+exception when insufficient_privilege then
+  null; -- RLS already enabled, skip silently
+end $$;
 
 -- 3. RLS: Public read avatars
 create policy "Public read avatars"

@@ -1,12 +1,20 @@
 -- =============================================================
 -- seed.sql
 -- Data dummy untuk development health_pal
+--
+-- Catatan: Auth users + user_profiles dibuat via seed-auth.ts
+--   cd supabase && npm install && npx tsx seed-auth.ts
+--
+-- Jalankan dengan: supabase db seed
+-- atau: supabase db reset (akan migrasi + seed otomatis)
 -- =============================================================
 
 -- Pastikan ekstensi pgcrypto untuk gen_random_uuid()
 create extension if not exists "pgcrypto" with schema "extensions";
 
--- Spesialisasi
+-- =============================================================
+-- 1. SPESIALISASI
+-- =============================================================
 insert into public.specializations (id, name, icon_url) values
   (gen_random_uuid(), 'Umum', null),
   (gen_random_uuid(), 'Anak', null),
@@ -19,7 +27,9 @@ insert into public.specializations (id, name, icon_url) values
   (gen_random_uuid(), 'Kandungan & Ginekologi', null),
   (gen_random_uuid(), 'Ortopedi', null);
 
--- Klinik (5 klinik di Jakarta)
+-- =============================================================
+-- 2. KLINIK (5 klinik di Jakarta)
+-- =============================================================
 with clinic_data as (
   select * from (values
     ('Klinik Sehat Keluarga', 'Jl. Sudirman No. 123, Jakarta Pusat', 'Jakarta Pusat', -6.2088, 106.8456, '021-12345678'),
@@ -33,8 +43,9 @@ insert into public.clinics (id, name, address, city, latitude, longitude, phone)
 select gen_random_uuid(), name, address, city, lat, lng, phone
 from clinic_data;
 
--- Dokter (2 per spesialisasi = 20 dokter)
--- Note: gunakan subquery untuk mendapatkan ID spesialisasi dan klinik
+-- =============================================================
+-- 3. DOKTER (2 per spesialisasi = 20 dokter)
+-- =============================================================
 do $$
 declare
   sp_umum_id uuid; sp_anak_id uuid; sp_kulit_id uuid; sp_gigi_id uuid;
@@ -42,7 +53,6 @@ declare
   sp_kandungan_id uuid; sp_ortopedi_id uuid;
   klinik1_id uuid; klinik2_id uuid; klinik3_id uuid; klinik4_id uuid; klinik5_id uuid;
 begin
-  -- Get specialization IDs
   select id into sp_umum_id from public.specializations where name = 'Umum' limit 1;
   select id into sp_anak_id from public.specializations where name = 'Anak' limit 1;
   select id into sp_kulit_id from public.specializations where name = 'Kulit & Kelamin' limit 1;
@@ -54,7 +64,6 @@ begin
   select id into sp_kandungan_id from public.specializations where name = 'Kandungan & Ginekologi' limit 1;
   select id into sp_ortopedi_id from public.specializations where name = 'Ortopedi' limit 1;
 
-  -- Get clinic IDs
   select id into klinik1_id from public.clinics where name = 'Klinik Sehat Keluarga' limit 1;
   select id into klinik2_id from public.clinics where name = 'RSIA Bunda Sejahtera' limit 1;
   select id into klinik3_id from public.clinics where name = 'Klinik Medika Utama' limit 1;
@@ -122,13 +131,13 @@ begin
     (gen_random_uuid(), klinik1_id, sp_ortopedi_id, 'dr. Lisa Kartika, Sp.OT', null, 'Ahli ortopedi dengan fokus pada rehabilitasi cedera sendi.', 8, 'FK Universitas Padjadjaran', 280000, 4.5, 60);
 end $$;
 
--- Jadwal dokter (template mingguan)
--- Semua dokter: Senin-Jumat 09:00-17:00, Sabtu 09:00-13:00, slot 30 menit
+-- =============================================================
+-- 4. JADWAL DOKTER (template mingguan)
+--    Senin-Jumat 09:00-17:00, Sabtu 09:00-13:00, slot 30 menit
+-- =============================================================
 do $$
 declare
   doc record;
-  sched_id uuid;
-  day int;
 begin
   for doc in select id from public.doctors loop
     -- Senin (1) - Jumat (5): 09:00 - 17:00
@@ -142,7 +151,44 @@ begin
   end loop;
 end $$;
 
--- Banner
+-- =============================================================
+-- 5. DOCTOR SLOTS (generate concrete slots untuk 7 hari ke depan)
+-- =============================================================
+do $$
+declare
+  sched record;
+  target_date date;
+  v_start time;
+  v_end time;
+  day_offset int;
+begin
+  for day_offset in 0..6 loop
+    target_date := current_date + day_offset;
+
+    for sched in
+      select ds.id as schedule_id, ds.doctor_id,
+             ds.start_time, ds.end_time, ds.slot_duration_minutes
+      from public.doctor_schedules ds
+      where ds.day_of_week = extract(dow from target_date)::int
+        and ds.is_active = true
+    loop
+      v_start := sched.start_time;
+      while v_start + (sched.slot_duration_minutes || ' minutes')::interval <= sched.end_time loop
+        v_end := v_start + (sched.slot_duration_minutes || ' minutes')::interval;
+
+        insert into public.doctor_slots (doctor_id, schedule_id, slot_date, slot_start, slot_end, is_booked)
+        values (sched.doctor_id, sched.schedule_id, target_date, v_start, v_end, false)
+        on conflict (doctor_id, slot_date, slot_start) do nothing;
+
+        v_start := v_end;
+      end loop;
+    end loop;
+  end loop;
+end $$;
+
+-- =============================================================
+-- 6. BANNER
+-- =============================================================
 insert into public.banners (id, title, image_url, action_url, display_order, is_active)
 values
   (gen_random_uuid(), 'Promo Spesial Konsultasi', null, null, 1, true),

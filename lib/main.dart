@@ -45,8 +45,12 @@ class MyApp extends StatelessWidget {
     return WidgetsApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      color: AppTheme.primary, // Wajib diisi di WidgetsApp
+      color: AppTheme.primary,
       textStyle: AppTextTheme.bodyMedium,
+      localizationsDelegates: const [
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
     );
   }
 }
