@@ -6,18 +6,19 @@
 // Referensi: docs/tdd/10-testing.md §6 (Mock Strategy)
 //
 // File ini berisi:
-// - @GenerateNiceMocks untuk Auth (3 mocks) + Home (3 mocks)
+// - @GenerateNiceMocks untuk Auth (3) + Home (3) + Doctor (5) = 11 mocks
 // - Export helper class untuk akses cepat di test
-//
-// Catatan: Project menggunakan mocktail (sudah ada di pubspec) untuk
-// stub-only, dan mockito (per spec user) untuk class mocks. Keduanya
-// bisa coexist tanpa konflik.
 
 import 'package:mockito/annotations.dart';
 
 import 'package:health_pal/features/auth/data/datasource/auth_local_datasource.dart';
 import 'package:health_pal/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:health_pal/features/auth/domain/repository/auth_repository.dart';
+import 'package:health_pal/features/doctor/data/datasource/doctor_remote_datasource.dart';
+import 'package:health_pal/features/doctor/domain/repository/doctor_repository.dart';
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_detail_usecase.dart';
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_slots_usecase.dart';
+import 'package:health_pal/features/doctor/domain/usecase/get_doctors_usecase.dart';
 import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart';
 import 'package:health_pal/features/home/data/datasource/home_remote_datasource.dart';
 import 'package:health_pal/features/home/domain/repository/home_repository.dart';
@@ -32,5 +33,12 @@ import 'package:health_pal/features/home/domain/repository/home_repository.dart'
   MockSpec<HomeRepository>(),
   MockSpec<HomeRemoteDataSource>(),
   MockSpec<HomeLocalDataSource>(),
+
+  // ── Doctor (5 mocks) ──
+  MockSpec<DoctorRepository>(),
+  MockSpec<DoctorRemoteDataSource>(),
+  MockSpec<GetDoctorsUseCase>(),
+  MockSpec<GetDoctorDetailUseCase>(),
+  MockSpec<GetDoctorSlotsUseCase>(),
 ])
 void main() {}

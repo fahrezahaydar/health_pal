@@ -3,41 +3,58 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
-import 'dart:io' as _i10;
+import 'dart:async' as _i7;
+import 'dart:io' as _i11;
 
-import 'package:health_pal/core/network/result.dart' as _i7;
+import 'package:health_pal/core/network/result.dart' as _i8;
 import 'package:health_pal/features/auth/data/datasource/auth_local_datasource.dart'
-    as _i12;
+    as _i13;
 import 'package:health_pal/features/auth/data/datasource/auth_remote_datasource.dart'
-    as _i11;
+    as _i12;
 import 'package:health_pal/features/auth/data/model/user_model.dart' as _i3;
-import 'package:health_pal/features/auth/domain/entity/user_entity.dart' as _i8;
+import 'package:health_pal/features/auth/domain/entity/user_entity.dart' as _i9;
 import 'package:health_pal/features/auth/domain/repository/auth_repository.dart'
-    as _i5;
+    as _i6;
+import 'package:health_pal/features/doctor/data/datasource/doctor_remote_datasource.dart'
+    as _i27;
+import 'package:health_pal/features/doctor/data/model/doctor_model.dart' as _i5;
+import 'package:health_pal/features/doctor/data/model/doctor_slot_model.dart'
+    as _i28;
+import 'package:health_pal/features/doctor/domain/entity/doctor_entity.dart'
+    as _i25;
+import 'package:health_pal/features/doctor/domain/entity/doctor_slot_entity.dart'
+    as _i26;
+import 'package:health_pal/features/doctor/domain/repository/doctor_repository.dart'
+    as _i24;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_detail_usecase.dart'
+    as _i30;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_slots_usecase.dart'
+    as _i31;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctors_usecase.dart'
+    as _i29;
 import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart'
-    as _i22;
+    as _i23;
 import 'package:health_pal/features/home/data/datasource/home_remote_datasource.dart'
-    as _i18;
-import 'package:health_pal/features/home/data/model/banner_model.dart' as _i19;
+    as _i19;
+import 'package:health_pal/features/home/data/model/banner_model.dart' as _i20;
 import 'package:health_pal/features/home/data/model/specialization_model.dart'
-    as _i21;
+    as _i22;
 import 'package:health_pal/features/home/data/model/upcoming_appointment_model.dart'
-    as _i20;
+    as _i21;
 import 'package:health_pal/features/home/data/model/user_profile_model.dart'
     as _i4;
 import 'package:health_pal/features/home/domain/entity/banner_entity.dart'
-    as _i14;
-import 'package:health_pal/features/home/domain/entity/specialization_entity.dart'
-    as _i16;
-import 'package:health_pal/features/home/domain/entity/upcoming_appointment_entity.dart'
     as _i15;
-import 'package:health_pal/features/home/domain/entity/user_profile_entity.dart'
+import 'package:health_pal/features/home/domain/entity/specialization_entity.dart'
     as _i17;
+import 'package:health_pal/features/home/domain/entity/upcoming_appointment_entity.dart'
+    as _i16;
+import 'package:health_pal/features/home/domain/entity/user_profile_entity.dart'
+    as _i18;
 import 'package:health_pal/features/home/domain/repository/home_repository.dart'
-    as _i13;
+    as _i14;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i9;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -71,10 +88,15 @@ class _FakeUserProfileModel_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeDoctorModel_3 extends _i1.SmartFake implements _i5.DoctorModel {
+  _FakeDoctorModel_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AuthRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthRepository extends _i1.Mock implements _i5.AuthRepository {
+class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
   @override
   bool get isLoggedIn =>
       (super.noSuchMethod(
@@ -85,534 +107,869 @@ class MockAuthRepository extends _i1.Mock implements _i5.AuthRepository {
           as bool);
 
   @override
-  _i6.Future<_i7.Result<_i8.UserEntity>> signInWithEmail(
+  _i7.Future<_i8.Result<_i9.UserEntity>> signInWithEmail(
     String? email,
     String? password,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#signInWithEmail, [email, password]),
-            returnValue: _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                 this,
                 Invocation.method(#signInWithEmail, [email, password]),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+                _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                     this,
                     Invocation.method(#signInWithEmail, [email, password]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i8.UserEntity>>);
+          as _i7.Future<_i8.Result<_i9.UserEntity>>);
 
   @override
-  _i6.Future<_i7.Result<_i8.UserEntity>> signUpWithEmail(
+  _i7.Future<_i8.Result<_i9.UserEntity>> signUpWithEmail(
     String? email,
     String? password,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#signUpWithEmail, [email, password]),
-            returnValue: _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                 this,
                 Invocation.method(#signUpWithEmail, [email, password]),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+                _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                     this,
                     Invocation.method(#signUpWithEmail, [email, password]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i8.UserEntity>>);
+          as _i7.Future<_i8.Result<_i9.UserEntity>>);
 
   @override
-  _i6.Future<_i7.Result<_i8.UserEntity>> signInWithGoogle() =>
+  _i7.Future<_i8.Result<_i9.UserEntity>> signInWithGoogle() =>
       (super.noSuchMethod(
             Invocation.method(#signInWithGoogle, []),
-            returnValue: _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                 this,
                 Invocation.method(#signInWithGoogle, []),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+                _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                     this,
                     Invocation.method(#signInWithGoogle, []),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i8.UserEntity>>);
+          as _i7.Future<_i8.Result<_i9.UserEntity>>);
 
   @override
-  _i6.Future<_i7.Result<_i8.UserEntity>> createProfile(
+  _i7.Future<_i8.Result<_i9.UserEntity>> createProfile(
     Map<String, dynamic>? data, {
-    _i10.File? photo,
+    _i11.File? photo,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createProfile, [data], {#photo: photo}),
-            returnValue: _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                 this,
                 Invocation.method(#createProfile, [data], {#photo: photo}),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+                _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                     this,
                     Invocation.method(#createProfile, [data], {#photo: photo}),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i8.UserEntity>>);
+          as _i7.Future<_i8.Result<_i9.UserEntity>>);
 
   @override
-  _i6.Future<_i7.Result<void>> sendResetPasswordEmail(String? email) =>
+  _i7.Future<_i8.Result<void>> sendResetPasswordEmail(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#sendResetPasswordEmail, [email]),
-            returnValue: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValue: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#sendResetPasswordEmail, [email]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValueForMissingStub: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#sendResetPasswordEmail, [email]),
               ),
             ),
           )
-          as _i6.Future<_i7.Result<void>>);
+          as _i7.Future<_i8.Result<void>>);
 
   @override
-  _i6.Future<_i7.Result<void>> resetPassword(String? newPassword) =>
+  _i7.Future<_i8.Result<void>> resetPassword(String? newPassword) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [newPassword]),
-            returnValue: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValue: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#resetPassword, [newPassword]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValueForMissingStub: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#resetPassword, [newPassword]),
               ),
             ),
           )
-          as _i6.Future<_i7.Result<void>>);
+          as _i7.Future<_i8.Result<void>>);
 
   @override
-  _i6.Future<_i7.Result<void>> signOut() =>
+  _i7.Future<_i8.Result<void>> signOut() =>
       (super.noSuchMethod(
             Invocation.method(#signOut, []),
-            returnValue: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValue: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#signOut, []),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i7.Result<void>>.value(
-              _i9.dummyValue<_i7.Result<void>>(
+            returnValueForMissingStub: _i7.Future<_i8.Result<void>>.value(
+              _i10.dummyValue<_i8.Result<void>>(
                 this,
                 Invocation.method(#signOut, []),
               ),
             ),
           )
-          as _i6.Future<_i7.Result<void>>);
+          as _i7.Future<_i8.Result<void>>);
 
   @override
-  _i6.Future<_i7.Result<_i8.UserEntity>> getCurrentUser() =>
+  _i7.Future<_i8.Result<_i9.UserEntity>> getCurrentUser() =>
       (super.noSuchMethod(
             Invocation.method(#getCurrentUser, []),
-            returnValue: _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                 this,
                 Invocation.method(#getCurrentUser, []),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i8.UserEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i8.UserEntity>>(
+                _i7.Future<_i8.Result<_i9.UserEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i9.UserEntity>>(
                     this,
                     Invocation.method(#getCurrentUser, []),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i8.UserEntity>>);
+          as _i7.Future<_i8.Result<_i9.UserEntity>>);
 }
 
 /// A class which mocks [AuthRemoteDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAuthRemoteDataSource extends _i1.Mock
-    implements _i11.AuthRemoteDataSource {
+    implements _i12.AuthRemoteDataSource {
   @override
-  _i6.Future<_i2.AuthResponse> signInWithEmail(
+  _i7.Future<_i2.AuthResponse> signInWithEmail(
     String? email,
     String? password,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#signInWithEmail, [email, password]),
-            returnValue: _i6.Future<_i2.AuthResponse>.value(
+            returnValue: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signInWithEmail, [email, password]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i2.AuthResponse>.value(
+            returnValueForMissingStub: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signInWithEmail, [email, password]),
               ),
             ),
           )
-          as _i6.Future<_i2.AuthResponse>);
+          as _i7.Future<_i2.AuthResponse>);
 
   @override
-  _i6.Future<_i2.AuthResponse> signUpWithEmail(
+  _i7.Future<_i2.AuthResponse> signUpWithEmail(
     String? email,
     String? password,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#signUpWithEmail, [email, password]),
-            returnValue: _i6.Future<_i2.AuthResponse>.value(
+            returnValue: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signUpWithEmail, [email, password]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i2.AuthResponse>.value(
+            returnValueForMissingStub: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signUpWithEmail, [email, password]),
               ),
             ),
           )
-          as _i6.Future<_i2.AuthResponse>);
+          as _i7.Future<_i2.AuthResponse>);
 
   @override
-  _i6.Future<_i2.AuthResponse> signInWithGoogle() =>
+  _i7.Future<_i2.AuthResponse> signInWithGoogle() =>
       (super.noSuchMethod(
             Invocation.method(#signInWithGoogle, []),
-            returnValue: _i6.Future<_i2.AuthResponse>.value(
+            returnValue: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signInWithGoogle, []),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i2.AuthResponse>.value(
+            returnValueForMissingStub: _i7.Future<_i2.AuthResponse>.value(
               _FakeAuthResponse_0(
                 this,
                 Invocation.method(#signInWithGoogle, []),
               ),
             ),
           )
-          as _i6.Future<_i2.AuthResponse>);
+          as _i7.Future<_i2.AuthResponse>);
 
   @override
-  _i6.Future<void> sendResetPasswordEmail(String? email) =>
+  _i7.Future<void> sendResetPasswordEmail(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#sendResetPasswordEmail, [email]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> updatePassword(String? newPassword) =>
+  _i7.Future<void> updatePassword(String? newPassword) =>
       (super.noSuchMethod(
             Invocation.method(#updatePassword, [newPassword]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<_i3.UserModel> fetchUserProfile(String? userId) =>
+  _i7.Future<_i3.UserModel> fetchUserProfile(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchUserProfile, [userId]),
-            returnValue: _i6.Future<_i3.UserModel>.value(
+            returnValue: _i7.Future<_i3.UserModel>.value(
               _FakeUserModel_1(
                 this,
                 Invocation.method(#fetchUserProfile, [userId]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i3.UserModel>.value(
+            returnValueForMissingStub: _i7.Future<_i3.UserModel>.value(
               _FakeUserModel_1(
                 this,
                 Invocation.method(#fetchUserProfile, [userId]),
               ),
             ),
           )
-          as _i6.Future<_i3.UserModel>);
+          as _i7.Future<_i3.UserModel>);
 
   @override
-  _i6.Future<_i3.UserModel> createUserProfile(Map<String, dynamic>? data) =>
+  _i7.Future<_i3.UserModel> createUserProfile(Map<String, dynamic>? data) =>
       (super.noSuchMethod(
             Invocation.method(#createUserProfile, [data]),
-            returnValue: _i6.Future<_i3.UserModel>.value(
+            returnValue: _i7.Future<_i3.UserModel>.value(
               _FakeUserModel_1(
                 this,
                 Invocation.method(#createUserProfile, [data]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i3.UserModel>.value(
+            returnValueForMissingStub: _i7.Future<_i3.UserModel>.value(
               _FakeUserModel_1(
                 this,
                 Invocation.method(#createUserProfile, [data]),
               ),
             ),
           )
-          as _i6.Future<_i3.UserModel>);
+          as _i7.Future<_i3.UserModel>);
 
   @override
-  _i6.Future<void> signOut() =>
+  _i7.Future<void> signOut() =>
       (super.noSuchMethod(
             Invocation.method(#signOut, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<String> uploadAvatar(String? userId, _i10.File? photo) =>
+  _i7.Future<String> uploadAvatar(String? userId, _i11.File? photo) =>
       (super.noSuchMethod(
             Invocation.method(#uploadAvatar, [userId, photo]),
-            returnValue: _i6.Future<String>.value(
-              _i9.dummyValue<String>(
+            returnValue: _i7.Future<String>.value(
+              _i10.dummyValue<String>(
                 this,
                 Invocation.method(#uploadAvatar, [userId, photo]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<String>.value(
-              _i9.dummyValue<String>(
+            returnValueForMissingStub: _i7.Future<String>.value(
+              _i10.dummyValue<String>(
                 this,
                 Invocation.method(#uploadAvatar, [userId, photo]),
               ),
             ),
           )
-          as _i6.Future<String>);
+          as _i7.Future<String>);
 }
 
 /// A class which mocks [AuthLocalDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAuthLocalDataSource extends _i1.Mock
-    implements _i12.AuthLocalDataSource {
+    implements _i13.AuthLocalDataSource {
   @override
-  _i6.Future<void> cacheUser(_i3.UserModel? user) =>
+  _i7.Future<void> cacheUser(_i3.UserModel? user) =>
       (super.noSuchMethod(
             Invocation.method(#cacheUser, [user]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> clearUser() =>
+  _i7.Future<void> clearUser() =>
       (super.noSuchMethod(
             Invocation.method(#clearUser, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 }
 
 /// A class which mocks [HomeRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHomeRepository extends _i1.Mock implements _i13.HomeRepository {
+class MockHomeRepository extends _i1.Mock implements _i14.HomeRepository {
   @override
-  _i6.Future<_i7.Result<List<_i14.BannerEntity>>> getBanners() =>
+  _i7.Future<_i8.Result<List<_i15.BannerEntity>>> getBanners() =>
       (super.noSuchMethod(
             Invocation.method(#getBanners, []),
-            returnValue: _i6.Future<_i7.Result<List<_i14.BannerEntity>>>.value(
-              _i9.dummyValue<_i7.Result<List<_i14.BannerEntity>>>(
+            returnValue: _i7.Future<_i8.Result<List<_i15.BannerEntity>>>.value(
+              _i10.dummyValue<_i8.Result<List<_i15.BannerEntity>>>(
                 this,
                 Invocation.method(#getBanners, []),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<List<_i14.BannerEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i14.BannerEntity>>>(
+                _i7.Future<_i8.Result<List<_i15.BannerEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i15.BannerEntity>>>(
                     this,
                     Invocation.method(#getBanners, []),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<List<_i14.BannerEntity>>>);
+          as _i7.Future<_i8.Result<List<_i15.BannerEntity>>>);
 
   @override
-  _i6.Future<_i7.Result<_i15.UpcomingAppointmentEntity?>> getUpcoming(
+  _i7.Future<_i8.Result<_i16.UpcomingAppointmentEntity?>> getUpcoming(
     String? profileId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getUpcoming, [profileId]),
             returnValue:
-                _i6.Future<_i7.Result<_i15.UpcomingAppointmentEntity?>>.value(
-                  _i9.dummyValue<_i7.Result<_i15.UpcomingAppointmentEntity?>>(
+                _i7.Future<_i8.Result<_i16.UpcomingAppointmentEntity?>>.value(
+                  _i10.dummyValue<_i8.Result<_i16.UpcomingAppointmentEntity?>>(
                     this,
                     Invocation.method(#getUpcoming, [profileId]),
                   ),
                 ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i15.UpcomingAppointmentEntity?>>.value(
-                  _i9.dummyValue<_i7.Result<_i15.UpcomingAppointmentEntity?>>(
+                _i7.Future<_i8.Result<_i16.UpcomingAppointmentEntity?>>.value(
+                  _i10.dummyValue<_i8.Result<_i16.UpcomingAppointmentEntity?>>(
                     this,
                     Invocation.method(#getUpcoming, [profileId]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i15.UpcomingAppointmentEntity?>>);
+          as _i7.Future<_i8.Result<_i16.UpcomingAppointmentEntity?>>);
 
   @override
-  _i6.Future<_i7.Result<List<_i16.SpecializationEntity>>>
+  _i7.Future<_i8.Result<List<_i17.SpecializationEntity>>>
   getSpecializations() =>
       (super.noSuchMethod(
             Invocation.method(#getSpecializations, []),
             returnValue:
-                _i6.Future<_i7.Result<List<_i16.SpecializationEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i16.SpecializationEntity>>>(
+                _i7.Future<_i8.Result<List<_i17.SpecializationEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i17.SpecializationEntity>>>(
                     this,
                     Invocation.method(#getSpecializations, []),
                   ),
                 ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<List<_i16.SpecializationEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i16.SpecializationEntity>>>(
+                _i7.Future<_i8.Result<List<_i17.SpecializationEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i17.SpecializationEntity>>>(
                     this,
                     Invocation.method(#getSpecializations, []),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<List<_i16.SpecializationEntity>>>);
+          as _i7.Future<_i8.Result<List<_i17.SpecializationEntity>>>);
 
   @override
-  _i6.Future<_i7.Result<_i17.UserProfileEntity>> getUserProfile(
+  _i7.Future<_i8.Result<_i18.UserProfileEntity>> getUserProfile(
     String? authId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getUserProfile, [authId]),
-            returnValue: _i6.Future<_i7.Result<_i17.UserProfileEntity>>.value(
-              _i9.dummyValue<_i7.Result<_i17.UserProfileEntity>>(
+            returnValue: _i7.Future<_i8.Result<_i18.UserProfileEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i18.UserProfileEntity>>(
                 this,
                 Invocation.method(#getUserProfile, [authId]),
               ),
             ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<_i17.UserProfileEntity>>.value(
-                  _i9.dummyValue<_i7.Result<_i17.UserProfileEntity>>(
+                _i7.Future<_i8.Result<_i18.UserProfileEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i18.UserProfileEntity>>(
                     this,
                     Invocation.method(#getUserProfile, [authId]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<_i17.UserProfileEntity>>);
+          as _i7.Future<_i8.Result<_i18.UserProfileEntity>>);
 }
 
 /// A class which mocks [HomeRemoteDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHomeRemoteDataSource extends _i1.Mock
-    implements _i18.HomeRemoteDataSource {
+    implements _i19.HomeRemoteDataSource {
   @override
-  _i6.Future<List<_i19.BannerModel>> fetchBanners() =>
+  _i7.Future<List<_i20.BannerModel>> fetchBanners() =>
       (super.noSuchMethod(
             Invocation.method(#fetchBanners, []),
-            returnValue: _i6.Future<List<_i19.BannerModel>>.value(
-              <_i19.BannerModel>[],
+            returnValue: _i7.Future<List<_i20.BannerModel>>.value(
+              <_i20.BannerModel>[],
             ),
-            returnValueForMissingStub: _i6.Future<List<_i19.BannerModel>>.value(
-              <_i19.BannerModel>[],
+            returnValueForMissingStub: _i7.Future<List<_i20.BannerModel>>.value(
+              <_i20.BannerModel>[],
             ),
           )
-          as _i6.Future<List<_i19.BannerModel>>);
+          as _i7.Future<List<_i20.BannerModel>>);
 
   @override
-  _i6.Future<_i20.UpcomingAppointmentModel?> fetchUpcoming(String? profileId) =>
+  _i7.Future<_i21.UpcomingAppointmentModel?> fetchUpcoming(String? profileId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchUpcoming, [profileId]),
-            returnValue: _i6.Future<_i20.UpcomingAppointmentModel?>.value(),
+            returnValue: _i7.Future<_i21.UpcomingAppointmentModel?>.value(),
             returnValueForMissingStub:
-                _i6.Future<_i20.UpcomingAppointmentModel?>.value(),
+                _i7.Future<_i21.UpcomingAppointmentModel?>.value(),
           )
-          as _i6.Future<_i20.UpcomingAppointmentModel?>);
+          as _i7.Future<_i21.UpcomingAppointmentModel?>);
 
   @override
-  _i6.Future<List<_i21.SpecializationModel>> fetchSpecializations() =>
+  _i7.Future<List<_i22.SpecializationModel>> fetchSpecializations() =>
       (super.noSuchMethod(
             Invocation.method(#fetchSpecializations, []),
-            returnValue: _i6.Future<List<_i21.SpecializationModel>>.value(
-              <_i21.SpecializationModel>[],
+            returnValue: _i7.Future<List<_i22.SpecializationModel>>.value(
+              <_i22.SpecializationModel>[],
             ),
             returnValueForMissingStub:
-                _i6.Future<List<_i21.SpecializationModel>>.value(
-                  <_i21.SpecializationModel>[],
+                _i7.Future<List<_i22.SpecializationModel>>.value(
+                  <_i22.SpecializationModel>[],
                 ),
           )
-          as _i6.Future<List<_i21.SpecializationModel>>);
+          as _i7.Future<List<_i22.SpecializationModel>>);
 
   @override
-  _i6.Future<_i4.UserProfileModel> fetchUserProfile(String? authId) =>
+  _i7.Future<_i4.UserProfileModel> fetchUserProfile(String? authId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchUserProfile, [authId]),
-            returnValue: _i6.Future<_i4.UserProfileModel>.value(
+            returnValue: _i7.Future<_i4.UserProfileModel>.value(
               _FakeUserProfileModel_2(
                 this,
                 Invocation.method(#fetchUserProfile, [authId]),
               ),
             ),
-            returnValueForMissingStub: _i6.Future<_i4.UserProfileModel>.value(
+            returnValueForMissingStub: _i7.Future<_i4.UserProfileModel>.value(
               _FakeUserProfileModel_2(
                 this,
                 Invocation.method(#fetchUserProfile, [authId]),
               ),
             ),
           )
-          as _i6.Future<_i4.UserProfileModel>);
+          as _i7.Future<_i4.UserProfileModel>);
 }
 
 /// A class which mocks [HomeLocalDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHomeLocalDataSource extends _i1.Mock
-    implements _i22.HomeLocalDataSource {
+    implements _i23.HomeLocalDataSource {
   @override
-  _i6.Future<void> cacheBanners(List<_i19.BannerModel>? banners) =>
+  _i7.Future<void> cacheBanners(List<_i20.BannerModel>? banners) =>
       (super.noSuchMethod(
             Invocation.method(#cacheBanners, [banners]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> cacheSpecializations(
-    List<_i21.SpecializationModel>? specializations,
+  _i7.Future<void> cacheSpecializations(
+    List<_i22.SpecializationModel>? specializations,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#cacheSpecializations, [specializations]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> clearAll() =>
+  _i7.Future<void> clearAll() =>
       (super.noSuchMethod(
             Invocation.method(#clearAll, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
+}
+
+/// A class which mocks [DoctorRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDoctorRepository extends _i1.Mock implements _i24.DoctorRepository {
+  @override
+  _i7.Future<_i8.Result<List<_i25.DoctorEntity>>> getDoctors({
+    String? specializationId,
+    String? query,
+    int? limit = 20,
+    int? offset = 0,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctors, [], {
+              #specializationId: specializationId,
+              #query: query,
+              #limit: limit,
+              #offset: offset,
+            }),
+            returnValue: _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>.value(
+              _i10.dummyValue<_i8.Result<List<_i25.DoctorEntity>>>(
+                this,
+                Invocation.method(#getDoctors, [], {
+                  #specializationId: specializationId,
+                  #query: query,
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i25.DoctorEntity>>>(
+                    this,
+                    Invocation.method(#getDoctors, [], {
+                      #specializationId: specializationId,
+                      #query: query,
+                      #limit: limit,
+                      #offset: offset,
+                    }),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>);
+
+  @override
+  _i7.Future<_i8.Result<_i25.DoctorEntity>> getDoctorDetail(String? doctorId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorDetail, [doctorId]),
+            returnValue: _i7.Future<_i8.Result<_i25.DoctorEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i25.DoctorEntity>>(
+                this,
+                Invocation.method(#getDoctorDetail, [doctorId]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<_i25.DoctorEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i25.DoctorEntity>>(
+                    this,
+                    Invocation.method(#getDoctorDetail, [doctorId]),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<_i25.DoctorEntity>>);
+
+  @override
+  _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>> getDoctorSlots(
+    String? doctorId,
+    DateTime? date,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorSlots, [doctorId, date]),
+            returnValue:
+                _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i26.DoctorSlotEntity>>>(
+                    this,
+                    Invocation.method(#getDoctorSlots, [doctorId, date]),
+                  ),
+                ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i26.DoctorSlotEntity>>>(
+                    this,
+                    Invocation.method(#getDoctorSlots, [doctorId, date]),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>);
+
+  @override
+  _i7.Future<_i8.Result<int>> getAvailableSlotCount({
+    required String? doctorId,
+    int? daysAhead = 7,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAvailableSlotCount, [], {
+              #doctorId: doctorId,
+              #daysAhead: daysAhead,
+            }),
+            returnValue: _i7.Future<_i8.Result<int>>.value(
+              _i10.dummyValue<_i8.Result<int>>(
+                this,
+                Invocation.method(#getAvailableSlotCount, [], {
+                  #doctorId: doctorId,
+                  #daysAhead: daysAhead,
+                }),
+              ),
+            ),
+            returnValueForMissingStub: _i7.Future<_i8.Result<int>>.value(
+              _i10.dummyValue<_i8.Result<int>>(
+                this,
+                Invocation.method(#getAvailableSlotCount, [], {
+                  #doctorId: doctorId,
+                  #daysAhead: daysAhead,
+                }),
+              ),
+            ),
+          )
+          as _i7.Future<_i8.Result<int>>);
+}
+
+/// A class which mocks [DoctorRemoteDataSource].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDoctorRemoteDataSource extends _i1.Mock
+    implements _i27.DoctorRemoteDataSource {
+  @override
+  _i7.Future<List<_i5.DoctorModel>> searchDoctors({
+    String? specializationId,
+    String? query,
+    int? limit = 20,
+    int? offset = 0,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#searchDoctors, [], {
+              #specializationId: specializationId,
+              #query: query,
+              #limit: limit,
+              #offset: offset,
+            }),
+            returnValue: _i7.Future<List<_i5.DoctorModel>>.value(
+              <_i5.DoctorModel>[],
+            ),
+            returnValueForMissingStub: _i7.Future<List<_i5.DoctorModel>>.value(
+              <_i5.DoctorModel>[],
+            ),
+          )
+          as _i7.Future<List<_i5.DoctorModel>>);
+
+  @override
+  _i7.Future<_i5.DoctorModel> getDoctorDetail(String? doctorId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorDetail, [doctorId]),
+            returnValue: _i7.Future<_i5.DoctorModel>.value(
+              _FakeDoctorModel_3(
+                this,
+                Invocation.method(#getDoctorDetail, [doctorId]),
+              ),
+            ),
+            returnValueForMissingStub: _i7.Future<_i5.DoctorModel>.value(
+              _FakeDoctorModel_3(
+                this,
+                Invocation.method(#getDoctorDetail, [doctorId]),
+              ),
+            ),
+          )
+          as _i7.Future<_i5.DoctorModel>);
+
+  @override
+  _i7.Future<List<_i28.DoctorSlotModel>> getDoctorSlots(
+    String? doctorId,
+    DateTime? date,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorSlots, [doctorId, date]),
+            returnValue: _i7.Future<List<_i28.DoctorSlotModel>>.value(
+              <_i28.DoctorSlotModel>[],
+            ),
+            returnValueForMissingStub:
+                _i7.Future<List<_i28.DoctorSlotModel>>.value(
+                  <_i28.DoctorSlotModel>[],
+                ),
+          )
+          as _i7.Future<List<_i28.DoctorSlotModel>>);
+
+  @override
+  _i7.Future<int> getAvailableSlotCount({
+    required String? doctorId,
+    int? daysAhead = 7,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAvailableSlotCount, [], {
+              #doctorId: doctorId,
+              #daysAhead: daysAhead,
+            }),
+            returnValue: _i7.Future<int>.value(0),
+            returnValueForMissingStub: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
+}
+
+/// A class which mocks [GetDoctorsUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetDoctorsUseCase extends _i1.Mock implements _i29.GetDoctorsUseCase {
+  @override
+  _i7.Future<_i8.Result<List<_i25.DoctorEntity>>> call({
+    String? specializationId,
+    String? query,
+    int? limit = 20,
+    int? offset = 0,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [], {
+              #specializationId: specializationId,
+              #query: query,
+              #limit: limit,
+              #offset: offset,
+            }),
+            returnValue: _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>.value(
+              _i10.dummyValue<_i8.Result<List<_i25.DoctorEntity>>>(
+                this,
+                Invocation.method(#call, [], {
+                  #specializationId: specializationId,
+                  #query: query,
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i25.DoctorEntity>>>(
+                    this,
+                    Invocation.method(#call, [], {
+                      #specializationId: specializationId,
+                      #query: query,
+                      #limit: limit,
+                      #offset: offset,
+                    }),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<List<_i25.DoctorEntity>>>);
+}
+
+/// A class which mocks [GetDoctorDetailUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetDoctorDetailUseCase extends _i1.Mock
+    implements _i30.GetDoctorDetailUseCase {
+  @override
+  _i7.Future<_i8.Result<_i25.DoctorEntity>> call(String? doctorId) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [doctorId]),
+            returnValue: _i7.Future<_i8.Result<_i25.DoctorEntity>>.value(
+              _i10.dummyValue<_i8.Result<_i25.DoctorEntity>>(
+                this,
+                Invocation.method(#call, [doctorId]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<_i25.DoctorEntity>>.value(
+                  _i10.dummyValue<_i8.Result<_i25.DoctorEntity>>(
+                    this,
+                    Invocation.method(#call, [doctorId]),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<_i25.DoctorEntity>>);
+}
+
+/// A class which mocks [GetDoctorSlotsUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetDoctorSlotsUseCase extends _i1.Mock
+    implements _i31.GetDoctorSlotsUseCase {
+  @override
+  _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>> call(
+    String? doctorId,
+    DateTime? date,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [doctorId, date]),
+            returnValue:
+                _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i26.DoctorSlotEntity>>>(
+                    this,
+                    Invocation.method(#call, [doctorId, date]),
+                  ),
+                ),
+            returnValueForMissingStub:
+                _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>.value(
+                  _i10.dummyValue<_i8.Result<List<_i26.DoctorSlotEntity>>>(
+                    this,
+                    Invocation.method(#call, [doctorId, date]),
+                  ),
+                ),
+          )
+          as _i7.Future<_i8.Result<List<_i26.DoctorSlotEntity>>>);
+
+  @override
+  _i7.Future<_i8.Result<int>> callAvailableCount(
+    String? doctorId, {
+    int? daysAhead = 7,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #callAvailableCount,
+              [doctorId],
+              {#daysAhead: daysAhead},
+            ),
+            returnValue: _i7.Future<_i8.Result<int>>.value(
+              _i10.dummyValue<_i8.Result<int>>(
+                this,
+                Invocation.method(
+                  #callAvailableCount,
+                  [doctorId],
+                  {#daysAhead: daysAhead},
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i7.Future<_i8.Result<int>>.value(
+              _i10.dummyValue<_i8.Result<int>>(
+                this,
+                Invocation.method(
+                  #callAvailableCount,
+                  [doctorId],
+                  {#daysAhead: daysAhead},
+                ),
+              ),
+            ),
+          )
+          as _i7.Future<_i8.Result<int>>);
 }

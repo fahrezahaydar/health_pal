@@ -40,6 +40,22 @@ import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.
     as _i685;
 import 'package:health_pal/features/auth/presentation/bloc/sign_up/sign_up_bloc.dart'
     as _i245;
+import 'package:health_pal/features/doctor/data/datasource/doctor_remote_datasource.dart'
+    as _i158;
+import 'package:health_pal/features/doctor/data/repository/doctor_repository_impl.dart'
+    as _i112;
+import 'package:health_pal/features/doctor/domain/repository/doctor_repository.dart'
+    as _i506;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_detail_usecase.dart'
+    as _i430;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_slots_usecase.dart'
+    as _i151;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctors_usecase.dart'
+    as _i146;
+import 'package:health_pal/features/doctor/presentation/bloc/doctor_detail/doctor_detail_cubit.dart'
+    as _i469;
+import 'package:health_pal/features/doctor/presentation/bloc/search/search_cubit.dart'
+    as _i401;
 import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart'
     as _i444;
 import 'package:health_pal/features/home/data/datasource/home_remote_datasource.dart'
@@ -89,6 +105,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i829.AuthRemoteDataSource>(
       () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i158.DoctorRemoteDataSource>(
+      () => _i158.DoctorRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i556.HomeRemoteDataSource>(
       () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
@@ -111,6 +130,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.factory<_i506.DoctorRepository>(
+      () => _i112.DoctorRepositoryImpl(gh<_i158.DoctorRemoteDataSource>()),
+    );
     gh.lazySingleton<_i605.AppServices>(
       () => _i605.AppServices(
         gh<_i167.SharedPrefService>(),
@@ -123,11 +145,29 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
     );
+    gh.factory<_i430.GetDoctorDetailUseCase>(
+      () => _i430.GetDoctorDetailUseCase(gh<_i506.DoctorRepository>()),
+    );
+    gh.factory<_i151.GetDoctorSlotsUseCase>(
+      () => _i151.GetDoctorSlotsUseCase(gh<_i506.DoctorRepository>()),
+    );
+    gh.factory<_i146.GetDoctorsUseCase>(
+      () => _i146.GetDoctorsUseCase(gh<_i506.DoctorRepository>()),
+    );
+    gh.factory<_i469.DoctorDetailCubit>(
+      () => _i469.DoctorDetailCubit(
+        gh<_i430.GetDoctorDetailUseCase>(),
+        gh<_i151.GetDoctorSlotsUseCase>(),
+      ),
+    );
     gh.factory<_i196.HomeRepository>(
       () => _i716.HomeRepositoryImpl(
         gh<_i556.HomeRemoteDataSource>(),
         gh<_i444.HomeLocalDataSource>(),
       ),
+    );
+    gh.factory<_i401.SearchCubit>(
+      () => _i401.SearchCubit(gh<_i146.GetDoctorsUseCase>()),
     );
     gh.factory<_i961.CreateProfileUseCase>(
       () => _i961.CreateProfileUseCase(gh<_i613.AuthRepository>()),

@@ -28,6 +28,7 @@ lib/
 ├── features/
 │   ├── auth/       # SignIn, SignUp, ForgotPassword, CreateProfile
 │   ├── home/       # Home dashboard
+│   ├── doctor/     # Doctor search + detail (Sprint 1)
 │   └── onboarding/ # Onboarding carousel
 ├── widgets/        # Shared reusable widgets
 └── main.dart       # Entrypoint (dotenv → DI → AppServices → runApp)
@@ -40,3 +41,9 @@ lib/
 - **Bloc/Cubit** for state management
 - **injectable + get_it** for DI
 - `.env` file required with `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+
+## Sprint 1 — Testing Policy
+- **TIDAK BOLEH membuat file test apapun** selama implementasi feature.
+- Fokus implementasi: Data Layer → Domain Layer → Presentation Layer → DI → `flutter analyze`.
+- Testing (unit, widget, bloc, integration) dikerjakan **fase terpisah** setelah SEMUA feature Sprint 1 selesai.
+- Test infrastructure (test/helpers, test/flutter_test_config.dart, mocks.mocks.dart) yang sudah ada di-skip dulu — tidak dipakai sampai fase testing dimulai.
