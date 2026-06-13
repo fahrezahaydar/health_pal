@@ -192,6 +192,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i990.GetAppointmentHistoryUseCase>(
       () => _i990.GetAppointmentHistoryUseCase(gh<_i163.BookingRepository>()),
     );
+    gh.factory<_i856.BookingBloc>(
+      () => _i856.BookingBloc(
+        gh<_i151.GetDoctorSlotsUseCase>(),
+        gh<_i149.CreateAppointmentUseCase>(),
+      ),
+    );
     gh.factory<_i469.DoctorDetailCubit>(
       () => _i469.DoctorDetailCubit(
         gh<_i430.GetDoctorDetailUseCase>(),
@@ -230,12 +236,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i730.CreateProfileCubit>(
       () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
-    );
-    gh.factory<_i856.BookingBloc>(
-      () => _i856.BookingBloc(
-        gh<InvalidType>(),
-        gh<_i149.CreateAppointmentUseCase>(),
-      ),
     );
     gh.factory<_i1000.ForgotPasswordCubit>(
       () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
