@@ -60,7 +60,7 @@ Halaman utama untuk membantu pengguna:
 │ └────────────┘  └────────────┘      │
 │                                     │
 │──────── Bottom Navigation ──────────│
-│ Home | Explore | Booking | Profile │
+│ Home | Loc | Booking | Profile │
 └─────────────────────────────────────┘
 ```
 

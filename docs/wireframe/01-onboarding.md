@@ -117,3 +117,20 @@
 | **Page Indicator** | Tap dot | `PageController.animateToPage(index)` |
 
 **Cubit/Notifier:** `OnboardingNotifier` (ChangeNotifier) — menyimpan `currentIndex`, punya `nextPage()`, `skip()`.
+
+---
+
+## Catatan Format
+
+Wireframe ini sudah lengkap dengan format standar 21 wireframe health_pal:
+- ✅ ASCII Layout (3 slide detail)
+- ✅ Component Breakdown (7 komponen)
+- ✅ State & Interaction Specs (5 interaksi)
+- ✅ Cubit/Notifier reference
+
+## Changelog
+
+| Versi | Tanggal | Perubahan |
+|---|---|---|
+| v1.0 | Juni 2026 | Initial — 3 slide carousel dengan PageView |
+| v1.0.1 | 13 Jun 2026 | **SS#8 Verified:** Format lengkap, no changes needed. Audit showstopper entry: "Wireframe 01-onboarding.md sudah detail 3 slide layout, tidak perlu dibuat ulang" |

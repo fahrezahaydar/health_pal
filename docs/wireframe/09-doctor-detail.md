@@ -36,14 +36,17 @@
 │  │  💰 Biaya: Rp150,000        │   │
 │  └──────────────────────────────┘   │
 │                                     │
-│  ┌─ Pilih Jadwal ───────────────┐   │
-│  │  📅 [Mo] [Tu] [We] [Th] [Fr]│   │
-│  │  [Sa] [Su]                   │   │
+│  ┌─ Ketersediaan Jadwal ────────┐   │
+│  │  📅 Tersedia 8 slot untuk    │   │
+│  │     7 hari ke depan           │   │
 │  │  ─────────────────────────   │   │
 │  │  🕐 [09:00] [09:30] [10:00] │   │
 │  │     [10:30] [11:00]         │   │
 │  │     (hijau=tersedia,         │   │
 │  │      abu=terbooking)        │   │
+│  │                              │   │
+│  │  ℹ️  Pilih tanggal & slot    │   │
+│  │     di halaman Booking       │   │
 │  └──────────────────────────────┘   │
 │                                     │
 │  ┌─ Ulasan Pasien ──────────────┐   │
@@ -64,13 +67,16 @@
 
 ### No Slot Available
 ```
-│  ┌─ Pilih Jadwal ───────────────┐   │
-│  │  📅 [Mo] [Tu] [We] [Th] [Fr]│   │
-│  │  [Sa] [Su]                   │   │
+│  ┌─ Ketersediaan Jadwal ────────┐   │
+│  │  📅 Belum ada slot untuk     │   │
+│  │     7 hari ke depan           │   │
 │  │  ─────────────────────────   │   │
 │  │     "Tidak ada jadwal        │   │
-│  │      tersedia untuk          │   │
-│  │      tanggal ini"            │   │
+│  │      tersedia saat ini.       │   │
+│  │      Coba lagi besok."       │   │
+│  │                              │   │
+│  │  ℹ️  Dokter mungkin belum    │   │
+│  │     membuka jadwal praktik.  │   │
 │  └──────────────────────────────┘   │
 ```
 
@@ -93,8 +99,8 @@
 | Clinic Info | `Column` with mini map | `clinics` (JOIN) |
 | Map Link | `GestureDetector` → "Lihat Peta" | Buka Google Maps external |
 | Fee | `Text` | `doctors.consultation_fee` |
-| Date Picker | Horizontal `ListView` | 7 hari ke depan |
-| Slot List | `Wrap` of chips | `GET /rest/v1/doctor_slots` |
+| Availability Text | `Container` with icon | `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&limit=1&is_booked=eq.false` → count 7 hari ke depan |
+| Slot List | `Wrap` of chips (sample 5 slot pertama) | `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&limit=5&order=slot_date.asc,slot_start.asc` |
 | Available Slot | `Container` hijau | `is_booked = false` |
 | Booked Slot | `Container` abu | `is_booked = true` |
 | Reviews | `Column` of review cards | `GET /rest/v1/reviews` (v1.1) |
@@ -109,17 +115,22 @@
 |---|---|---|
 | **Tap back** | Tap | `context.pop()` |
 | **Tap ❤️ favorite** | Tap | Toggle filled/outline → API favorite |
-| **Tap tanggal** | Tap date chip | `GET /rest/v1/doctor_slots?doctor_id&slot_date=` → refresh slot list |
-| **Tap slot tersedia** | Tap green chip | Slot terpilih (highlight) |
-| **Tap "Book Appointment"** | Tap | Navigasi ke `/booking/:doctorId` dengan argumen doctor dan slot |
+| **Tap slot (sample 5 pertama)** | Tap green chip | Highlight slot (lokal, hanya untuk visual reference) |
+| **Tap "Book Appointment"** | Tap | Navigasi ke `/booking/:doctorId` dengan extra: `{doctor, suggestedSlotId?}` |
 | **Tap "Lihat Peta"** | Tap | Buka Google Maps URL `https://maps.google.com/?q=lat,lng` |
 | **Tap "Lihat semua ulasan"** | Tap | Expand / halaman ulasan (v1.1) |
 | **Slot loading** | API call | Tampilkan shimmer pada slot area |
 | **Slot error** | API error | Snackbar: "Gagal memuat jadwal" |
 
-**BLoC:** `DoctorDetailCubit` — states: `loading`, `loaded(doctor, slots, selectedDate, reviews)`, `error`.
+**BLoC:** `DoctorDetailCubit` — states: `loading`, `loaded(doctor, slotCount7Days, sampleSlots, reviews)`, `error`.
 
-**Date Selection Logic:**
-- Default: hari ini (jika masih ada slot)
-- Jika hari ini tidak ada slot → auto-select hari pertama yang punya slot
-- Jika tidak ada slot sama sekali dalam 7 hari → tampilkan empty state
+**Catatan Perubahan v1.0.1 (SS#10):**
+- **Hapus:** Komponen pemilihan hari horizontal (day chips). Alasan: duplikasi dengan halaman Book Appointment, dan untuk user info cepat cukup text "Tersedia X slot untuk 7 hari ke depan"
+- **Slot List:** Hanya tampilkan 5 sample slot pertama sebagai preview. Pemilihan tanggal & slot penuh dilakukan di halaman Book Appointment
+- **Navigasi:** Tombol "Book Appointment" kirim `extra: {doctor, suggestedSlotId?}` ke `/booking/:doctorId` (tanpa `selectedDate` lagi)
+- **API:** `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&is_booked=eq.false&limit=5&order=slot_date.asc,slot_start.asc`
+
+**Availability Text Logic:**
+- Hitung total slot `is_booked=false` dalam 7 hari ke depan dari `doctor_slots`
+- Tampilkan: "📅 Tersedia X slot untuk 7 hari ke depan" (X = count, 0 = "Belum ada slot")
+- Update real-time saat user pull-to-refresh

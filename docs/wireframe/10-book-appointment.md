@@ -100,7 +100,7 @@
 
 | Elemen | Interaksi | Efek |
 |---|---|---|
-| **Pilih tanggal** | Tap date | Refresh slot list untuk tanggal tersebut |
+| **Pilih tanggal** | Tap date picker | Tampilkan date picker dialog → selected date di-set → refresh slot list untuk tanggal tersebut |
 | **Pilih slot** | Tap chip hijau | `_selectedSlotId` terisi, chip terhighlight |
 | **Isi keluhan** | Mengetik | Char counter update; >300 → error "Maks 300 karakter" |
 | **Tap "Konfirmasi Booking"** | — | Bottom sheet muncul jika slot terpilih |
@@ -116,4 +116,42 @@
 **Validation Rules:**
 - Slot wajib dipilih → button disable jika null
 - Keluhan opsional, max 300 karakter
-- Tanggal default dari Doctor Detail page
+- Tanggal **WAJIB** dipilih manual (tidak ada default dari Doctor Detail — see Catatan v1.0.1)
+
+---
+
+## Catatan Perubahan v1.0.1 (SS#10)
+
+**Perubahan Kontrak Navigasi (Doctor Detail → Book Appointment):**
+
+Pada versi sebelumnya, halaman Book Appointment menerima `extra: {selectedDate}` dari Doctor Detail dan auto-set tanggal. Mulai v1.0.1, **kontrak ini berubah**:
+- Doctor Detail (SS#10) sudah **TIDAK LAGI** punya date picker, jadi tidak ada `selectedDate` yang dikirim
+- Book Appointment menjadi halaman **single source of truth** untuk pemilihan tanggal
+- Navigasi: `context.push('/booking/:doctorId', extra: {doctor, suggestedSlotId?})`
+  - `doctor` — object doctor lengkap (untuk Doctor Summary card)
+  - `suggestedSlotId` — **opsional**, slot yang di-tap di Doctor Detail (untuk pre-select)
+  - **TIDAK ADA** `selectedDate` lagi
+
+**Alasan perubahan:**
+1. Menghindari duplikasi date picker (antara Doctor Detail dan Book Appointment)
+2. Mempercepat load Doctor Detail (tidak perlu fetch 7 hari slot sekaligus)
+3. Memisahkan concerns: Doctor Detail fokus info dokter, Book Appointment fokus input booking
+
+**Inisialisasi state saat halaman dibuka:**
+```dart
+// BookingCubit constructor
+BookingCubit({required this.doctor, String? suggestedSlotId})
+  : super(BookingState.initial()) {
+  // Default: hari ini (jika available) atau null
+  selectedDate = _findFirstAvailableDate(doctor.id);
+  
+  // Pre-select slot jika user tap di Doctor Detail
+  if (suggestedSlotId != null) {
+    selectedSlotId = suggestedSlotId;
+  }
+}
+```
+
+**API Call Pattern:**
+- `GET /rest/v1/doctor_slots?doctor_id=eq.<id>&slot_date=eq.<selectedDate>&is_booked=eq.false&order=slot_start.asc` → slot list untuk tanggal yang dipilih
+- Saat user pilih tanggal lain → refetch dengan `slot_date` baru
