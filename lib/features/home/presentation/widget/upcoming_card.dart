@@ -39,9 +39,9 @@ class _AppointmentCard extends StatelessWidget {
   final UpcomingAppointmentEntity appointment;
 
   BookingStatus get _status => BookingStatus.values.firstWhere(
-        (e) => e.name == appointment.status,
-        orElse: () => BookingStatus.pending,
-      );
+    (e) => e.name == appointment.status,
+    orElse: () => BookingStatus.pending,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +65,7 @@ class _AppointmentCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    appointment.doctorName,
-                    style: AppTextTheme.titleLarge,
-                  ),
+                  Text(appointment.doctorName, style: AppTextTheme.titleLarge),
                   const SizedBox(height: 2),
                   Text(
                     appointment.specializationName,
@@ -109,11 +106,8 @@ class _AppointmentCard extends StatelessWidget {
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Iconsax.user,
-                  color: AppTheme.grey400,
-                  size: 28,
-                ),
+                errorBuilder: (_, _, _) =>
+                    const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
               )
             : const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
       ),

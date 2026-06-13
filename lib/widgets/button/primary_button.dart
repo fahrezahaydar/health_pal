@@ -100,7 +100,7 @@ class _LightFilledButtonState extends State<LightFilledButton> {
               : null,
         ),
         child: Row(
-          mainAxisSize: .min,
+          mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
             ?icon,

@@ -35,7 +35,7 @@
 
 | # | Item BRD | Kondisi di PRD | Dampak |
 |---|---|---|---|
-| 1 | **Goal: Booking < 3 tap** | Alur aktual = 4–5 tap (Home → Search → Doctor Detail → Book → BSheet) | KPI utama BRD sulit tercapai |
+| 1 | **Goal: Booking < 3-tap** (lama) | Alur aktual = 4–5 tap (Home → Search → Doctor Detail → Book → BSheet) | KPI utama BRD sulit tercapai |
 | 2 | **P2 Should Have: Payment Gateway** (Midtrans/GoPay) | PRD §10: "Pembayaran **dummy/simulasi**" | Backward step, tidak memenuhi BRD |
 | 3 | **P2 Should Have: Rekam Medis Ringkas** | PRD Out-of-Scope (riwayat appointment saja) | Cakupan lebih sempit dari BRD |
 | 4 | **Target User: Dokter + Admin Klinik** | PRD fokus 100% pasien; tidak ada portal dokter/admin | 2 dari 3 persona terabaikan |
@@ -111,7 +111,7 @@
 |---|---|---|---|---|
 | H1 | Selesaikan inkonsistensi API endpoint antara wireframe Home dan API Contract | Flutter Readiness | `06-home.md`, `api_contract_health_pal.md` | Tambah endpoint `GET /rest/v1/appointments?status=in.(pending,upcoming)&limit=1&order=slot_date.asc` untuk Upcoming Card. Tambah `POST /functions/v1/nearby-facilities` atau ganti ke `get_nearby_clinics` RPC. |
 | H2 | Fix duplikat Section 7 di API Contract | Dokumentasi | `api_contract_health_pal.md` baris 1536+ | Hapus duplikat; konsolidasi "Facility" → "Clinic" (sesuai ERD) |
-| H3 | Selaraskan "Booking < 3 tap" BRD dengan flow aktual | Bisnis | `brd_health_pal.md` §2, `prd_health_pal.md` §7 | Revisi klaim: ganti jadi "< 5 tap" atau redesign Home dengan Quick Book dari Favorites. Update KPI. |
+| H3 | Selaraskan "Booking < 3-tap" BRD (lama) dengan flow aktual | Bisnis | `brd_health_pal.md` §2, `prd_health_pal.md` §7 | Revisi klaim: ganti jadi "< 5 tap" atau redesign Home dengan Quick Book dari Favorites. Update KPI. |
 | H4 | Tambah wireframe untuk halaman yang hilang: Onboarding 3 slide detail, Edit Profile, Notification Settings, Settings, Help, T&C, Booking Success | UX/Wireframe | `docs/wireframe/` | Minimal 1 wireframe per halaman. Format konsisten dengan wireframe 06–17. |
 | H5 | Konsolidasi Date Picker (hanya di Book Appointment, Doctor Detail cukup info teks) | UX/Wireframe | `09-doctor-detail.md`, `10-book-appointment.md` | Hapus date picker dari Detail; tampilkan "Tersedia: 5 slot" per tanggal. Pilih tanggal hanya di halaman Book. |
 | H6 | Fix inkonsistensi Bottom Nav antara PRD/User Flow dan Wireframe 06 | UX/Wireframe | `06-home.md` | Ganti `Explore` → `Loc` agar match dengan PRD dan route. |
@@ -178,7 +178,7 @@ Setelah 6 poin High di-address, estimasi skor akan naik ke **86–88/100** dan p
 | # | ID | Tindakan | Owner (Rekomendasi) | Target |
 |---|---|---|---|---|
 | 1 | H1, H2 | Fix API Contract duplikat + tambah endpoint Home | Backend Lead | Sebelum Sprint 1 |
-| 2 | H3 | Revisi KPI "Booking < 3 tap" di BRD/PRD | Product Manager | Sebelum Sprint 1 |
+| 2 | H3 | Revisi KPI "Booking < 3-tap" (lama) di BRD/PRD | Product Manager | Sebelum Sprint 1 |
 | 3 | H4 | Lengkapi 7 wireframe yang hilang | UI/UX Designer | Sprint 1 (minggu 1–2) |
 | 4 | H5, H6 | Redesign Doctor Detail & Home bottom nav | UI/UX Designer | Sprint 1 (minggu 1) |
 | 5 | M1, M2 | Update BRD & ERD untuk partner clinic tracking | Product Manager + DB Architect | Sprint 1 (minggu 1) |

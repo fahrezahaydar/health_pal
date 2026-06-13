@@ -29,9 +29,7 @@ class QuickCategories extends StatelessWidget {
                 onTap: () => context.push(RoutePaths.doctorSearch),
                 child: Text(
                   'See All',
-                  style: AppTextTheme.bodySmall.copyWith(
-                    color: AppTheme.blue,
-                  ),
+                  style: AppTextTheme.bodySmall.copyWith(color: AppTheme.blue),
                 ),
               ),
             ],
@@ -84,7 +82,7 @@ class _CategoryItem extends StatelessWidget {
                     specialization.iconUrl!,
                     width: 28,
                     height: 28,
-                    errorBuilder: (_, __, ___) => Icon(
+                    errorBuilder: (_, _, _) => Icon(
                       _getIcon(specialization.name),
                       size: 28,
                       color: AppTheme.blue,

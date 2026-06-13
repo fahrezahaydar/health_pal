@@ -45,7 +45,7 @@ Sistem booking dokter di Indonesia masih sangat terfragmentasi. Pasien harus men
 
 1. Membangun platform mobile terpadu yang menghubungkan pasien dengan dokter lintas klinik dan rumah sakit.
 2. Mereduksi no-show appointment minimal **40%** melalui sistem notifikasi otomatis.
-3. Menyederhanakan proses booking menjadi **kurang dari 3 tap** dari halaman utama.
+3. Menyederhanakan proses booking menjadi **kurang dari 5 tap** dari halaman utama.
 4. Memberikan pengalaman pengguna yang seamless dan cepat, sehingga dapat bersaing dengan pemain eksisting (Alodokter, Halodoc, SehatQ).
 5. Menjadi platform terpercaya untuk data rekam medis ringkas pasien di Indonesia.
 
@@ -84,7 +84,7 @@ Sistem booking dokter di Indonesia masih sangat terfragmentasi. Pasien harus men
 ### 4.2 Booking Appointment
 
 - Kalender slot jadwal real-time yang selalu up-to-date.
-- Proses booking selesai dalam 1–3 tap.
+- Proses booking selesai dalam 1–5 tap.
 - Konfirmasi booking instan via notifikasi push dan SMS.
 
 ### 4.3 Notifikasi & Reminder
@@ -143,7 +143,7 @@ Dengan Flutter, satu codebase dapat menargetkan Android dan iOS secara bersamaan
 Reminder appointment via push notification (FCM) adalah mekanisme paling efektif untuk menurunkan no-show rate. Kapabilitas ini hanya bisa dieksekusi secara optimal di platform mobile.
 
 **5. Keunggulan kompetitif melalui UX**
-Booking selesai dalam kurang dari 3 tap adalah keunggulan kompetitif konkret versus kompetitor yang masih menggunakan flow telepon, form web panjang, atau aplikasi dengan UX yang berat.
+Booking selesai dalam kurang dari 5 tap adalah keunggulan kompetitif konkret versus kompetitor yang masih menggunakan flow telepon, form web panjang, atau aplikasi dengan UX yang berat.
 
 ---
 
@@ -151,7 +151,7 @@ Booking selesai dalam kurang dari 3 tap adalah keunggulan kompetitif konkret ver
 
 | Metrik | Target | Metode Pengukuran |
 |---|---|---|
-| Waktu booking end-to-end | < 3 tap / < 60 detik | In-app analytics (funnel) |
+| Waktu booking end-to-end | < 5 tap / < 60 detik | In-app analytics (funnel) |
 | Penurunan no-show rate | ↓ 40% vs. baseline | Perbandingan data pre/post launch |
 | Rating app store | ≥ 4.5 bintang | Google Play & App Store rating |
 | Load time halaman utama | < 2 detik (4G) | Firebase Performance Monitoring |
@@ -199,6 +199,15 @@ Booking selesai dalam kurang dari 3 tap adalah keunggulan kompetitif konkret ver
 | **Beta Launch** | 2 minggu | Soft launch ke 500 user, feedback loop, hotfix prioritas |
 | **Public Release v1.0** | 1 minggu | Submission Google Play Store & App Store |
 | **Total** | **~20 minggu** | |
+
+---
+
+## Changelog
+
+| Versi | Tanggal | Perubahan |
+|---|---|---|
+| v1.0 | Juni 2026 | Initial draft |
+| v1.0.1 | 13 Jun 2026 | **SS#9 Revisi KPI:** Target "Booking < 5 tap" (dari target lama 3 langkah yang tidak achievable). Update di §2 Tujuan Bisnis #3, §4.2 Booking Appointment, §6 Keunggulan Kompetitif #5, §7 KPI & Success Metrics. Rationale: flow aktual Home → Search → Doctor Detail → Book → Success = minimum 4-5 tap. |
 
 ---
 

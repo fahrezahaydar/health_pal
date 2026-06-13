@@ -55,7 +55,6 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
       case Success<UserEntity>():
         emit(CreateProfileSuccess(result.data));
       case Failure<UserEntity>():
-        print(result.message);
         emit(CreateProfileFailure(result.message));
     }
   }

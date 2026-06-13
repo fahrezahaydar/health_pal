@@ -27,7 +27,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       case Success<UserEntity>():
         emit(SignInSuccess(result.data));
       case Failure<UserEntity>():
-        print(result.message);
         emit(SignInFailure(result.message));
     }
   }

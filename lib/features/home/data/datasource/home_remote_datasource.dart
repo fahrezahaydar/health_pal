@@ -40,7 +40,7 @@ class HomeRemoteDataSource {
         .maybeSingle();
 
     if (result == null) return null;
-    return UpcomingAppointmentModel.fromJson(result as Map<String, dynamic>);
+    return UpcomingAppointmentModel.fromJson(result);
   }
 
   Future<List<SpecializationModel>> fetchSpecializations() async {
@@ -61,6 +61,6 @@ class HomeRemoteDataSource {
         .eq('auth_id', authId)
         .single();
 
-    return UserProfileModel.fromJson(result as Map<String, dynamic>);
+    return UserProfileModel.fromJson(result);
   }
 }

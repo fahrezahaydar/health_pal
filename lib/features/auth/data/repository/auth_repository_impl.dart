@@ -103,7 +103,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final profile = await _remote.createUserProfile({
         ...data,
         'auth_id': session.user.id,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
+        'avatar_url': ?avatarUrl,
       });
       await _local.cacheUser(profile);
       return Result.success(profile.toEntity());

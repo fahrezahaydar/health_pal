@@ -28,7 +28,7 @@ class HomeRepositoryImpl implements HomeRepository {
       if (cached != null) {
         return Result.success(cached.map((m) => m.toEntity()).toList());
       }
-      return Result.failure(ErrorHandler().map(e));
+      return Result.failure(const ErrorHandler().map(e));
     }
   }
 
@@ -39,7 +39,7 @@ class HomeRepositoryImpl implements HomeRepository {
       final remote = await _remote.fetchUpcoming(profileId);
       return Result.success(remote?.toEntity());
     } catch (e) {
-      return Result.failure(ErrorHandler().map(e));
+      return Result.failure(const ErrorHandler().map(e));
     }
   }
 
@@ -54,7 +54,7 @@ class HomeRepositoryImpl implements HomeRepository {
       if (cached != null) {
         return Result.success(cached.map((m) => m.toEntity()).toList());
       }
-      return Result.failure(ErrorHandler().map(e));
+      return Result.failure(const ErrorHandler().map(e));
     }
   }
 
@@ -64,7 +64,7 @@ class HomeRepositoryImpl implements HomeRepository {
       final remote = await _remote.fetchUserProfile(authId);
       return Result.success(remote.toEntity());
     } catch (e) {
-      return Result.failure(ErrorHandler().map(e));
+      return Result.failure(const ErrorHandler().map(e));
     }
   }
 }

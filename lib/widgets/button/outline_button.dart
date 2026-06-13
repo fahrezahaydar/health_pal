@@ -72,7 +72,7 @@ class _LightOutlineButtonState extends State<LightOutlineButton> {
           ),
         ),
         child: Row(
-          mainAxisSize: .min,
+          mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
             if (widget.icon != null) ...[widget.icon!],

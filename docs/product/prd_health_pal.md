@@ -422,7 +422,7 @@ Fitur berikut **tidak** masuk dalam MVP v1.0 dan dijadwalkan untuk rilis berikut
 | **Search Dokter** | Hasil pencarian muncul dalam < 2 detik; hasil relevan dengan kata kunci nama / spesialisasi |
 | **Loc Tab** | Peta menampilkan pin dokter terdekat; list dokter terfilter berdasarkan radius lokasi user |
 | **Detail Dokter** | Slot tersedia dan tidak tersedia dibedakan secara visual; slot yang sudah dibooking tidak bisa dipilih |
-| **Booking** | Appointment berhasil tersimpan di Supabase dengan status Pending; notifikasi push terkirim dalam 30 detik |
+| **Booking** | Appointment berhasil tersimpan di Supabase dengan status Pending; notifikasi push terkirim dalam 30 detik; **end-to-end flow selesai dalam < 5 tap** (Home → Search → Doctor Detail → Book → Success, v1.0.1) |
 | **Booking History** | Filter status bekerja; card appointment menampilkan info yang benar sesuai data Supabase |
 | **Batalkan Appointment** | Tombol batalkan hanya muncul untuk status Pending / Upcoming; status berubah ke Cancelled setelah konfirmasi |
 | **Reminder Notifikasi** | Notifikasi H-1 dan H-0 terkirim pada waktu yang tepat via FCM |
@@ -431,3 +431,10 @@ Fitur berikut **tidak** masuk dalam MVP v1.0 dan dijadwalkan untuk rilis berikut
 ---
 
 *Dokumen ini adalah living document. Setiap perubahan requirement harus didiskusikan dengan tim dan diupdate di sini sebelum implementasi dimulai.*
+
+## Changelog
+
+| Versi | Tanggal | Perubahan |
+|---|---|---|
+| v1.0 | Juni 2026 | Initial draft |
+| v1.0.1 | 13 Jun 2026 | **SS#9 Revisi KPI:** Tambah acceptance criteria "Booking end-to-end < 5 tap" (sinkron dengan BRD v1.0.1). Rationale: flow Home → Search → Doctor Detail → Book → Success = minimum 4-5 tap; target lama (3 langkah) tidak achievable tanpa redesign major. |

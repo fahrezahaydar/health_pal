@@ -117,7 +117,7 @@ BESOK (Sabtu, 14 Juni 2026) — MORNING
 - Onboarding 3 slide + Auth + Main shell sudah mature
 
 **Kelemahan:**
-- KPI "Booking < 3 tap" tidak realistis vs alur aktual (4-5 tap)
+- KPI "Booking < 3-tap" (lama) tidak realistis vs alur aktual (4-5 tap)
 - Payment gateway dummy di PRD vs Should Have di BRD
 - Beberapa inkonsistensi minor antara dokumen
 
@@ -271,7 +271,7 @@ BESOK (Sabtu, 14 Juni 2026) — MORNING
 | **Tindakan** | Buat 7 wireframe dengan format konsisten:<br>1. `01-onboarding.md` — detail 3 slide layout (saat ini hanya title)<br>2. `11-booking-success.md` — success page (sudah ada, verify)<br>3. `15-profile-edit.md` (sudah ada, verify)<br>4. `17-notification-settings.md` (sudah ada, verify)<br>5. `18-settings.md` — belum ada<br>6. `19-help-support.md` (sudah ada, verify)<br>7. `20-tnc.md` (sudah ada, verify) |
 | **Verifikasi** | Semua wireframe punya ASCII layout + component breakdown + state interaction |
 
-### 🔴 SHOWSTOPPER #9: KPI "Booking < 3 tap" BRD vs Realita Flow
+### 🔴 SHOWSTOPPER #9: KPI "Booking < 3-tap" (lama) BRD vs Realita Flow
 
 | Aspek | Detail |
 |---|---|
@@ -355,7 +355,7 @@ Keputusan: 🟡 SIAP DENGAN CATATAN.
 🔴 #6  Nested key singular vs plural    → Backend Lead (30m)
 🔴 #7  @JsonKey examples di TDD 05     → Tech Lead (1.5h)
 🔴 #8  7 wireframe hilang               → UI/UX (4-6h, paralel)
-🔴 #9  KPI "Booking < 3 tap"            → PM (20m)
+🔴 #9  KPI "Booking < 3-tap" (lama)     → PM (20m)
 🔴 #10 Date picker duplikat             → UI/UX + Tech (30m)
 
 Total: 8-10 jam paralel (2 tim: Backend/Docs & Design)

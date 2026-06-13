@@ -162,7 +162,6 @@ class ForgetPassword extends StatelessWidget {
                 final form = AppForm.of(context);
                 if (form.validate()) {
                   final email = form.values['Email']!;
-                  print('Email : $email');
                   AppLoadingDialog.show(context);
                   await context.read<ForgotPasswordCubit>().sendEmail(
                     email,
@@ -173,7 +172,7 @@ class ForgetPassword extends StatelessWidget {
                 } else {
                   Map<String, String>? errors = form.errors;
                   if (errors != null) {
-                    print('Validation Errors: $errors');
+                    // errors handled by AppForm via state
                   }
                 }
               },
@@ -229,7 +228,6 @@ class VerifyCode extends StatelessWidget {
             final form = AppForm.of(context);
             if (form.validate()) {
               final code = form.values['Code']!;
-              print('Code : $code');
               AppLoadingDialog.show(context);
               await context.read<ForgotPasswordCubit>().verifyCode(
                 code,
@@ -240,7 +238,7 @@ class VerifyCode extends StatelessWidget {
             } else {
               Map<String, String>? errors = form.errors;
               if (errors != null) {
-                print('Validation Errors: $errors');
+                // errors handled by AppForm via state
               }
             }
           },
@@ -397,7 +395,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
             } else {
               Map<String, String>? errors = form.errors;
               if (errors != null) {
-                print('Validation Errors: $errors');
+                // errors handled by AppForm via state
               }
             }
           },
