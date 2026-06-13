@@ -1,5 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
+
+import 'route_paths.dart';
 
 import '../../features/auth/presentation/page/create_profile_page.dart';
 import '../../features/auth/presentation/page/forgot_password_page.dart';
@@ -236,4 +239,45 @@ class AppRouter {
     errorBuilder: (context, state) =>
         NotFoundPage(message: 'Halaman ${state.uri.path} tidak ditemukan'),
   );
+}
+
+/// Handle deep link dari push notification tap.
+///
+/// Payload format (parsed dari FcmService.parseNotificationPayload):
+/// - type: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'general'
+/// - appointmentId: string? (optional)
+/// - path: string? (optional override)
+///
+/// Behavior:
+/// - booking_*  + appointmentId → push /booking-history/:appointmentId
+/// - general / default            → push /profile/notifications
+/// - explicit `path` field       → push ke path tsb (jika valid route)
+void handleNotificationNavigation(
+  BuildContext context,
+  Map<String, dynamic> payload,
+) {
+  final type = payload['type'] as String? ?? 'general';
+  final appointmentId = payload['appointmentId'] as String?;
+  final customPath = payload['path'] as String?;
+
+  // Custom path override
+  if (customPath != null && customPath.isNotEmpty) {
+    context.push(customPath);
+    return;
+  }
+
+  switch (type) {
+    case 'booking_confirmed':
+    case 'booking_cancelled':
+    case 'booking_reminder':
+      if (appointmentId != null) {
+        context.push('/booking-history/$appointmentId');
+      } else {
+        context.push(RoutePaths.bookingHistory);
+      }
+      break;
+    case 'general':
+    default:
+      context.push(RoutePaths.notificationSettings);
+  }
 }

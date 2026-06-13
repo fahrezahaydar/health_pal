@@ -1,9 +1,12 @@
 // lib/features/profile/presentation/page/notification_page.dart
 //
-// Halaman daftar notifikasi user. Per API §8.1 — fetch dari
-// `notifications` table, tampilkan dalam list dengan timestamp relative.
+// Halaman Notification Inbox. Per API §8.1.
+// - AppBar: title + unread count badge + "Tandai semua dibaca" action
+// - ListView NotificationCard (unread highlighted dengan paleBlue background)
+// - Pull to refresh
+// - Empty state
 //
-// Pola: Stateless wrapper (BlocProvider) + view (UI).
+// Pola: Stateless wrapper (BlocProvider) + StatefulWidget view.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,11 +14,14 @@ import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/services/fcm_service.dart';
 import '../../domain/entity/notification_entity.dart';
 import '../bloc/notification/notification_cubit.dart';
 import '../bloc/notification/notification_state.dart';
+import '../widget/notification_card.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -24,52 +30,124 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<NotificationCubit>(
       create: (_) {
-        // Sama dengan booking history: pakai auth.currentUser.id
-        // (RLS di Supabase handle mapping ke profile_id).
         final userId = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
         return getIt<NotificationCubit>()..loadNotifications(userId);
       },
-      child: Scaffold(
-        backgroundColor: AppTheme.grey50,
-        appBar: AppBar(
-          backgroundColor: AppTheme.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text('Notifications', style: AppTextTheme.titleLarge),
+      child: const _NotificationView(),
+    );
+  }
+}
+
+class _NotificationView extends StatelessWidget {
+  const _NotificationView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.grey50,
+      appBar: AppBar(
+        backgroundColor: AppTheme.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body: BlocBuilder<NotificationCubit, NotificationListState>(
+        title: BlocBuilder<NotificationCubit, NotificationListState>(
           builder: (context, state) {
-            return switch (state) {
-              NotificationInitial() || NotificationLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              NotificationLoaded(:final notifications)
-                  when notifications.isEmpty =>
-                _emptyState(),
-              NotificationLoaded(:final notifications) => _list(notifications),
-              NotificationError(:final message) => _errorState(
-                context,
-                message,
-              ),
-            };
+            final unread = state is NotificationLoaded ? state.unreadCount : 0;
+            return Row(
+              children: [
+                const Text('Notifikasi'),
+                if (unread > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '$unread',
+                      style: AppTextTheme.labelSmall.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            );
           },
         ),
+        actions: [
+          BlocBuilder<NotificationCubit, NotificationListState>(
+            builder: (context, state) {
+              if (state is! NotificationLoaded || state.unreadCount == 0) {
+                return const SizedBox.shrink();
+              }
+              return TextButton(
+                onPressed: () =>
+                    context.read<NotificationCubit>().markAllAsRead(),
+                child: const Text('Tandai semua'),
+              );
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<NotificationCubit, NotificationListState>(
+        builder: (context, state) {
+          return switch (state) {
+            NotificationInitial() ||
+            NotificationLoading() =>
+              const Center(child: CircularProgressIndicator()),
+            NotificationLoaded(:final notifications)
+                when notifications.isEmpty =>
+              _emptyState(),
+            NotificationLoaded(:final notifications) => _list(context, notifications),
+            NotificationError(:final message) => _errorState(context, message),
+          };
+        },
       ),
     );
   }
 
-  Widget _list(List<NotificationEntity> notifications) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: notifications.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final n = notifications[index];
-        return _NotificationCard(notification: n);
+  Widget _list(BuildContext context, List<NotificationEntity> notifications) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        final userId =
+            getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+        await context.read<NotificationCubit>().loadNotifications(userId);
       },
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: notifications.length,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final n = notifications[index];
+          return NotificationCard(
+            notification: n,
+            onTap: () async {
+              // 1. Mark as read (optimistic)
+              if (!n.isRead) {
+                await context.read<NotificationCubit>().markAsRead(n.id);
+              }
+              // 2. Deep link navigation
+              if (!context.mounted) return;
+              final payload = FcmService.parseNotificationPayload({
+                'type': n.type,
+                'appointment_id': n.appointmentId,
+              });
+              if (payload['appointmentId'] != null ||
+                  payload['type'] != 'general') {
+                handleNotificationNavigation(context, payload);
+              }
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -122,103 +200,6 @@ class NotificationPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _NotificationCard extends StatelessWidget {
-  const _NotificationCard({required this.notification});
-
-  final NotificationEntity notification;
-
-  IconData get _typeIcon => switch (notification.type) {
-    'booking_confirmed' => Iconsax.tickCircle,
-    'reminder_h1' => Iconsax.clock,
-    'booking_cancelled' => Iconsax.closeCircle,
-    _ => Iconsax.notification,
-  };
-
-  Color get _typeColor => switch (notification.type) {
-    'booking_confirmed' => AppTheme.green,
-    'reminder_h1' => AppTheme.primary,
-    'booking_cancelled' => AppTheme.darkRed,
-    _ => AppTheme.grey500,
-  };
-
-  String get _relativeTime {
-    final now = DateTime.now();
-    final diff = now.difference(notification.sentAt);
-    if (diff.inMinutes < 1) return 'Baru saja';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m';
-    if (diff.inHours < 24) return '${diff.inHours}h';
-    if (diff.inDays < 7) return '${diff.inDays}d';
-    return '${(diff.inDays / 7).floor()}w';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: notification.isRead ? AppTheme.white : AppTheme.paleBlue,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Icon ──
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: _typeColor.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(_typeIcon, size: 22, color: _typeColor),
-          ),
-          const SizedBox(width: 12),
-          // ── Content ──
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        notification.title,
-                        style: AppTextTheme.bodyLarge.copyWith(
-                          fontWeight: notification.isRead
-                              ? FontWeight.w500
-                              : FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      _relativeTime,
-                      style: AppTextTheme.labelSmall.copyWith(
-                        color: AppTheme.grey500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  notification.body,
-                  style: AppTextTheme.bodySmall.copyWith(
-                    color: AppTheme.grey700,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
