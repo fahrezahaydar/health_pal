@@ -1,5 +1,5 @@
-// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
 
 // **************************************************************************
 // InjectableConfigGenerator
@@ -83,6 +83,15 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.factory<_i454.SupabaseClient>(() => registerModule.supabaseClient);
+    gh.lazySingleton<_i357.FcmService>(
+      () => _i357.FcmService(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i829.AuthRemoteDataSource>(
+      () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i556.HomeRemoteDataSource>(
+      () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i735.AuthLocalDataSource>(
       () => _i735.AuthLocalDataSource(gh<_i460.SharedPreferences>()),
     );
@@ -95,24 +104,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
     );
-    gh.lazySingleton<_i357.FcmService>(
-      () => _i357.FcmService(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i605.AppServices>(
-      () => _i605.AppServices(
-        gh<_i167.SharedPrefService>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
-    gh.factory<_i829.AuthRemoteDataSource>(
-      () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
-    );
-    gh.factory<_i556.HomeRemoteDataSource>(
-      () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i934.AppRouter>(
-      () => _i934.AppRouter(gh<_i605.AppServices>()),
-    );
     gh.factory<_i613.AuthRepository>(
       () => _i733.AuthRepositoryImpl(
         gh<_i829.AuthRemoteDataSource>(),
@@ -120,8 +111,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.lazySingleton<_i605.AppServices>(
+      () => _i605.AppServices(
+        gh<_i167.SharedPrefService>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
     gh.factory<_i913.OnboardingNotifier>(
       () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
+    );
+    gh.lazySingleton<_i934.AppRouter>(
+      () => _i934.AppRouter(gh<_i605.AppServices>()),
+    );
+    gh.factory<_i196.HomeRepository>(
+      () => _i716.HomeRepositoryImpl(
+        gh<_i556.HomeRemoteDataSource>(),
+        gh<_i444.HomeLocalDataSource>(),
+      ),
     );
     gh.factory<_i961.CreateProfileUseCase>(
       () => _i961.CreateProfileUseCase(gh<_i613.AuthRepository>()),
@@ -135,11 +141,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i722.SignUpUseCase>(
       () => _i722.SignUpUseCase(gh<_i613.AuthRepository>()),
     );
-    gh.factory<_i196.HomeRepository>(
-      () => _i716.HomeRepositoryImpl(
-        gh<_i556.HomeRemoteDataSource>(),
-        gh<_i444.HomeLocalDataSource>(),
-      ),
+    gh.factory<_i685.SignInBloc>(
+      () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
+    );
+    gh.factory<_i730.CreateProfileCubit>(
+      () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
+    );
+    gh.factory<_i1000.ForgotPasswordCubit>(
+      () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
+    );
+    gh.factory<_i245.SignUpBloc>(
+      () => _i245.SignUpBloc(gh<_i722.SignUpUseCase>()),
     );
     gh.factory<_i446.GetBannersUseCase>(
       () => _i446.GetBannersUseCase(gh<_i196.HomeRepository>()),
@@ -156,26 +168,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i244.SpecializationCubit>(
       () => _i244.SpecializationCubit(gh<_i262.GetSpecializationsUseCase>()),
     );
-    gh.factory<_i1000.ForgotPasswordCubit>(
-      () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
-    );
-    gh.factory<_i245.SignUpBloc>(
-      () => _i245.SignUpBloc(gh<_i722.SignUpUseCase>()),
-    );
     gh.factory<_i15.BannerCubit>(
       () => _i15.BannerCubit(gh<_i446.GetBannersUseCase>()),
     );
     gh.factory<_i272.UpcomingCubit>(
       () => _i272.UpcomingCubit(gh<_i987.GetUpcomingAppointmentUseCase>()),
     );
-    gh.factory<_i685.SignInBloc>(
-      () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
-    );
     gh.factory<_i365.GreetingCubit>(
       () => _i365.GreetingCubit(gh<_i511.GetUserProfileUseCase>()),
-    );
-    gh.factory<_i730.CreateProfileCubit>(
-      () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
     );
     return this;
   }

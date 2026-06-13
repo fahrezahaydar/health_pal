@@ -445,14 +445,16 @@ targets:
           mode: full                  # ← Generate copyWith, ==, hashCode, toString
 ```
 
-**Generate command:**
+**Generate command (per v1.0.1 — pakai `--force-jit` karena Dart 3.10 SDK + `dart compile` tidak support build hooks):**
 ```bash
 # Watch mode (development)
-dart run build_runner watch --delete-conflicting-outputs
+dart run build_runner watch --force-jit
 
-# One-shot (CI)
-dart run build_runner build --delete-conflicting-outputs
+# One-shot (CI / one-time generate)
+dart run build_runner build --force-jit
 ```
+
+> **Catatan v1.0.1:** Sejak upgrade ke Dart SDK 3.10, flag `--delete-conflicting-outputs` menyebabkan error `'dart compile' does not support build hooks, use 'dart build' instead`. Solusi: pakai `--force-jit` (JIT mode compilation). Output file `*.g.dart`, `*.freezed.dart`, `*.mocks.dart` tetap ter-generate seperti biasa.
 
 ---
 

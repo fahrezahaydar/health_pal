@@ -216,10 +216,15 @@ Test directory "test" not found.
 ```
 ❌ **FAIL — test/ folder belum ada. Belum ada unit/widget/integration test.**
 
-### dart run build_runner build
+### dart run build_runner build --force-jit
 ```
 ✓ Built with build_runner (1 output written in 31s)
 ```
+
+> **Catatan v1.0.1:** Sejak upgrade ke Dart SDK 3.10, command tanpa `--force-jit` akan error:
+> `'dart compile' does not support build hooks, use 'dart build' instead`.
+> Solusi resmi: pakai `dart run build_runner build --force-jit` (JIT mode).
+> Output file `*.g.dart`, `*.freezed.dart`, `*.mocks.dart` tetap ter-generate normal.
 ✅ **PASS** — `lib/core/di/locator.config.dart` ter-generate (7648 bytes)
 
 ### flutter pub get

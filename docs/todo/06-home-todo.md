@@ -153,7 +153,7 @@
 | C.7 | `UpcomingCard` widget | `home/presentation/widget/upcoming_card.dart` | Card + empty state + CTA. BlocSelector: `.upcoming`. |
 | C.8 | `QuickCategories` widget | `home/presentation/widget/quick_categories.dart` | Grid 2×4. BlocSelector: `.specializations`. Tap → `/doctor/search?specialization={id}` |
 | C.9 | Rebuild `HomePage` | `home/presentation/page/home_page.dart` | MultiBlocProvider 4 cubits + orchestrate load. Load profile dulu → dpt profileId → trigger upcoming. |
-| C.10 | DI Registration + `flutter analyze` | `core/di/` | `dart run build_runner build`, 0 errors 0 warnings |
+| C.10 | DI Registration + `flutter analyze` | `core/di/` | `dart run build_runner build --force-jit`, 0 errors 0 warnings |
 
 ### Blok D: Refinements (Ditunda)
 

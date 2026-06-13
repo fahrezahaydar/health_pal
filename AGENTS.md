@@ -14,7 +14,7 @@ Refer to `docs/` for detailed guidance:
 
 ## Quick Commands
 ```powershell
-dart run build_runner build --delete-conflicting-outputs  # Codegen (injectable)
+dart run build_runner build --force-jit  # Codegen (injectable, freezed, json_serializable, mockito)
 dart fix --apply                                          # Auto-fix lint issues
 flutter analyze                                           # Static analysis
 flutter test                                              # Tests
