@@ -4,9 +4,9 @@
 |---|---|
 | **Tanggal** | 14 Juni 2026 |
 | **Dibuat oleh** | Claude Code Audit (Tech Lead) |
-| **Versi** | v1.1 |
-| **Status Sprint** | Sprint 1 in progress — 6/8 features complete (Doctor, Booking, Profile implemented) |
-| **Last Commit** | `5cebecd` — feat(profile): implement view, edit, favorites, notification list |
+| **Versi** | v1.2 |
+| **Status Sprint** | Sprint 1 in progress — 8/8 UI features complete; tinggal Push Notification (Fase 10) + Test (Fase 11, deferred) |
+| **Last Commit** | `cfec420` — feat(loc): implement nearby clinics with geolocation |
 
 ---
 
@@ -14,11 +14,11 @@
 
 | Metrik | Nilai |
 |---|---|
-| Total Features | 8 (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings) |
-| Completed (✅) | 6 (Onboarding, Auth, Home, Doctor, Booking, Profile) |
-| Partial (🟡) | 2 (Loc, Settings — stub only, low priority) |
+| Total Features | 8 UI (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings) + Push Notif + Test |
+| Completed (✅) | 8 (semua UI features P1+P2) |
+| Partial (🟡) | 0 |
 | Not Started (❌) | 2 (Test layer, Push Notification) |
-| Overall Progress | **~85%** (Sprint 1 core features done) |
+| Overall Progress | **~95%** (semua UI P1/P2 done) |
 | flutter analyze | **0 issues** ✅ |
 | Test Coverage | **0%** (deferred per AGENTS.md testing policy — Sprint 1 tidak buat test files) |
 
@@ -44,10 +44,12 @@
 | Data | Profile | ✅ | 3 files | ProfileRemoteDataSource (4 methods) + NotificationModel + RepositoryImpl |
 | Domain | Profile | ✅ | 5 files | NotificationEntity + Repository + 4 UseCase (2 in 1 file) |
 | Presentation | Profile | ✅ | 14 files | 4 Cubits + 4 Pages (all implemented, no more stubs) |
-| Presentation | Loc | 🟡 | 1 file | **Stub page** (316 bytes), no implementation |
-| Presentation | Settings | 🟡 | 4 files | **Stub pages** (319-349 bytes) — T&C, Help, NoInternet, Settings menu |
+| Data | Loc | ✅ | 3 files | ClinicModel (@freezed 10 fields) + RemoteDataSource (PostgREST .rpc()) + RepositoryImpl |
+| Domain | Loc | ✅ | 3 files | ClinicEntity (with derived distanceKm + distanceDisplay) + Repository + UseCase |
+| Presentation | Loc | ✅ | 5 files | LocCubit (5 states: Initial/PermissionDenied/Loading/Loaded/Error) + LocPage + ClinicCard widget |
+| Presentation | Settings | ✅ | 6 files | SettingsCubit (4 methods) + 4 Pages (Settings, Help, TnC, NoInternet) |
 | — | **Test** | ❌ | 0 files | Deferred per AGENTS.md testing policy (Sprint 1 tidak buat test files) |
-| — | **Push Notification (FCM)** | ❌ | 0 files | Backlog Sprint 1 hari 6-7 |
+| — | **Push Notification (FCM)** | ❌ | 0 files | Backlog Sprint 1 hari 6-7 — Fase 10 dari TDD 12 |
 
 ### Ringkasan per Feature
 
@@ -59,9 +61,9 @@
 | **Doctor** | All 3 | ✅ | Full Clean Architecture (commit `356311e`) — @freezed models + search/detail cubits |
 | **Booking** | All 3 | ✅ | Full Clean Architecture (commit `8a23b2f`) — 14-field AppointmentModel + event-driven BookingBloc |
 | **Profile** | All 3 | ✅ | Full Clean Architecture (commit `5cebecd`) — view/edit/favorite/notification pages |
-| **Loc** | Presentation | 🟡 | Stub only (P2, bisa backlog) |
-| **Settings** | Presentation | 🟡 | Stub only (acceptable — menu pages) |
-| **Test** | All | ❌ | 0 files (deferred per testing policy) |
+| **Loc** | All 3 | ✅ | Full Clean Architecture (commit `cfec420`) — geolocation + PostgREST RPC |
+| **Settings** | All 3 | ✅ | Full Clean Architecture (commit `95496c5`) — settings menu + FAQ + TnC + offline page |
+| **Test** | All | ❌ | 0 files (deferred per testing policy — fase terpisah) |
 
 ---
 
