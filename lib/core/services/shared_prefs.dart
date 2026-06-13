@@ -9,6 +9,7 @@ class SharedPrefService {
   static const _onboardingKey = 'onboarding_done';
   static const _loginKey = 'is_logged_in';
   static const _loginTimeKey = 'login_timestamp';
+  static const _notifEnabledKey = 'notif_enabled';
 
   // -- Onboarding
   bool get isOnboardingDone =>
@@ -41,4 +42,11 @@ class SharedPrefService {
     await setLoggedIn(false);
     await clearLoginTimestamp();
   }
+
+  // -- Notification preference (default: true)
+  bool get isNotifEnabled =>
+      _prefs.getBool(_notifEnabledKey) ?? true;
+
+  Future<void> setNotifEnabled(bool value) =>
+      _prefs.setBool(_notifEnabledKey, value);
 }

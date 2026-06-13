@@ -1,12 +1,94 @@
-import 'package:flutter/widgets.dart';
+// lib/features/settings/presentation/page/no_internet_page.dart
+//
+// Halaman No Internet. Per wireframe 21-no-internet.md.
+// Tap "Coba Lagi" → cek connectivity_plus → pop jika online.
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/button/primary_button.dart';
 
-class NoInternetPage extends StatelessWidget {
+class NoInternetPage extends StatefulWidget {
   const NoInternetPage({super.key});
 
   @override
+  State<NoInternetPage> createState() => _NoInternetPageState();
+}
+
+class _NoInternetPageState extends State<NoInternetPage> {
+  bool _isChecking = false;
+
+  Future<void> _retry() async {
+    setState(() => _isChecking = true);
+    final connectivityResult = await Connectivity().checkConnectivity();
+    final hasConnection = connectivityResult.any((r) => r != ConnectivityResult.none);
+    if (!mounted) return;
+    setState(() => _isChecking = false);
+
+    if (hasConnection) {
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Masih tidak ada koneksi. Periksa WiFi atau data seluler.'),
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(child: Text('No Internet', style: AppTextTheme.bodyLarge));
+    return Scaffold(
+      backgroundColor: AppTheme.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // ── Illustration (icon) ──
+              Container(
+                width: 160,
+                height: 160,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.grey100,
+                ),
+                child: const Icon(
+                  Iconsax.wifiSquare,
+                  size: 80,
+                  color: AppTheme.grey400,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Tidak Ada Koneksi',
+                style: AppTextTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Periksa koneksi internetmu dan coba lagi.',
+                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                child: _isChecking
+                    ? const Center(child: CircularProgressIndicator())
+                    : LightFilledButton(
+                        label: 'Coba Lagi',
+                        onTap: _retry,
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

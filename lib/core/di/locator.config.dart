@@ -102,6 +102,30 @@ import 'package:health_pal/features/home/presentation/bloc/upcoming/upcoming_cub
     as _i272;
 import 'package:health_pal/features/onboarding/presentation/bloc/onboarding_notifier.dart'
     as _i913;
+import 'package:health_pal/features/profile/data/datasource/profile_remote_datasource.dart'
+    as _i340;
+import 'package:health_pal/features/profile/data/repository/profile_repository_impl.dart'
+    as _i85;
+import 'package:health_pal/features/profile/domain/repository/profile_repository.dart'
+    as _i572;
+import 'package:health_pal/features/profile/domain/usecase/get_favorites_usecase.dart'
+    as _i204;
+import 'package:health_pal/features/profile/domain/usecase/get_notifications_usecase.dart'
+    as _i411;
+import 'package:health_pal/features/profile/domain/usecase/get_profile_usecase.dart'
+    as _i399;
+import 'package:health_pal/features/profile/domain/usecase/update_profile_usecase.dart'
+    as _i289;
+import 'package:health_pal/features/profile/presentation/bloc/edit_profile/edit_profile_cubit.dart'
+    as _i830;
+import 'package:health_pal/features/profile/presentation/bloc/favorite/favorite_cubit.dart'
+    as _i311;
+import 'package:health_pal/features/profile/presentation/bloc/notification/notification_cubit.dart'
+    as _i372;
+import 'package:health_pal/features/profile/presentation/bloc/profile/profile_cubit.dart'
+    as _i516;
+import 'package:health_pal/features/settings/presentation/bloc/settings/settings_cubit.dart'
+    as _i1053;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
@@ -134,6 +158,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i556.HomeRemoteDataSource>(
       () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i340.ProfileRemoteDataSource>(
+      () => _i340.ProfileRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i735.AuthLocalDataSource>(
       () => _i735.AuthLocalDataSource(gh<_i460.SharedPreferences>()),
     );
@@ -165,11 +192,39 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.factory<_i1053.SettingsCubit>(
+      () => _i1053.SettingsCubit(
+        gh<_i167.SharedPrefService>(),
+        gh<_i605.AppServices>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
+    gh.factory<_i572.ProfileRepository>(
+      () => _i85.ProfileRepositoryImpl(gh<_i340.ProfileRemoteDataSource>()),
+    );
     gh.factory<_i913.OnboardingNotifier>(
       () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
     );
     gh.lazySingleton<_i934.AppRouter>(
       () => _i934.AppRouter(gh<_i605.AppServices>()),
+    );
+    gh.factory<_i204.GetFavoritesUseCase>(
+      () => _i204.GetFavoritesUseCase(gh<_i572.ProfileRepository>()),
+    );
+    gh.factory<_i411.GetNotificationsUseCase>(
+      () => _i411.GetNotificationsUseCase(gh<_i572.ProfileRepository>()),
+    );
+    gh.factory<_i411.MarkNotificationAsReadUseCase>(
+      () => _i411.MarkNotificationAsReadUseCase(gh<_i572.ProfileRepository>()),
+    );
+    gh.factory<_i399.GetProfileUseCase>(
+      () => _i399.GetProfileUseCase(gh<_i572.ProfileRepository>()),
+    );
+    gh.factory<_i289.UpdateProfileUseCase>(
+      () => _i289.UpdateProfileUseCase(gh<_i572.ProfileRepository>()),
+    );
+    gh.factory<_i289.UploadAvatarUseCase>(
+      () => _i289.UploadAvatarUseCase(gh<_i572.ProfileRepository>()),
     );
     gh.factory<_i430.GetDoctorDetailUseCase>(
       () => _i430.GetDoctorDetailUseCase(gh<_i506.DoctorRepository>()),
@@ -198,10 +253,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i149.CreateAppointmentUseCase>(),
       ),
     );
+    gh.factory<_i372.NotificationCubit>(
+      () => _i372.NotificationCubit(gh<_i411.GetNotificationsUseCase>()),
+    );
     gh.factory<_i469.DoctorDetailCubit>(
       () => _i469.DoctorDetailCubit(
         gh<_i430.GetDoctorDetailUseCase>(),
         gh<_i151.GetDoctorSlotsUseCase>(),
+      ),
+    );
+    gh.factory<_i830.EditProfileCubit>(
+      () => _i830.EditProfileCubit(
+        gh<_i399.GetProfileUseCase>(),
+        gh<_i289.UpdateProfileUseCase>(),
+        gh<_i289.UploadAvatarUseCase>(),
       ),
     );
     gh.factory<_i196.HomeRepository>(
@@ -237,6 +302,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i730.CreateProfileCubit>(
       () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
     );
+    gh.factory<_i516.ProfileCubit>(
+      () => _i516.ProfileCubit(
+        gh<_i399.GetProfileUseCase>(),
+        gh<_i605.AppServices>(),
+      ),
+    );
     gh.factory<_i1000.ForgotPasswordCubit>(
       () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
     );
@@ -257,6 +328,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i511.GetUserProfileUseCase>(
       () => _i511.GetUserProfileUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i311.FavoriteCubit>(
+      () => _i311.FavoriteCubit(gh<_i204.GetFavoritesUseCase>()),
     );
     gh.factory<_i244.SpecializationCubit>(
       () => _i244.SpecializationCubit(gh<_i262.GetSpecializationsUseCase>()),
