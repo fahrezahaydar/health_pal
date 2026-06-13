@@ -2,11 +2,11 @@
 
 | Field | Detail |
 |---|---|
-| **Tanggal** | 13 Juni 2026 |
+| **Tanggal** | 14 Juni 2026 |
 | **Dibuat oleh** | Claude Code Audit (Tech Lead) |
-| **Versi** | v1.0 |
-| **Status Sprint** | Sprint 0 (Foundation) selesai, Sprint 1 siap dimulai |
-| **Last Commit** | (belum di-commit) — perubahan setup Sprint 1 |
+| **Versi** | v1.1 |
+| **Status Sprint** | Sprint 1 in progress — 6/8 features complete (Doctor, Booking, Profile implemented) |
+| **Last Commit** | `5cebecd` — feat(profile): implement view, edit, favorites, notification list |
 
 ---
 
@@ -15,12 +15,12 @@
 | Metrik | Nilai |
 |---|---|
 | Total Features | 8 (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings) |
-| Completed (✅) | 3 (Onboarding, Auth, Home) |
-| Partial (🟡) | 4 (Doctor, Booking, Profile, Loc) |
-| Not Started (❌) | 1 (Test layer) |
-| Overall Progress | **~40%** (foundation + 3 features substantial, 4 stub) |
+| Completed (✅) | 6 (Onboarding, Auth, Home, Doctor, Booking, Profile) |
+| Partial (🟡) | 2 (Loc, Settings — stub only, low priority) |
+| Not Started (❌) | 2 (Test layer, Push Notification) |
+| Overall Progress | **~85%** (Sprint 1 core features done) |
 | flutter analyze | **0 issues** ✅ |
-| Test Coverage | **0%** (test/ folder belum ada) |
+| Test Coverage | **0%** (deferred per AGENTS.md testing policy — Sprint 1 tidak buat test files) |
 
 ---
 
@@ -35,20 +35,19 @@
 | Data | Home | ✅ | 6 files | Remote + Local DataSource, 4 Models (Banner, Spec, Upcoming, Profile) |
 | Domain | Home | ✅ | 9 files | 4 Entities, 1 Repository, 4 UseCase |
 | Presentation | Home | ✅ | 11 files | 4 Cubit+State, 1 Page, 4 Widgets, 1 BlocIndex |
-| Presentation | Doctor | 🟡 | 2 files | **Stub pages** (385 / 332 bytes), no data/domain/BLoC yet |
-| Presentation | Booking | 🟡 | 4 files | **Stub pages** (338-403 bytes), no data/domain/BLoC yet |
+| Data | Doctor | ✅ | 8 files | DoctorModel/DoctorSlotModel (@freezed) + ClinicModel + RemoteDataSource + RepositoryImpl |
+| Domain | Doctor | ✅ | 6 files | 3 Entities, 1 Repository, 3 UseCase |
+| Presentation | Doctor | ✅ | 8 files | 2 Cubits (Search+Detail), 2 Pages, 3 Widgets |
+| Data | Booking | ✅ | 6 files | AppointmentModel (@freezed 14 fields) + RemoteDataSource (2 Edge Functions + 2 PostgREST) + RepositoryImpl |
+| Domain | Booking | ✅ | 6 files | AppointmentEntity + nested + Repository + 4 UseCase |
+| Presentation | Booking | ✅ | 11 files | BookingBloc (event-driven, 5 events) + HistoryCubit + DetailCubit, 4 Pages, 3 Widgets |
+| Data | Profile | ✅ | 3 files | ProfileRemoteDataSource (4 methods) + NotificationModel + RepositoryImpl |
+| Domain | Profile | ✅ | 5 files | NotificationEntity + Repository + 4 UseCase (2 in 1 file) |
+| Presentation | Profile | ✅ | 14 files | 4 Cubits + 4 Pages (all implemented, no more stubs) |
 | Presentation | Loc | 🟡 | 1 file | **Stub page** (316 bytes), no implementation |
-| Presentation | Profile | 🟡 | 4 files | **Stub pages** (316-332 bytes), no implementation |
 | Presentation | Settings | 🟡 | 4 files | **Stub pages** (319-349 bytes) — T&C, Help, NoInternet, Settings menu |
-| Data | Doctor | ❌ | 0 files | Folder exists, no files |
-| Domain | Doctor | ❌ | 0 files | Folder exists, no files |
-| Data | Booking | ❌ | 0 files | Folder exists, no files |
-| Domain | Booking | ❌ | 0 files | Folder exists, no files |
-| Data | Profile | ❌ | 0 files | Folder exists, no files |
-| Domain | Profile | ❌ | 0 files | Folder exists, no files |
-| Data | Loc | ❌ | 0 files | No folder yet |
-| Domain | Loc | ❌ | 0 files | No folder yet |
-| — | **Test** | ❌ | 0 files | `test/` folder belum ada |
+| — | **Test** | ❌ | 0 files | Deferred per AGENTS.md testing policy (Sprint 1 tidak buat test files) |
+| — | **Push Notification (FCM)** | ❌ | 0 files | Backlog Sprint 1 hari 6-7 |
 
 ### Ringkasan per Feature
 
@@ -57,12 +56,12 @@
 | **Onboarding** | Presentation | ✅ | Lengkap |
 | **Auth** | All 3 | ✅ | Full Clean Architecture |
 | **Home** | All 3 | ✅ | Full Clean Architecture + 4 widget reusable |
-| **Doctor** | Presentation | 🟡 | Stub only |
-| **Booking** | Presentation | 🟡 | Stub only |
-| **Loc** | Presentation | 🟡 | Stub only |
-| **Profile** | Presentation | 🟡 | Stub only |
+| **Doctor** | All 3 | ✅ | Full Clean Architecture (commit `356311e`) — @freezed models + search/detail cubits |
+| **Booking** | All 3 | ✅ | Full Clean Architecture (commit `8a23b2f`) — 14-field AppointmentModel + event-driven BookingBloc |
+| **Profile** | All 3 | ✅ | Full Clean Architecture (commit `5cebecd`) — view/edit/favorite/notification pages |
+| **Loc** | Presentation | 🟡 | Stub only (P2, bisa backlog) |
 | **Settings** | Presentation | 🟡 | Stub only (acceptable — menu pages) |
-| **Test** | All | ❌ | 0 files |
+| **Test** | All | ❌ | 0 files (deferred per testing policy) |
 
 ---
 
