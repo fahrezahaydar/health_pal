@@ -100,6 +100,16 @@ import 'package:health_pal/features/home/presentation/bloc/specialization/specia
     as _i244;
 import 'package:health_pal/features/home/presentation/bloc/upcoming/upcoming_cubit.dart'
     as _i272;
+import 'package:health_pal/features/loc/data/datasource/loc_remote_datasource.dart'
+    as _i1038;
+import 'package:health_pal/features/loc/data/repository/loc_repository_impl.dart'
+    as _i191;
+import 'package:health_pal/features/loc/domain/repository/loc_repository.dart'
+    as _i754;
+import 'package:health_pal/features/loc/domain/usecase/get_nearby_clinics_usecase.dart'
+    as _i995;
+import 'package:health_pal/features/loc/presentation/bloc/loc_cubit.dart'
+    as _i481;
 import 'package:health_pal/features/onboarding/presentation/bloc/onboarding_notifier.dart'
     as _i913;
 import 'package:health_pal/features/profile/data/datasource/profile_remote_datasource.dart'
@@ -158,6 +168,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i556.HomeRemoteDataSource>(
       () => _i556.HomeRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i1038.LocRemoteDataSource>(
+      () => _i1038.LocRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i340.ProfileRemoteDataSource>(
       () => _i340.ProfileRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
@@ -201,6 +214,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i572.ProfileRepository>(
       () => _i85.ProfileRepositoryImpl(gh<_i340.ProfileRemoteDataSource>()),
+    );
+    gh.factory<_i754.LocRepository>(
+      () => _i191.LocRepositoryImpl(gh<_i1038.LocRemoteDataSource>()),
     );
     gh.factory<_i913.OnboardingNotifier>(
       () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
@@ -261,6 +277,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i430.GetDoctorDetailUseCase>(),
         gh<_i151.GetDoctorSlotsUseCase>(),
       ),
+    );
+    gh.factory<_i995.GetNearbyClinicsUseCase>(
+      () => _i995.GetNearbyClinicsUseCase(gh<_i754.LocRepository>()),
     );
     gh.factory<_i830.EditProfileCubit>(
       () => _i830.EditProfileCubit(
@@ -328,6 +347,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i511.GetUserProfileUseCase>(
       () => _i511.GetUserProfileUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i481.LocCubit>(
+      () => _i481.LocCubit(gh<_i995.GetNearbyClinicsUseCase>()),
     );
     gh.factory<_i311.FavoriteCubit>(
       () => _i311.FavoriteCubit(gh<_i204.GetFavoritesUseCase>()),
