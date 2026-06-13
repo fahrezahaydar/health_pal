@@ -501,9 +501,49 @@ class LocCubit extends Cubit<LocState> {
 
 **Type:** Bloc (4 event) — karena ada multiple interaksi sebelum submit
 
+**Inisialisasi via GoRouter Extra Param (per SS#10 alignment v1.0.1):**
+
+Halaman `BookAppointmentPage` menerima `extra: {doctor, suggestedSlotId?}` dari `DoctorDetailPage` saat navigasi. Per v1.0.1 (lihat `docs/wireframe/10-book-appointment.md` Catatan Perubahan), kontrak ini **TIDAK LAGI** menyertakan `selectedDate` — date picker di Doctor Detail sudah dihapus, dan pemilihan tanggal adalah tanggung jawab Book Appointment page.
+
+```dart
+// ── Route registration (di app_router.dart) ──
+GoRoute(
+  path: '/booking/:doctorId',
+  name: 'bookAppointment',
+  builder: (context, state) {
+    final data = state.extra as Map<String, dynamic>?;
+    return BlocProvider(
+      create: (ctx) => getIt<BookingBloc>(
+        param1: ..., // dependencies lain
+      )..add(BookingInitialized(
+        doctor: data?['doctor'] as DoctorEntity?,
+        suggestedSlotId: data?['suggestedSlotId'] as String?,
+      )),
+      child: const BookAppointmentPage(),
+    );
+  },
+),
+
+// ── Navigasi dari DoctorDetailPage (per wireframe 09 v1.0.1) ──
+context.push(
+  '/booking/${doctor.id}',
+  extra: {
+    'doctor': doctor,
+    'suggestedSlotId': selectedSlotId,  // opsional, null jika user belum pilih
+  },
+);
+// ↑ TIDAK ADA 'selectedDate' — date picker single source di BookAppointmentPage
+```
+
 ```dart
 // ── Event ──
 sealed class BookingEvent extends Equatable { ... }
+
+class BookingInitialized extends BookingEvent {
+  final DoctorEntity? doctor;
+  final String? suggestedSlotId;
+  const BookingInitialized({this.doctor, this.suggestedSlotId});
+}
 
 class SelectSlot extends BookingEvent {
   final String slotId;
@@ -522,8 +562,10 @@ class ResetBooking extends BookingEvent { }
 
 // ── State ──
 class BookingState extends Equatable {
-  final String? selectedSlotId;
-  final DateTime? selectedDate;
+  final DoctorEntity? doctor;        // ← dari extra param
+  final String? suggestedSlotId;     // ← dari extra param (untuk pre-select)
+  final String? selectedSlotId;      // ← dari interaksi user
+  final DateTime? selectedDate;      // ← dari date picker BookAppointmentPage
   final String complaint;
   final bool isSubmitting;
   final bool isSuccess;

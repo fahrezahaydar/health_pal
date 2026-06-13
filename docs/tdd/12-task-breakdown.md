@@ -270,7 +270,27 @@
 | 5.20 | Buat `DoctorInfoCard` widget | 1 | Pendidikan, pengalaman, klinik, fee | 5.16 |
 | 5.21 | Buat `ReviewCard` widget (placeholder v1.1) | 1 | List review + "Lihat semua" | 5.16 |
 | 5.22 | Handle: no slots available → empty state | 1 | "Tidak ada jadwal untuk tanggal ini" | 5.17 |
-| 5.23 | Handle: tap "Book Appointment" → navigate `/booking/:doctorId` | 1 | Pass doctor data via extra | 5.17 |
+| 5.23 | Handle: tap "Book Appointment" → navigate `/booking/:doctorId` | 1 | Pass doctor data via extra (TANPA `selectedDate` per SS#10 v1.0.1) | 5.17 |
+
+**Catatan SS#10 alignment v1.0.1:** Sejak wireframe 09-doctor-detail.md dan 10-book-appointment.md diperbarui (commit `7839d9d`), kontrak navigasi dari DoctorDetailPage → BookAppointmentPage berubah:
+
+```dart
+// SEBELUM (v1.0 awal)
+context.push('/booking/:doctorId', extra: {
+  'doctor': doctor,
+  'selectedDate': selectedDate,    // ← ADA
+  'suggestedSlotId': suggestedSlotId,
+});
+
+// SESUDAH (v1.0.1)
+context.push('/booking/:doctorId', extra: {
+  'doctor': doctor,
+  'suggestedSlotId': suggestedSlotId,  // ← opsional, null jika belum pilih
+  // 'selectedDate' DIHAPUS — date picker single source di BookAppointmentPage
+});
+```
+
+Update TDD 04 §4.10 (BookingBloc spec) sudah dilakukan: tambah `BookingInitialized` event dengan `doctor` + `suggestedSlotId`, dan hapus asumsi `selectedDate` dari extra. BookingState tetap punya `selectedDate` — tapi di-set lewat interaksi `SelectSlot(date, slotId)` di BookAppointmentPage, BUKAN dari extra param.
 | 5.24 | Handle: tap "Lihat Peta" → open Google Maps external | 1 | Launch URL | 5.17 |
 
 **Total Fase 5:** 40 jam
