@@ -9,6 +9,7 @@ import '../../features/booking/presentation/page/book_appointment_page.dart';
 import '../../features/booking/presentation/page/booking_detail_page.dart';
 import '../../features/booking/presentation/page/booking_history_page.dart';
 import '../../features/booking/presentation/page/booking_success_page.dart';
+import '../../features/booking/domain/entity/appointment_entity.dart';
 import '../../features/doctor/presentation/page/doctor_detail_page.dart';
 import '../../features/doctor/presentation/page/doctor_search_page.dart';
 import '../../features/home/presentation/page/home_page.dart';
@@ -173,7 +174,12 @@ class AppRouter {
       GoRoute(
         path: '/booking/success',
         name: 'bookingSuccess',
-        builder: (_, _) => const BookingSuccessPage(),
+        builder: (_, state) {
+          final extra = state.extra;
+          return BookingSuccessPage(
+            appointment: extra is AppointmentEntity ? extra : null,
+          );
+        },
       ),
       GoRoute(
         path: '/booking-history/:appointmentId',

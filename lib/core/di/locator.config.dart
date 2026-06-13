@@ -40,6 +40,26 @@ import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.
     as _i685;
 import 'package:health_pal/features/auth/presentation/bloc/sign_up/sign_up_bloc.dart'
     as _i245;
+import 'package:health_pal/features/booking/data/datasource/booking_remote_datasource.dart'
+    as _i482;
+import 'package:health_pal/features/booking/data/repository/booking_repository_impl.dart'
+    as _i79;
+import 'package:health_pal/features/booking/domain/repository/booking_repository.dart'
+    as _i163;
+import 'package:health_pal/features/booking/domain/usecase/cancel_appointment_usecase.dart'
+    as _i269;
+import 'package:health_pal/features/booking/domain/usecase/create_appointment_usecase.dart'
+    as _i149;
+import 'package:health_pal/features/booking/domain/usecase/get_appointment_detail_usecase.dart'
+    as _i597;
+import 'package:health_pal/features/booking/domain/usecase/get_appointment_history_usecase.dart'
+    as _i990;
+import 'package:health_pal/features/booking/presentation/bloc/booking/booking_bloc.dart'
+    as _i856;
+import 'package:health_pal/features/booking/presentation/bloc/detail/booking_detail_cubit.dart'
+    as _i851;
+import 'package:health_pal/features/booking/presentation/bloc/history/booking_history_cubit.dart'
+    as _i248;
 import 'package:health_pal/features/doctor/data/datasource/doctor_remote_datasource.dart'
     as _i158;
 import 'package:health_pal/features/doctor/data/repository/doctor_repository_impl.dart'
@@ -105,6 +125,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i829.AuthRemoteDataSource>(
       () => _i829.AuthRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
+    gh.factory<_i482.BookingRemoteDataSource>(
+      () => _i482.BookingRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
     gh.factory<_i158.DoctorRemoteDataSource>(
       () => _i158.DoctorRemoteDataSource(gh<_i454.SupabaseClient>()),
     );
@@ -122,6 +145,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i163.BookingRepository>(
+      () => _i79.BookingRepositoryImpl(gh<_i482.BookingRemoteDataSource>()),
     );
     gh.factory<_i613.AuthRepository>(
       () => _i733.AuthRepositoryImpl(
@@ -154,6 +180,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i146.GetDoctorsUseCase>(
       () => _i146.GetDoctorsUseCase(gh<_i506.DoctorRepository>()),
     );
+    gh.factory<_i269.CancelAppointmentUseCase>(
+      () => _i269.CancelAppointmentUseCase(gh<_i163.BookingRepository>()),
+    );
+    gh.factory<_i149.CreateAppointmentUseCase>(
+      () => _i149.CreateAppointmentUseCase(gh<_i163.BookingRepository>()),
+    );
+    gh.factory<_i597.GetAppointmentDetailUseCase>(
+      () => _i597.GetAppointmentDetailUseCase(gh<_i163.BookingRepository>()),
+    );
+    gh.factory<_i990.GetAppointmentHistoryUseCase>(
+      () => _i990.GetAppointmentHistoryUseCase(gh<_i163.BookingRepository>()),
+    );
     gh.factory<_i469.DoctorDetailCubit>(
       () => _i469.DoctorDetailCubit(
         gh<_i430.GetDoctorDetailUseCase>(),
@@ -164,6 +202,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i716.HomeRepositoryImpl(
         gh<_i556.HomeRemoteDataSource>(),
         gh<_i444.HomeLocalDataSource>(),
+      ),
+    );
+    gh.factory<_i851.BookingDetailCubit>(
+      () => _i851.BookingDetailCubit(
+        gh<_i597.GetAppointmentDetailUseCase>(),
+        gh<_i269.CancelAppointmentUseCase>(),
       ),
     );
     gh.factory<_i401.SearchCubit>(
@@ -187,11 +231,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i730.CreateProfileCubit>(
       () => _i730.CreateProfileCubit(gh<_i961.CreateProfileUseCase>()),
     );
+    gh.factory<_i856.BookingBloc>(
+      () => _i856.BookingBloc(
+        gh<InvalidType>(),
+        gh<_i149.CreateAppointmentUseCase>(),
+      ),
+    );
     gh.factory<_i1000.ForgotPasswordCubit>(
       () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
     );
     gh.factory<_i245.SignUpBloc>(
       () => _i245.SignUpBloc(gh<_i722.SignUpUseCase>()),
+    );
+    gh.factory<_i248.BookingHistoryCubit>(
+      () => _i248.BookingHistoryCubit(gh<_i990.GetAppointmentHistoryUseCase>()),
     );
     gh.factory<_i446.GetBannersUseCase>(
       () => _i446.GetBannersUseCase(gh<_i196.HomeRepository>()),
