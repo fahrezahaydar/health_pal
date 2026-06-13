@@ -18,7 +18,7 @@ create type fcm_platform as enum ('android', 'ios');
 -- User profiles (one-to-one with auth.users)
 create table public.user_profiles (
   id            uuid primary key default gen_random_uuid(),
-  auth_id       uuid not null references auth.users(id) on delete cascade,
+  auth_id       uuid not null unique references auth.users(id) on delete cascade,
   full_name     text not null,
   nickname      text,
   avatar_url    text,

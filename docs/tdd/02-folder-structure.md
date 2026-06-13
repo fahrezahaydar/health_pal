@@ -33,7 +33,7 @@ lib/
 │   │
 │   ├── enums/
 │   │   ├── app_status.dart                # loading, onboarding, unauthenticated, authenticated
-│   │   ├── gender.dart                    # male, female, notSpecified
+│   │   ├── gender.dart                    # male, female, other
 │   │   ├── booking_status.dart            # pending, upcoming, completed, cancelled
 │   │   └── failure_code.dart              # networkError, unauthorized, notFound, conflict, ...
 │   │

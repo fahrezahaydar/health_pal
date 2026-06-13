@@ -199,7 +199,7 @@ apikey: <SUPABASE_ANON_KEY>
 POST /auth/v1/token?grant_type=password
 ```
 
-**Description:** Login user yang sudah terdaftar menggunakan email dan password.
+**Description:** Login user yang sudah terdaftar menggunakan email dan password. Setelah login sukses, **wajib panggil `GET /rest/v1/me`** (lihat §3.5) untuk mengambil `is_profile_complete` sebelum routing ke `/home` atau `/sign-up/create-profile`.
 
 **Headers:**
 ```
@@ -234,6 +234,8 @@ apikey: <SUPABASE_ANON_KEY>
   }
 }
 ```
+
+> **Catatan Flutter:** Response di atas **TIDAK** berisi `is_profile_complete`. Setelah menerima `access_token`, panggil `GET /rest/v1/me?select=*` (lihat §3.5) untuk mendapatkan profil lengkap termasuk `is_profile_complete`. Field ini krusial untuk routing decision: `true` → `/home`, `false` → `/sign-up/create-profile`.
 
 **Error Responses:**
 
@@ -638,6 +640,69 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 3.5 Get My Profile (Current User via `/me`)
+
+```
+GET /rest/v1/me?select=*
+```
+
+**Description:** Mengambil data profil user yang sedang login secara singkat dan aman via **PostgREST view/alias `/me`**. RLS policy `auth.uid() = auth_id` menjamin user hanya bisa membaca profil miliknya sendiri. Endpoint ini **direkomendasikan** untuk dipanggil segera setelah login/signup (lihat §2.1, §2.2) untuk mengambil `is_profile_complete` — field yang krusial untuk routing decision di User Flow 4.1 (`/home` vs `/sign-up/create-profile`).
+
+**Cara kerja di PostgREST:**
+View `me` adalah wrapper tipis di atas `user_profiles` yang memfilter otomatis berdasarkan `auth.uid()`. Migrasi SQL-nya:
+```sql
+CREATE VIEW me AS
+  SELECT * FROM user_profiles
+  WHERE auth_id = auth.uid();
+
+-- Grant akses ke authenticated users
+GRANT SELECT ON me TO authenticated;
+```
+
+**Headers:**
+```
+apikey: <SUPABASE_ANON_KEY>
+Authorization: Bearer <access_token>
+```
+
+**Query Params:**
+| Param | Value | Keterangan |
+|---|---|---|
+| `select` | `*` | Ambil semua kolom profil |
+
+**Success Response `200`:**
+```json
+{
+  "id": "p1q2r3s4-t5u6-7890-vwxy-z12345678901",
+  "auth_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "full_name": "Rina Kartika",
+  "nickname": "Rina",
+  "avatar_url": "https://<ref>.supabase.co/storage/v1/object/public/avatars/rina.jpg",
+  "date_of_birth": "1998-03-15",
+  "gender": "female",
+  "notif_reminder_enabled": true,
+  "is_profile_complete": true,
+  "created_at": "2026-06-07T10:00:00.000Z",
+  "updated_at": "2026-06-07T10:15:00.000Z"
+}
+```
+
+> **Catatan Flutter:** Berbeda dengan §3.1 (`GET /rest/v1/user_profiles?auth_id=eq.<auth_uid>`) yang return **array**, endpoint ini return **object tunggal** (bukan array). Lebih simple untuk di-parse. Gunakan ini di `AppServices.init()` setelah refresh token / session restore.
+
+**Error Responses:**
+
+`401` — Token tidak ada atau expired:
+```json
+{
+  "code": 401,
+  "message": "JWT expired"
+}
+```
+
+`200` dengan `{}` (empty object) — User belum punya profil. Redirect ke `/sign-up/create-profile`.
+
+---
+
 ## 4. Specialization Endpoints
 
 ---
@@ -1000,6 +1065,89 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 5.5 Get Nearby Clinics
+
+```
+POST /rest/v1/rpc/get_nearby_clinics
+```
+
+**Description:** Mengembalikan daftar klinik terdekat dari lokasi user berdasarkan koordinat GPS. Endpoint ini **distinct** dari §5.2 (`doctors-by-location`) — fokus pada **klinik sebagai entitas** (untuk Home Page section "Nearby Medical Centers" di wireframe 06), bukan daftar dokter. Menggunakan PostgreSQL function dengan Haversine formula (lihat ERD §8 untuk definisi function). RLS: public read (tidak perlu auth untuk melihat klinik).
+
+**Headers:**
+```
+Content-Type: application/json
+apikey: <SUPABASE_ANON_KEY>
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "user_lat": -6.2088,
+  "user_lng": 106.8456,
+  "radius_meters": 10000
+}
+```
+
+| Field | Tipe | Wajib | Default | Keterangan |
+|---|---|---|---|---|
+| `user_lat` | `float` | Ya | — | Latitude lokasi user |
+| `user_lng` | `float` | Ya | — | Longitude lokasi user |
+| `radius_meters` | `int` | Tidak | `10000` | Radius pencarian dalam meter (max 50000) |
+
+**Success Response `200`:**
+```json
+[
+  {
+    "id": "c1a2b3c4-d5e6-7890-clinic-000000000001",
+    "name": "Klinik Sehat Bersama",
+    "address": "Jl. Sudirman No. 123, Jakarta Selatan",
+    "city": "Jakarta",
+    "latitude": -6.2100,
+    "longitude": 106.8470,
+    "phone": "021-1234567",
+    "image_url": "https://<ref>.supabase.co/storage/v1/object/public/clinics/klinik1.jpg",
+    "distance_meters": 1200,
+    "doctor_count": 5
+  }
+]
+```
+
+| Field | Tipe | Keterangan |
+|---|---|---|
+| `id` | `string` (UUID) | ID klinik |
+| `name` | `string` | Nama klinik |
+| `address` | `string` | Alamat lengkap |
+| `city` | `string` | Kota |
+| `latitude` | `float` | Koordinat lintang |
+| `longitude` | `float` | Koordinat bujur |
+| `phone` | `string` | Nomor telepon |
+| `image_url` | `string?` | URL foto klinik |
+| `distance_meters` | `float` | Jarak dari lokasi user (meter) |
+| `doctor_count` | `int` | Jumlah dokter aktif di klinik |
+
+**Error Responses:**
+
+`400` — Koordinat tidak disertakan:
+```json
+{
+  "code": "MISSING_COORDINATES",
+  "message": "user_lat dan user_lng wajib diisi"
+}
+```
+
+`400` — Radius melebihi batas:
+```json
+{
+  "code": "INVALID_RADIUS",
+  "message": "Radius maksimum adalah 50000 meter (50 km)"
+}
+```
+
+> **Catatan:** Function `get_nearby_clinics` didefinisikan di ERD §8 dengan signature `(user_lat FLOAT8, user_lng FLOAT8, radius_meters INT DEFAULT 10000)`. Query ini menggunakan Haversine formula di SQL — bukan PostGIS — untuk kompatibilitas lebih luas.
+
+---
+
 ## 6. Appointment Endpoints
 
 ---
@@ -1052,7 +1200,7 @@ Authorization: Bearer <access_token>
     "cancelled_at": null,
     "created_at": "2026-06-07T10:30:00.000Z",
     "updated_at": "2026-06-07T10:30:00.000Z",
-    "doctor": {
+    "doctors": {
       "full_name": "dr. Budi Santoso, Sp.PD",
       "photo_url": "https://<ref>.supabase.co/storage/v1/object/public/doctors/budi.jpg",
       "specializations": {
@@ -1063,7 +1211,7 @@ Authorization: Bearer <access_token>
         "address": "Jl. Merdeka No. 10, Bandung"
       }
     },
-    "slot": {
+    "slots": {
       "slot_date": "2026-06-15",
       "slot_start": "09:00:00",
       "slot_end": "09:30:00"
@@ -1340,6 +1488,98 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 6.5 Get Upcoming Appointment (untuk Home Page)
+
+```
+GET /rest/v1/appointments
+  ?patient_id=eq.<profile_id>
+  &status=in.(pending,upcoming)
+  &select=*,doctors(id,full_name,photo_url,specializations(name,icon_url),clinics(id,name,address,phone)),doctor_slots(slot_date,slot_start,slot_end)
+  &order=doctor_slots.slot_date.asc
+  &limit=1
+```
+
+**Description:** Mengambil appointment **terdekat** milik user yang berstatus `pending` atau `upcoming`. Digunakan untuk "Upcoming Treatment" card di Home Page (lihat wireframe 06 §4). Hanya return 1 item — appointment dengan tanggal paling dekat.
+
+**Catatan PostgreSQL/PostgREST:**
+- Filter `status=in.(pending,upcoming)` menggunakan IN syntax PostgREST untuk match multiple values
+- Order by nested column `doctor_slots.slot_date` via JOIN PostgREST
+- Karena ada JOIN ke `doctor_slots`, ordering di atas memerlukan alias PostgREST — jika gagal, fallback: order di Flutter side
+
+**Headers:**
+```
+apikey: <SUPABASE_ANON_KEY>
+Authorization: Bearer <access_token>
+```
+
+**Query Params:**
+| Param | Value | Keterangan |
+|---|---|---|
+| `patient_id` | `eq.<profile_id>` | Filter by user (RLS juga handle) |
+| `status` | `in.(pending,upcoming)` | Hanya status aktif (exclude completed/cancelled) |
+| `select` | `*,doctors(...),doctor_slots(...)` | Include relasi dokter dan slot |
+| `order` | `doctor_slots.slot_date.asc` | Tanggal terdekat dulu |
+| `limit` | `1` | Cuma 1 item untuk card |
+
+**Success Response `200`:**
+```json
+[
+  {
+    "id": "ap1a2b3c-d4e5-6789-appt-000000000001",
+    "patient_id": "p1q2r3s4-t5u6-7890-vwxy-z12345678901",
+    "doctor_id": "d1a2b3c4-e5f6-7890-doc1-000000000001",
+    "slot_id": "sl1a2b3c-d4e5-6789-slot-000000000001",
+    "status": "upcoming",
+    "complaint_note": "Sudah 3 hari demam dan batuk.",
+    "consultation_fee_snapshot": 150000.00,
+    "booked_at": "2026-06-07T10:30:00.000Z",
+    "confirmed_at": "2026-06-07T11:00:00.000Z",
+    "completed_at": null,
+    "cancelled_at": null,
+    "cancellation_reason": null,
+    "created_at": "2026-06-07T10:30:00.000Z",
+    "updated_at": "2026-06-07T11:00:00.000Z",
+    "doctors": {
+      "id": "d1a2b3c4-e5f6-7890-doc1-000000000001",
+      "full_name": "dr. Budi Santoso, Sp.PD",
+      "photo_url": "https://<ref>.supabase.co/storage/v1/object/public/doctors/budi.jpg",
+      "specializations": {
+        "name": "Penyakit Dalam",
+        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+      },
+      "clinics": {
+        "id": "c1a2b3c4-d5e6-7890-cln1-000000000001",
+        "name": "Klinik Sehat Bersama",
+        "address": "Jl. Merdeka No. 10, Bandung",
+        "phone": "022-12345678"
+      }
+    },
+    "doctor_slots": {
+      "slot_date": "2026-06-15",
+      "slot_start": "09:00:00",
+      "slot_end": "09:30:00"
+    }
+  }
+]
+```
+
+**Empty Response `200` dengan `[]`:**
+User tidak punya appointment aktif. Flutter render empty state di Home Page dengan CTA "Cari Dokter Sekarang".
+
+**Error Responses:**
+
+`401` — Token tidak ada atau expired:
+```json
+{
+  "code": 401,
+  "message": "JWT expired"
+}
+```
+
+> **Catatan Flutter:** Profile ID bisa didapat dari `GET /rest/v1/me` (lihat §3.5). Disimpan di memory setelah login untuk efisiensi.
+
+---
+
 ## 7. Banner Endpoints
 
 ---
@@ -1533,99 +1773,12 @@ class ApiException implements Exception {
 
 ---
 
-## 7. Facility Endpoints
+## Changelog
 
-### 7.1 Get Nearby Clinics
-
-```
-POST /rest/v1/rpc/get_nearby_clinics
-```
-
-**Description:** Mengembalikan daftar klinik terdekat dari lokasi user. Menggunakan PostgreSQL function dengan Haversine formula. Tidak memerlukan autentikasi (public read).
-
-**Headers:**
-```
-Content-Type: application/json
-apikey: <SUPABASE_ANON_KEY>
-```
-
-**Request Body:**
-```json
-{
-  "user_lat": -6.2088,
-  "user_lng": 106.8456,
-  "radius_meters": 10000
-}
-```
-
-| Field | Tipe | Wajib | Default | Keterangan |
-|---|---|---|---|---|
-| `user_lat` | `float` | Ya | — | Latitude lokasi user |
-| `user_lng` | `float` | Ya | — | Longitude lokasi user |
-| `radius_meters` | `int` | Tidak | `10000` | Radius pencarian dalam meter |
-
-**Response `200`:**
-```json
-[
-  {
-    "id": "c1a2b3c4-d5e6-7890-clinic-000000000001",
-    "name": "Klinik Sehat Bersama",
-    "address": "Jl. Sudirman No. 123, Jakarta Selatan",
-    "city": "Jakarta",
-    "latitude": -6.2100,
-    "longitude": 106.8470,
-    "phone": "021-1234567",
-    "image_url": "https://<ref>.supabase.co/storage/v1/object/public/clinics/klinik1.jpg",
-    "distance_meters": 1200,
-    "doctor_count": 5
-  }
-]
-```
-
-| Field | Tipe | Keterangan |
+| Versi | Tanggal | Perubahan |
 |---|---|---|
-| `id` | `string` (UUID) | ID klinik |
-| `name` | `string` | Nama klinik |
-| `address` | `string` | Alamat lengkap |
-| `city` | `string` | Kota |
-| `latitude` | `float` | Koordinat lintang |
-| `longitude` | `float` | Koordinat bujur |
-| `phone` | `string` | Nomor telepon |
-| `image_url` | `string?` | URL foto klinik |
-| `distance_meters` | `float` | Jarak dari lokasi user (meter) |
-| `doctor_count` | `int` | Jumlah dokter aktif di klinik |
-
----
-
-### 7.2 Get Clinic Detail
-
-```
-GET /rest/v1/clinics?id=eq.<clinic_id>&select=*,doctors(*,specializations(*))
-```
-
-**Description:** Mengambil data lengkap satu klinik beserta daftar dokter dan spesialisasi.
-
-**Response `200`:**
-```json
-{
-  "id": "c1a2b3c4-d5e6-7890-clinic-000000000001",
-  "name": "Klinik Sehat Bersama",
-  "address": "Jl. Sudirman No. 123",
-  "city": "Jakarta",
-  "latitude": -6.2100,
-  "longitude": 106.8470,
-  "phone": "021-1234567",
-  "image_url": "https://...",
-  "doctors": [
-    {
-      "id": "d1a2b3c4-d5e6-7890-doctor-000000000001",
-      "full_name": "Dr. Budi Santoso",
-      "photo_url": "https://...",
-      "specializations": { "name": "Umum" }
-    }
-  ]
-}
-```
+| v1.0 | Juni 2026 | Initial release — 19 endpoint |
+| v1.0.1 | 13 Jun 2026 | **Showstopper fixes:** Hapus duplikat Section 7; tambah §3.5 `GET /me`; tambah §5.5 `get_nearby_clinics`; tambah §6.5 Get Upcoming Appointment; standarkan enum Gender ke `other`; standarkan nested key ke plural (PostgREST convention) |
 
 ---
 

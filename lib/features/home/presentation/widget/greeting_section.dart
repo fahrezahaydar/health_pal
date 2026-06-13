@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_pal/widgets/badge/app_badge.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/router/route_paths.dart';
@@ -25,9 +26,12 @@ class GreetingSection extends StatelessWidget {
           ),
           LightIconButton(
             onTap: () => context.push(RoutePaths.notificationSettings),
-            icon: const Icon(
-              Iconsax.notificationBingStyle5,
-              color: AppTheme.grey900,
+            icon: const AppBadge(
+              count: 5,
+              child: Icon(
+                Iconsax.notificationBingStyle5,
+                color: AppTheme.grey900,
+              ),
             ),
           ),
         ],
