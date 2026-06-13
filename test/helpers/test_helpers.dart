@@ -1,13 +1,12 @@
 // test/helpers/test_helpers.dart
 //
 // Shared helper utilities untuk semua test di health_pal.
-// Berisi: factory untuk Entity/Model, helper untuk BLoC/Cubit, dan
+// Berisi: factory untuk Entity, helper untuk BLoC/Cubit, dan
 // common matcher functions.
 //
-// Referensi: docs/tdd/10-testing.md §7 (Test Organization)
+// PENTING: Constructor signature HARUS match dengan entity class asli.
+// Selalu rujuk ke file entity saat menulis factory.
 
-import 'package:health_pal/core/enums/booking_status.dart';
-import 'package:health_pal/core/enums/gender.dart';
 import 'package:health_pal/features/auth/domain/entity/user_entity.dart';
 import 'package:health_pal/features/home/domain/entity/banner_entity.dart';
 import 'package:health_pal/features/home/domain/entity/specialization_entity.dart';
@@ -23,20 +22,27 @@ class TestData {
   TestData._();
 
   // ── User (Auth) ──
+  // Signature HARUS match UserEntity constructor di
+  // lib/features/auth/domain/entity/user_entity.dart
   static UserEntity mockUser({
     String? id,
+    String? authId,
     String? email,
     String? fullName,
-    Gender? gender,
+    String? nickname,
+    String? gender,
+    bool? isProfileComplete,
   }) {
     return UserEntity(
       id: id ?? 'user-test-123',
+      authId: authId ?? 'auth-test-123',
       email: email ?? 'test@example.com',
       fullName: fullName ?? 'Test User',
-      gender: gender ?? Gender.male,
-      nickname: 'Tester',
-      photoUrl: null,
+      nickname: nickname,
+      avatarUrl: null,
       dateOfBirth: DateTime(1990, 1, 1),
+      gender: gender,
+      isProfileComplete: isProfileComplete ?? false,
     );
   }
 
@@ -47,15 +53,9 @@ class TestData {
     String? imageUrl,
     int? displayOrder,
   }) {
-    return BannerEntity(
-      id: id ?? 'banner-test-1',
-      title: title ?? 'Test Promo',
-      imageUrl: imageUrl ?? 'https://example.com/banner.jpg',
-      actionUrl: null,
-      displayOrder: displayOrder ?? 1,
-      isActive: true,
-      startsAt: null,
-      endsAt: null,
+    return const BannerEntity(
+      id: 'banner-test-1',
+      title: 'Test Promo',
     );
   }
 
@@ -63,58 +63,37 @@ class TestData {
   static SpecializationEntity mockSpecialization({
     String? id,
     String? name,
+    String? iconUrl,
   }) {
-    return SpecializationEntity(
-      id: id ?? 'spec-test-1',
-      name: name ?? 'Umum',
-      iconUrl: 'https://example.com/icon.png',
+    return const SpecializationEntity(
+      id: 'spec-test-1',
+      name: 'Umum',
     );
   }
 
   // ── Upcoming Appointment (Home) ──
-  static UpcomingAppointmentEntity? mockUpcoming({
-    bool isNull = false,
-  }) {
+  static UpcomingAppointmentEntity? mockUpcoming({bool isNull = false}) {
     if (isNull) return null;
-    return UpcomingAppointmentEntity(
+    return const UpcomingAppointmentEntity(
       id: 'appt-test-1',
-      patientId: 'user-test-123',
-      doctorId: 'doc-test-1',
-      slotId: 'slot-test-1',
-      status: BookingStatus.upcoming,
-      complaintNote: 'Sakit kepala',
-      consultationFeeSnapshot: 150000.0,
-      bookedAt: DateTime(2026, 6, 1),
-      confirmedAt: DateTime(2026, 6, 2),
-      completedAt: null,
-      cancelledAt: null,
       doctorName: 'dr. Test',
-      doctorPhotoUrl: null,
-      doctorSpecializationName: 'Umum',
-      slotDate: DateTime(2026, 6, 15),
-      slotStartHour: 9,
-      slotStartMinute: 0,
-      slotEndHour: 9,
-      slotEndMinute: 30,
+      clinicName: 'Klinik Test',
+      specializationName: 'Umum',
+      slotDate: '2026-06-15',
+      slotStart: '09:00',
+      slotEnd: '09:30',
+      status: 'upcoming',
     );
   }
 
-  // ── User Profile (Home) ──
+  // ── User Profile (Home) — minimal entity ──
   static UserProfileEntity mockUserProfile({
     String? id,
     String? nickname,
-    bool? isProfileComplete,
   }) {
     return UserProfileEntity(
       id: id ?? 'profile-test-1',
-      authId: 'user-test-123',
-      fullName: 'Test User',
       nickname: nickname ?? 'Tester',
-      avatarUrl: null,
-      dateOfBirth: DateTime(1990, 1, 1),
-      gender: Gender.male,
-      notifReminderEnabled: true,
-      isProfileComplete: isProfileComplete ?? true,
     );
   }
 }
@@ -129,6 +108,8 @@ Future<void> waitForMicrotasks() async {
 }
 
 /// Wait untuk durasi spesifik (untuk loading state).
-Future<void> waitForLoading({Duration duration = const Duration(milliseconds: 100)}) {
+Future<void> waitForLoading({
+  Duration duration = const Duration(milliseconds: 100),
+}) {
   return Future<void>.delayed(duration);
 }
