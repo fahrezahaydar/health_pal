@@ -18,7 +18,7 @@ class RegisterAndCreateProfileUseCase {
     required String fullName,
     required String nickname,
     required String gender,
-    required DateTime dob,
+    required DateTime dateOfBirth,
     File? photo,
   }) {
     return _repository.registerAndCreateProfile(
@@ -27,7 +27,7 @@ class RegisterAndCreateProfileUseCase {
       fullName: fullName,
       nickname: nickname,
       gender: gender,
-      dob: dob,
+      dateOfBirth: dateOfBirth,
       photo: photo,
     );
   }

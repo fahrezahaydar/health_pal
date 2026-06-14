@@ -54,7 +54,7 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
     required String fullName,
     required String nickname,
     required String gender,
-    required DateTime dob,
+    required DateTime dateOfBirth,
     File? photo,
   }) async {
     emit(const CreateProfileLoading());
@@ -64,7 +64,7 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
       fullName: fullName,
       nickname: nickname,
       gender: gender,
-      dob: dob,
+      dateOfBirth: dateOfBirth,
       photo: photo,
     );
     switch (result) {

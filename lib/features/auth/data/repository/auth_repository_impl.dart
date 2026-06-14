@@ -76,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   // Flow:
   //   1) signUp Auth + set user_metadata.{display_name, is_profile_complete:false}
   //   2) uploadAvatar (jika ada photo) → bucket avatars/{authId}/profile.jpg
-  //   3) INSERT user_profiles (full_name, nickname, gender, dob,
+  //   3) INSERT user_profiles (full_name, nickname, gender, date_of_birth,
   //      is_profile_complete:true, avatar_url)
   //   4) updateAuthMetadata(is_profile_complete:true) — jaga-jaga
   //      kalau RLS trigger di step 3 overwrite
@@ -88,7 +88,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String fullName,
     required String nickname,
     required String gender,
-    required DateTime dob,
+    required DateTime dateOfBirth,
     File? photo,
   }) async {
     String? createdAuthId;
@@ -119,7 +119,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'full_name': fullName,
         'nickname': nickname,
         'gender': gender,
-        'dob': dob.toIso8601String().split('T').first,
+        'date_of_birth': dateOfBirth.toIso8601String().split('T').first,
         'is_profile_complete': true,
         'avatar_url': avatarUrl,
       });

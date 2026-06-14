@@ -12,7 +12,7 @@ abstract class AuthRepository {
     required String fullName,
     required String nickname,
     required String gender,
-    required DateTime dob,
+    required DateTime dateOfBirth,
     File? photo,
   });
   Future<Result<UserEntity>> createProfile(Map<String, dynamic> data, {File? photo});

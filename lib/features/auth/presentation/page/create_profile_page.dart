@@ -68,8 +68,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
   void _onSaveProfile(BuildContext context) {
     if (!_formKey.currentState!.validate()) return;
     final values = _formKey.currentState!.values;
-    final dob = values['dob'] as DateTime?;
-    if (dob == null) {
+    final dateOfBirth = values['date_of_birth'] as DateTime?;
+    if (dateOfBirth == null) {
       // Shouldn't happen — validator catches null. Guard biar cast aman.
       return;
     }
@@ -89,7 +89,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
       fullName: values['Name'] ?? '',
       nickname: values['Nickname'] ?? '',
       gender: values['gender'] as String,
-      dob: dob,
+      dateOfBirth: dateOfBirth,
       photo: _localPhoto,
     );
   }
@@ -236,7 +236,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                       },
                                     ),
                                     AppDatePickerFormField(
-                                      name: 'dob',
+                                      name: 'date_of_birth',
                                       hintText: 'Date of Birth',
                                       firstDate: DateTime(1900),
                                       lastDate: DateTime.now(),
