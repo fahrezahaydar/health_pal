@@ -253,6 +253,13 @@ class _ProfileView extends StatelessWidget {
               onPressed: () => context.read<ProfileCubit>().loadProfile(),
               child: const Text('Coba lagi'),
             ),
+            // FIX-2: Tambah tombol Logout agar user tidak stuck di error
+            // state. Sebelumnya, kalau loadProfile() gagal, user cuma
+            // bisa "Coba lagi" atau paksa close app. Sekarang ada jalan
+            // keluar eksplisit: logout. Pakai _confirmLogout untuk
+            // konsistensi dengan flow logout normal.
+            const SizedBox(height: 24),
+            _logoutButton(context),
           ],
         ),
       ),

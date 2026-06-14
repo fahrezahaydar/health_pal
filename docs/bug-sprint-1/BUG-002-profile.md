@@ -1,9 +1,9 @@
 # BUG-002 — Profile Issues
 
-**Tanggal:** 2026-06-14 (last updated: FIX-1 selesai)
+**Tanggal:** 2026-06-14 (last updated: FIX-2 selesai; FIX-3 di-defer)
 **Feature:** Profile
 **Severity:** Critical
-**Status:** In Progress (BUG-002-A resolved, BUG-002-B open)
+**Status:** Resolved (FIX-3 di-defer ke Sprint 2)
 
 ---
 
@@ -92,7 +92,7 @@ Future<void> loadProfile() async {
 - `lib/features/profile/presentation/bloc/profile/profile_cubit.dart` line 24-34 — `loadProfile` tanpa try/catch (potential future rejection)
 - `lib/core/services/app_services.dart` — `logout()` (sudah benar: signOut + clearAuth + status update)
 
-**Status:** Open
+**Status:** Fixed — diselesesaikan via FIX-2 (logout button di error state). FIX-3 di-skip untuk Sprint 1 (lihat "Catatan: FIX-3 di-skip" di bawah).
 
 ---
 
@@ -106,13 +106,15 @@ Future<void> loadProfile() async {
 
 - [ ] **FIX-2**: Tambah tombol logout di `_errorState` widget (dan/atau pindahkan logout ke AppBar agar selalu reachable).
 
-- [ ] **FIX-2**: Tambah tombol logout di `_errorState` widget (dan/atau pindahkan logout ke AppBar agar selalu reachable).
+- [x] **FIX-2**: Tambah tombol logout di `_errorState` widget (dan/atau pindahkan logout ke AppBar agar selalu reachable).
   - File: `lib/features/profile/presentation/page/profile_page.dart` line 235-260
   - Pilihan desain:
-    - (a) Tambah `OutlinedButton.icon` "Logout" di bawah tombol "Coba lagi" di `_errorState`. Sederhana, scoped.
+    - (a) Tambah `OutlinedButton.icon` "Logout" di bawah tombol "Coba lagi" di `_errorState`. Sederhana, scoped. ✅ Dipilih.
     - (b) Pindahkan tombol logout ke `AppBar` `actions` agar selalu terlihat di semua state (loaded/error). Lebih robust tapi ubah UI di loaded state juga.
   - Rekomendasi: opsi (a) untuk minimal diff, atau (b) untuk defense-in-depth. Diskusikan dengan designer.
   - Test: `loadProfile()` paksa error (misal disable network) → user bisa logout lewat error state.
+
+- [ ] **FIX-3 (DEFERRED)**: Tambah try/catch di `ProfileCubit.loadProfile()` agar future tidak reject.
 
 - [ ] **FIX-3**: Tambah try/catch di `ProfileCubit.loadProfile()` agar future tidak reject.
   - File: `lib/features/profile/presentation/bloc/profile/profile_cubit.dart` line 24-34
@@ -138,10 +140,10 @@ Future<void> loadProfile() async {
 |---|----------|----------|--------|
 | 1 | Buka Profile page (network OK, profile exists) | Data user tampil | Done (FIX-1) |
 | 2 | Buka Profile page (network OK, query 'me' fail — sekarang tidak ada) | N/A (query diganti ke user_profiles) | N/A |
-| 3 | Buka Profile page (network error) | Tampil error state + tombol Logout + Coba lagi | Open (FIX-2) |
+| 3 | Buka Profile page (network error) | Tampil error state + tombol Logout + Coba lagi | Done (FIX-2) |
 | 4 | Logout dari Profile page (state loaded) | Berhasil logout, navigate ke Login | Pass (current behavior) |
-| 5 | Logout dari Profile page (state error) | Berhasil logout, navigate ke Login | Open (FIX-2) |
-| 6 | loadProfile() throw unexpected exception | Tampil error state, tidak stuck loading | Open (FIX-3) |
+| 5 | Logout dari Profile page (state error) | Berhasil logout, navigate ke Login | Done (FIX-2) |
+| 6 | loadProfile() throw unexpected exception | Tampil error state, tidak stuck loading | Deferred (FIX-3) |
 | 7 | Refresh Profile (pull-to-refresh dari loaded state) | Re-fetch, tampil data | Pass (current behavior) |
 
 ---
@@ -160,11 +162,11 @@ Future<void> loadProfile() async {
 
 | Fix | Status | Commit |
 |-----|--------|--------|
-| FIX-1: Ganti query `.from('me')` -> `user_profiles` | Done | uncommitted |
-| FIX-2: Tambah logout button di `_errorState` | Pending | — |
-| FIX-3: Try/catch di `ProfileCubit.loadProfile` | Pending | — |
+| FIX-1: Ganti query `.from('me')` -> `user_profiles` | Done | 98a2888 |
+| FIX-2: Tambah logout button di `_errorState` | Done | uncommitted |
+| FIX-3: Try/catch di `ProfileCubit.loadProfile` | Deferred (Sprint 2) | — |
 
-**Status summary:** 1 dari 3 fix selesai (33%).
+**Status summary:** 2 dari 3 fix selesai (67%). **FIX-3 di-skip untuk Sprint 1** — defense-in-depth yang over-engineered untuk konteks (semua layer di bawah cubit sudah punya try/catch). Bisa di-revisit kalau ada crash report "stuck in loading".
 
 ### Fix Details
 
@@ -190,3 +192,44 @@ File diubah:
   - Sesudah: query `.from('user_profiles').eq('auth_id', ...)` -> 200 OK dengan data row -> `ProfileLoaded(user)`.
 
 - Verifikasi: `flutter analyze` -> No issues found!
+
+#### FIX-2 (Done)
+
+File diubah:
+
+- `lib/features/profile/presentation/page/profile_page.dart`:
+  - `_errorState` widget (line 235-260): tambah tombol Logout di bawah tombol "Coba lagi", dengan spacing 24.
+  - Reuse `_logoutButton(context)` (helper yang sudah ada) — style konsisten dengan logout di loaded state (icon `Iconsax.logout01`, color `AppTheme.darkRed`, `OutlinedButton.icon`).
+  - Pakai `_confirmLogout` helper (sama dengan logout di loaded state) — user tetap diminta konfirmasi sebelum logout. Konsistensi UX.
+  - Komentar inline menjelaskan kenapa tombol ini ditambah.
+
+- Trace user flow:
+  1. User buka Profile page.
+  2. `loadProfile()` gagal (network error / DB error / RLS deny).
+  3. Cubit emit `ProfileError(message)`.
+  4. UI render `_errorState`: icon warning, pesan error, tombol "Coba lagi", **tombol Logout**.
+  5. User tap Logout.
+  6. `_confirmLogout` tampilkan dialog "Yakin ingin logout?".
+  7. User konfirmasi.
+  8. `ProfileCubit.logout()` -> `AppServices.logout()` -> Supabase signOut + clearAuth + status=unauthenticated.
+  9. Router Kondisi 2 redirect ke `/sign-in`. ✅
+
+- Trace Skenario #5 (sebelum fix): user cuma bisa "Coba lagi" atau force-close. Tidak ada jalan keluar.
+
+- `flutter analyze` -> No issues found!
+
+#### FIX-3 (DEFERRED)
+
+Alasan skip untuk Sprint 1:
+
+- Skenario "loadProfile() throw exception" adalah teoritis. Cek chain: `ProfileCubit.loadProfile()` -> `GetProfileUseCase` -> `ProfileRepositoryImpl.getProfile()` yang punya try/catch (line 27-32) -> `ErrorHandler.map()` return value (no throw). Jadi `_getProfile()` praktis tidak akan throw.
+- Defense-in-depth yang over-engineered untuk konteks Sprint 1.
+- Effort:risk ratio rendah.
+
+Kapan FIX-3 baru relevan:
+
+- Jika ada refactor yang menghapus try/catch di repository.
+- Jika ada use case baru yang tidak pakai ErrorHandler.
+- Jika ada crashlytics report "stuck in loading spinner" dari user.
+
+Untuk sekarang, FIX-2 sudah cukup untuk memenuhi skenario validasi #3 dan #5 (real UX bug). Skenario #6 (theoretical) di-defer.
