@@ -17,8 +17,32 @@ class AuthRemoteDataSource {
     return _client.auth.signInWithPassword(email: email, password: password);
   }
 
-  Future<AuthResponse> signUpWithEmail(String email, String password) {
-    return _client.auth.signUp(email: email, password: password);
+  Future<AuthResponse> signUpWithEmail(
+    String email,
+    String password, {
+    Map<String, dynamic>? data,
+  }) {
+    return _client.auth.signUp(email: email, password: password, data: data);
+  }
+
+  Future<UserResponse> updateAuthMetadata({
+    String? displayName,
+    bool? isProfileComplete,
+  }) {
+    final data = <String, dynamic>{};
+    if (displayName != null) data['display_name'] = displayName;
+    if (isProfileComplete != null) {
+      data['is_profile_complete'] = isProfileComplete;
+    }
+    return _client.auth.updateUser(UserAttributes(data: data));
+  }
+
+  // BUG-004-C Fix: Cleanup fallback. Panggil RPC Postgres `delete_user()`
+  // yang enforce `auth.uid() = id` via SECURITY DEFINER. Butuh migration
+  // SQL function di Sprint 1 cleanup task. Aman dipanggil dari client —
+  // service-role tidak diperlukan karena RLS sudah enforce caller = owner.
+  Future<void> deleteCurrentUser() async {
+    await _client.rpc('delete_user');
   }
 
   Future<AuthResponse> signInWithGoogle() async {
@@ -87,11 +111,13 @@ class AuthRemoteDataSource {
   Future<String> uploadAvatar(String userId, File photo) async {
     final bytes = await photo.readAsBytes();
     final path = '$userId/profile.jpg';
-    await _client.storage.from('avatars').uploadBinary(
-      path,
-      bytes,
-      fileOptions: const FileOptions(upsert: true),
-    );
+    await _client.storage
+        .from('avatars')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
     return _client.storage.from('avatars').getPublicUrl(path);
   }
 }
