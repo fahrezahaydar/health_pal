@@ -128,11 +128,14 @@ class AppServices extends ChangeNotifier {
     _updateStatus(AppStatus.unauthenticated);
   }
 
+  /// Set status ke [AppStatus.authenticated] dan simpan cache hint.
+  ///
+  /// Dipanggil dari `LoginPage` listener setelah sign-in dengan profile
+  /// lengkap. TIDAK dipanggil untuk profile incomplete (lihat FIX-5)
+  /// karena akan konflik dengan `_setStatusFromProfile()` di event
+  /// handler yang lebih authoritative.
   Future<void> login() async {
     await prefs.setLoggedIn(true);
-    // Sumber kebenaran status ada di Supabase session + profile.
-    // Saat login dipanggil dari UI, diasumsikan profile sudah lengkap
-    // (lihat LoginPage listener — BUG-001-C).
     _updateStatus(AppStatus.authenticated);
   }
 

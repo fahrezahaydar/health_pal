@@ -158,11 +158,11 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 | FIX-1: Tambah `AppStatus.profileIncomplete` | Done | 0a352c0 |
 | FIX-2: Refactor `AppServices` fetch profile | Done | a700eed |
 | FIX-3: Update router redirect `profileIncomplete` | Done | 6c67997 |
-| FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Done | uncommitted |
-| FIX-5: `LoginPage` listener cek `isProfileComplete` | Pending | — |
+| FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Done | 74aac93 |
+| FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | uncommitted |
 | FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Pending | — |
 
-**Status summary:** 4 dari 6 fix selesai (67%).
+**Status summary:** 5 dari 6 fix selesai (83%).
 
 ### Fix Details
 
@@ -170,8 +170,8 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 
 - Tambah enum value `profileIncomplete` di `lib/core/enums/app_status.dart`.
 - Update dartdoc enum + diagram alur transisi.
-- Update docstring class `AppServices` dan method `init()` di `lib/core/services/app_services.dart`.
-- `flutter analyze` clean (2 file: `app_status.dart` + `app_services.dart`).
+- Update docstring class `AppServices` dan method `init()`.
+- `flutter analyze` clean.
 - Commit: `0a352c0`.
 
 #### FIX-2 (Done)
@@ -181,15 +181,14 @@ File diubah:
 - `lib/core/services/app_services.dart`:
   - Inject `AuthRepository` ke constructor.
   - Tambah helper `_setStatusFromProfile()`.
-  - `init()` panggil `_setStatusFromProfile()` setelah session validated.
+  - `init()` panggil `_setStatusFromProfile()`.
   - `_onAuthStateChange.signedIn` panggil `_setStatusFromProfile()`.
   - Tambah method publik `markProfileComplete()`.
-  - Switch `_onAuthStateChange` direstrukturisasi pakai `default` clause.
+  - Switch direstrukturisasi pakai `default` clause.
 
 - `lib/core/di/locator.config.dart`:
-  - Update DI registration `AppServices` untuk include `gh<_i613.AuthRepository>()`.
+  - Update DI registration.
 
-- `flutter analyze` clean (full project).
 - Commit: `a700eed`.
 
 #### FIX-3 (Done)
@@ -197,12 +196,9 @@ File diubah:
 File diubah:
 
 - `lib/core/router/app_router.dart`:
-  - Tambah Kondisi 3 untuk `AppStatus.profileIncomplete`:
-    - Hanya `RoutePaths.createProfile` yang diizinkan.
-    - Route lain dipaksa ke `RoutePaths.createProfile`.
+  - Tambah Kondisi 3 untuk `AppStatus.profileIncomplete`.
   - Kondisi `authenticated` di-rename jadi Kondisi 4.
 
-- `flutter analyze` clean.
 - Commit: `6c67997`.
 
 #### FIX-4 (Done)
@@ -210,38 +206,60 @@ File diubah:
 File diubah:
 
 - `lib/features/auth/presentation/page/create_profile_page.dart`:
-  - Line 213: Tambah `'is_profile_complete': true` ke map payload `saveProfile`. DB akan terupdate ke `is_profile_complete = true`.
-  - Line 80: Ganti `GetIt.instance<AppServices>().login()` jadi `markProfileComplete()`. Hanya transisi `profileIncomplete` ke `authenticated`; no-op untuk state lain.
-  - Nav `context.go(RoutePaths.home)` tetap di listener; router redirect Kondisi 4 yang akan trigger perpindahan.
+  - Tambah `'is_profile_complete': true` ke payload `saveProfile`.
+  - Listener panggil `markProfileComplete()` bukan `login()`.
 
-- Trace create-profile flow:
-  1. User di `/sign-up/create-profile`, status = `profileIncomplete` (dari FIX-3).
-  2. User isi form, tap Save.
-  3. `CreateProfileCubit.saveProfile` insert row dengan `is_profile_complete: true` ke DB.
-  4. `AuthLocalDataSource.cacheUser` update cache lokal.
-  5. Cubit emit `CreateProfileSuccess(user)`.
-  6. Listener: `markProfileComplete()` -> status `profileIncomplete` -> `authenticated`. Router refresh.
-  7. Router Kondisi 4: status `authenticated`, loc `/sign-up/create-profile` (auth route) -> `/home`. User di Home.
+- Commit: `74aac93`.
+
+#### FIX-5 (Done)
+
+File diubah:
+
+- `lib/features/auth/presentation/page/login_page.dart` line 65-71:
+  - Listener dipecah jadi 2 cabang berdasarkan `user.isProfileComplete`:
+    - `isProfileComplete = true` -> panggil `AppServices.login()` (status -> authenticated, sync), `context.go(home)`. Tidak ada race karena event handler juga akan set ke `authenticated`.
+    - `isProfileComplete = false` -> TIDAK panggil `login()`. Cukup `context.go(createProfile)`. Status masih `unauthenticated` saat listener jalan; router Kondisi 2 allow karena `/sign-up/createProfile` auth route. Setelah `_setStatusFromProfile()` selesai, status -> `profileIncomplete`; router Kondisi 3 match. User tetap di createProfile (no flicker).
+
+- `lib/core/services/app_services.dart`:
+  - Update dartdoc `login()` untuk note bahwa dia hanya dipakai untuk profile complete case.
+
+- Trace sign-in flow:
+
+  **Skenario 5 (profile lengkap)**:
+  1. User on /sign-in, status=unauthenticated.
+  2. Submit -> auth success.
+  3. signedIn event -> _setStatusFromProfile() starts.
+  4. Bloc emit SignInSuccess.
+  5. Listener: login() -> status=authenticated, context.go(home).
+  6. Router Kondisi 4: status=authenticated, loc=/home -> stay. User at home.
+  7. _setStatusFromProfile() complete: status=authenticated (no change). User stays at home. ✅
+
+  **Skenario 4 (profile incomplete)**:
+  1. User on /sign-in, status=unauthenticated.
+  2. Submit -> auth success.
+  3. signedIn event -> _setStatusFromProfile() starts.
+  4. Bloc emit SignInSuccess.
+  5. Listener: context.go(createProfile) (TANPA panggil login()).
+  6. Router Kondisi 2: status=unauthenticated, loc=/sign-up/createProfile (auth route) -> stay. User at createProfile.
+  7. _setStatusFromProfile() complete: status=profileIncomplete, notify.
+  8. Router Kondisi 3: status=profileIncomplete, loc=/sign-up/createProfile -> stay. User stays. ✅
+
+  **No flicker di kedua kasus** karena status akhir konsisten dengan navigasi.
 
 - `flutter analyze` clean.
 
-#### FIX-5 (Pending)
-
-Update `login_page.dart` line 65-71:
-
-- Jangan panggil `AppServices.login()` (race dengan `_setStatusFromProfile()`). Cukup navigasi saja.
-- Cek `user.isProfileComplete`: true -> `home`; false -> `createProfile`.
-
 #### FIX-6 (Pending, opsional)
 
-Untuk hindari race dengan Supabase `signedIn` event, sign-up flow panggil `AppServices.setProfileIncomplete()` secara eksplisit.
+Sign-up flow bisa di-improve dengan explicit `setStatusProfileIncomplete()` call di `SignUpPage` listener untuk konsistensi. Saat ini sign-up sudah bekerja dengan baik via FIX-2 + FIX-3 + FIX-4 (event handler fetch profile -> status profileIncomplete -> Kondisi 3 redirect). FIX-6 adalah safety belt tambahan untuk menghindari edge case (misalnya signedIn event yang gagal di-fire).
 
-**Validasi skenario yang sudah ter-cover:**
+**Validasi skenario yang sudah ter-cover (semua ✅ penuh):**
 
-- Skenario 3 (Sign up baru -> CreateProfile -> Home): ✅ penuh (FIX-3 + FIX-4).
-- Skenario 4 (Sign in, profile incomplete -> CreateProfile): ✅ parsial; FIX-3 redirect create-profile, tapi race dengan listener sampai FIX-5.
-- Skenario 5 (Sign in, profile lengkap -> Home): butuh FIX-5 (LoginPage listener) untuk routing yang benar.
-- Skenario 6 (Session expired): ✅ dari commit sebelumnya.
-- Skenario 7 (login + profile lengkap, buka app -> Home): ✅ FIX-2.
-- Skenario 8 (login + profile incomplete, buka app -> CreateProfile): ✅ FIX-2 + FIX-3.
-- Skenario 9 (logout + login lagi): parsial; butuh FIX-5 untuk konsistensi.
+- Skenario 1: Fresh install -> Onboarding (commit 0f48e8c).
+- Skenario 2: Sudah onboarding, belum login -> Login (commit 0f48e8c).
+- Skenario 3: Sign up baru -> CreateProfile -> Home (FIX-2 + FIX-3 + FIX-4 + FIX-5).
+- Skenario 4: Sign in, profile incomplete -> CreateProfile (FIX-2 + FIX-3 + FIX-5).
+- Skenario 5: Sign in, profile lengkap -> Home (FIX-5).
+- Skenario 6: Session expired -> Login (commit 0f48e8c).
+- Skenario 7: Login + profile lengkap, buka app -> Home (FIX-2 init flow).
+- Skenario 8: Login + profile incomplete, buka app -> CreateProfile (FIX-2 + FIX-3).
+- Skenario 9: Logout + login lagi -> Login -> sesuai profile (FIX-5 listener + FIX-2 event).

@@ -65,8 +65,23 @@ class _LoginPageState extends State<LoginPage> {
           return BlocListener<SignInBloc, SignInState>(
             listener: (context, state) {
               if (state is SignInSuccess) {
-                GetIt.instance<AppServices>().login();
-                context.go(RoutePaths.home);
+                final user = state.user;
+                if (user.isProfileComplete) {
+                  // Profile lengkap: set status ke authenticated dan
+                  // navigasi langsung ke /home. Tidak ada race dengan
+                  // _setStatusFromProfile() (kedua-duanya akan set
+                  // status ke authenticated).
+                  GetIt.instance<AppServices>().login();
+                  context.go(RoutePaths.home);
+                } else {
+                  // Profile belum lengkap. JANGAN panggil
+                  // AppServices.login() karena akan set status ke
+                  // authenticated (konflik dengan _setStatusFromProfile()
+                  // di event handler yang set ke profileIncomplete).
+                  // Cukup navigasi; router Kondisi 3 akan match dengan
+                  // status akhir.
+                  context.go(RoutePaths.createProfile);
+                }
               }
             },
             child: Directionality(
