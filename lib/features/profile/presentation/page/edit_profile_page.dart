@@ -132,7 +132,9 @@ class _EditProfileViewState extends State<_EditProfileView> {
           subtitle: 'Profil berhasil disimpan',
         );
         if (!mounted) return;
-        context.pop();
+        // Pop dengan `true` agar Profile page tahu harus refresh
+        // (lihat _EditProfile tap handler di profile_page.dart).
+        context.pop(true);
       },
       onError: (message) async {
         if (!mounted) return;

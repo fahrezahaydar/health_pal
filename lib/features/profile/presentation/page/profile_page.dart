@@ -158,7 +158,15 @@ class _ProfileView extends StatelessWidget {
           _menuItem(
             icon: Iconsax.user,
             label: 'Edit Profile',
-            onTap: () => context.push(RoutePaths.editProfile),
+            onTap: () async {
+              // EditProfilePage.pop(true) menandakan data telah berubah.
+              // Refresh ProfileCubit biar UI tampil data terbaru tanpa
+              // harus pull-to-refresh manual.
+              final changed = await context.push<bool>(RoutePaths.editProfile);
+              if (changed == true && context.mounted) {
+                context.read<ProfileCubit>().loadProfile();
+              }
+            },
           ),
           const _Divider(),
           _menuItem(
