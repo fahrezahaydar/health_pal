@@ -7,9 +7,12 @@ import 'shared_prefs.dart';
 
 /// Pengendali status global aplikasi.
 ///
-/// Alur status (sumber kebenaran = sesi Supabase):
-///   loading → onboarding → unauthenticated → authenticated
-///                                              ↓ (session expired)
+/// Alur status (sumber kebenaran = sesi Supabase + is_profile_complete):
+///   loading → onboarding → unauthenticated ─┬─→ profileIncomplete → authenticated
+///                                          │             ↑
+///                                          │   (sign up) │
+///                                          └─────────────┘
+///                                          ↓ (session expired)
 ///                                       unauthenticated
 ///
 /// Dipakai oleh GoRouter sebagai `refreshListenable` — setiap perubahan
@@ -27,10 +30,11 @@ class AppServices extends ChangeNotifier {
   /// Inisialisasi awal — dipanggil SEBELUM runApp().
   ///
   /// Keputusan routing:
-  /// 1. onboarding flag di SharedPreferences → masih di onboarding page
-  /// 2. Supabase currentSession == null         → unauthenticated
-  /// 3. Supabase session.isExpired              → force logout
-  /// 4. else                                    → authenticated
+  /// 1. onboarding flag di SharedPreferences     → onboarding
+  /// 2. Supabase currentSession == null            → unauthenticated
+  /// 3. Supabase session.isExpired                 → force logout (→ unauthenticated)
+  /// 4. user.isProfileComplete == false            → profileIncomplete
+  /// 5. else                                       → authenticated
   Future<void> init() async {
     _supabaseClient.auth.onAuthStateChange.listen(_onAuthStateChange);
 
