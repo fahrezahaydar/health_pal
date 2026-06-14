@@ -67,9 +67,21 @@ class AppRouter {
         return RoutePaths.signIn;
       }
 
-      // ─── Kondisi 3: sudah login (status = authenticated). Jika user
-      //                  mencoba akses onboarding / auth pages, lempar ke
-      //                  /home. Route lain (booking, profile, dll) dibiarkan.
+      // ─── Kondisi 3: sudah sign-in tapi profile belum lengkap
+      //                  (status = profileIncomplete). Hanya CreateProfile
+      //                  yang diizinkan; route lain dipaksa ke create-profile.
+      //                  User TIDAK boleh kembali ke sign-in / sign-up /
+      //                  home sebelum profile diisi (BUG-001-B & BUG-001-C).
+      if (status == AppStatus.profileIncomplete) {
+        return loc == RoutePaths.createProfile
+            ? null
+            : RoutePaths.createProfile;
+      }
+
+      // ─── Kondisi 4: sudah login + profile lengkap (status = authenticated).
+      //                  Jika user mencoba akses onboarding / auth pages,
+      //                  lempar ke /home. Route lain (booking, profile, dll)
+      //                  dibiarkan.
       if (status == AppStatus.authenticated) {
         final isOnAuthOrOnboarding = loc == RoutePaths.onboarding || isOnAuthRoute;
         if (isOnAuthOrOnboarding) return RoutePaths.home;
