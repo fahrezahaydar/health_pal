@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:health_pal/core/di/locator.dart';
+import 'package:health_pal/core/services/app_services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entity/banner_entity.dart';
@@ -53,8 +55,18 @@ class _HomePageBody extends StatelessWidget {
       body: SafeArea(
         child: BlocListener<GreetingCubit, GreetingState>(
           listener: (context, state) {
-            if (state is GreetingLoaded && state.profileId.isNotEmpty) {
-              context.read<UpcomingCubit>().loadUpcoming(state.profileId);
+            if (state is GreetingLoaded) {
+              if (state.profileId.isNotEmpty) {
+                context.read<UpcomingCubit>().loadUpcoming(state.profileId);
+              }
+              // FIX-7: Guard profile completeness. Jika profile incomplete
+              // (misalnya network failure fallback di FIX-2 atau server-side
+              // change setelah sign-in), set status ke profileIncomplete.
+              // Router Kondisi 3 akan redirect ke /sign-up/create-profile.
+              // Idempotent: jika status sudah profileIncomplete, no-op.
+              if (!state.isProfileComplete) {
+                GetIt.instance<AppServices>().setProfileIncomplete();
+              }
             }
           },
           child: ListView(

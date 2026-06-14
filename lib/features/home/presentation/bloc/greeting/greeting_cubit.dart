@@ -20,6 +20,7 @@ class GreetingCubit extends Cubit<GreetingState> {
         emit(GreetingLoaded(
           nickname: result.data.nickname,
           profileId: result.data.id,
+          isProfileComplete: result.data.isProfileComplete,
         ));
         return result.data.id;
       case Failure<UserProfileEntity>():

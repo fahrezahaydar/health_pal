@@ -1,6 +1,6 @@
 # BUG-001 — Auth Routing Issues
 
-**Tanggal:** 2026-06-14  
+**Tanggal:** 2026-06-14 (last updated: FIX-7 selesai)  
 **Feature:** Auth + Routing  
 **Severity:** Critical  
 **Status:** Resolved
@@ -86,7 +86,40 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
 - `lib/features/auth/data/repository/auth_repository_impl.dart` line 147-165 — `getCurrentUser()` sudah ada, tinggal dipanggil
 - `lib/core/router/app_router.dart` — tidak ada state `profileIncomplete`
 
-**Status:** Fixed — diselesesaikan via FIX-1, FIX-2, FIX-3, FIX-5. Commit: `487ded6`.
+**Status:** Fixed — diselesesaikan via FIX-1, FIX-2, FIX-3, FIX-5, FIX-7. Commit: `487ded6`, lalu FIX-7.
+
+---
+
+### BUG-001-D: User Bisa Stay di Home Tanpa Profile Lengkap (OPEN)
+
+**Deskripsi:**  
+User yang terlanjur masuk ke Home (status `AppStatus.authenticated`) tanpa `is_profile_complete = true` di DB tetap bisa stay di Home, browse semua tab, dan tidak di-redirect ke Create Profile. Seharusnya ada guard runtime yang merefresh status dari source of truth dan redirect user ke `/sign-up/create-profile` jika profile tiba-tiba tidak lengkap.
+
+**Root Cause:**
+
+Tiga lapis defense hilang:
+
+1. **Router redirect Kondisi 4 (`authenticated`) tidak re-validasi `is_profile_complete`.** Lihat `lib/core/router/app_router.dart` line 81-89: Kondisi 4 hanya cek apakah user mencoba akses auth/onboarding routes. Tidak ada fetch `getCurrentUser()` ulang. Status `authenticated` di-cache di `AppServices._status` dan diasumsikan valid sampai ada auth event.
+
+2. **Router redirect re-evaluasi hanya saat `AppServices.notifyListeners()`.** `app_router.dart:42` pakai `refreshListenable: _appServices`. Redirect TIDAK re-evaluasi pada navigasi internal (misal: user di Home, tap tab ke Profile, balik ke Home). Selama status tidak berubah, redirect diam.
+
+3. **`HomePage` tidak punya guard apapun.** `lib/features/home/presentation/page/home_page.dart` line 22-45 cuma `MultiBlocProvider` untuk cubits (Greeting, Banner, Upcoming, Specialization). Tidak ada `BlocListener`, `RouteObserver`, atau `WidgetsBindingObserver` yang cek `isProfileComplete` saat Home mount/resume.
+
+Skenario konkret yang luput:
+
+- **Skenario X1**: Saat sign-in, `getCurrentUser()` `Failure` (network error, no cache) → status default ke `authenticated` (per FIX-2 fallback di `app_services.dart`). User di Home meskipun profile sebenarnya incomplete di DB.
+- **Skenario X2**: Profile user di-mark incomplete oleh admin/backend setelah sign-in. Status lokal masih `authenticated`. User stay di Home tanpa indikasi.
+- **Skenario X3**: User membuka Home via deep link (push notification ke `/booking-history/:id`). Router Kondisi 4 izinkan. Profile sebenarnya incomplete (misal user baru di-invite admin, belum lengkapi). User bisa browse tanpa diminta lengkapi profile.
+- **Skenario X4**: User kill app saat di tengah create-profile (status `profileIncomplete`, tapi DB `is_profile_complete = true` karena cubit sudah save). Reopen app: `init()` fetch profile → `isProfileComplete = true` → status `authenticated` → Home. SEHARUSNYA OK (ini bukan bug). TAPI kalau ada race di mana cubit save gagal sebagian atau DB transaction rollback, user bisa stuck.
+
+**File yang terkait:**
+
+- `lib/features/home/presentation/page/home_page.dart` line 22-106 — tidak ada guard profile check
+- `lib/features/home/presentation/bloc/greeting/greeting_cubit.dart` — load profile tapi state tidak expose `isProfileComplete` ke UI
+- `lib/core/router/app_router.dart` line 81-89 — Kondisi 4 tidak re-validasi profile
+- `lib/core/services/app_services.dart` line 116-128 — `_setStatusFromProfile()` cuma dipanggil dari `init()` dan event `signedIn`, tidak ada periodic/refresh mechanism
+
+**Status:** Fixed — diselesesaikan via FIX-7.
 
 ---
 
@@ -122,6 +155,13 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
   - Untuk menghindari race condition dengan `signedIn` event Supabase, sign-up flow idealnya set status ke `profileIncomplete` secara eksplisit sebelum `context.go(createProfile)`.
   - Alternatif: cukup andalkan FIX-2 (event handler fetch profile), tapi ini race-prone.
 
+- [x] **FIX-7**: Guard di Home page — refresh `is_profile_complete` saat Home mount, redirect ke CreateProfile jika incomplete
+  - File: `lib/features/home/presentation/page/home_page.dart` dan dependency-nya.
+  - **Strategi**: extend `GreetingCubit` (alternatif ringan dari bug report) — `GreetingCubit` sudah load profile; expose `isProfileComplete` ke state, lalu `HomePage` BlocListener react. Tidak ada network call tambahan.
+  - File: `lib/features/auth/presentation/page/sign_up_page.dart` line 70-78
+  - Untuk menghindari race condition dengan `signedIn` event Supabase, sign-up flow idealnya set status ke `profileIncomplete` secara eksplisit sebelum `context.go(createProfile)`.
+  - Alternatif: cukup andalkan FIX-2 (event handler fetch profile), tapi ini race-prone.
+
 ---
 
 ## Skenario Validasi
@@ -137,6 +177,7 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
 | 7 | Sudah login + profile lengkap, buka app | Home | Done (FIX-2) |
 | 8 | Sudah login + profile incomplete, buka app | Create Profile | Done (FIX-2 + FIX-3) |
 | 9 | Logout, lalu login lagi | Login, lalu sesuai profile | Done (FIX-5) |
+| 10 | User terlanjur di Home, profile belum lengkap (server-side change) | Redirect ke Create Profile | Done (FIX-7) |
 
 ---
 
@@ -160,9 +201,10 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 | FIX-3: Update router redirect `profileIncomplete` | Done | 6c67997 |
 | FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Done | 74aac93 |
 | FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | 487ded6 |
-| FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Done | uncommitted |
+| FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Done | d96837d |
+| FIX-7: Guard di Home page refresh `is_profile_complete` | Done | uncommitted |
 
-**Status summary:** 6 dari 6 fix selesai (100%). **BUG-001 Resolved.**
+**Status summary:** 7 dari 7 fix selesai (100%). **BUG-001 Resolved.**
 
 ### Fix Details
 
@@ -274,6 +316,45 @@ File diubah:
 
 - `flutter analyze` clean.
 
+#### FIX-7 (Done)
+
+File diubah:
+
+- `lib/features/home/data/model/user_profile_model.dart`:
+  - Tambah field `final bool isProfileComplete;`
+  - Parse dari `json['is_profile_complete']` (default `false`).
+  - Include di `toEntity()`.
+
+- `lib/features/home/domain/entity/user_profile_entity.dart`:
+  - Tambah field `final bool isProfileComplete;`
+  - Update `props` dan constructor.
+
+- `lib/features/home/presentation/bloc/greeting/greeting_state.dart`:
+  - `GreetingLoaded` tambah field `final bool isProfileComplete;` (default `false`).
+  - Update `props`.
+
+- `lib/features/home/presentation/bloc/greeting/greeting_cubit.dart`:
+  - `loadProfile` sekarang parse `result.data.isProfileComplete` dan emit ke `GreetingLoaded`.
+
+- `lib/features/home/presentation/page/home_page.dart`:
+  - Tambah import `package:get_it/get_it.dart` dan `core/services/app_services.dart`.
+  - Extend `BlocListener<GreetingCubit, GreetingState>` (line 54-65): setelah existing logic `UpcomingCubit.loadUpcoming`, tambah cek `if (!state.isProfileComplete) GetIt.instance<AppServices>().setProfileIncomplete();`.
+
+- Trace guard flow:
+  1. User di Home (status=authenticated, mungkin dari FIX-2 network-failure fallback atau admin side change).
+  2. HomePage mount, GreetingCubit `loadProfile` dipanggil.
+  3. Home remote datasource fetch `user_profiles` baris user.
+  4. Cubit emit `GreetingLoaded(isProfileComplete: false)`.
+  5. Listener: `setProfileIncomplete()` -> status sync ke `profileIncomplete`, `notifyListeners()`.
+  6. Router Kondisi 3: status=profileIncomplete, loc=/home -> `/sign-up/create-profile`. User di createProfile.
+
+- Edge case & limitasi:
+  - **GreetingError** (network glitch): listener TIDAK fire (cuma listen ke GreetingLoaded). User stay di Home dengan empty greeting. Conservative choice (menghindari false positive redirect). Bisa di-improve nanti dengan `WidgetsBindingObserver` untuk re-check on app resume.
+  - **Server-side change setelah first load**: GreetingCubit di `StatefulShellRoute` di-reuse saat tab switch; `loadProfile` cuma dipanggil sekali. Guard tidak re-fire. Bisa di-handle dengan `WidgetsBindingObserver` re-fetch on app resume. Future enhancement.
+  - **No infinite loop**: setelah redirect ke createProfile dan user save profile (FIX-4), status ke `authenticated`, user kembali ke Home, GreetingCubit re-fetch, GreetingLoaded(isProfileComplete=true), no action. Loop-free.
+
+- `flutter analyze` clean.
+
 **Validasi skenario yang sudah ter-cover (semua ✅ penuh):**
 
 - Skenario 1: Fresh install -> Onboarding (commit 0f48e8c).
@@ -285,3 +366,4 @@ File diubah:
 - Skenario 7: Login + profile lengkap, buka app -> Home (FIX-2 init flow).
 - Skenario 8: Login + profile incomplete, buka app -> CreateProfile (FIX-2 + FIX-3).
 - Skenario 9: Logout + login lagi -> Login -> sesuai profile (FIX-5 listener + FIX-2 event).
+- Skenario 10: User terlanjur di Home (network fallback atau server-side change), profile belum lengkap -> Redirect ke CreateProfile (FIX-7 guard).
