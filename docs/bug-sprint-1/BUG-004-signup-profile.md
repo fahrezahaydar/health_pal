@@ -3,7 +3,7 @@
 **Tanggal:** 2026-06-14
 **Feature:** Auth — Sign Up + Create Profile
 **Severity:** 🔴 Critical
-**Status:** 🚧 In Progress (4/8 fix landed — UI integration pending)
+**Status:** ✅ Resolved (code-complete; menunggu SQL migration `delete_user()` + manual test)
 
 ---
 
@@ -15,12 +15,17 @@
 | 2 | FIX-2: Hapus `SignUpBloc/Event/State/UseCase` (YAGNI) | `72f6f05` | ✅ Done |
 | 3 | FIX-3+4+5: Atomic `registerAndCreateProfile` + `display_name` + cleanup | `68af411` | ✅ Done |
 | 4 | FIX-6: Refactor `CreateProfileCubit` ke use case baru | `d0d98e4` | ✅ Done |
-| 5 | FIX-7: Update `CreateProfilePage` (form + call new usecase) | — | ⏳ Pending |
-| 6 | FIX-8: Verifikasi router redirect | — | ⏳ Pending |
+| 5 | FIX-7: Update `CreateProfilePage` (form + call new usecase) | `95aeafa` | ✅ Done |
+| 6 | FIX-8: `setProfileIncomplete()` safety belt + verify redirect | `95aeafa` | ✅ Done |
+| 7 | Docs: Update progress | `97f188c` | ✅ Done |
 
-**Branch:** `master` · **Ahead of origin:** 4 commits
+**Branch:** `master` · **Ahead of origin:** 6 commits
 
-**Known broken state:** `create_profile_page.dart:207` masih panggil `cubit.saveProfile(...)` (method lama). `flutter analyze` gagal dengan 1 expected error. Akan di-fix di FIX-7.
+**flutter analyze:** clean (no errors, no warnings).
+
+**Remaining work (di luar Sprint 1 fix scope):**
+- ⏳ **Sprint 1 cleanup task:** Postgres migration SQL function `delete_user()` — tanpa ini, `_safeCleanup()` di FIX-3+4+5 akan silent fail dan ada risk ghost account jika INSERT `user_profiles` gagal post-signup.
+- ⏳ **Manual testing:** Skenario Validasi (7 skenario) belum di-execute — Sprint 1 skip test infrastructure.
 
 ---
 
@@ -48,7 +53,7 @@ Akibat: name yang diinput di sign_up_page TIDAK tersimpan di mana pun sampai use
 - `lib/features/auth/data/repository/auth_repository_impl.dart`
 - `lib/features/auth/data/datasource/auth_remote_datasource.dart`
 
-**Status:** [x] **Code-fixed (FIX-3+4+5+6)** — atomic `registerAndCreateProfile` sekarang INSERT `full_name` ke `user_profiles`. **UI integration pending (FIX-7)** — page belum panggil use case baru.
+**Status:** [x] **Fully fixed (FIX-7+8 landed)** — `create_profile_page.dart:172-179` panggil `cubit.registerAndCreateProfile({email, password, fullName, nickname, gender, dob, photo})` → atomic use case INSERT `full_name` ke `user_profiles`. `flutter analyze` clean.
 
 ---
 
@@ -78,7 +83,7 @@ Akibat: name yang diinput di sign_up_page TIDAK tersimpan di mana pun sampai use
 - `lib/features/auth/domain/usecase/sign_up_usecase.dart`
 - `lib/features/auth/domain/repository/auth_repository.dart`
 
-**Status:** [x] **Code-fixed (FIX-5 + FIX-3+4+5)** — `signUpWithEmail` sekarang support `data:` param, dan `registerAndCreateProfile` pass `{display_name: fullName, is_profile_complete: false}` saat register. Plus `updateAuthMetadata()` untuk refresh post-INSERT. **UI integration pending (FIX-7)**.
+**Status:** [x] **Fully fixed (FIX-7+8 landed)** — `registerAndCreateProfile` (FIX-3+4+5) pass `{display_name: fullName, is_profile_complete: false}` saat signUp + `updateAuthMetadata()` post-INSERT. Page panggil use case ini (FIX-7).
 
 ---
 
@@ -108,13 +113,14 @@ Akibat: name yang diinput di sign_up_page TIDAK tersimpan di mana pun sampai use
 - `lib/features/auth/data/repository/auth_repository_impl.dart`
 - `lib/features/auth/data/datasource/auth_remote_datasource.dart`
 
-**Status:** [x] **Code-fixed (FIX-1+2+3+4+5+6)**:
+**Status:** [x] **Fully fixed (FIX-1+2+3+4+5+6+7+8)**:
 - `sign_up_page` (FIX-1) tidak lagi call Supabase — form-only
 - `SignUpBloc/Event/State/UseCase` (FIX-2) dihapus
 - `signUp()` pindah ke `registerAndCreateProfile` (FIX-3+4+5) di Create Profile page
 - `_safeCleanup()` dengan `deleteCurrentUser()` RPC fallback (FIX-5)
-- **UI integration pending (FIX-7)** — page belum panggil use case baru, jadi `_safeCleanup` belum pernah dipanggil di real flow
-- **Migration dependency:** `delete_user()` RPC butuh SQL function di Supabase (Sprint 1 cleanup task, belum ada)
+- `CreateProfilePage` (FIX-7) panggil `cubit.registerAndCreateProfile` + field `dob`
+- `setProfileIncomplete()` safety belt (FIX-8) — kunci status `profileIncomplete` selama atomic flow, mencegah race `_onAuthStateChange` → `_setStatusFromProfile` → upgrade ke `authenticated` saat profile INSERT sedang berjalan
+- **Migration dependency:** `delete_user()` RPC butuh SQL function di Supabase (Sprint 1 cleanup task, **belum ada**) — tanpa ini, `_safeCleanup` silent fail. TAPI route ke `unauthenticated` tetap mungkin via signOut manual di cleanup path.
 
 ---
 
@@ -184,16 +190,17 @@ Create Profile Page
   - ✅ Method `registerAndCreateProfile({email, password, fullName, nickname, gender, dob, photo})` (sebelumnya `saveProfile(Map, {File?})`)
   - ✅ State machine (Initial/Loading/Success/Failure) dipertahankan
   - ✅ `create_profile_usecase.dart` dihapus (no caller)
-- [ ] **FIX-7:** Update `Create Profile Page`
-  - ⏳ Baca extra `{email, password, fullName}` dari GoRouter (sudah ada di constructor, tinggal pass ke cubit)
-  - ⏳ Pre-fill name & email field dari extra (sudah ada di line 56-57)
-  - ⏳ Tambah field: `dob` (jika belum ada di form) — `nickname` sudah ada
-  - ⏳ Saat submit → panggil `cubit.registerAndCreateProfile(...)` (bukan `cubit.saveProfile`)
-  - ⏳ Saat sukses → `context.go(RoutePaths.home)` (sudah ada di line 81)
-- [ ] **FIX-8:** Update router redirect
-  - ⏳ Pastikan `RoutePaths.createProfile` di-allow saat flow berjalan (sudah ada guard di line 60)
-  - ⏳ **TIDAK perlu ubah redirect logic** — guard existing sudah handle `profileIncomplete` dengan benar
-  - ⏳ Hanya pastikan: kalau `RegisterAndCreateProfileUseCase` gagal di tengah → state tetap `unauthenticated` (bukan `profileIncomplete` salah), supaya user bisa retry register dengan email yang sama
+- [x] **FIX-7:** Update `Create Profile Page` — `95aeafa`
+  - ✅ Baca extra `{email, password, fullName}` dari GoRouter → pass ke cubit via `widget.email`/`widget.password` (sudah ada di constructor)
+  - ✅ Pre-fill name & email field dari extra (sudah ada di initState)
+  - ✅ Tambah field `dob` via `AppDatePickerFormField` (firstDate: 1900, lastDate: now)
+  - ✅ Submit handler: `_onSaveProfile()` → `cubit.registerAndCreateProfile({...})` (sebelumnya `cubit.saveProfile(...)`)
+  - ✅ Success listener: `markProfileComplete()` + `context.go(RoutePaths.home)` (sudah ada)
+- [x] **FIX-8:** Update router redirect + safety belt — `95aeafa`
+  - ✅ `RoutePaths.createProfile` di-allow (existing guard `app_router.dart:60`)
+  - ✅ Router redirect logic TIDAK diubah
+  - ✅ **Safety belt**: `setProfileIncomplete()` dipanggil SEBELUM submit — kunci status `profileIncomplete` selama atomic flow. Mencegah race: `_onAuthStateChange(signedIn)` → `_setStatusFromProfile()` Failure → tanpa safety belt upgrade ke `authenticated` ❌
+  - ✅ Cleanup path: `_safeCleanup()` → `deleteCurrentUser()` RPC → trigger Supabase `signedOut` → status `unauthenticated` (user bisa retry)
 
 ---
 
@@ -213,8 +220,8 @@ Create Profile Page
 | `lib/features/auth/domain/usecase/create_profile_usecase.dart` | **HAPUS** (no caller setelah FIX-6). | ✅ FIX-6 |
 | `lib/features/auth/presentation/bloc/create_profile/create_profile_cubit.dart` | Ganti dependency ke `RegisterAndCreateProfileUseCase`. Method `registerAndCreateProfile({...})` baru (sebelumnya `saveProfile`). | ✅ FIX-6 |
 | `lib/core/di/locator.config.dart` | Regenerated 3× via `dart run build_runner build --force-jit`: hapus SignUpUseCase/SignUpBloc/CreateProfileUseCase factories, tambah RegisterAndCreateProfileUseCase, update CreateProfileCubit dep. | ✅ FIX-2+3+6 |
-| `lib/features/auth/presentation/page/create_profile_page.dart` | Tambah field `dob` di form. Pass `{email, password, fullName}` dari extra ke `cubit.registerAndCreateProfile(...)`. Ganti `cubit.saveProfile(...)` call. | ⏳ FIX-7 |
-| `lib/core/router/app_router.dart` | Verifikasi redirect guard untuk `createProfile` route saat flow berjalan. Existing guard di line 60 sudah handle — tidak perlu ubah logic. | ⏳ FIX-8 |
+| `lib/features/auth/presentation/page/create_profile_page.dart` | Tambah field `dob` di form. Pass `{email, password, fullName}` dari extra ke `cubit.registerAndCreateProfile(...)`. Ganti `cubit.saveProfile(...)` call. `setProfileIncomplete()` safety belt sebelum submit. | ✅ FIX-7+8 |
+| `lib/core/router/app_router.dart` | Verifikasi redirect guard untuk `createProfile` route saat flow berjalan. Existing guard di line 60 sudah handle — tidak perlu ubah logic. | ✅ FIX-8 (no change needed) |
 
 **Catatan `deleteCurrentUser()`:**
 - Supabase JS/Dart SDK tidak expose self-delete user secara langsung untuk anon client.
@@ -229,13 +236,13 @@ Create Profile Page
 
 | Skenario | Expected | Status |
 |----------|----------|--------|
-| Sign up → cancel/back di Create Profile | Tidak ada user terbuat di `auth.users` | [ ] (menunggu FIX-7 + manual test) |
-| Sign up → Create Profile lengkap (no photo) | `auth.users` + `user_profiles` terisi, `display_name` di metadata | [ ] (menunggu FIX-7 + manual test) |
-| Sign up → Create Profile + foto | Avatar terupload ke `storage/avatars/{authId}/profile.jpg` | [ ] (menunggu FIX-7 + manual test) |
-| Cek `display_name` setelah register | `auth.users.raw_user_meta_data->>'display_name'` = fullName | [ ] (menunggu FIX-7 + manual test) |
-| Login setelah register | Langsung ke `/home` (profile sudah complete) | [ ] (menunggu FIX-7 + manual test) |
+| Sign up → cancel/back di Create Profile | Tidak ada user terbuat di `auth.users` | [ ] (code-ready, menunggu manual test) |
+| Sign up → Create Profile lengkap (no photo) | `auth.users` + `user_profiles` terisi, `display_name` di metadata | [ ] (code-ready, menunggu manual test) |
+| Sign up → Create Profile + foto | Avatar terupload ke `storage/avatars/{authId}/profile.jpg` | [ ] (code-ready, menunggu manual test) |
+| Cek `display_name` setelah register | `auth.users.raw_user_meta_data->>'display_name'` = fullName | [ ] (code-ready, menunggu manual test) |
+| Login setelah register | Langsung ke `/home` (profile sudah complete) | [ ] (code-ready, menunggu manual test) |
 | Sign up → upload avatar sukses → INSERT profile gagal | `auth.users` row di-delete via `delete_user()` RPC, user bisa retry | [ ] (cleanup code ada di FIX-3+4+5, tapi RPC function belum ada di DB) |
-| Logout setelah register, lalu login lagi | Tidak ada loop ke create-profile (profile complete) | [ ] (menunggu FIX-7 + manual test) |
+| Logout setelah register, lalu login lagi | Tidak ada loop ke create-profile (profile complete) | [ ] (code-ready, menunggu manual test) |
 
 ---
 
@@ -291,4 +298,4 @@ Expected: `name` = `{userId}/profile.jpg` (bukan `avatars/{userId}/profile.jpg` 
 
 ---
 *Dibuat: 2026-06-14*
-*Update terakhir: 2026-06-14 (FIX-1+2+3+4+5+6 landed)*
+*Update terakhir: 2026-06-14 (FIX-7+8 landed — code-complete)*
