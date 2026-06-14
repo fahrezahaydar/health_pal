@@ -67,6 +67,12 @@ class AuthRepositoryImpl implements AuthRepository {
   // setelah signUp sukses, user di-delete via RPC `delete_user()`
   // (BUG-004-C: no ghost account).
   //
+  // BUG-004-D Fix: Capture authId dari signUp response (bukan dari
+  // currentSession) — lebih eksplisit dan reliable. Plus _safeCleanup
+  // sekarang log error + signOut fallback supaya client-side state
+  // bersih walau RPC delete_user() gagal (mis. function belum
+  // di-deploy ke DB).
+  //
   // Flow:
   //   1) signUp Auth + set user_metadata.{display_name, is_profile_complete:false}
   //   2) uploadAvatar (jika ada photo) → bucket avatars/{authId}/profile.jpg
@@ -85,8 +91,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required DateTime dob,
     File? photo,
   }) async {
+    String? createdAuthId;
     try {
-      await _remote.signUpWithEmail(
+      final response = await _remote.signUpWithEmail(
         email,
         password,
         data: {
@@ -94,24 +101,21 @@ class AuthRepositoryImpl implements AuthRepository {
           'is_profile_complete': false,
         },
       );
-
-      final session = _supabaseClient.auth.currentSession;
-      if (session == null) {
-        await _safeCleanup();
+      createdAuthId = response.user?.id;
+      if (createdAuthId == null) {
         return Result.failure(const ApiException(
           code: FailureCode.unknown,
-          message: 'No session after signUp',
+          message: 'Sign up gagal — tidak ada user ID',
         ));
       }
-      final authId = session.user.id;
 
       String? avatarUrl;
       if (photo != null) {
-        avatarUrl = await _remote.uploadAvatar(authId, photo);
+        avatarUrl = await _remote.uploadAvatar(createdAuthId, photo);
       }
 
       final profile = await _remote.createUserProfile({
-        'auth_id': authId,
+        'auth_id': createdAuthId,
         'full_name': fullName,
         'nickname': nickname,
         'gender': gender,
@@ -125,16 +129,34 @@ class AuthRepositoryImpl implements AuthRepository {
       await _local.cacheUser(profile);
       return Result.success(profile.toEntity());
     } catch (e) {
-      await _safeCleanup();
+      // BUG-004-D: Proper rollback. Hanya cleanup jika step A (signUp)
+      // SUDAH sukses (createdAuthId != null). Step A gagal = tidak ada
+      // auth user, cleanup tidak perlu. Step B/C/D gagal = ada auth
+      // user tapi profile tidak ada — harus cleanup supaya retry
+      // tidak kena "user already registered".
+      await _safeCleanup(createdAuthId);
       return Result.failure(const ErrorHandler().map(e));
     }
   }
 
-  Future<void> _safeCleanup() async {
+  // BUG-004-D: Cleanup fallback chain. Primary: deleteCurrentUser() via
+  // RPC `delete_user()`. Fallback: signOut() kalau RPC gagal (mis.
+  // function belum di-deploy ke DB). signOut() tidak menghapus row
+  // auth.users — user akan orphan sampai admin cleanup / expired by
+  // Supabase. Tapi minimal client-side state bersih supaya retry
+  // attempt tidak stuck di session lama.
+  Future<void> _safeCleanup(String? createdAuthId) async {
+    if (createdAuthId == null) return;
     try {
       await _remote.deleteCurrentUser();
-    } catch (_) {
-      // Silent: cleanup failure shouldn't mask original error
+    } catch (e) {
+      // ignore: avoid_print
+      print('[BUG-004-D] deleteCurrentUser failed: $e — fallback signOut');
+      try {
+        await _remote.signOut();
+      } catch (_) {
+        // Best effort
+      }
     }
   }
 

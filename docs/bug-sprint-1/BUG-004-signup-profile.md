@@ -17,15 +17,18 @@
 | 4 | FIX-6: Refactor `CreateProfileCubit` ke use case baru | `d0d98e4` | ✅ Done |
 | 5 | FIX-7: Update `CreateProfilePage` (form + call new usecase) | `95aeafa` | ✅ Done |
 | 6 | FIX-8: `setProfileIncomplete()` safety belt + verify redirect | `95aeafa` | ✅ Done |
-| 7 | Docs: Update progress | `97f188c` | ✅ Done |
+| 7 | FIX-9: Proper rollback — capture authId + log cleanup + signOut fallback | (this commit) | ✅ Done |
+| 8 | FIX-10: UI error message "already registered" actionable | (this commit) | ✅ Done |
+| 9 | FIX-11: SharedPreferences safety net | — | ❌ Rejected (over-engineering) |
+| 10 | Docs: Update progress | (separate doc commit) | ✅ Done |
 
-**Branch:** `master` · **Ahead of origin:** 6 commits
+**Branch:** `master` · **Ahead of origin:** 8 commits (after this batch)
 
-**flutter analyze:** clean (no errors, no warnings).
+**flutter analyze:** clean.
 
-**Remaining work (di luar Sprint 1 fix scope):**
-- ⏳ **Sprint 1 cleanup task:** Postgres migration SQL function `delete_user()` — tanpa ini, `_safeCleanup()` di FIX-3+4+5 akan silent fail dan ada risk ghost account jika INSERT `user_profiles` gagal post-signup.
-- ⏳ **Manual testing:** Skenario Validasi (7 skenario) belum di-execute — Sprint 1 skip test infrastructure.
+**BLOCKER (di luar Sprint 1 fix scope):**
+- 🚧 **Postgres migration `delete_user()` SQL function** — tanpa ini, FIX-9 cleanup RPC akan throw → fallback ke signOut (client-side clean, server-side orphan). Deploy sprint 1 cleanup task ASAP.
+- 🚧 **FIX-2 "silent login" + "admin client"** di-reject oleh senior dev (security risk). Tidak ada plan untuk implement.
 
 ---
 
@@ -124,6 +127,65 @@ Akibat: name yang diinput di sign_up_page TIDAK tersimpan di mana pun sampai use
 
 ---
 
+### BUG-004-D: Atomic Flow Tidak Benar-benar Atomic
+**Deskripsi:** `signUp()` Supabase Auth sukses tapi `createProfile()` (INSERT ke `user_profiles`) gagal → user terdaftar di `auth.users` tapi tidak ada di `user_profiles`. Saat retry → error "user already registered" karena email sudah ada di `auth.users`. Ghost account kembali muncul.
+
+**Root Cause:**
+- `lib/features/auth/data/repository/auth_repository_impl.dart:78-131` — `registerAndCreateProfile` punya try/catch + `_safeCleanup()`, TAPI…
+- `lib/features/auth/data/datasource/auth_remote_datasource.dart:40-46` — `deleteCurrentUser()` panggil RPC `delete_user()` (per BUG-004-C fix). **TAPI Postgres function `delete_user()` belum di-deploy** (Sprint 1 cleanup task belum selesai).
+- Hasil: `delete_user()` RPC throw exception → `_safeCleanup` swallow silently → auth.users row tetap ada → retry gagal.
+- Plus: original code capture `authId` dari `_supabaseClient.auth.currentSession` setelah signUp — bisa null/empty jika race dengan auth state change. Lebih eksplisit pakai `response.user?.id` dari signUp response.
+
+**File yang Terimpact:**
+- `lib/features/auth/data/repository/auth_repository_impl.dart` (FIX-9)
+- `lib/features/auth/data/datasource/auth_remote_datasource.dart` (no code change, tapi `deleteCurrentUser` jadi titik failure)
+- `lib/features/auth/presentation/page/create_profile_page.dart` (FIX-10 — UI error message)
+- **Postgres migration `delete_user()` function** (Sprint 1 cleanup task — BLOCKER)
+
+**Status:** [x] **Partially fixed (FIX-9+10 landed)** — rollback improved (capture authId explicit, log cleanup errors, signOut fallback), UI error message actionable. **TAPI runtime ghost account masih mungkin jika** `delete_user()` RPC gagal DAN signOut juga gagal (network issue). Full fix butuh deploy SQL migration.
+
+---
+
+## Senior Dev Pushback Notes (BUG-004-D)
+
+Saat review prompt untuk BUG-004-D, ada beberapa saran yang **TIDAK diimplementasikan** karena alasan security/architecture:
+
+### ❌ REJECTED: Silent login on "already registered"
+**Saran prompt:** Modify `signUp()` di datasource — kalau `AuthException` dengan message "already registered", auto-login dengan kredensial yang sama + cek `user_profiles` → kalau belum ada, lanjut create profile.
+
+**Alasan reject:**
+- **SECURITY VULNERABILITY**: Kalau user A register dengan email user B (typo, malicious), kode ini akan login ke akun B. Itu authentication bypass — attacker bisa akses akun siapa saja yang email-nya mereka tahu.
+- Pola yang benar: surface error "Email sudah terdaftar" ke user, minta mereka login atau pakai email lain.
+- Jangan pernah silent auth user dengan credential yang mereka berikan untuk register.
+
+### ❌ REJECTED: Admin client (service role) untuk `deleteUser`
+**Saran prompt:** Buat `_adminClient` dengan `SUPABASE_SERVICE_ROLE` key, pakai `_adminClient.auth.admin.deleteUser(uid)`.
+
+**Alasan reject:**
+- **Service role key di client = critical security anti-pattern.** Service role bypasses ALL RLS. Siapa saja yang unpack APK bisa extract key dari build → full DB access (read/write/delete semua table).
+- Plus `.env` tidak punya `SERVICE_ROLE` key (cuma `URL` + `ANON_KEY`).
+- Pattern RPC `delete_user()` (current) adalah design yang benar — RLS-enforced, client-safe. Issue-nya bukan arsitektur, cuma **migration belum di-deploy**.
+- `signOut()` sebagai fallback juga bukan delete — dia cuma clear local session, row `auth.users` tetap ada (orphan). Saya tambahkan sebagai fallback untuk clear client state, bukan sebagai delete mechanism.
+
+### ⚠️ PARTIAL: UI error message (FIX-10)
+**Saran prompt:** Refactor `CreateProfileCubit` ke `onError: (message) async { ... }` callback pattern.
+
+**Alasan partial:**
+- Cubit saat ini pakai sealed class state (`CreateProfileFailure(message)`) yang sudah clean. Refactor ke callback pattern = breaking change yang tidak perlu.
+- Saya implement detection di **page listener** (existing pattern) — lebih minimal & maintain arsitektur existing.
+- Hasil: judul dialog "Email Sudah Terdaftar" + subtitle actionable, tapi untuk error lain tetap pakai raw message.
+
+### ❌ REJECTED: SharedPreferences safety net (FIX-11)
+**Saran prompt:** Simpan pending registration state ke SharedPreferences.
+
+**Alasan reject:**
+- Over-engineering untuk root cause. Root cause = `delete_user()` RPC belum di-deploy.
+- Fix root cause: deploy migration, bukan tambah layer SharedPreferences (yang juga punya race conditions sendiri — kapan di-clear? kapan di-restore?).
+- TIDAK diimplementasikan.
+
+
+---
+
 ## Rencana Refactor Flow
 
 ### Flow Sebelum (Bermasalah)
@@ -201,6 +263,19 @@ Create Profile Page
   - ✅ Router redirect logic TIDAK diubah
   - ✅ **Safety belt**: `setProfileIncomplete()` dipanggil SEBELUM submit — kunci status `profileIncomplete` selama atomic flow. Mencegah race: `_onAuthStateChange(signedIn)` → `_setStatusFromProfile()` Failure → tanpa safety belt upgrade ke `authenticated` ❌
   - ✅ Cleanup path: `_safeCleanup()` → `deleteCurrentUser()` RPC → trigger Supabase `signedOut` → status `unauthenticated` (user bisa retry)
+- [x] **FIX-9:** Proper rollback di `registerAndCreateProfile`
+  - ✅ Capture `authId` dari `response.user?.id` (signUp response), BUKAN dari `currentSession` — lebih eksplisit
+  - ✅ `_safeCleanup(createdAuthId)` — skip cleanup kalau step A (signUp) gagal (no user to delete)
+  - ✅ Cleanup error sekarang di-LOG (`print('[BUG-004-D] deleteCurrentUser failed: ...')`), bukan silent swallow
+  - ✅ **signOut() fallback** kalau `deleteCurrentUser()` RPC gagal — clear client-side state walau server-side orphan
+  - ⚠️ Runtime full safety masih butuh **Postgres migration `delete_user()`** (Sprint 1 cleanup task — BLOCKER untuk production)
+- [x] **FIX-10:** UI error message actionable untuk "already registered"
+  - ✅ Page listener detect `state.message.toLowerCase()` contains "already registered" / "user already"
+  - ✅ Show different title ("Email Sudah Terdaftar") + subtitle actionable ("Silakan login atau gunakan email lain")
+  - ❌ **TIDAK refactor cubit** ke `onError` callback — sealed state pattern lebih clean
+  - ❌ **TIDAK implement silent login** di datasource — security vulnerability (auth bypass)
+- [ ] **FIX-11:** SharedPreferences safety net
+  - ❌ **NOT IMPLEMENTED** — over-engineering. Root cause = `delete_user()` RPC belum deployed. Fix root cause, bukan tambah layer.
 
 ---
 

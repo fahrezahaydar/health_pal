@@ -111,11 +111,19 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   context.go(RoutePaths.home);
                 case CreateProfileFailure():
                   AppLoadingDialog.dismiss(context);
+                  final msg = state.message.toLowerCase();
+                  final isAlreadyRegistered =
+                      msg.contains('already registered') ||
+                      msg.contains('user already');
                   AppCustomDialog.show(
                     context,
                     type: AppDialogType.error,
-                    title: 'Failed',
-                    subtitle: state.message,
+                    title: isAlreadyRegistered
+                        ? 'Email Sudah Terdaftar'
+                        : 'Gagal Mendaftar',
+                    subtitle: isAlreadyRegistered
+                        ? 'Email ini sudah terdaftar. Silakan login atau gunakan email lain.'
+                        : state.message,
                   );
                 default:
                   break;
