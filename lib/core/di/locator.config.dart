@@ -30,16 +30,12 @@ import 'package:health_pal/features/auth/domain/usecase/forgot_password_usecase.
     as _i957;
 import 'package:health_pal/features/auth/domain/usecase/login_with_email_usecase.dart'
     as _i930;
-import 'package:health_pal/features/auth/domain/usecase/sign_up_usecase.dart'
-    as _i722;
 import 'package:health_pal/features/auth/presentation/bloc/create_profile/create_profile_cubit.dart'
     as _i730;
 import 'package:health_pal/features/auth/presentation/bloc/forget_password/forget_password_state.dart'
     as _i1000;
 import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.dart'
     as _i685;
-import 'package:health_pal/features/auth/presentation/bloc/sign_up/sign_up_bloc.dart'
-    as _i245;
 import 'package:health_pal/features/booking/data/datasource/booking_remote_datasource.dart'
     as _i482;
 import 'package:health_pal/features/booking/data/repository/booking_repository_impl.dart'
@@ -313,9 +309,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i930.LoginWithEmailUseCase>(
       () => _i930.LoginWithEmailUseCase(gh<_i613.AuthRepository>()),
     );
-    gh.factory<_i722.SignUpUseCase>(
-      () => _i722.SignUpUseCase(gh<_i613.AuthRepository>()),
-    );
     gh.factory<_i685.SignInBloc>(
       () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
     );
@@ -330,9 +323,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1000.ForgotPasswordCubit>(
       () => _i1000.ForgotPasswordCubit(gh<_i957.ForgotPasswordUseCase>()),
-    );
-    gh.factory<_i245.SignUpBloc>(
-      () => _i245.SignUpBloc(gh<_i722.SignUpUseCase>()),
     );
     gh.factory<_i248.BookingHistoryCubit>(
       () => _i248.BookingHistoryCubit(gh<_i990.GetAppointmentHistoryUseCase>()),
