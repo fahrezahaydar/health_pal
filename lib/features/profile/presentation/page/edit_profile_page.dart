@@ -111,7 +111,6 @@ class _EditProfileViewState extends State<_EditProfileView> {
 
     context.read<EditProfileCubit>().updateProfile(
       authId: authId,
-      userId: user.id,
       fullName: _nameController.text.trim(),
       nickname: _nicknameController.text.trim(),
       dateOfBirth: _selectedDate != null

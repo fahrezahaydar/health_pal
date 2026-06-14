@@ -47,9 +47,15 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   /// Tidak ada emit state intermediate (Saving/Success). Caller
   /// menampilkan loading via [AppLoadingDialog] dan feedback via
   /// [AppCustomDialog] menggunakan [onSuccess] / [onError].
+  ///
+  /// Catatan: avatar upload pakai [authId] (Supabase auth user ID =
+  /// `auth.uid()`) BUKAN `user_profiles.id`. RLS policy di
+  /// `002_storage_buckets.sql` line 38 mengharuskan folder pertama
+  /// path = `auth.uid()`. Kalau pakai `user_profiles.id` (DB primary
+  /// key) → RLS deny dengan error "new row violates row-level
+  /// security policy".
   Future<void> updateProfile({
     required String authId,
-    required String userId,
     String? fullName,
     String? nickname,
     String? dateOfBirth,
@@ -60,7 +66,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   }) async {
     String? avatarUrl;
     if (photo != null) {
-      final uploadResult = await _uploadAvatar(userId: userId, photo: photo);
+      final uploadResult = await _uploadAvatar(userId: authId, photo: photo);
       switch (uploadResult) {
         case Success(:final data):
           avatarUrl = data;
