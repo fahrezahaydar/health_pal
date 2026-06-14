@@ -15,6 +15,7 @@ import '../../../../core/di/locator.dart';
 import '../../../../core/enums/gender.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/dialog/app_succes_dialog.dart';
 import '../../../../widgets/form/app_dropdown_field.dart';
 import '../../../../widgets/picker/app_image_picker.dart';
 import '../../../auth/domain/entity/user_entity.dart';
@@ -124,12 +125,23 @@ class _EditProfileViewState extends State<_EditProfileView> {
     return BlocConsumer<EditProfileCubit, EditProfileState>(
       listenWhen: (prev, curr) =>
           prev is! EditProfileSuccess && curr is EditProfileSuccess,
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is EditProfileSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profil berhasil disimpan')),
+          // Tunggu dialog auto-dismiss (2s) sebelum pop. Kalau tidak
+          // di-await, timer auto-dismiss check `context.mounted` akan
+          // gagal setelah `context.pop()` (page unmounted) dan dialog
+          // stuck di root navigator. Dengan await, `Navigator.pop`
+          // dipanggil via `dismiss(context)` dari timer yang masih
+          // valid (context EditProfile masih mounted selama 2s).
+          await AppCustomDialog.show(
+            context,
+            type: AppDialogType.success,
+            title: 'Berhasil',
+            subtitle: 'Profil berhasil disimpan',
           );
-          context.pop();
+          if (context.mounted) {
+            context.pop();
+          }
         }
       },
       builder: (context, state) {
