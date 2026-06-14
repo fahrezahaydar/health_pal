@@ -3,8 +3,14 @@
 // Cubit untuk Edit Profile page.
 // - loadEdit → fetch current profile (populate form)
 // - updateProfile → PATCH user_profiles; optional upload avatar first
+//
+// Catatan: Cubit ini TIDAK mengelola state Saving/Success. Loading
+// dan feedback (success/error) ditangani oleh caller via callback
+// onSuccess / onError + AppLoadingDialog + AppCustomDialog. Ini
+// memisahkan "state dari data" dari "state dari UI side-effect".
 
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -36,6 +42,10 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   /// Update profile (optional new avatar).
   /// Flow: if photo != null → upload dulu → dapat URL → PATCH.
+  ///
+  /// Tidak ada emit state intermediate (Saving/Success). Caller
+  /// menampilkan loading via [AppLoadingDialog] dan feedback via
+  /// [AppCustomDialog] menggunakan [onSuccess] / [onError].
   Future<void> updateProfile({
     required String authId,
     required String userId,
@@ -44,15 +54,9 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     String? dateOfBirth,
     String? gender,
     File? photo,
+    required VoidCallback onSuccess,
+    required void Function(String message) onError,
   }) async {
-    final current = state;
-    if (current is EditProfileLoaded || current is EditProfileSuccess) {
-      final user = current is EditProfileLoaded
-          ? current.user
-          : (current as EditProfileSuccess).user;
-      emit(EditProfileSaving(user));
-    }
-
     String? avatarUrl;
     if (photo != null) {
       final uploadResult = await _uploadAvatar(userId: userId, photo: photo);
@@ -60,7 +64,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         case Success(:final data):
           avatarUrl = data;
         case Failure(:final message):
-          emit(EditProfileError(message: 'Gagal upload avatar: $message'));
+          onError('Gagal upload avatar: $message');
           return;
       }
     }
@@ -75,10 +79,10 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     );
 
     switch (result) {
-      case Success<UserEntity>(:final data):
-        emit(EditProfileSuccess(data));
+      case Success<UserEntity>():
+        onSuccess();
       case Failure(:final message):
-        emit(EditProfileError(message: message));
+        onError(message);
     }
   }
 }

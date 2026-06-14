@@ -15,6 +15,7 @@ import '../../../../core/di/locator.dart';
 import '../../../../core/enums/gender.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/dialog/app_loading_dialog.dart';
 import '../../../../widgets/dialog/app_succes_dialog.dart';
 import '../../../../widgets/form/app_dropdown_field.dart';
 import '../../../../widgets/picker/app_image_picker.dart';
@@ -105,6 +106,9 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final session = getIt<SupabaseClient>().auth.currentSession;
     final authId = session?.user.id ?? user.authId;
 
+    // Tampilkan loading dialog
+    AppLoadingDialog.show(context);
+
     context.read<EditProfileCubit>().updateProfile(
       authId: authId,
       userId: user.id,
@@ -117,33 +121,36 @@ class _EditProfileViewState extends State<_EditProfileView> {
           : null,
       gender: _selectedGender,
       photo: _newPhoto,
+      onSuccess: () async {
+        if (!mounted) return;
+        await AppLoadingDialog.dismiss(context);
+        if (!mounted) return;
+        await AppCustomDialog.show(
+          context,
+          type: AppDialogType.success,
+          title: 'Berhasil',
+          subtitle: 'Profil berhasil disimpan',
+        );
+        if (!mounted) return;
+        context.pop();
+      },
+      onError: (message) async {
+        if (!mounted) return;
+        await AppLoadingDialog.dismiss(context);
+        if (!mounted) return;
+        await AppCustomDialog.show(
+          context,
+          type: AppDialogType.error,
+          title: 'Gagal',
+          subtitle: message,
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EditProfileCubit, EditProfileState>(
-      listenWhen: (prev, curr) =>
-          prev is! EditProfileSuccess && curr is EditProfileSuccess,
-      listener: (context, state) async {
-        if (state is EditProfileSuccess) {
-          // Tunggu dialog auto-dismiss (2s) sebelum pop. Kalau tidak
-          // di-await, timer auto-dismiss check `context.mounted` akan
-          // gagal setelah `context.pop()` (page unmounted) dan dialog
-          // stuck di root navigator. Dengan await, `Navigator.pop`
-          // dipanggil via `dismiss(context)` dari timer yang masih
-          // valid (context EditProfile masih mounted selama 2s).
-          await AppCustomDialog.show(
-            context,
-            type: AppDialogType.success,
-            title: 'Berhasil',
-            subtitle: 'Profil berhasil disimpan',
-          );
-          if (context.mounted) {
-            context.pop();
-          }
-        }
-      },
+    return BlocBuilder<EditProfileCubit, EditProfileState>(
       builder: (context, state) {
         // Populate form fields once we have data.
         if (state is EditProfileLoaded) _populateFrom(state.user);
@@ -172,70 +179,56 @@ class _EditProfileViewState extends State<_EditProfileView> {
   }
 
   Widget _formView(BuildContext context, EditProfileState state) {
-    final isSaving = state is EditProfileSaving;
     final user = _initialUser;
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Avatar picker ──
-                Center(
-                  child: AppPhotoPicker(
-                    localFile: _newPhoto,
-                    remoteUrl: user?.avatarUrl,
-                    size: 100,
-                    onPhotoSelected: (file) => setState(() => _newPhoto = file),
-                    onPhotoRemoved: () => setState(() => _newPhoto = null),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _field('Full Name', _nameController, required: true),
-                const SizedBox(height: 12),
-                _field('Nickname', _nicknameController, required: true),
-                const SizedBox(height: 12),
-                _dateField(),
-                const SizedBox(height: 12),
-                _genderField(),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: isSaving ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: isSaving
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: AppTheme.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Save',
-                            style: TextStyle(
-                              color: AppTheme.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                  ),
-                ),
-              ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Avatar picker ──
+            Center(
+              child: AppPhotoPicker(
+                localFile: _newPhoto,
+                remoteUrl: user?.avatarUrl,
+                size: 100,
+                onPhotoSelected: (file) => setState(() => _newPhoto = file),
+                onPhotoRemoved: () => setState(() => _newPhoto = null),
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+            _field('Full Name', _nameController, required: true),
+            const SizedBox(height: 12),
+            _field('Nickname', _nicknameController, required: true),
+            const SizedBox(height: 12),
+            _dateField(),
+            const SizedBox(height: 12),
+            _genderField(),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    color: AppTheme.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

@@ -15,10 +15,8 @@ class EditProfileInitial extends EditProfileState {
 }
 
 class EditProfileLoading extends EditProfileState {
-  /// Initial data untuk populate form.
   final UserEntity user;
   const EditProfileLoading(this.user);
-
   @override
   List<Object?> get props => [user];
 }
@@ -26,23 +24,6 @@ class EditProfileLoading extends EditProfileState {
 class EditProfileLoaded extends EditProfileState {
   final UserEntity user;
   const EditProfileLoaded(this.user);
-
-  @override
-  List<Object?> get props => [user];
-}
-
-class EditProfileSaving extends EditProfileState {
-  final UserEntity current;
-  const EditProfileSaving(this.current);
-
-  @override
-  List<Object?> get props => [current];
-}
-
-class EditProfileSuccess extends EditProfileState {
-  final UserEntity user;
-  const EditProfileSuccess(this.user);
-
   @override
   List<Object?> get props => [user];
 }
@@ -50,7 +31,6 @@ class EditProfileSuccess extends EditProfileState {
 class EditProfileError extends EditProfileState {
   final String message;
   const EditProfileError({this.message = ''});
-
   @override
   List<Object?> get props => [message];
 }
