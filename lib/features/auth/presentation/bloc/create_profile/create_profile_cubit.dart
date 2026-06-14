@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/network/result.dart';
-import '../../../../auth/domain/usecase/create_profile_usecase.dart';
+import '../../../../auth/domain/usecase/register_and_create_profile_usecase.dart';
 import '../../../domain/entity/user_entity.dart';
 
 sealed class CreateProfileState extends Equatable {
@@ -43,14 +43,30 @@ final class CreateProfileFailure extends CreateProfileState {
 
 @injectable
 class CreateProfileCubit extends Cubit<CreateProfileState> {
-  final CreateProfileUseCase _createProfileUseCase;
+  final RegisterAndCreateProfileUseCase _registerAndCreateProfileUseCase;
 
-  CreateProfileCubit(this._createProfileUseCase)
+  CreateProfileCubit(this._registerAndCreateProfileUseCase)
     : super(const CreateProfileInitial());
 
-  Future<void> saveProfile(Map<String, dynamic> data, {File? photo}) async {
+  Future<void> registerAndCreateProfile({
+    required String email,
+    required String password,
+    required String fullName,
+    required String nickname,
+    required String gender,
+    required DateTime dob,
+    File? photo,
+  }) async {
     emit(const CreateProfileLoading());
-    final result = await _createProfileUseCase(data, photo: photo);
+    final result = await _registerAndCreateProfileUseCase(
+      email: email,
+      password: password,
+      fullName: fullName,
+      nickname: nickname,
+      gender: gender,
+      dob: dob,
+      photo: photo,
+    );
     switch (result) {
       case Success<UserEntity>():
         emit(CreateProfileSuccess(result.data));
