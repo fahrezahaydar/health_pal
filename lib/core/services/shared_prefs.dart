@@ -8,7 +8,6 @@ class SharedPrefService {
 
   static const _onboardingKey = 'onboarding_done';
   static const _loginKey = 'is_logged_in';
-  static const _loginTimeKey = 'login_timestamp';
   static const _notifEnabledKey = 'notif_enabled';
 
   // -- Onboarding
@@ -18,29 +17,16 @@ class SharedPrefService {
   Future<void> setOnboardingDone(bool value) =>
       _prefs.setBool(_onboardingKey, value);
 
-  // -- Login flag
+  // -- Login flag (cache hint — sumber kebenaran ada di Supabase session)
   bool get isLoggedIn =>
       _prefs.getBool(_loginKey) ?? false;
 
   Future<void> setLoggedIn(bool value) =>
       _prefs.setBool(_loginKey, value);
 
-  // -- Login timestamp (epoch millis)
-  int? get loginTimestamp {
-    final raw = _prefs.getInt(_loginTimeKey);
-    return raw;
-  }
-
-  Future<void> setLoginTimestamp(int millis) =>
-      _prefs.setInt(_loginTimeKey, millis);
-
-  Future<void> clearLoginTimestamp() =>
-      _prefs.remove(_loginTimeKey);
-
   // -- Bulk clear auth
   Future<void> clearAuth() async {
     await setLoggedIn(false);
-    await clearLoginTimestamp();
   }
 
   // -- Notification preference (default: true)

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
 import 'route_paths.dart';
+import '../enums/app_status.dart';
+import '../services/app_services.dart';
 
 import '../../features/auth/presentation/page/create_profile_page.dart';
 import '../../features/auth/presentation/page/forgot_password_page.dart';
@@ -26,8 +28,6 @@ import '../../features/settings/presentation/page/help_support_page.dart';
 import '../../features/settings/presentation/page/no_internet_page.dart';
 import '../../features/settings/presentation/page/settings_page.dart';
 import '../../features/settings/presentation/page/terms_and_conditions_page.dart';
-import '../enums/app_status.dart';
-import '../services/app_services.dart';
 import '../../widgets/app_shell.dart';
 import '../../widgets/not_found_page.dart';
 
@@ -38,29 +38,45 @@ class AppRouter {
   AppRouter(this._appServices);
 
   late final GoRouter router = GoRouter(
-    initialLocation: '/onboarding',
+    initialLocation: RoutePaths.onboarding,
     refreshListenable: _appServices,
 
     redirect: (context, state) {
       final status = _appServices.status;
-      final loc = state.uri.path;
+      final loc = state.matchedLocation;
 
-      final isAuthRoute =
-          loc.startsWith('/sign-in') || loc.startsWith('/sign-up');
-      final isPublicRoute = loc == '/onboarding' || loc == '/no-internet';
+      // /no-internet adalah utility page — boleh diakses dari state apapun.
+      if (loc == RoutePaths.noInternet) return null;
 
-      switch (status) {
-        case AppStatus.loading:
-          return null;
-        case AppStatus.onboarding:
-          return loc == '/onboarding' ? null : '/onboarding';
-        case AppStatus.unauthenticated:
-          if (isPublicRoute || isAuthRoute) return null;
-          return '/sign-in';
-        case AppStatus.authenticated:
-          if (isPublicRoute || isAuthRoute) return '/home';
-          return null;
+      // Loading: biarkan user di tempat sampai init() selesai.
+      if (status == AppStatus.loading) return null;
+
+      final isOnAuthRoute = loc.startsWith(RoutePaths.signIn) ||
+          loc.startsWith(RoutePaths.signUp);
+
+      // ─── Kondisi 1: belum pernah onboarding → halaman onboarding
+      if (status == AppStatus.onboarding) {
+        return loc == RoutePaths.onboarding ? null : RoutePaths.onboarding;
       }
+
+      // ─── Kondisi 2: sudah onboarding, tidak ada session / session expired
+      //                  (status = unauthenticated). Auth pages diizinkan,
+      //                  route lain dipaksa ke /sign-in.
+      if (status == AppStatus.unauthenticated) {
+        if (isOnAuthRoute) return null;
+        return RoutePaths.signIn;
+      }
+
+      // ─── Kondisi 3: sudah login (status = authenticated). Jika user
+      //                  mencoba akses onboarding / auth pages, lempar ke
+      //                  /home. Route lain (booking, profile, dll) dibiarkan.
+      if (status == AppStatus.authenticated) {
+        final isOnAuthOrOnboarding = loc == RoutePaths.onboarding || isOnAuthRoute;
+        if (isOnAuthOrOnboarding) return RoutePaths.home;
+        return null;
+      }
+
+      return null;
     },
 
     routes: [

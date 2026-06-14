@@ -14,6 +14,7 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -28,6 +29,11 @@ import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 0. Global error handlers — register SEBELUM Supabase agar setiap
+  //    exception dari auth/DB dapat ditangani dan session-expired
+  //    tidak menyebabkan crash.
+  _registerErrorHandlers();
 
   // 1. .env
   await dotenv.load(fileName: '.env');
@@ -70,6 +76,57 @@ Future<void> _initFcm() async {
   } catch (e) {
     // FCM init failure TIDAK boleh block app launch — log dan continue.
     debugPrint('FCM init failed: $e');
+  }
+}
+
+/// Daftarkan error handler global. Dipanggil paling awal di main().
+///
+/// Tujuannya: TANGKAP `AuthException` dari Supabase yang menandakan
+/// session expired / token invalid, lalu sign-out secara graceful
+/// tanpa crash. AppServices.authStateListener kemudian akan
+/// mengarahkan user ke halaman login.
+void _registerErrorHandlers() {
+  // Framework errors (build, layout, paint, gesture).
+  FlutterError.onError = (FlutterErrorDetails details) {
+    if (_isSessionExpiredError(details.exception)) {
+      _signOutQuietly();
+      return;
+    }
+    FlutterError.presentError(details);
+  };
+
+  // Async errors yang tidak tertangkap framework.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (_isSessionExpiredError(error)) {
+      _signOutQuietly();
+      return true;
+    }
+    return false;
+  };
+}
+
+/// Cek apakah exception adalah AuthException dengan pesan session-expired.
+bool _isSessionExpiredError(Object? error) {
+  if (error is! AuthException) return false;
+  final msg = error.message.toLowerCase();
+  return (error.statusCode == '400' || error.statusCode == '401') &&
+      (msg.contains('session expired') ||
+          msg.contains('jwt expired') ||
+          msg.contains('token expired') ||
+          msg.contains('invalid token'));
+}
+
+/// Trigger sign-out tanpa await — fire and forget.
+/// AppServices.authStateListener akan tangani navigasi.
+void _signOutQuietly() {
+  final getIt = GetIt.instance;
+  if (getIt.isRegistered<AppServices>()) {
+    // ignore: discarded_futures
+    getIt<AppServices>().logout();
+  } else {
+    // Fallback: Supabase sudah di-init tapi DI belum jalan.
+    // ignore: discarded_futures
+    Supabase.instance.client.auth.signOut();
   }
 }
 

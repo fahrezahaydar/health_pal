@@ -1,7 +1,7 @@
-/// Durasi sesi login sebelum otomatis logout.
-/// Ubah nilai ini untuk memperpanjang/memperpendek masa berlaku sesi.
+/// Konstanta global aplikasi.
 ///
-/// Contoh:
-///   Duration(hours: 4)  → 4 jam
-///   Duration(days: 7)   → 7 hari
-const appSessionDuration = Duration(hours: 4);
+/// Durasi sesi login sepenuhnya ditentukan oleh Supabase JWT
+/// (lihat `session.isExpired`). Untuk menyesuaikan masa berlaku
+/// token, ubah konfigurasi server-side pada Supabase
+/// (ACCESS_TOKEN_LIFETIME / REFRESH_TOKEN_LIFETIME).
+library;
