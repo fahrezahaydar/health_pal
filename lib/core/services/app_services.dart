@@ -123,6 +123,19 @@ class AppServices extends ChangeNotifier {
     }
   }
 
+  /// Set status ke [AppStatus.profileIncomplete].
+  ///
+  /// Dipanggil dari `SignUpPage` listener sebagai safety belt sebelum
+  /// `context.go(createProfile)`. Idealnya status sudah diset oleh
+  /// `_setStatusFromProfile()` di event handler async, tapi explicit
+  /// call di sini memastikan tidak ada celah waktu di mana status
+  /// masih `unauthenticated` saat user navigate (misalnya via deep
+  /// link ke /home). Idempotent: jika status sudah `profileIncomplete`,
+  /// call ini no-op.
+  void setProfileIncomplete() {
+    _updateStatus(AppStatus.profileIncomplete);
+  }
+
   Future<void> completeOnboarding() async {
     await prefs.setOnboardingDone(true);
     _updateStatus(AppStatus.unauthenticated);

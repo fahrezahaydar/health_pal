@@ -3,7 +3,7 @@
 **Tanggal:** 2026-06-14  
 **Feature:** Auth + Routing  
 **Severity:** Critical  
-**Status:** In Progress
+**Status:** Resolved
 
 ---
 
@@ -46,7 +46,7 @@ Saat session Supabase expired, user dilempar ke halaman Onboarding, padahal haru
 
 ---
 
-### BUG-001-B: Sign Up, User Diarahkan ke Home (skip Create Profile) (OPEN)
+### BUG-001-B: Sign Up, User Diarahkan ke Home (skip Create Profile) (FIXED)
 
 **Deskripsi:**  
 Setelah sign-up berhasil, user langsung landing di Home tanpa sempat mengisi Create Profile form. Seharusnya sign up, Create Profile, Home.
@@ -65,11 +65,11 @@ Selain itu, `CreateProfileCubit.saveProfile` (`create_profile_cubit.dart` line 5
 - `lib/features/auth/data/repository/auth_repository_impl.dart` line 103-107 — `createProfile` forward data apa adanya
 - `lib/core/router/app_router.dart` line 73-77 — redirect tidak kenal state `profileIncomplete`
 
-**Status:** Open
+**Status:** Fixed — diselesesaikan via FIX-1, FIX-2, FIX-3, FIX-4, FIX-6. Commit: `487ded6` (termasuk FIX-5), sebelumnya `74aac93`, `6c67997`, `a700eed`, `0a352c0`.
 
 ---
 
-### BUG-001-C: Sign In, Langsung ke Home padahal Profile Belum Lengkap (OPEN)
+### BUG-001-C: Sign In, Langsung ke Home padahal Profile Belum Lengkap (FIXED)
 
 **Deskripsi:**  
 User yang sign in dengan `is_profile_complete = false` di DB langsung dilempar ke Home. Seharusnya di-redirect ke Create Profile dulu, sesuai `docs/wireframe/02-sign-in.md` line 90 dan `USER_FLOW.md` line 244-246.
@@ -86,7 +86,7 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
 - `lib/features/auth/data/repository/auth_repository_impl.dart` line 147-165 — `getCurrentUser()` sudah ada, tinggal dipanggil
 - `lib/core/router/app_router.dart` — tidak ada state `profileIncomplete`
 
-**Status:** Open
+**Status:** Fixed — diselesesaikan via FIX-1, FIX-2, FIX-3, FIX-5. Commit: `487ded6`.
 
 ---
 
@@ -130,13 +130,13 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
 |---|----------|----------|--------|
 | 1 | Fresh install (belum pernah onboarding) | Onboarding | Done (commit 0f48e8c) |
 | 2 | Sudah onboarding, belum login | Login | Done (commit 0f48e8c) |
-| 3 | Sign up baru | Create Profile | Open |
-| 4 | Sign in, profile belum lengkap | Create Profile | Open |
-| 5 | Sign in, profile sudah lengkap | Home | Open |
+| 3 | Sign up baru | Create Profile | Done (FIX-1 sampai FIX-6) |
+| 4 | Sign in, profile belum lengkap | Create Profile | Done (FIX-1 sampai FIX-5) |
+| 5 | Sign in, profile sudah lengkap | Home | Done (FIX-5) |
 | 6 | Session expired | Login (bukan onboarding) | Done (commit 0f48e8c) |
-| 7 | Sudah login + profile lengkap, buka app | Home | Open (perlu fetch profile di init) |
-| 8 | Sudah login + profile incomplete, buka app | Create Profile | Open |
-| 9 | Logout, lalu login lagi | Login, lalu sesuai profile | Open |
+| 7 | Sudah login + profile lengkap, buka app | Home | Done (FIX-2) |
+| 8 | Sudah login + profile incomplete, buka app | Create Profile | Done (FIX-2 + FIX-3) |
+| 9 | Logout, lalu login lagi | Login, lalu sesuai profile | Done (FIX-5) |
 
 ---
 
@@ -159,10 +159,10 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 | FIX-2: Refactor `AppServices` fetch profile | Done | a700eed |
 | FIX-3: Update router redirect `profileIncomplete` | Done | 6c67997 |
 | FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Done | 74aac93 |
-| FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | uncommitted |
-| FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Pending | — |
+| FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | 487ded6 |
+| FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Done | uncommitted |
 
-**Status summary:** 5 dari 6 fix selesai (83%).
+**Status summary:** 6 dari 6 fix selesai (100%). **BUG-001 Resolved.**
 
 ### Fix Details
 
@@ -248,15 +248,37 @@ File diubah:
 
 - `flutter analyze` clean.
 
-#### FIX-6 (Pending, opsional)
+#### FIX-6 (Done)
 
-Sign-up flow bisa di-improve dengan explicit `setStatusProfileIncomplete()` call di `SignUpPage` listener untuk konsistensi. Saat ini sign-up sudah bekerja dengan baik via FIX-2 + FIX-3 + FIX-4 (event handler fetch profile -> status profileIncomplete -> Kondisi 3 redirect). FIX-6 adalah safety belt tambahan untuk menghindari edge case (misalnya signedIn event yang gagal di-fire).
+File diubah:
+
+- `lib/core/services/app_services.dart`:
+  - Tambah method publik `setProfileIncomplete()` — transisi ke `AppStatus.profileIncomplete`. Idempotent (no-op jika status sudah sama).
+  - Dartdoc menjelaskan use case: safety belt untuk sign-up flow agar tidak ada celah waktu di mana status `unauthenticated` saat user navigate.
+
+- `lib/features/auth/presentation/page/sign_up_page.dart`:
+  - Tambah import `package:get_it/get_it.dart` dan `core/services/app_services.dart`.
+  - Line 70-78: Listener `SignUpSuccess` panggil `GetIt.instance<AppServices>().setProfileIncomplete()` sebelum `context.go(createProfile, extra: ...)`.
+
+- Trace sign-up flow end-to-end:
+  1. User on /sign-up, status=unauthenticated.
+  2. Submit -> Supabase create user+session.
+  3. signedIn event -> _setStatusFromProfile() starts (async).
+  4. Bloc emit SignUpSuccess.
+  5. Listener: setProfileIncomplete() -> status=profileIncomplete (sync). context.go(createProfile, extra).
+  6. Router Kondisi 3: status=profileIncomplete, loc=/sign-up/create-profile -> stay. User at createProfile.
+  7. _setStatusFromProfile() complete: status=profileIncomplete (no change, _updateStatus idempotent). User stays.
+  8. User isi form, tap Save -> FIX-4 flow -> status=authenticated -> home. ✅
+
+- Tanpa FIX-6 (sebelumnya): ada celah waktu sesaat antara step 4 dan step 7 di mana status masih `unauthenticated`. Router Kondisi 2 + isOnAuthRoute masih allow createProfile, jadi user tidak terlempar ke /sign-in. Tapi safety belt ini memastikan konsistensi jika ada deep link / navigasi cepat.
+
+- `flutter analyze` clean.
 
 **Validasi skenario yang sudah ter-cover (semua ✅ penuh):**
 
 - Skenario 1: Fresh install -> Onboarding (commit 0f48e8c).
 - Skenario 2: Sudah onboarding, belum login -> Login (commit 0f48e8c).
-- Skenario 3: Sign up baru -> CreateProfile -> Home (FIX-2 + FIX-3 + FIX-4 + FIX-5).
+- Skenario 3: Sign up baru -> CreateProfile -> Home (FIX-2 + FIX-3 + FIX-4 + FIX-5 + FIX-6).
 - Skenario 4: Sign in, profile incomplete -> CreateProfile (FIX-2 + FIX-3 + FIX-5).
 - Skenario 5: Sign in, profile lengkap -> Home (FIX-5).
 - Skenario 6: Session expired -> Login (commit 0f48e8c).

@@ -1,12 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_pal/widgets/dialog/app_succes_dialog.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/outline_button.dart';
@@ -68,6 +70,12 @@ class _SignUpPageState extends State<SignUpPage> {
             listener: (context, state) {
               switch (state) {
                 case SignUpSuccess():
+                  // FIX-6: Safety belt untuk hindari race dengan
+                  // _setStatusFromProfile() di event handler. Explicit
+                  // set status ke profileIncomplete sebelum navigate,
+                  // agar router konsisten jika user cepat-cepat navigate
+                  // ke /home via deep link sebelum event handler selesai.
+                  GetIt.instance<AppServices>().setProfileIncomplete();
                   context.go(
                     RoutePaths.createProfile,
                     extra: {
