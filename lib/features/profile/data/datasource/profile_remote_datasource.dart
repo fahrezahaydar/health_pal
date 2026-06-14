@@ -107,23 +107,14 @@ class ProfileRemoteDataSource {
   Future<String> uploadAvatar(String userId, File photo) async {
     final bytes = await photo.readAsBytes();
     final path = '$userId/profile.jpg';
-    // BUG-003 TEMPORARY DEBUG LOG — hapus setelah verifikasi.
-    // Catatan: string 'avatars/$userId/profile.jpg' di bawah adalah
-    // path BERMASALAH (sebelum FIX-2.5). Yang dipakai upload beneran
-    // adalah variable `path` di atas (sudah tanpa prefix 'avatars/').
-    debugPrint('=== UPLOAD AVATAR DEBUG ===');
-    debugPrint('userId param   : $userId');
-    debugPrint('currentUser id : ${_client.auth.currentUser?.id}');
-    debugPrint('session uid    : ${_client.auth.currentSession?.user.id}');
-    debugPrint('upload path    : avatars/$userId/profile.jpg');
-    debugPrint('actual path var: $path');
-    debugPrint('match?         : ${userId == _client.auth.currentUser?.id}');
-    debugPrint('===========================');
-    await _client.storage.from('avatars').uploadBinary(
-      path,
-      bytes,
-      fileOptions: const FileOptions(upsert: true),
-    );
+
+    await _client.storage
+        .from('avatars')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
     return _client.storage.from('avatars').getPublicUrl(path);
   }
 
