@@ -17,6 +17,7 @@ import '../../../../widgets/dialog/app_succes_dialog.dart';
 import '../../../../widgets/form/app_dropdown_field.dart';
 import '../../../../widgets/form/app_form.dart';
 import '../../../../widgets/form/app_form_field.dart';
+import '../../../../widgets/input/app_date_picker_form_field.dart';
 import '../../../../widgets/picker/app_image_picker.dart';
 import '../../presentation/bloc/create_profile/create_profile_cubit.dart';
 
@@ -62,6 +63,35 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     _nameController.dispose();
     _emailController.dispose();
     super.dispose();
+  }
+
+  void _onSaveProfile(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+    final values = _formKey.currentState!.values;
+    final dob = values['dob'] as DateTime?;
+    if (dob == null) {
+      // Shouldn't happen — validator catches null. Guard biar cast aman.
+      return;
+    }
+
+    // FIX-8 safety belt: kunci status ke `profileIncomplete` SEBELUM
+    // signUp. Tanpa ini, race condition: _onAuthStateChange(signedIn)
+    // → _setStatusFromProfile() akan fetch user_profiles (row belum
+    // ada, INSERT sedang berjalan) → Failure → upgrade status ke
+    // `authenticated` ❌. Dengan setProfileIncomplete() dulu, status
+    // sudah `profileIncomplete` saat _setStatusFromProfile() Failure
+    // → KEEP (existing logic di app_services.dart:122-125).
+    GetIt.instance<AppServices>().setProfileIncomplete();
+
+    context.read<CreateProfileCubit>().registerAndCreateProfile(
+      email: widget.email,
+      password: widget.password,
+      fullName: values['Name'] ?? '',
+      nickname: values['Nickname'] ?? '',
+      gender: values['gender'] as String,
+      dob: dob,
+      photo: _localPhoto,
+    );
   }
 
   @override
@@ -197,23 +227,20 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                         return null;
                                       },
                                     ),
-                                    LightFilledButton(
-                                      onTap: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          final values =
-                                              _formKey.currentState!.values;
-                                          context
-                                              .read<CreateProfileCubit>()
-                                              .saveProfile({
-                                                'full_name':
-                                                    values['Name'] ?? '',
-                                                'nickname':
-                                                    values['Nickname'] ?? '',
-                                                'gender': values['gender'],
-                                                'is_profile_complete': true,
-                                              }, photo: _localPhoto);
+                                    AppDatePickerFormField(
+                                      name: 'dob',
+                                      hintText: 'Date of Birth',
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now(),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Tanggal lahir wajib diisi';
                                         }
+                                        return null;
                                       },
+                                    ),
+                                    LightFilledButton(
+                                      onTap: () => _onSaveProfile(context),
                                       label: 'Save Profile',
                                     ),
                                   ],
