@@ -17,6 +17,8 @@ import 'dart:io';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/enums/failure_code.dart';
+import '../../../../core/network/api_exception.dart';
 import '../../../auth/data/model/user_model.dart';
 import '../model/notification_model.dart';
 
@@ -26,17 +28,35 @@ class ProfileRemoteDataSource {
 
   ProfileRemoteDataSource(this._client);
 
-  // ── API §3.5 Get My Profile (via /me view) ──────────────────────────────
+  // ── API §3.5 Get My Profile ───────────────────────────────────────────────
+  // FIX-1: Query langsung ke tabel `user_profiles` (bukan view `me`).
+  // Pattern konsisten dengan auth_remote_datasource.dart:48-52 dan
+  // home_remote_datasource.dart:58-62. View `me` di API contract §3.5
+  // belum di-migrate ke Supabase DB; query `.from('me')` menyebabkan
+  // PGRST205 (table not found).
   Future<UserModel> getProfile() async {
-    final result = await _client.from('me').select().maybeSingle();
-
-    if (result == null) {
-      throw Exception('Profile not found — user mungkin belum punya profil');
+    final session = _client.auth.currentSession;
+    if (session == null) {
+      throw const ApiException(
+        code: FailureCode.unauthorized,
+        message: 'Tidak ada sesi aktif',
+      );
     }
 
-    // Get email dari session (tidak ada di /me view)
-    final email = _client.auth.currentSession?.user.email ?? '';
-    return UserModel.fromJson({...result, 'email': email});
+    final result = await _client
+        .from('user_profiles')
+        .select()
+        .eq('auth_id', session.user.id)
+        .maybeSingle();
+
+    if (result == null) {
+      throw const ApiException(
+        code: FailureCode.notFound,
+        message: 'User profile not found',
+      );
+    }
+
+    return UserModel.fromJson({...result, 'email': session.user.email ?? ''});
   }
 
   // ── API §3.2 Update Profile (PATCH) ──────────────────────────────────────

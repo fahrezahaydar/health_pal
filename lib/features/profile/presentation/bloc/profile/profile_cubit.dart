@@ -1,9 +1,10 @@
 // lib/features/profile/presentation/bloc/profile/profile_cubit.dart
 //
 // Cubit untuk Profile page.
-// - loadProfile → fetch dari /me
+// - loadProfile → fetch dari user_profiles (lihat FIX-1 BUG-002)
 // - logout → delegate ke AppServices (yang handle Supabase signOut + status)
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -19,7 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final AppServices _appServices;
 
   ProfileCubit(this._getProfile, this._appServices)
-      : super(const ProfileInitial());
+    : super(const ProfileInitial());
 
   Future<void> loadProfile() async {
     emit(const ProfileLoading());
@@ -28,6 +29,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       case Success<UserEntity>(:final data):
         emit(ProfileLoaded(data));
       case Failure(:final message):
+        debugPrint('ProfileCubit.loadProfile error: $message');
         emit(ProfileError(message: message));
     }
   }
