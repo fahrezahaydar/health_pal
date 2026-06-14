@@ -2,7 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/auth/domain/entity/user_entity.dart';
+import '../../features/auth/domain/repository/auth_repository.dart';
 import '../enums/app_status.dart';
+import '../network/result.dart';
 import 'shared_prefs.dart';
 
 /// Pengendali status global aplikasi.
@@ -21,8 +24,9 @@ import 'shared_prefs.dart';
 class AppServices extends ChangeNotifier {
   final SharedPrefService prefs;
   final SupabaseClient _supabaseClient;
+  final AuthRepository _authRepository;
 
-  AppServices(this.prefs, this._supabaseClient);
+  AppServices(this.prefs, this._supabaseClient, this._authRepository);
 
   AppStatus _status = AppStatus.loading;
   AppStatus get status => _status;
@@ -54,7 +58,7 @@ class AppServices extends ChangeNotifier {
       return;
     }
 
-    _updateStatus(AppStatus.authenticated);
+    await _setStatusFromProfile();
   }
 
   void _onAuthStateChange(AuthState data) {
@@ -75,13 +79,47 @@ class AppServices extends ChangeNotifier {
         break;
 
       case AuthChangeEvent.signedIn:
-        if (_status != AppStatus.authenticated) {
-          _updateStatus(AppStatus.authenticated);
-        }
+        // Fetch profile untuk tentukan status — JANGAN langsung
+        // authenticated (lihat BUG-001-B: sign-up baru bisa
+        // is_profile_complete = false).
+        // ignore: discarded_futures
+        _setStatusFromProfile();
         break;
 
       default:
+        // initialSession / userUpdated / passwordRecovery /
+        // mfaChallengeVerified / userDeleted: no-op.
         break;
+    }
+  }
+
+  /// Fetch profil user via [AuthRepository.getCurrentUser] dan set status
+  /// berdasarkan `isProfileComplete`.
+  ///
+  /// - `Success(user)` dengan `isProfileComplete = true`  → authenticated
+  /// - `Success(user)` dengan `isProfileComplete = false` → profileIncomplete
+  /// - `Failure` (network/cache miss)                     → authenticated
+  ///   (session Supabase valid; defer profile check ke API call berikutnya)
+  Future<void> _setStatusFromProfile() async {
+    final result = await _authRepository.getCurrentUser();
+    switch (result) {
+      case Success<UserEntity>(:final data):
+        _updateStatus(
+          data.isProfileComplete
+              ? AppStatus.authenticated
+              : AppStatus.profileIncomplete,
+        );
+      case Failure<UserEntity>():
+        _updateStatus(AppStatus.authenticated);
+    }
+  }
+
+  /// Dipanggil dari `CreateProfilePage` listener setelah profile disimpan
+  /// dengan `is_profile_complete: true` di DB. Transisi
+  /// `profileIncomplete` → `authenticated` dan trigger router refresh.
+  void markProfileComplete() {
+    if (_status == AppStatus.profileIncomplete) {
+      _updateStatus(AppStatus.authenticated);
     }
   }
 
@@ -92,6 +130,9 @@ class AppServices extends ChangeNotifier {
 
   Future<void> login() async {
     await prefs.setLoggedIn(true);
+    // Sumber kebenaran status ada di Supabase session + profile.
+    // Saat login dipanggil dari UI, diasumsikan profile sudah lengkap
+    // (lihat LoginPage listener — BUG-001-C).
     _updateStatus(AppStatus.authenticated);
   }
 

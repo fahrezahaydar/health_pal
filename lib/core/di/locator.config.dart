@@ -203,6 +203,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i605.AppServices(
         gh<_i167.SharedPrefService>(),
         gh<_i454.SupabaseClient>(),
+        gh<_i613.AuthRepository>(),
       ),
     );
     gh.factory<_i1053.SettingsCubit>(

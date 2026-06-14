@@ -155,14 +155,14 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 
 | Fix | Status | Commit |
 |-----|--------|--------|
-| FIX-1: Tambah `AppStatus.profileIncomplete` | Done | uncommitted |
-| FIX-2: Refactor `AppServices` fetch profile | Pending | — |
+| FIX-1: Tambah `AppStatus.profileIncomplete` | Done | 0a352c0 |
+| FIX-2: Refactor `AppServices` fetch profile | Done | uncommitted |
 | FIX-3: Update router redirect `profileIncomplete` | Pending | — |
 | FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Pending | — |
 | FIX-5: `LoginPage` listener cek `isProfileComplete` | Pending | — |
 | FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Pending | — |
 
-**Status summary:** 1 dari 6 fix selesai (17%).
+**Status summary:** 2 dari 6 fix selesai (33%).
 
 ### Fix Details
 
@@ -172,11 +172,29 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 - Update dartdoc enum + diagram alur transisi.
 - Update docstring class `AppServices` dan method `init()` di `lib/core/services/app_services.dart`.
 - `flutter analyze` clean (2 file: `app_status.dart` + `app_services.dart`).
-- Belum ada efek runtime sampai FIX-2 dan FIX-3 dieksekusi.
+- Commit: `0a352c0`.
 
-#### FIX-2 (Pending)
+#### FIX-2 (Done)
 
-Butuh DI `AuthRepository` ke `AppServices`; panggil `getCurrentUser()` di `init()` dan `_onAuthStateChange.signedIn`; tambah method `markProfileComplete()`.
+File diubah:
+
+- `lib/core/services/app_services.dart`:
+  - Inject `AuthRepository` ke constructor.
+  - Tambah helper `_setStatusFromProfile()` yang fetch `getCurrentUser()` lalu set status:
+    - `Success(user.isProfileComplete)` true → `authenticated`
+    - `Success(user)` false → `profileIncomplete`
+    - `Failure(_)` → `authenticated` (defer; session Supabase valid)
+  - `init()` panggil `_setStatusFromProfile()` setelah session validated.
+  - `_onAuthStateChange.signedIn` panggil `_setStatusFromProfile()` (TIDAK langsung `authenticated`).
+  - Tambah method publik `markProfileComplete()` — transisi `profileIncomplete` → `authenticated`. Akan dipanggil dari `CreateProfilePage` listener (FIX-4).
+  - Update dartdoc `login()` agar note asumsi profile sudah lengkap (lihat FIX-5).
+
+- `lib/core/di/locator.config.dart`:
+  - Update DI registration `AppServices` untuk include `gh<_i613.AuthRepository>()`.
+
+- Switch `_onAuthStateChange` direstrukturisasi pakai `default` clause agar tidak mengutip `AuthChangeEvent.userDeleted` (deprecated).
+
+- `flutter analyze` clean (full project).
 
 #### FIX-3 (Pending)
 
@@ -184,14 +202,20 @@ Tambah Kondisi 4 di `app_router.dart` yang route ke `/sign-up/create-profile` sa
 
 #### FIX-4 (Pending)
 
-Update payload di `create_profile_page.dart` line 206-213 agar include `'is_profile_complete': true`.
+Update payload di `create_profile_page.dart` line 206-213 agar include `'is_profile_complete': true`. Setelah save sukses, panggil `AppServices.markProfileComplete()` dari listener.
 
 #### FIX-5 (Pending)
 
-Update `login_page.dart` line 65-71 agar cek `user.isProfileComplete` sebelum routing.
+Update `login_page.dart` line 65-71 agar cek `user.isProfileComplete` sebelum routing. `isProfileComplete` true → `home`; false → `createProfile`.
 
 #### FIX-6 (Pending, opsional)
 
 Untuk hindari race dengan Supabase `signedIn` event, sign-up flow panggil `AppServices.setProfileIncomplete()` secara eksplisit.
 
-**Validasi skenario yang sudah ter-cover FIX-1:** belum ada, enum baru belum dipakai di mana pun sampai FIX-2 dan FIX-3 selesai.
+**Validasi skenario yang sudah ter-cover:**
+
+- Skenario 7 (login + profile lengkap, buka app): ✅ FIX-2 (init() fetch profile, status = authenticated)
+- Skenario 8 (login + profile incomplete, buka app): ✅ FIX-2 (init() fetch profile, status = profileIncomplete)
+- Skenario 9 (logout, lalu login lagi): parsial — FIX-2 handle `signedIn` event, tapi FIX-5 (LoginPage listener) masih harus cek `isProfileComplete` untuk routing yang benar
+- Skenario 3, 4, 5 (sign up / sign in flow): butuh FIX-3, FIX-4, FIX-5 supaya router arahkan dengan benar
+- Skenario 6 (session expired): ✅ dari commit sebelumnya (FIX-1 tidak mengubah behavior)
