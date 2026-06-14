@@ -74,9 +74,19 @@ class AuthRemoteDataSource {
 
   Future<void> signOut() => _client.auth.signOut();
 
+  // ── API §3.3 Upload Avatar ───────────────────────────────────────────────
+  // BUG-003 re-fix: SDK `storage_client` (line 40 storage_file_api.dart)
+  // concat path dengan bucketId otomatis: `'$bucketId/$path'`. Kalau
+  // path kita include 'avatars/' prefix → URL jadi
+  // 'avatars/avatars/$userId/profile.jpg' (double prefix) →
+  // RLS policy `storage.foldername(name)[1] = auth.uid()::text`
+  // selalu check 'avatars' (bucket name) bukan userId → DENY.
+  //
+  // Fix: path HARUS relative ke bucket, tanpa 'avatars/' prefix.
+  // SDK comment: "[path] is the relative file path without the bucket ID".
   Future<String> uploadAvatar(String userId, File photo) async {
     final bytes = await photo.readAsBytes();
-    final path = 'avatars/$userId/profile.jpg';
+    final path = '$userId/profile.jpg';
     await _client.storage.from('avatars').uploadBinary(
       path,
       bytes,
