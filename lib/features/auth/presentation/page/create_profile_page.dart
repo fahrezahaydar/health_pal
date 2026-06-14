@@ -77,7 +77,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   AppLoadingDialog.show(context);
                 case CreateProfileSuccess():
                   AppLoadingDialog.dismiss(context);
-                  GetIt.instance<AppServices>().login();
+                  GetIt.instance<AppServices>().markProfileComplete();
                   context.go(RoutePaths.home);
                 case CreateProfileFailure():
                   AppLoadingDialog.dismiss(context);
@@ -210,6 +210,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                                 'nickname':
                                                     values['Nickname'] ?? '',
                                                 'gender': values['gender'],
+                                                'is_profile_complete': true,
                                               }, photo: _localPhoto);
                                         }
                                       },
