@@ -3,7 +3,7 @@
 **Tanggal:** 2026-06-14 (last updated: FIX-7 v2 enhancement)  
 **Feature:** Auth + Routing  
 **Severity:** Critical  
-**Status:** Resolved
+**Status:** Resolved (including BUG-001-E race condition)
 
 ---
 
@@ -87,6 +87,55 @@ Tambahan: `AppServices.init()` (saat app restart dengan session valid) juga tida
 - `lib/core/router/app_router.dart` — tidak ada state `profileIncomplete`
 
 **Status:** Fixed — diselesesaikan via FIX-1, FIX-2, FIX-3, FIX-5, FIX-7. Commit: `487ded6`, lalu FIX-7.
+
+---
+
+### BUG-001-E: Sign Up → Create Profile → Flicker ke Home → Balik Create Profile (FIXED)
+
+**Deskripsi:**  
+Setelah sign up berhasil dan navigate ke Create Profile, app tiba-tiba pindah ke Home lalu balik ke Create Profile (flicker). Ini terjadi karena race condition antara:
+1. Manual navigation ke Create Profile (dari `sign_up_page.dart` listener yang panggil `setProfileIncomplete()` + `context.go(createProfile)`)
+2. `_onAuthStateChange.signedIn` → `_setStatusFromProfile()` (async) → Failure case default ke `authenticated` (FIX-2 fallback) → Kondisi 4 redirect ke Home
+3. FIX-7 v2 home guard fires → setProfileIncomplete() → Kondisi 3 redirect balik ke CreateProfile
+
+**Root Cause:**
+
+Dua lapis race condition di BUG-002's FIX-2 fallback path:
+
+1. **`_setStatusFromProfile()` Failure case di `app_services.dart` line 113-114 default ke `authenticated`** — tapi untuk new user (sign up baru), row `user_profiles` belum ada → `getCurrentUser()` returns `notFound` → `Failure`. Listener (SignUpPage) sudah set status ke `profileIncomplete` via `setProfileIncomplete()` (sync, IMMEDIATE), tapi async fetcher (T3 → T7) **downgrade** status ke `authenticated` setelah listener navigate (T6) ke createProfile.
+
+2. **Router Kondisi 4 (`authenticated`) TIDAK punya guard untuk `createProfile`** — kalau status somehow jadi `authenticated` saat user di `/sign-up/create-profile`, Kondisi 4 redirect ke `/home`.
+
+**Trace timeline:**
+
+```
+T0: status=unauthenticated, user on /sign-up
+T1: User taps Create Account
+T2: Supabase auth.signUp() runs
+T3: signedIn event → _setStatusFromProfile() (async, starts)
+T4: auth.signUp() returns
+T5: SignUpBloc emits SignUpSuccess
+T6: SignUpPage listener:
+    a. setProfileIncomplete() → status=profileIncomplete (sync) ✅
+    b. context.go(createProfile) → Kondisi 3 → stay ✅
+T7: _setStatusFromProfile() (T3) finishes:
+    a. getCurrentUser() → notFound (new user, no row)
+    b. SEBELUM FIX: status=authenticated → notifyListeners → Kondisi 4 → /home ❌
+    c. SESUDAH FIX: status stays profileIncomplete → no change ✅
+T8: (with SEBELUM FIX)
+    HomePage mounts → GreetingCubit fetch → notFound
+    → GreetingNoProfile (FIX-7 v2) → setProfileIncomplete()
+    → status=profileIncomplete → Kondisi 3 → /sign-up/create-profile
+    → Flicker: CreateProfile → Home → CreateProfile ❌
+```
+
+**File yang terkait:**
+
+- `lib/core/services/app_services.dart` line 103-115 — `_setStatusFromProfile()` Failure case default `authenticated` (BUG: downgrade)
+- `lib/core/router/app_router.dart` Kondisi 4 — TIDAK ada guard `createProfile`
+- `lib/features/auth/presentation/page/sign_up_page.dart` line 78 — `setProfileIncomplete()` listener call (safety belt, tapi di-override oleh async fetcher)
+
+**Status:** Fixed — diselesesaikan via Fix Part 1 (`_setStatusFromProfile` Failure case guard) + Fix Part 2 (router `createProfile` early return).
 
 ---
 
@@ -203,8 +252,9 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 | FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | 487ded6 |
 | FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Done | d96837d |
 | FIX-7: Guard di Home page refresh `is_profile_complete` | Done (v1 + v2 enhancement) | 743e529 + uncommitted |
+| FIX-8: BUG-001-E — fix race condition `_setStatusFromProfile` downgrade + router `createProfile` guard | Done | uncommitted |
 
-**Status summary:** 7 dari 7 fix selesai (100% — termasuk FIX-7 v2 enhancement untuk empty-profile case). **BUG-001 Resolved.**
+**Status summary:** 8 dari 8 fix selesai (100% — termasuk BUG-001-E race condition fix). **BUG-001 Resolved.**
 
 ### Fix Details
 
@@ -391,6 +441,30 @@ File diubah:
   3. Repo: catch -> `Result.failure(networkError)`.
   4. Cubit: code != 'notFound' -> emit `GreetingError`.
   5. Listener: tidak fire (cuma listen `GreetingLoaded` dan `GreetingNoProfile`). ✅ User stay di Home.
+
+- `flutter analyze` clean.
+
+#### FIX-8 / BUG-001-E (Done) — Race Condition `_setStatusFromProfile` Downgrade + Router `createProfile` Guard
+
+File diubah:
+
+- `lib/core/services/app_services.dart`:
+  - `_setStatusFromProfile()` Failure case: jangan downgrade dari `profileIncomplete` ke `authenticated`.
+  - Pattern: `if (_status != AppStatus.profileIncomplete) _updateStatus(AppStatus.authenticated);`
+  - Rationale: SignUpPage listener (sync) sudah set status yang benar (`profileIncomplete`) via `setProfileIncomplete()`. Async fetcher (dari signedIn event) TIDAK boleh override kalau status saat ini sudah `profileIncomplete`. Untuk returning user (init() flow, status = loading), Failure case tetap default ke `authenticated` (FIX-2 behavior preserved).
+
+- `lib/core/router/app_router.dart`:
+  - Tambah early return di redirect logic, setelah loading check: `if (loc == RoutePaths.createProfile) return null;`
+  - Rationale: Defense in depth. Kalau somehow status jadi `authenticated` (race window), Kondisi 4 tidak akan redirect dari `createProfile` ke `/home`. Primary fix ada di `_setStatusFromProfile()` (mencegah status berubah), guard ini adalah safety belt tambahan.
+
+- Trace setelah fix (sign up flow):
+  1. status=unauthenticated
+  2. signedIn event → `_setStatusFromProfile()` starts (async)
+  3. SignUpPage listener: `setProfileIncomplete()` → status=profileIncomplete
+  4. `context.go(createProfile)` → Kondisi 3 (status=profileIncomplete, loc=createProfile) → STAY
+  5. `_setStatusFromProfile()` finishes: `getCurrentUser()` → notFound → Failure
+  6. **WITH FIX**: status is `profileIncomplete` → KEEP (no change, no notifyListeners)
+  7. **NO FLICKER.** User stays on createProfile. ✅
 
 - `flutter analyze` clean.
 

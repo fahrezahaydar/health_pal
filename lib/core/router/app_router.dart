@@ -51,6 +51,14 @@ class AppRouter {
       // Loading: biarkan user di tempat sampai init() selesai.
       if (status == AppStatus.loading) return null;
 
+      // BUG-001-E Fix A: Kalau user sedang di createProfile, JANGAN
+      // redirect kemana pun biar user selesaikan profile dulu. Tanpa
+      // guard ini, Kondisi 4 (`authenticated`) bisa redirect ke /home
+      // saat ada race dengan async _setStatusFromProfile() yang
+      // downgrade status sementara ke `authenticated`. Defense in
+      // depth — primary fix ada di _setStatusFromProfile() Failure case.
+      if (loc == RoutePaths.createProfile) return null;
+
       final isOnAuthRoute = loc.startsWith(RoutePaths.signIn) ||
           loc.startsWith(RoutePaths.signUp);
 

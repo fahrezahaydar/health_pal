@@ -98,8 +98,18 @@ class AppServices extends ChangeNotifier {
   ///
   /// - `Success(user)` dengan `isProfileComplete = true`  → authenticated
   /// - `Success(user)` dengan `isProfileComplete = false` → profileIncomplete
-  /// - `Failure` (network/cache miss)                     → authenticated
-  ///   (session Supabase valid; defer profile check ke API call berikutnya)
+  /// - `Failure`:
+  ///   - Kalau status saat ini `profileIncomplete` (di-set oleh listener
+  ///     SignUpPage via `setProfileIncomplete()` safety belt) → KEEP.
+  ///     Jangan downgrade ke `authenticated` — ini yang menyebabkan
+  ///     race condition flicker (CreateProfile → Home → CreateProfile)
+  ///     di BUG-001-E. New user yang signUp: row `user_profiles` belum
+  ///     ada → fetch returns notFound → Failure. Listener sudah set
+  ///     status yang benar (profileIncomplete), jangan override.
+  ///   - Else (init() flow, status = loading/unauthenticated) →
+  ///     default ke `authenticated` (session Supabase valid; defer
+  ///     profile check ke API call berikutnya, akan di-catch oleh
+  ///     FIX-7 v2 home guard kalau ternyata profile incomplete).
   Future<void> _setStatusFromProfile() async {
     final result = await _authRepository.getCurrentUser();
     switch (result) {
@@ -110,7 +120,9 @@ class AppServices extends ChangeNotifier {
               : AppStatus.profileIncomplete,
         );
       case Failure<UserEntity>():
-        _updateStatus(AppStatus.authenticated);
+        if (_status != AppStatus.profileIncomplete) {
+          _updateStatus(AppStatus.authenticated);
+        }
     }
   }
 
