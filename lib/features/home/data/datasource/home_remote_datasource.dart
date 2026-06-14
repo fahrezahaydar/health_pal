@@ -54,13 +54,14 @@ class HomeRemoteDataSource {
         .toList();
   }
 
-  Future<UserProfileModel> fetchUserProfile(String authId) async {
+  Future<UserProfileModel?> fetchUserProfile(String authId) async {
     final result = await _client
         .from('user_profiles')
         .select()
         .eq('auth_id', authId)
-        .single();
+        .maybeSingle();
 
+    if (result == null) return null;
     return UserProfileModel.fromJson(result);
   }
 }

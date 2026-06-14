@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/enums/failure_code.dart';
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/error_handler.dart';
 import '../../../../core/network/result.dart';
 import '../../domain/entity/banner_entity.dart';
@@ -62,6 +64,12 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Result<UserProfileEntity>> getUserProfile(String authId) async {
     try {
       final remote = await _remote.fetchUserProfile(authId);
+      if (remote == null) {
+        return Result.failure(const ApiException(
+          code: FailureCode.notFound,
+          message: 'User profile not found',
+        ));
+      }
       return Result.success(remote.toEntity());
     } catch (e) {
       return Result.failure(const ErrorHandler().map(e));

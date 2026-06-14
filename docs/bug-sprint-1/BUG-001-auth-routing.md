@@ -1,6 +1,6 @@
 # BUG-001 — Auth Routing Issues
 
-**Tanggal:** 2026-06-14 (last updated: FIX-7 selesai)  
+**Tanggal:** 2026-06-14 (last updated: FIX-7 v2 enhancement)  
 **Feature:** Auth + Routing  
 **Severity:** Critical  
 **Status:** Resolved
@@ -202,9 +202,9 @@ Ringkasan status eksekusi. Detail per-fix lihat section "Fix Details" di bawah.
 | FIX-4: `CreateProfileCubit` set `is_profile_complete: true` | Done | 74aac93 |
 | FIX-5: `LoginPage` listener cek `isProfileComplete` | Done | 487ded6 |
 | FIX-6: `SignUpPage` panggil `setProfileIncomplete()` | Done | d96837d |
-| FIX-7: Guard di Home page refresh `is_profile_complete` | Done | uncommitted |
+| FIX-7: Guard di Home page refresh `is_profile_complete` | Done (v1 + v2 enhancement) | 743e529 + uncommitted |
 
-**Status summary:** 7 dari 7 fix selesai (100%). **BUG-001 Resolved.**
+**Status summary:** 7 dari 7 fix selesai (100% — termasuk FIX-7 v2 enhancement untuk empty-profile case). **BUG-001 Resolved.**
 
 ### Fix Details
 
@@ -348,10 +348,49 @@ File diubah:
   5. Listener: `setProfileIncomplete()` -> status sync ke `profileIncomplete`, `notifyListeners()`.
   6. Router Kondisi 3: status=profileIncomplete, loc=/home -> `/sign-up/create-profile`. User di createProfile.
 
-- Edge case & limitasi:
+- Edge case & limitasi (FIX-7 v1):
   - **GreetingError** (network glitch): listener TIDAK fire (cuma listen ke GreetingLoaded). User stay di Home dengan empty greeting. Conservative choice (menghindari false positive redirect). Bisa di-improve nanti dengan `WidgetsBindingObserver` untuk re-check on app resume.
   - **Server-side change setelah first load**: GreetingCubit di `StatefulShellRoute` di-reuse saat tab switch; `loadProfile` cuma dipanggil sekali. Guard tidak re-fire. Bisa di-handle dengan `WidgetsBindingObserver` re-fetch on app resume. Future enhancement.
   - **No infinite loop**: setelah redirect ke createProfile dan user save profile (FIX-4), status ke `authenticated`, user kembali ke Home, GreetingCubit re-fetch, GreetingLoaded(isProfileComplete=true), no action. Loop-free.
+
+- `flutter analyze` clean.
+
+#### FIX-7 v2 (enhancement — empty profile saat hot restart)
+
+User report: hot restart dengan profile row kosong di DB masih tidak trigger guard. Root cause: `home_remote_datasource.dart` pakai `.single()` yang throw `notFound`, cubit emit `GreetingError`, listener FIX-7 v1 TIDAK listen ke state itu.
+
+File diubah:
+
+- `lib/features/home/data/datasource/home_remote_datasource.dart`:
+  - Ganti `.single()` -> `.maybeSingle()`. Return `UserProfileModel?` (null untuk no row).
+- `lib/features/home/data/repository/home_repository_impl.dart`:
+  - Tambah import `core/enums/failure_code.dart` dan `core/network/api_exception.dart`.
+  - Handle null dari remote: return `Result.failure(ApiException(code: FailureCode.notFound, message: 'User profile not found'))`.
+- `lib/features/home/presentation/bloc/greeting/greeting_state.dart`:
+  - Tambah state baru `GreetingNoProfile` (distinct dari `GreetingError`).
+- `lib/features/home/presentation/bloc/greeting/greeting_cubit.dart`:
+  - Tambah import `core/enums/failure_code.dart`.
+  - Pattern match `Failure<UserProfileEntity>(:final code)`: jika `code == FailureCode.notFound.name` -> emit `GreetingNoProfile`; else `GreetingError(message: result.message)`.
+- `lib/features/home/presentation/page/home_page.dart`:
+  - Extend `BlocListener`: tambah `else if (state is GreetingNoProfile) GetIt.instance<AppServices>().setProfileIncomplete();`.
+  - Komentar inline menjelaskan kenapa `GreetingError` (network) tidak trigger guard.
+
+- Trace fix v2:
+  1. User hot restart dengan profile row kosong.
+  2. `init()` -> `_setStatusFromProfile()` -> `getCurrentUser()` (auth) -> `notFound` (no cache) -> status default `authenticated` (FIX-2 fallback).
+  3. Router Kondisi 4 izinkan /home.
+  4. HomePage mount, `GreetingCubit.loadProfile`.
+  5. Home remote fetch -> `.maybeSingle()` returns null.
+  6. Repo: null -> `Result.failure(notFound)`.
+  7. Cubit: code == 'notFound' -> emit `GreetingNoProfile`.
+  8. Listener: `setProfileIncomplete()` -> status `profileIncomplete` -> Kondisi 3 -> /createProfile. ✅
+
+- Trace Skenario network error (tidak boleh trigger redirect):
+  1. User on Home, network glitch.
+  2. `GreetingCubit.loadProfile` -> fetch throws network exception.
+  3. Repo: catch -> `Result.failure(networkError)`.
+  4. Cubit: code != 'notFound' -> emit `GreetingError`.
+  5. Listener: tidak fire (cuma listen `GreetingLoaded` dan `GreetingNoProfile`). ✅ User stay di Home.
 
 - `flutter analyze` clean.
 

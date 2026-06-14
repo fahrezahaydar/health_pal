@@ -38,3 +38,11 @@ class GreetingError extends GreetingState {
   @override
   List<Object?> get props => [message];
 }
+
+/// Emit saat row `user_profiles` tidak ada untuk user saat ini (notFound).
+/// Distinct dari [GreetingError] (network/timeout) sehingga HomePage
+/// guard bisa membedakan "tidak ada profile" (wajib redirect ke
+/// CreateProfile) vs "gagal fetch sesaat" (stay di Home, retry natural).
+class GreetingNoProfile extends GreetingState {
+  const GreetingNoProfile();
+}

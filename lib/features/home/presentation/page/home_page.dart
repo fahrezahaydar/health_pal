@@ -67,7 +67,16 @@ class _HomePageBody extends StatelessWidget {
               if (!state.isProfileComplete) {
                 GetIt.instance<AppServices>().setProfileIncomplete();
               }
+            } else if (state is GreetingNoProfile) {
+              // FIX-7 enhancement: row user_profiles tidak ada untuk
+              // user ini. Sama seperti isProfileComplete=false, kita
+              // treat sebagai incomplete dan redirect ke CreateProfile.
+              // Distinct dari GreetingError (network/timeout) agar
+              // transient error TIDAK trigger false-positive redirect.
+              GetIt.instance<AppServices>().setProfileIncomplete();
             }
+            // GreetingError (network/timeout) -> no action; user stay
+            // di Home dan retry terjadi natural di app resume / pull-refresh.
           },
           child: ListView(
             children: [
