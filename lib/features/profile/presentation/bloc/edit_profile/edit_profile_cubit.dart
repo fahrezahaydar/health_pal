@@ -10,8 +10,9 @@
 // memisahkan "state dari data" dari "state dari UI side-effect".
 
 import 'dart:io';
-import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -63,8 +64,15 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       switch (uploadResult) {
         case Success(:final data):
           avatarUrl = data;
-        case Failure(:final message):
-          onError('Gagal upload avatar: $message');
+        case Failure(:final code, :final message, :final exception):
+          // Log full chain (code + message + exception) ke logcat agar
+          // developer bisa diagnosa (e.g. "Bucket not found", "RLS
+          // policy violation", "Payload too large", dll).
+          debugPrint(
+            'EditProfileCubit.updateProfile upload avatar error: '
+            'code=$code message=$message exception=$exception',
+          );
+          onError('Gagal Upload Avatar: $message');
           return;
       }
     }
@@ -81,8 +89,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     switch (result) {
       case Success<UserEntity>():
         onSuccess();
-      case Failure(:final message):
-        onError(message);
+      case Failure(:final code, :final message, :final exception):
+        debugPrint(
+          'EditProfileCubit.updateProfile update error: '
+          'code=$code message=$message exception=$exception',
+        );
+        onError('Gagal Update Profil: $message');
     }
   }
 }
