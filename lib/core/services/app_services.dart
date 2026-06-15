@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/auth/domain/entity/user_entity.dart';
 import '../../features/auth/domain/repository/auth_repository.dart';
+import '../../features/home/data/datasource/home_local_datasource.dart';
 import '../enums/app_status.dart';
 import '../network/result.dart';
 import 'shared_prefs.dart';
@@ -25,8 +26,11 @@ class AppServices extends ChangeNotifier {
   final SharedPrefService prefs;
   final SupabaseClient _supabaseClient;
   final AuthRepository _authRepository;
+  final HomeLocalDataSource _homeLocalCache;
 
-  AppServices(this.prefs, this._supabaseClient, this._authRepository);
+  // Sprint 2 — B6: inject HomeLocalDataSource untuk clearAll() on logout.
+  AppServices(this.prefs, this._supabaseClient, this._authRepository,
+      this._homeLocalCache);
 
   AppStatus _status = AppStatus.loading;
   AppStatus get status => _status;
@@ -87,6 +91,10 @@ class AppServices extends ChangeNotifier {
         _updateStatus(AppStatus.unauthenticated);
         // ignore: discarded_futures
         prefs.clearAuth();
+        // Sprint 2 — B6: clear home cache (redundan dengan logout(),
+        // safety net kalau signedOut dipicu oleh session expiry).
+        // ignore: discarded_futures
+        _homeLocalCache.clearAll();
         break;
 
       case AuthChangeEvent.tokenRefreshed:
@@ -187,6 +195,9 @@ class AppServices extends ChangeNotifier {
     } catch (_) {
       // best-effort
     }
+    // Sprint 2 — B6: clear home cache (banners, specs, profile) on logout
+    // ignore: discarded_futures
+    _homeLocalCache.clearAll();
     await prefs.clearAuth();
     _updateStatus(AppStatus.unauthenticated);
   }

@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/services/cache_service.dart';
 import '../model/banner_model.dart';
 import '../model/specialization_model.dart';
 import '../model/user_profile_model.dart';
 
 @lazySingleton
 class HomeLocalDataSource {
-  final SharedPreferences _prefs;
+  final CacheService _cache;
 
-  HomeLocalDataSource(this._prefs);
+  HomeLocalDataSource(this._cache);
 
   // ---------------------------------------------------------------------------
   // Banners (TTL: 5 menit)
@@ -22,14 +22,13 @@ class HomeLocalDataSource {
 
   Future<void> cacheBanners(List<BannerModel> banners) async {
     final json = banners.map((b) => b.toJson()).toList();
-    await _prefs.setString(_bannersKey, jsonEncode(json));
-    await _prefs.setInt(
-        _bannersTimeKey, DateTime.now().millisecondsSinceEpoch);
+    await _cache.setString(_bannersKey, jsonEncode(json));
+    await _cache.setInt(_bannersTimeKey, DateTime.now().millisecondsSinceEpoch);
   }
 
   List<BannerModel>? getCachedBanners() {
-    final cached = _prefs.getString(_bannersKey);
-    final savedAt = _prefs.getInt(_bannersTimeKey);
+    final cached = _cache.getString(_bannersKey);
+    final savedAt = _cache.getInt(_bannersTimeKey);
     if (cached == null || savedAt == null) return null;
 
     final age = DateTime.now().difference(
@@ -52,14 +51,14 @@ class HomeLocalDataSource {
   Future<void> cacheSpecializations(
       List<SpecializationModel> specializations) async {
     final json = specializations.map((s) => s.toJson()).toList();
-    await _prefs.setString(_specsKey, jsonEncode(json));
-    await _prefs.setInt(
+    await _cache.setString(_specsKey, jsonEncode(json));
+    await _cache.setInt(
         _specsTimeKey, DateTime.now().millisecondsSinceEpoch);
   }
 
   List<SpecializationModel>? getCachedSpecializations() {
-    final cached = _prefs.getString(_specsKey);
-    final savedAt = _prefs.getInt(_specsTimeKey);
+    final cached = _cache.getString(_specsKey);
+    final savedAt = _cache.getInt(_specsTimeKey);
     if (cached == null || savedAt == null) return null;
 
     final age = DateTime.now().difference(
@@ -73,37 +72,37 @@ class HomeLocalDataSource {
   }
 
   // ---------------------------------------------------------------------------
-  // User Profile (TTL: 5 menit — cukup untuk session, cepat untuk re-check)
+  // User Profile (TTL: 5 menit)
   // ---------------------------------------------------------------------------
   static const _profileKey = 'home_user_profile';
   static const _profileTimeKey = 'home_user_profile_time';
   static const _profileTtl = Duration(minutes: 5);
 
   Future<void> cacheUserProfile(UserProfileModel profile) async {
-    await _prefs.setString(_profileKey, jsonEncode(profile.toJson()));
-    await _prefs.setInt(
+    await _cache.setJson(_profileKey, profile.toJson());
+    await _cache.setInt(
         _profileTimeKey, DateTime.now().millisecondsSinceEpoch);
   }
 
   UserProfileModel? getCachedUserProfile() {
-    final cached = _prefs.getString(_profileKey);
-    final savedAt = _prefs.getInt(_profileTimeKey);
-    if (cached == null || savedAt == null) return null;
+    final savedAt = _cache.getInt(_profileTimeKey);
+    if (savedAt == null) return null;
 
     final age = DateTime.now().difference(
         DateTime.fromMillisecondsSinceEpoch(savedAt));
     if (age > _profileTtl) return null;
 
-    return UserProfileModel.fromJson(
-        jsonDecode(cached) as Map<String, dynamic>);
+    final raw = _cache.getJson(_profileKey);
+    if (raw == null) return null;
+    return UserProfileModel.fromJson(raw);
   }
 
   Future<void> clearAll() async {
-    await _prefs.remove(_bannersKey);
-    await _prefs.remove(_bannersTimeKey);
-    await _prefs.remove(_specsKey);
-    await _prefs.remove(_specsTimeKey);
-    await _prefs.remove(_profileKey);
-    await _prefs.remove(_profileTimeKey);
+    await _cache.remove(_bannersKey);
+    await _cache.remove(_bannersTimeKey);
+    await _cache.remove(_specsKey);
+    await _cache.remove(_specsTimeKey);
+    await _cache.remove(_profileKey);
+    await _cache.remove(_profileTimeKey);
   }
 }

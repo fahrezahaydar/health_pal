@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 13/30 tasks (43%) — Pool A 100% ✅ | Pool B 3/8 ✅
+**Overall:** 16/30 tasks (53%) — Pool A 100% ✅ | Pool B 6/8 ✅
 
 ### Pool A — Critical Bugs
 
@@ -44,12 +44,12 @@
 | B2 | HomeLocalDataSource @lazySingleton | 0.1h | ✅ Done | `7b3ba96` | Changed `@injectable` → `@lazySingleton`. build_runner regenerated DI. |
 | B3 | Result.Failure.code ke enum FailureCode | 2h | ✅ Done | `7b3ba96` | `code: String` → `FailureCode` (enum). Factory `Result.failure` no longer uses `.name`. GreetingCubit enum compare langsung (no `.name`). `edit_profile_cubit.dart` compatible (toString works with enum). |
 | B4 | Cache user profile | 1h | ✅ Done | `78e5696` | Add profile cache (TTL 5 menit) to `HomeLocalDataSource`. Repo fallback: remote → cache → failure. `clearAll()` now also clears profile. `flutter analyze` 0 issues. |
-| B5 | Use CacheService generic di Home | 2h | ⬜ Not Started | — | — |
-| B6 | Cache invalidation hook | 0.5h | ⬜ Not Started | — | — |
+| B5 | Use CacheService generic di Home | 2h | ✅ Done | (in B5+B6 commit) | Refactor HomeLocalDataSource to use `CacheService` instead of `SharedPreferences` directly. Added `setInt`/`getInt` to CacheService (for TTL). DI regen OK. |
+| B6 | Cache invalidation hook | 0.5h | ✅ Done | (in B5+B6 commit) | Inject `HomeLocalDataSource` into `AppServices`. Call `clearAll()` on `logout()` + `_onAuthStateChange.signedOut`. Identity-safe (clearAll idempotent). |
 | B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
 | B8 | Implement withRetry | 0.5h | ⬜ Not Started | — | — |
 
-**Pool B Progress: 3/8 done (38%)**
+**Pool B Progress: 6/8 done (75%)**
 
 ### Pool C — Home UX Polish
 

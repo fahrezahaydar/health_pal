@@ -179,9 +179,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
     );
-    gh.lazySingleton<_i444.HomeLocalDataSource>(
-      () => _i444.HomeLocalDataSource(gh<_i460.SharedPreferences>()),
-    );
     gh.factory<_i163.BookingRepository>(
       () => _i79.BookingRepositoryImpl(gh<_i482.BookingRemoteDataSource>()),
     );
@@ -195,11 +192,35 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i506.DoctorRepository>(
       () => _i112.DoctorRepositoryImpl(gh<_i158.DoctorRemoteDataSource>()),
     );
+    gh.lazySingleton<_i444.HomeLocalDataSource>(
+      () => _i444.HomeLocalDataSource(gh<_i861.CacheService>()),
+    );
+    gh.lazySingleton<_i605.AppServices>(
+      () => _i605.AppServices(
+        gh<_i167.SharedPrefService>(),
+        gh<_i454.SupabaseClient>(),
+        gh<_i613.AuthRepository>(),
+        gh<_i444.HomeLocalDataSource>(),
+      ),
+    );
+    gh.factory<_i1053.SettingsCubit>(
+      () => _i1053.SettingsCubit(
+        gh<_i167.SharedPrefService>(),
+        gh<_i605.AppServices>(),
+        gh<_i454.SupabaseClient>(),
+      ),
+    );
     gh.factory<_i572.ProfileRepository>(
       () => _i85.ProfileRepositoryImpl(gh<_i340.ProfileRemoteDataSource>()),
     );
     gh.factory<_i754.LocRepository>(
       () => _i191.LocRepositoryImpl(gh<_i1038.LocRemoteDataSource>()),
+    );
+    gh.factory<_i913.OnboardingNotifier>(
+      () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
+    );
+    gh.lazySingleton<_i934.AppRouter>(
+      () => _i934.AppRouter(gh<_i605.AppServices>()),
     );
     gh.factory<_i204.GetFavoritesUseCase>(
       () => _i204.GetFavoritesUseCase(gh<_i572.ProfileRepository>()),
@@ -289,13 +310,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i630.RegisterAndCreateProfileUseCase>(
       () => _i630.RegisterAndCreateProfileUseCase(gh<_i613.AuthRepository>()),
     );
-    gh.lazySingleton<_i605.AppServices>(
-      () => _i605.AppServices(
-        gh<_i167.SharedPrefService>(),
-        gh<_i454.SupabaseClient>(),
-        gh<_i613.AuthRepository>(),
-      ),
-    );
     gh.factory<_i730.CreateProfileCubit>(
       () =>
           _i730.CreateProfileCubit(gh<_i630.RegisterAndCreateProfileUseCase>()),
@@ -315,13 +329,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i248.BookingHistoryCubit>(
       () => _i248.BookingHistoryCubit(gh<_i990.GetAppointmentHistoryUseCase>()),
     );
-    gh.factory<_i1053.SettingsCubit>(
-      () => _i1053.SettingsCubit(
-        gh<_i167.SharedPrefService>(),
-        gh<_i605.AppServices>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
     gh.factory<_i446.GetBannersUseCase>(
       () => _i446.GetBannersUseCase(gh<_i196.HomeRepository>()),
     );
@@ -337,14 +344,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i481.LocCubit>(
       () => _i481.LocCubit(gh<_i995.GetNearbyClinicsUseCase>()),
     );
-    gh.factory<_i913.OnboardingNotifier>(
-      () => _i913.OnboardingNotifier(gh<_i605.AppServices>()),
-    );
     gh.factory<_i311.FavoriteCubit>(
       () => _i311.FavoriteCubit(gh<_i204.GetFavoritesUseCase>()),
-    );
-    gh.lazySingleton<_i934.AppRouter>(
-      () => _i934.AppRouter(gh<_i605.AppServices>()),
     );
     gh.factory<_i244.SpecializationCubit>(
       () => _i244.SpecializationCubit(gh<_i262.GetSpecializationsUseCase>()),

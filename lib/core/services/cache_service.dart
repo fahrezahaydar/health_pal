@@ -9,7 +9,8 @@ class CacheService {
 
   CacheService(this._prefs);
 
-  Future<void> setString(String key, String value) => _prefs.setString(key, value);
+  Future<void> setString(String key, String value) =>
+      _prefs.setString(key, value);
 
   String? getString(String key) => _prefs.getString(key);
 
@@ -25,6 +26,11 @@ class CacheService {
   Future<void> setBool(String key, bool value) => _prefs.setBool(key, value);
 
   bool? getBool(String key) => _prefs.getBool(key);
+
+  // Sprint 2 — B5: untuk TTL timestamp storage (int millis).
+  Future<void> setInt(String key, int value) => _prefs.setInt(key, value);
+
+  int? getInt(String key) => _prefs.getInt(key);
 
   Future<void> remove(String key) => _prefs.remove(key);
 
