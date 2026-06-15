@@ -31,7 +31,7 @@
 | A6 | Fix route path :bookingId → :appointmentId | 0.25h | ✅ Done | `422e3c5` | `route_paths.dart` rename param. `upcoming_card.dart` replaceAll fix. Bonus: booking_history_page.dart was using `:appointmentId` with old `:bookingId` path → broken nav fixed. `flutter analyze` 0 issues. |
 | A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ✅ Done | `a6eb2e8` | Add try/catch wrapper di `loadProfile()`. Pastikan cubit selalu emit terminal state (Loaded/Error), tidak stuck di Loading. `flutter analyze` 0 issues. |
 | A8 | Notification count from API | 2h | ✅ Done | `2a65e05` | Add `NotificationCubit` to HomePage MultiBlocProvider. Trigger `loadNotifications` after GreetingLoaded (alongside existing UpcomingCubit). GreetingSection `unreadCount` param replaces hardcoded 5. AppBadge hidden when count=0. `flutter analyze` 0 issues. |
-| A9 | Empty state CTA copy fix | 0.1h | ✅ Done | (this commit) | "Book Appointment" → "Cari Dokter" di upcoming_card.dart:179. Sinkron dengan PRD §6.2 + Wireframe 06 §Empty. `flutter analyze` 0 issues. |
+| A9 | Empty state CTA copy fix | 0.1h | ✅ Done | `558c99a` | "Book Appointment" → "Cari Dokter" di upcoming_card.dart:179. Sinkron dengan PRD §6.2 + Wireframe 06 §Empty. `flutter analyze` 0 issues. |
 | A10 | Postgres delete_user() RPC migration | 1h | ⬜ Not Started | — | — |
 
 **Pool A Progress: 1/10 done (10%)**
