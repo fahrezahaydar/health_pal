@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 2/30 tasks (7%)
+**Overall:** 3/30 tasks (10%)
 
 ### Pool A — Critical Bugs
 
@@ -25,7 +25,7 @@
 |------|-----------|---------|--------|--------|---------|
 | A1 | Search Bar widget | 4h | ✅ Done | `0b7d603` | Stateless widget, tap → /doctor/search, integrated to HomePage below GreetingSection. `flutter analyze` 0 issues. |
 | A2 | Fix getUpcoming order | 1h | ✅ Done | `be9205e` | Filter: `inFilter('status', [pending,upcoming])` (was 2x neq). Order: `slot_date asc, referencedTable: 'doctor_slots'` (was `created_at desc`). Align dengan API Contract §6.5. `flutter analyze` 0 issues. |
-| A3 | Fix slot date/time typing | 3h | ⬜ Not Started | — | — |
+| A3 | Fix slot date/time typing | 3h | ✅ Done | (this commit) | `slotDate: DateTime?` via `DateOnlyJsonConverter`; `slotStart/slotEnd: TimeOfDay?` via `TimeOnlyJsonConverter`. `DateFormatter` + nullable variants. UI: "15 Jun 2026 • 09:00". Fixed test_helpers + preview to match new types. `flutter analyze` 0 issues. |
 | A4 | Fix HomePage SupabaseClient import | 1h | ⬜ Not Started | — | — |
 | A5 | Fix BookingStatus.firstWhere unsafe | 1h | ⬜ Not Started | — | — |
 | A6 | Fix route path :bookingId → :appointmentId | 0.25h | ⬜ Not Started | — | — |

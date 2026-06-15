@@ -1,14 +1,33 @@
+import 'package:flutter/material.dart' show TimeOfDay;
+
+import '../../../../core/network/json_converters.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
 
+/// Model untuk "Upcoming Treatment" card di Home Page.
+///
+/// **Sprint 2 — Task A3 (Fix K3):** slot fields di-parse menggunakan
+/// converters dari `core/network/json_converters.dart` (per TDD 05 §3.2):
+/// - `slotDate` (raw "YYYY-MM-DD") → `DateTime?` via `DateOnlyJsonConverter`
+/// - `slotStart`/`slotEnd` (raw "HH:MM:SS") → `TimeOfDay?` via
+///   `TimeOnlyJsonConverter`
+///
+/// Model masih manual (bukan `@freezed`) — refactor ke `@freezed` +
+/// `@JsonKey` adalah task B1 (Pool B). Untuk A3, kita pakai converters
+/// secara inline di `fromJson`.
+///
+/// `status` masih `String` — enum mapping adalah A5.
 class UpcomingAppointmentModel {
+  static const _dateConverter = DateOnlyJsonConverter();
+  static const _timeConverter = TimeOnlyJsonConverter();
+
   final String id;
   final String doctorName;
   final String? doctorPhoto;
   final String clinicName;
   final String specializationName;
-  final String slotDate;
-  final String slotStart;
-  final String slotEnd;
+  final DateTime? slotDate;
+  final TimeOfDay? slotStart;
+  final TimeOfDay? slotEnd;
   final String status;
 
   const UpcomingAppointmentModel({
@@ -37,9 +56,9 @@ class UpcomingAppointmentModel {
       doctorPhoto: doctors?['photo_url'] as String?,
       clinicName: clinics?['name'] as String? ?? '',
       specializationName: specializations?['name'] as String? ?? '',
-      slotDate: slots?['slot_date'] as String? ?? '',
-      slotStart: slots?['slot_start'] as String? ?? '',
-      slotEnd: slots?['slot_end'] as String? ?? '',
+      slotDate: _dateConverter.fromJson(slots?['slot_date'] as String?),
+      slotStart: _timeConverter.fromJson(slots?['slot_start'] as String?),
+      slotEnd: _timeConverter.fromJson(slots?['slot_end'] as String?),
       status: json['status'] as String? ?? '',
     );
   }

@@ -6,6 +6,7 @@ import '../../../../core/enums/booking_status.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/card/status_badge.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
 
@@ -76,7 +77,12 @@ class _AppointmentCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   _InfoRow(
                     icon: Iconsax.calendar,
-                    text: '${appointment.slotDate} • ${appointment.slotStart}',
+                    // Sprint 2 — A3: format slotDate (DateTime?) + slotStart
+                    // (TimeOfDay?) via DateFormatter nullable variants.
+                    // Output: "15 Jun 2026 • 09:00" per Wireframe 06 §4.
+                    text:
+                        '${DateFormatter.toFullDateOrDash(appointment.slotDate)} • '
+                        '${DateFormatter.toTimeOfDayStringOrDash(appointment.slotStart)}',
                   ),
                   const SizedBox(height: 4),
                   _InfoRow(

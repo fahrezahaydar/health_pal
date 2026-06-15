@@ -7,6 +7,8 @@
 // PENTING: Constructor signature HARUS match dengan entity class asli.
 // Selalu rujuk ke file entity saat menulis factory.
 
+import 'package:flutter/material.dart' show TimeOfDay;
+
 import 'package:health_pal/features/auth/domain/entity/user_entity.dart';
 import 'package:health_pal/features/home/domain/entity/banner_entity.dart';
 import 'package:health_pal/features/home/domain/entity/specialization_entity.dart';
@@ -72,16 +74,19 @@ class TestData {
   }
 
   // ── Upcoming Appointment (Home) ──
+  // Sprint 2 — A3: slotDate (DateTime?), slotStart/slotEnd (TimeOfDay?)
+  // (was String, per TDD 05 §3.2 + json_converters.dart). Test factory
+  // harus match entity signature.
   static UpcomingAppointmentEntity? mockUpcoming({bool isNull = false}) {
     if (isNull) return null;
-    return const UpcomingAppointmentEntity(
+    return UpcomingAppointmentEntity(
       id: 'appt-test-1',
       doctorName: 'dr. Test',
       clinicName: 'Klinik Test',
       specializationName: 'Umum',
-      slotDate: '2026-06-15',
-      slotStart: '09:00',
-      slotEnd: '09:30',
+      slotDate: DateTime(2026, 6, 15),
+      slotStart: const TimeOfDay(hour: 9, minute: 0),
+      slotEnd: const TimeOfDay(hour: 9, minute: 30),
       status: 'upcoming',
     );
   }
