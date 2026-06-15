@@ -175,8 +175,9 @@ class _EmptyState extends StatelessWidget {
                 color: AppTheme.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
+              // Sprint 2 — A9 (Fix M6): copy sesuai PRD §6.2 + Wireframe 06 §Empty
               child: Text(
-                'Book Appointment',
+                'Cari Dokter',
                 style: AppTextTheme.bodySmall.copyWith(color: AppTheme.white),
               ),
             ),
