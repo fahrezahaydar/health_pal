@@ -4,6 +4,8 @@ import '../../../../core/enums/failure_code.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/error_handler.dart';
 import '../../../../core/network/result.dart';
+import '../../../../core/services/app_services.dart';
+import '../../../../core/utils/retry.dart';
 import '../../domain/entity/banner_entity.dart';
 import '../../domain/entity/specialization_entity.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
@@ -16,13 +18,18 @@ import '../datasource/home_remote_datasource.dart';
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource _remote;
   final HomeLocalDataSource _local;
+  final AppServices _appServices;
 
-  HomeRepositoryImpl(this._remote, this._local);
+  // Sprint 2 — B7: inject AppServices untuk handleWithAuthCheck
+  // (auto-logout on 401 di getUserProfile).
+  HomeRepositoryImpl(this._remote, this._local, this._appServices);
 
   @override
   Future<Result<List<BannerEntity>>> getBanners() async {
     try {
-      final remote = await _remote.fetchBanners();
+      // Sprint 2 — B8: retry network-transient errors (SocketException,
+      // TimeoutException) with exponential backoff 1s, 2s, 4s.
+      final remote = await withRetry(() => _remote.fetchBanners());
       await _local.cacheBanners(remote);
       return Result.success(remote.map((m) => m.toEntity()).toList());
     } catch (e) {
@@ -81,7 +88,14 @@ class HomeRepositoryImpl implements HomeRepository {
       if (cached != null) {
         return Result.success(cached.toEntity());
       }
-      return Result.failure(const ErrorHandler().map(e));
+      // Sprint 2 — B7: jika unauthorized (401/token expired),
+      // trigger auto-logout sebelum return failure.
+      return Result.failure(
+        await ErrorHandler.handleWithAuthCheck(
+          e,
+          onUnauthorized: () => _appServices.logout(),
+        ),
+      );
     }
   }
 }

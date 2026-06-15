@@ -290,6 +290,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i716.HomeRepositoryImpl(
         gh<_i556.HomeRemoteDataSource>(),
         gh<_i444.HomeLocalDataSource>(),
+        gh<_i605.AppServices>(),
       ),
     );
     gh.factory<_i851.BookingDetailCubit>(

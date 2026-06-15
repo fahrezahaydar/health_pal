@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 16/30 tasks (53%) — Pool A 100% ✅ | Pool B 6/8 ✅
+**Overall:** 18/30 tasks (60%) — Pool A 100% ✅ | Pool B 100% ✅ | Pool C 0/6
 
 ### Pool A — Critical Bugs
 
@@ -46,10 +46,10 @@
 | B4 | Cache user profile | 1h | ✅ Done | `78e5696` | Add profile cache (TTL 5 menit) to `HomeLocalDataSource`. Repo fallback: remote → cache → failure. `clearAll()` now also clears profile. `flutter analyze` 0 issues. |
 | B5 | Use CacheService generic di Home | 2h | ✅ Done | `a8de100` | Refactor HomeLocalDataSource to use `CacheService` instead of `SharedPreferences` directly. Added `setInt`/`getInt` to CacheService (for TTL). DI regen OK. |
 | B6 | Cache invalidation hook | 0.5h | ✅ Done | `a8de100` | Inject `HomeLocalDataSource` into `AppServices`. Call `clearAll()` on `logout()` + `_onAuthStateChange.signedOut`. Identity-safe (clearAll idempotent). |
-| B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
-| B8 | Implement withRetry | 0.5h | ⬜ Not Started | — | — |
+| B7 | ErrorHandler.handleWithAuthCheck | 2h | ✅ Done | (in B7+B8 commit) | Add static `handleWithAuthCheck` — callback `onUnauthorized`. Demo usage in `getUserProfile` (auto-logout on 401 via `AppServices.logout()`). |
+| B8 | Implement withRetry | 0.5h | ✅ Done | (in B7+B8 commit) | Create `lib/core/utils/retry.dart` — exponential backoff (1s, 2s, 4s) for SocketException/TimeoutException. Applied to `getBanners` in HomeRepositoryImpl. |
 
-**Pool B Progress: 6/8 done (75%)**
+**Pool B Progress: 8/8 done (100%) ✅**
 
 ### Pool C — Home UX Polish
 
