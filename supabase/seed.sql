@@ -154,20 +154,20 @@ begin
   -- identity_data harus berisi {"sub":"<user_id>","email":"<email>"}
   -- provider = 'email' untuk email/password
   -- provider_id = email (digunakan oleh GoTrue untuk unique constraint)
-  insert into auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at, email)
+  insert into auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
   values
     (gen_random_uuid(), uid1,
      jsonb_build_object('sub', uid1, 'email', 'test@example.com'),
      'email', 'test@example.com',
-     now(), now(), now(), 'test@example.com'),
+     now(), now(), now()),
     (gen_random_uuid(), uid2,
      jsonb_build_object('sub', uid2, 'email', 'user@example.com'),
      'email', 'user@example.com',
-     now(), now(), now(), 'user@example.com'),
+     now(), now(), now()),
     (gen_random_uuid(), uid3,
      jsonb_build_object('sub', uid3, 'email', 'demo@example.com'),
      'email', 'demo@example.com',
-     now(), now(), now(), 'demo@example.com')
+     now(), now(), now())
   on conflict (provider_id, provider) do nothing;
 
   -- ── CONTOH: nambah user + identity baru ─────────────────────────
@@ -178,8 +178,8 @@ begin
   --   values ('00000000-0000-0000-0000-000000000000', uid4, 'authenticated', 'authenticated', 'sinta@example.com', crypt('Sinta123!', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', false, now(), now(), false, false)
   --   on conflict (id) do nothing;
   --
-  --   insert into auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at, email)
-  --   values (gen_random_uuid(), uid4, jsonb_build_object('sub', uid4, 'email', 'sinta@example.com'), 'email', 'sinta@example.com', now(), now(), now(), 'sinta@example.com')
+  --   insert into auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+  --   values (gen_random_uuid(), uid4, jsonb_build_object('sub', uid4, 'email', 'sinta@example.com'), 'email', 'sinta@example.com', now(), now(), now())
   --   on conflict (provider_id, provider) do nothing;
   -- end;
 end $$;
