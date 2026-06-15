@@ -43,8 +43,12 @@ class _AppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // Sprint 2 — A6 (Fix M2): path param renamed to :appointmentId
+      // (was :bookingId). booking_history_page.dart already uses
+      // :appointmentId in replaceAll — dulu path mismatch caused
+      // broken navigation there.
       onTap: () => context.push(
-        RoutePaths.bookingDetail.replaceAll(':bookingId', appointment.id),
+        RoutePaths.bookingDetail.replaceAll(':appointmentId', appointment.id),
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
