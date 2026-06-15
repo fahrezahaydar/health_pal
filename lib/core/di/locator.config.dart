@@ -173,14 +173,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i735.AuthLocalDataSource>(
       () => _i735.AuthLocalDataSource(gh<_i460.SharedPreferences>()),
     );
-    gh.factory<_i444.HomeLocalDataSource>(
-      () => _i444.HomeLocalDataSource(gh<_i460.SharedPreferences>()),
-    );
     gh.lazySingleton<_i861.CacheService>(
       () => _i861.CacheService(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i167.SharedPrefService>(
       () => _i167.SharedPrefService(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i444.HomeLocalDataSource>(
+      () => _i444.HomeLocalDataSource(gh<_i460.SharedPreferences>()),
     );
     gh.factory<_i163.BookingRepository>(
       () => _i79.BookingRepositoryImpl(gh<_i482.BookingRemoteDataSource>()),

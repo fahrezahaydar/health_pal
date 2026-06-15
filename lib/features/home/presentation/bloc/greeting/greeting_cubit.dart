@@ -29,7 +29,9 @@ class GreetingCubit extends Cubit<GreetingState> {
         // error lain (network/timeout). Hanya no-profile yang trigger
         // guard redirect; error lain dibiarkan stay di Home agar
         // user bisa retry (atau user menutup app lalu buka lagi).
-        if (code == FailureCode.notFound.name) {
+        // Sprint 2 — B3: Failure.code sekarang FailureCode enum
+        // (bukan String). Compare langsung, tanpa .name.
+        if (code == FailureCode.notFound) {
           emit(const GreetingNoProfile());
         } else {
           emit(GreetingError(message: result.message));

@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 11/30 tasks (37%) — Pool A 100% ✅ | Pool B 1/8 ✅
+**Overall:** 13/30 tasks (43%) — Pool A 100% ✅ | Pool B 3/8 ✅
 
 ### Pool A — Critical Bugs
 
@@ -41,15 +41,15 @@
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
 | B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | `1f00d75` | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
-| B2 | HomeLocalDataSource @lazySingleton | 0.1h | ⬜ Not Started | — | — |
-| B3 | Result.Failure.code ke enum FailureCode | 2h | ⬜ Not Started | — | — |
+| B2 | HomeLocalDataSource @lazySingleton | 0.1h | ✅ Done | (in B2+B3 commit) | Changed `@injectable` → `@lazySingleton`. build_runner regenerated DI. |
+| B3 | Result.Failure.code ke enum FailureCode | 2h | ✅ Done | (in B2+B3 commit) | `code: String` → `FailureCode` (enum). Factory `Result.failure` no longer uses `.name`. GreetingCubit enum compare langsung (no `.name`). `edit_profile_cubit.dart` compatible (toString works with enum). |
 | B4 | Cache user profile | 1h | ⬜ Not Started | — | — |
 | B5 | Use CacheService generic di Home | 2h | ⬜ Not Started | — | — |
 | B6 | Cache invalidation hook | 0.5h | ⬜ Not Started | — | — |
 | B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
 | B8 | Implement withRetry | 0.5h | ⬜ Not Started | — | — |
 
-**Pool B Progress: 1/8 done (13%)**
+**Pool B Progress: 3/8 done (38%)**
 
 ### Pool C — Home UX Polish
 

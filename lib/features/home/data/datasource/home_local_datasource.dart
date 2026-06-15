@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/banner_model.dart';
 import '../model/specialization_model.dart';
 
-@injectable
+@lazySingleton
 class HomeLocalDataSource {
   final SharedPreferences _prefs;
 
