@@ -16,7 +16,9 @@ import '../../../../core/network/json_converters.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/shared/info_row.dart';
 import '../../domain/entity/appointment_entity.dart';
 
 class BookingSuccessPage extends StatelessWidget {
@@ -106,26 +108,28 @@ class BookingSuccessPage extends StatelessWidget {
         children: [
           Text('Detail Booking', style: AppTextTheme.titleLarge),
           const SizedBox(height: 12),
-          _row(Icons.person, appt.doctorName),
+          InfoRow(icon: Icons.person, text: appt.doctorName, iconSize: 16),
           const SizedBox(height: 8),
-          _row(Icons.local_hospital, appt.clinicName),
+          InfoRow(icon: Icons.local_hospital, text: appt.clinicName, iconSize: 16),
           const SizedBox(height: 8),
           if (appt.slotDate != null)
-            _row(Icons.calendar_today, _formatDate(appt.slotDate!)),
+            InfoRow(icon: Icons.calendar_today, text: DateFormatter.toShortDate(appt.slotDate!), iconSize: 16),
           if (appt.timeRangeDisplay != null) ...[
             const SizedBox(height: 8),
-            _row(Icons.access_time, appt.timeRangeDisplay!),
+            InfoRow(icon: Icons.access_time, text: appt.timeRangeDisplay!, iconSize: 16),
           ],
           const SizedBox(height: 8),
-          _row(
-            Icons.payments,
-            '${formatRupiah(appt.consultationFeeSnapshot)} (Simulasi)',
+          InfoRow(
+            icon: Icons.payments,
+            text: '${formatRupiah(appt.consultationFeeSnapshot)} (Simulasi)',
+            iconSize: 16,
             valueColor: AppTheme.primary,
           ),
           const SizedBox(height: 8),
-          _row(
-            Icons.info_outline,
-            'Status: ${appt.status[0].toUpperCase()}${appt.status.substring(1)}',
+          InfoRow(
+            icon: Icons.info_outline,
+            text: 'Status: ${appt.status[0].toUpperCase()}${appt.status.substring(1)}',
+            iconSize: 16,
             valueColor: AppTheme.primary,
           ),
         ],
@@ -133,30 +137,4 @@ class BookingSuccessPage extends StatelessWidget {
     );
   }
 
-  Widget _row(IconData icon, String text, {Color? valueColor}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 16, color: AppTheme.grey500),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextTheme.bodyMedium.copyWith(
-              color: valueColor ?? AppTheme.grey900,
-              fontWeight: valueColor != null ? FontWeight.w600 : null,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }

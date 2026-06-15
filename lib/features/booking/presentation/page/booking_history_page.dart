@@ -14,6 +14,7 @@ import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/shared/empty_state_view.dart';
 import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
 import '../widget/appointment_card.dart';
@@ -99,7 +100,11 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
             BookingHistoryLoading() =>
               const Center(child: CircularProgressIndicator()),
             BookingHistoryLoaded(:final appointments) when appointments.isEmpty =>
-              _emptyState(),
+              const EmptyStateView(
+                icon: Icons.calendar_today,
+                message: 'Tidak ada appointment',
+                hint: 'Booking pertamamu akan muncul di sini',
+              ),
             BookingHistoryLoaded(:final appointments) => _list(appointments),
             BookingHistoryError(:final message) => _errorState(message),
           },
@@ -123,35 +128,6 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
           ),
         );
       },
-    );
-  }
-
-  Widget _emptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.calendar_today,
-              size: 64,
-              color: AppTheme.grey300,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Tidak ada appointment',
-              style: AppTextTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Booking pertamamu akan muncul di sini',
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 

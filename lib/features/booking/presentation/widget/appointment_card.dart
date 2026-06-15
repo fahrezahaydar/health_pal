@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/enums/booking_status.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/card/status_badge.dart';
 import '../../domain/entity/appointment_entity.dart';
 
@@ -109,16 +110,9 @@ class AppointmentCard extends StatelessWidget {
     final start = appointment.startTimeDisplay;
     final end = appointment.endTimeDisplay;
     if (date == null) return '';
-    final dateStr = _formatDate(date);
+    final dateStr = DateFormatter.toShortDate(date);
     if (start == null || end == null) return dateStr;
     return '$dateStr • $start - $end';
   }
 
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }

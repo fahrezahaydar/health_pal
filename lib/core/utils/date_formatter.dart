@@ -34,6 +34,10 @@ class DateFormatter {
   static String toDayMonth(DateTime date) =>
       '${date.day} ${_shortMonths[date.month - 1]}';
 
+  /// Format: "15 Jun 2026" — short month with year (Bahasa Indonesia).
+  static String toShortDate(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')} ${_shortMonths[date.month - 1]} ${date.year}';
+
   /// Format: "15 Juni 2026" (Bahasa Indonesia)
   static String toFullDate(DateTime date) =>
       '${date.day} ${_longMonths[date.month - 1]} ${date.year}';
@@ -60,6 +64,10 @@ class DateFormatter {
   /// Safe wrapper untuk `toDayMonth`. Returns "—" jika null.
   static String toDayMonthOrDash(DateTime? date) =>
       date == null ? _placeholder : toDayMonth(date);
+
+  /// Safe wrapper untuk `toShortDate`. Returns "—" jika null.
+  static String toShortDateOrDash(DateTime? date) =>
+      date == null ? _placeholder : toShortDate(date);
 
   /// Safe wrapper untuk `toFullDate`. Returns "—" jika null.
   static String toFullDateOrDash(DateTime? date) =>

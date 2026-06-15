@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/enums/booking_status.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../domain/entity/appointment_entity.dart';
 
 class StatusTimeline extends StatelessWidget {
@@ -165,7 +166,7 @@ class _TimelineItem extends StatelessWidget {
                   Text(item.label, style: AppTextTheme.bodyLarge),
                   const SizedBox(height: 2),
                   Text(
-                    _formatDate(item.date),
+                    DateFormatter.toShortDate(item.date),
                     style: AppTextTheme.bodySmall
                         .copyWith(color: AppTheme.grey500),
                   ),
@@ -186,11 +187,4 @@ class _TimelineItem extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }

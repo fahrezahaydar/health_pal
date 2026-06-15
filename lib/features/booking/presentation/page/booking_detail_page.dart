@@ -18,7 +18,9 @@ import '../../../../core/enums/booking_status.dart';
 import '../../../../core/network/json_converters.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/shared/label_value_row.dart';
 import '../../../../widgets/card/status_badge.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
 import '../../domain/entity/appointment_entity.dart';
@@ -175,27 +177,27 @@ class _BookingDetailView extends StatelessWidget {
                 Text('Info Booking', style: AppTextTheme.titleLarge),
                 const SizedBox(height: 12),
                 if (appt.slotDate != null)
-                  _infoRow(Icons.calendar_today, 'Tanggal',
-                      _formatDate(appt.slotDate!)),
+                  LabelValueRow(icon: Icons.calendar_today, label: 'Tanggal',
+                      value: DateFormatter.toShortDate(appt.slotDate!)),
                 if (appt.timeRangeDisplay != null) ...[
                   const SizedBox(height: 8),
-                  _infoRow(Icons.access_time, 'Waktu', appt.timeRangeDisplay!),
+                  LabelValueRow(icon: Icons.access_time, label: 'Waktu', value: appt.timeRangeDisplay!),
                 ],
                 const SizedBox(height: 8),
-                _infoRow(Icons.local_hospital, 'Klinik', appt.clinicName),
+                LabelValueRow(icon: Icons.local_hospital, label: 'Klinik', value: appt.clinicName),
                 if (appt.clinicAddress != null) ...[
                   const SizedBox(height: 8),
-                  _infoRow(Icons.location_on, 'Alamat', appt.clinicAddress!),
+                  LabelValueRow(icon: Icons.location_on, label: 'Alamat', value: appt.clinicAddress!),
                 ],
                 if (appt.clinicPhone != null) ...[
                   const SizedBox(height: 8),
-                  _infoRow(Icons.phone, 'Telepon', appt.clinicPhone!),
+                  LabelValueRow(icon: Icons.phone, label: 'Telepon', value: appt.clinicPhone!),
                 ],
                 const SizedBox(height: 8),
-                _infoRow(
-                  Icons.payments,
-                  'Biaya',
-                  formatRupiah(appt.consultationFeeSnapshot),
+                LabelValueRow(
+                  icon: Icons.payments,
+                  label: 'Biaya',
+                  value: formatRupiah(appt.consultationFeeSnapshot),
                   valueColor: AppTheme.primary,
                 ),
                 if (appt.complaintNote != null) ...[
@@ -294,37 +296,6 @@ class _BookingDetailView extends StatelessWidget {
     }
   }
 
-  Widget _infoRow(
-    IconData icon,
-    String label,
-    String value, {
-    Color? valueColor,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 18, color: AppTheme.grey500),
-        const SizedBox(width: 8),
-        SizedBox(
-          width: 80,
-          child: Text(
-            '$label:',
-            style: AppTextTheme.bodyMedium.copyWith(color: AppTheme.grey700),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: AppTextTheme.bodyMedium.copyWith(
-              color: valueColor ?? AppTheme.grey900,
-              fontWeight: valueColor != null ? FontWeight.w600 : null,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _errorState(String message) {
     return Center(
       child: Padding(
@@ -348,11 +319,4 @@ class _BookingDetailView extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }

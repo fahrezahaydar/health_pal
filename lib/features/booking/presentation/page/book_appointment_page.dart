@@ -24,6 +24,7 @@ import '../../../../core/network/json_converters.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../bloc/booking/booking_bloc.dart';
 import '../bloc/booking/booking_event.dart';
@@ -264,7 +265,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              _formatDate(_selectedDate),
+              DateFormatter.toShortDateOrDash(_selectedDate),
               style: AppTextTheme.bodyLarge,
             ),
           ),
@@ -411,12 +412,4 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
     );
   }
 
-  String _formatDate(DateTime? d) {
-    if (d == null) return 'Pilih tanggal';
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }

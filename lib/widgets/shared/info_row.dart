@@ -11,22 +11,29 @@ class InfoRow extends StatelessWidget {
     super.key,
     required this.icon,
     required this.text,
+    this.valueColor,
+    this.iconSize = 14,
   });
 
   final IconData icon;
   final String text;
+  final Color? valueColor;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 14, color: AppTheme.grey400),
-        const SizedBox(width: 6),
+        Icon(icon, size: iconSize, color: AppTheme.grey500),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-            overflow: TextOverflow.ellipsis,
+            style: valueColor != null
+                ? AppTextTheme.bodyMedium.copyWith(
+                    color: valueColor, fontWeight: FontWeight.w600)
+                : AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
           ),
         ),
       ],

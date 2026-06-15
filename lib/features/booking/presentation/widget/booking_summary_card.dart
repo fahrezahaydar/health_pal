@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/network/json_converters.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
+import '../../../../widgets/shared/info_row.dart';
 
 class BookingSummaryCard extends StatelessWidget {
   const BookingSummaryCard({
@@ -41,17 +43,18 @@ class BookingSummaryCard extends StatelessWidget {
         children: [
           Text('Ringkasan Booking', style: AppTextTheme.titleLarge),
           const SizedBox(height: 16),
-          _row(Icons.person, doctorName),
+          InfoRow(icon: Icons.person, text: doctorName, iconSize: 18),
           const SizedBox(height: 8),
-          _row(Icons.medical_services, specializationName),
+          InfoRow(icon: Icons.medical_services, text: specializationName, iconSize: 18),
           const SizedBox(height: 8),
-          _row(Icons.calendar_today, _formatDate(date)),
+          InfoRow(icon: Icons.calendar_today, text: DateFormatter.toShortDate(date), iconSize: 18),
           const SizedBox(height: 8),
-          _row(Icons.access_time, '$startTime - $endTime'),
+          InfoRow(icon: Icons.access_time, text: '$startTime - $endTime', iconSize: 18),
           const SizedBox(height: 8),
-          _row(
-            Icons.payments,
-            '${formatRupiah(fee)} (Simulasi)',
+          InfoRow(
+            icon: Icons.payments,
+            text: '${formatRupiah(fee)} (Simulasi)',
+            iconSize: 18,
             valueColor: AppTheme.primary,
           ),
         ],
@@ -59,30 +62,4 @@ class BookingSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _row(IconData icon, String text, {Color? valueColor}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 18, color: AppTheme.grey500),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextTheme.bodyMedium.copyWith(
-              color: valueColor ?? AppTheme.grey900,
-              fontWeight: valueColor != null ? FontWeight.w600 : null,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
-    ];
-    return '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]} ${d.year}';
-  }
 }
