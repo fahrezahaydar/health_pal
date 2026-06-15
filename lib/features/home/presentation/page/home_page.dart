@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:health_pal/core/di/locator.dart';
 import 'package:health_pal/core/services/app_services.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../core/enums/booking_status.dart';
 import '../../../profile/presentation/bloc/notification/notification_cubit.dart';
 import '../../../profile/presentation/bloc/notification/notification_state.dart';
 import '../../domain/entity/banner_entity.dart';
@@ -59,6 +61,42 @@ class HomePage extends StatelessWidget {
 class _HomePageBody extends StatelessWidget {
   const _HomePageBody();
 
+  // Sprint 2 — C1: Skeletonizer mock data (non-empty) for production
+  // widgets whose default empty-data branch returns SizedBox.shrink.
+  // Per AGENTS.md: DILARANG dedicated skeleton widget files — reuse
+  // production widget langsung via Skeletonizer(enabled:..., child:...).
+  // When `state is *Loading`, the production widget receives this
+  // non-empty data so Skeletonizer can paint bone placeholders over
+  // the resulting layout. Once loaded, the real data replaces these.
+  // Hoisted to static const so we don't allocate per-rebuild.
+  static const _skeletonBanners = <BannerEntity>[
+    BannerEntity(id: 'sk-1', title: 'Loading banner placeholder 1'),
+    BannerEntity(id: 'sk-2', title: 'Loading banner placeholder 2'),
+    BannerEntity(id: 'sk-3', title: 'Loading banner placeholder 3'),
+  ];
+  static const _skeletonSpecializations = <SpecializationEntity>[
+    SpecializationEntity(id: 'sk-1', name: 'Loading spec 1'),
+    SpecializationEntity(id: 'sk-2', name: 'Loading spec 2'),
+    SpecializationEntity(id: 'sk-3', name: 'Loading spec 3'),
+    SpecializationEntity(id: 'sk-4', name: 'Loading spec 4'),
+    SpecializationEntity(id: 'sk-5', name: 'Loading spec 5'),
+    SpecializationEntity(id: 'sk-6', name: 'Loading spec 6'),
+    SpecializationEntity(id: 'sk-7', name: 'Loading spec 7'),
+    SpecializationEntity(id: 'sk-8', name: 'Loading spec 8'),
+  ];
+  static const _skeletonUpcoming = UpcomingAppointmentEntity(
+    id: 'sk-1',
+    doctorName: 'Loading Doctor Name Placeholder',
+    clinicName: 'Loading Clinic Name Placeholder',
+    specializationName: 'Loading Specialization Placeholder',
+    // Intentionally null slot fields — DateFormatter returns "—" for
+    // null, Skeletonizer paints bones over the dash.
+    slotDate: null,
+    slotStart: null,
+    slotEnd: null,
+    status: BookingStatus.upcoming,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,15 +138,29 @@ class _HomePageBody extends StatelessWidget {
                     NotificationLoaded(:final unreadCount) => unreadCount,
                     _ => 0,
                   };
-                  return BlocSelector<GreetingCubit, GreetingState, String>(
-                    selector: (state) => switch (state) {
-                      GreetingLoaded(:final nickname) => nickname,
-                      _ => '',
-                    },
-                    builder: (context, nickname) {
-                      return GreetingSection(
-                        nickname: nickname,
-                        unreadCount: unread,
+                  return BlocBuilder<GreetingCubit, GreetingState>(
+                    builder: (context, greetingState) {
+                      final isLoading = greetingState is GreetingLoading;
+                      // Sprint 2 — C1: Skeletonizer wrap for GreetingSection.
+                      // When loading, Skeletonizer paints bones over the
+                      // "Halo, " text + notification icon. When loaded,
+                      // Skeletonizer is disabled — real content shows.
+                      // SearchBarHome is intentionally NOT wrapped (no
+                      // loading state — purely static tap target).
+                      return Skeletonizer(
+                        enabled: isLoading,
+                        child: BlocSelector<GreetingCubit, GreetingState, String>(
+                          selector: (state) => switch (state) {
+                            GreetingLoaded(:final nickname) => nickname,
+                            _ => '',
+                          },
+                          builder: (context, nickname) {
+                            return GreetingSection(
+                              nickname: isLoading ? 'Halo' : nickname,
+                              unreadCount: unread,
+                            );
+                          },
+                        ),
                       );
                     },
                   );
@@ -116,34 +168,61 @@ class _HomePageBody extends StatelessWidget {
               ),
               // Sprint 2 — A1: Search Bar widget (stateless, tap → doctor search)
               // Per Wireframe 06 §2 + PRD §6.2 + home_page_audit.md §13.1 K1
+              // C1 note: SearchBarHome tidak dibungkus Skeletonizer karena
+              // tidak ada loading state (stateless tap target, content
+              // static). Per AD-6 — skeletonizer HANYA untuk data-driven
+              // sections.
               const SearchBarHome(),
-              BlocSelector<BannerCubit, BannerState, List<BannerEntity>>(
-                selector: (state) => switch (state) {
-                  BannerLoaded(:final banners) => banners,
-                  _ => const [],
-                },
-                builder: (context, banners) {
-                  return BannerCarousel(banners: banners);
+              BlocBuilder<BannerCubit, BannerState>(
+                builder: (context, state) {
+                  final isLoading = state is BannerLoading;
+                  // Sprint 2 — C1: mock banners saat loading agar
+                  // BannerCarousel render 3 skeleton cards (default
+                  // empty list returns SizedBox.shrink per widget code,
+                  // no skeleton possible).
+                  final banners = isLoading
+                      ? _skeletonBanners
+                      : (state is BannerLoaded
+                          ? state.banners
+                          : const <BannerEntity>[]);
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: BannerCarousel(banners: banners),
+                  );
                 },
               ),
               const SizedBox(height: 24),
-              BlocSelector<UpcomingCubit, UpcomingState, UpcomingAppointmentEntity?>(
-                selector: (state) => switch (state) {
-                  UpcomingLoaded(:final upcoming) => upcoming,
-                  _ => null,
-                },
-                builder: (context, upcoming) {
-                  return UpcomingCard(upcoming: upcoming);
+              BlocBuilder<UpcomingCubit, UpcomingState>(
+                builder: (context, state) {
+                  final isLoading = state is UpcomingLoading;
+                  // Sprint 2 — C1: mock upcoming saat loading agar
+                  // UpcomingCard render appointment-card layout (bukan
+                  // empty state) untuk Skeletonizer paint bones.
+                  final upcoming = isLoading
+                      ? _skeletonUpcoming
+                      : (state is UpcomingLoaded ? state.upcoming : null);
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: UpcomingCard(upcoming: upcoming),
+                  );
                 },
               ),
               const SizedBox(height: 24),
-              BlocSelector<SpecializationCubit, SpecializationState, List<SpecializationEntity>>(
-                selector: (state) => switch (state) {
-                  SpecializationLoaded(:final specializations) => specializations,
-                  _ => const [],
-                },
-                builder: (context, specializations) {
-                  return QuickCategories(specializations: specializations);
+              BlocBuilder<SpecializationCubit, SpecializationState>(
+                builder: (context, state) {
+                  final isLoading = state is SpecializationLoading;
+                  // Sprint 2 — C1: mock 8 specializations (2 rows × 4
+                  // columns per Wireframe 06 grid) saat loading agar
+                  // QuickCategories render grid skeleton.
+                  final specializations = isLoading
+                      ? _skeletonSpecializations
+                      : (state is SpecializationLoaded
+                          ? state.specializations
+                          : const <SpecializationEntity>[]);
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: QuickCategories(specializations: specializations),
+                  );
                 },
               ),
             ],
@@ -153,3 +232,8 @@ class _HomePageBody extends StatelessWidget {
     );
   }
 }
+
+// Sprint 2 — C1: Skeletonizer needs valid BookingStatus value for
+// mock _skeletonUpcoming. Using BookingStatus.upcoming — enum value
+// is const-evaluable so static const _skeletonUpcoming compiles fine.
+// (No need for private alias; enum is imported above.)
