@@ -62,16 +62,25 @@ class HomeRepositoryImpl implements HomeRepository {
 
   @override
   Future<Result<UserProfileEntity>> getUserProfile(String authId) async {
+    // Sprint 2 — B4: remote-first + cache fallback (TDD 08 §2 compliance).
+    // Profile cache TTL = 5 menit (session-spanning, cepat untuk re-check).
     try {
       final remote = await _remote.fetchUserProfile(authId);
       if (remote == null) {
+        // Null dari remote = user belum punya profile (sign-up baru).
+        // JANGAN cache null — biarkan next Home mount re-fetch.
         return Result.failure(const ApiException(
           code: FailureCode.notFound,
           message: 'User profile not found',
         ));
       }
+      await _local.cacheUserProfile(remote);
       return Result.success(remote.toEntity());
     } catch (e) {
+      final cached = _local.getCachedUserProfile();
+      if (cached != null) {
+        return Result.success(cached.toEntity());
+      }
       return Result.failure(const ErrorHandler().map(e));
     }
   }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/banner_model.dart';
 import '../model/specialization_model.dart';
+import '../model/user_profile_model.dart';
 
 @lazySingleton
 class HomeLocalDataSource {
@@ -71,10 +72,38 @@ class HomeLocalDataSource {
         .toList();
   }
 
+  // ---------------------------------------------------------------------------
+  // User Profile (TTL: 5 menit — cukup untuk session, cepat untuk re-check)
+  // ---------------------------------------------------------------------------
+  static const _profileKey = 'home_user_profile';
+  static const _profileTimeKey = 'home_user_profile_time';
+  static const _profileTtl = Duration(minutes: 5);
+
+  Future<void> cacheUserProfile(UserProfileModel profile) async {
+    await _prefs.setString(_profileKey, jsonEncode(profile.toJson()));
+    await _prefs.setInt(
+        _profileTimeKey, DateTime.now().millisecondsSinceEpoch);
+  }
+
+  UserProfileModel? getCachedUserProfile() {
+    final cached = _prefs.getString(_profileKey);
+    final savedAt = _prefs.getInt(_profileTimeKey);
+    if (cached == null || savedAt == null) return null;
+
+    final age = DateTime.now().difference(
+        DateTime.fromMillisecondsSinceEpoch(savedAt));
+    if (age > _profileTtl) return null;
+
+    return UserProfileModel.fromJson(
+        jsonDecode(cached) as Map<String, dynamic>);
+  }
+
   Future<void> clearAll() async {
     await _prefs.remove(_bannersKey);
     await _prefs.remove(_bannersTimeKey);
     await _prefs.remove(_specsKey);
     await _prefs.remove(_specsTimeKey);
+    await _prefs.remove(_profileKey);
+    await _prefs.remove(_profileTimeKey);
   }
 }
