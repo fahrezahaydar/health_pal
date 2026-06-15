@@ -43,7 +43,7 @@
 | B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | `1f00d75` | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
 | B2 | HomeLocalDataSource @lazySingleton | 0.1h | ✅ Done | `7b3ba96` | Changed `@injectable` → `@lazySingleton`. build_runner regenerated DI. |
 | B3 | Result.Failure.code ke enum FailureCode | 2h | ✅ Done | `7b3ba96` | `code: String` → `FailureCode` (enum). Factory `Result.failure` no longer uses `.name`. GreetingCubit enum compare langsung (no `.name`). `edit_profile_cubit.dart` compatible (toString works with enum). |
-| B4 | Cache user profile | 1h | ✅ Done | `2071042` | Add profile cache (TTL 5 menit) to `HomeLocalDataSource`. Repo fallback: remote → cache → failure. `clearAll()` now also clears profile. `flutter analyze` 0 issues. |
+| B4 | Cache user profile | 1h | ✅ Done | `78e5696` | Add profile cache (TTL 5 menit) to `HomeLocalDataSource`. Repo fallback: remote → cache → failure. `clearAll()` now also clears profile. `flutter analyze` 0 issues. |
 | B5 | Use CacheService generic di Home | 2h | ⬜ Not Started | — | — |
 | B6 | Cache invalidation hook | 0.5h | ⬜ Not Started | — | — |
 | B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
