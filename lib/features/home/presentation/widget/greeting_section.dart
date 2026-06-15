@@ -7,6 +7,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/light_icon_button.dart';
+import '../../../../widgets/shared/profile_avatar.dart';
 
 class GreetingSection extends StatelessWidget {
   const GreetingSection({
@@ -34,7 +35,7 @@ class GreetingSection extends StatelessWidget {
           // CircleAvatar 48x48. Jika avatarUrl null, fallback ke inisial
           // pertama nickname. Tidak pakai Material CircleAvatar —
           // menggunakan ClipOval + Container + Image.network manual.
-          _ProfileAvatar(nickname: nickname, avatarUrl: avatarUrl),
+          ProfileAvatar(nickname: nickname, avatarUrl: avatarUrl),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -59,51 +60,4 @@ class GreetingSection extends StatelessWidget {
   }
 }
 
-/// Avatar diri yang menampilkan foto profil atau inisial nama jika
-/// belum ada foto. Ukuran 48x48, bentuk lingkaran.
-///
-/// Sprint 2 — C4: Profile photo di Greeting section HomePage.
-/// Tidak pakai Material CircleAvatar — menggunakan ClipOval +
-/// Container + Image.network (konsisten dengan `_buildDoctorAvatar`
-/// di upcoming_card.dart).
-class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar({required this.nickname, this.avatarUrl});
 
-  final String nickname;
-  final String? avatarUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipOval(
-      child: SizedBox(
-        width: 48,
-        height: 48,
-        child: avatarUrl != null
-            ? Image.network(
-                avatarUrl!,
-                width: 48,
-                height: 48,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildFallback(),
-              )
-            : _buildFallback(),
-      ),
-    );
-  }
-
-  Widget _buildFallback() {
-    return Container(
-      width: 48,
-      height: 48,
-      color: AppTheme.primary.withValues(alpha: 0.15),
-      alignment: Alignment.center,
-      child: Text(
-        nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
-        style: AppTextTheme.titleLarge.copyWith(
-          color: AppTheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}

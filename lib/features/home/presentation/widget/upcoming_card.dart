@@ -7,6 +7,7 @@ import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/card/status_badge.dart';
+import '../../../../widgets/shared/info_row.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
 
 class UpcomingCard extends StatelessWidget {
@@ -75,7 +76,7 @@ class _AppointmentCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _InfoRow(
+                  InfoRow(
                     icon: Iconsax.calendar,
                     // Sprint 2 — A3: format slotDate (DateTime?) + slotStart
                     // (TimeOfDay?) via DateFormatter nullable variants.
@@ -85,7 +86,7 @@ class _AppointmentCard extends StatelessWidget {
                         '${DateFormatter.toTimeOfDayStringOrDash(appointment.slotStart)}',
                   ),
                   const SizedBox(height: 4),
-                  _InfoRow(
+                  InfoRow(
                     icon: Iconsax.location,
                     text: appointment.clinicName,
                   ),
@@ -117,30 +118,6 @@ class _AppointmentCard extends StatelessWidget {
               )
             : const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: AppTheme.grey400),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -18,6 +18,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
 import '../../../../widgets/dialog/app_succes_dialog.dart';
 import '../../../../widgets/form/app_dropdown_field.dart';
+import '../../../../widgets/form/date_picker_field.dart';
+import '../../../../widgets/form/labeled_text_field.dart';
 import '../../../../widgets/picker/app_image_picker.dart';
 import '../../../auth/domain/entity/user_entity.dart';
 import '../bloc/edit_profile/edit_profile_cubit.dart';
@@ -199,11 +201,23 @@ class _EditProfileViewState extends State<_EditProfileView> {
               ),
             ),
             const SizedBox(height: 24),
-            _field('Full Name', _nameController, required: true),
+            LabeledTextField(
+              label: 'Full Name',
+              controller: _nameController,
+              required: true,
+            ),
             const SizedBox(height: 12),
-            _field('Nickname', _nicknameController, required: true),
+            LabeledTextField(
+              label: 'Nickname',
+              controller: _nicknameController,
+              required: true,
+            ),
             const SizedBox(height: 12),
-            _dateField(),
+            DatePickerField(
+              label: 'Date of Birth',
+              valueText: _formatDate(_selectedDate),
+              onTap: _pickDate,
+            ),
             const SizedBox(height: 12),
             _genderField(),
             const SizedBox(height: 24),
@@ -230,74 +244,6 @@ class _EditProfileViewState extends State<_EditProfileView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _field(
-    String label,
-    TextEditingController controller, {
-    bool required = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: AppTextTheme.bodyMedium),
-        const SizedBox(height: 4),
-        TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppTheme.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppTheme.grey200),
-            ),
-          ),
-          validator: required
-              ? (v) => (v == null || v.trim().isEmpty)
-                    ? '$label wajib diisi'
-                    : null
-              : null,
-        ),
-      ],
-    );
-  }
-
-  Widget _dateField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Date of Birth', style: AppTextTheme.bodyMedium),
-        const SizedBox(height: 4),
-        InkWell(
-          onTap: _pickDate,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.grey200),
-            ),
-            child: Row(
-              children: [
-                const Icon(Iconsax.calendar, color: AppTheme.grey500),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _formatDate(_selectedDate),
-                    style: AppTextTheme.bodyMedium,
-                  ),
-                ),
-                const Icon(
-                  Iconsax.arrowDown01,
-                  color: AppTheme.grey400,
-                  size: 18,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 

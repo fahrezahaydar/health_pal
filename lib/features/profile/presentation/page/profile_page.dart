@@ -16,6 +16,8 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
+import '../../../../widgets/shared/app_divider.dart';
+import '../../../../widgets/shared/menu_item_tile.dart';
 import '../../../auth/domain/entity/user_entity.dart';
 import '../bloc/profile/profile_cubit.dart';
 import '../bloc/profile/profile_state.dart';
@@ -155,7 +157,7 @@ class _ProfileView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _menuItem(
+          MenuItemTile(
             icon: Iconsax.user,
             label: 'Edit Profile',
             onTap: () async {
@@ -168,58 +170,37 @@ class _ProfileView extends StatelessWidget {
               }
             },
           ),
-          const _Divider(),
-          _menuItem(
+          const AppDivider(),
+          MenuItemTile(
             icon: Iconsax.heart,
             label: 'Favorite',
             onTap: () => context.push(RoutePaths.favorite),
           ),
-          const _Divider(),
-          _menuItem(
+          const AppDivider(),
+          MenuItemTile(
             icon: Iconsax.notification,
             label: 'Notification',
             onTap: () => context.push(RoutePaths.notificationSettings),
           ),
-          const _Divider(),
-          _menuItem(
+          const AppDivider(),
+          MenuItemTile(
             icon: Iconsax.setting2,
             label: 'Settings',
             onTap: () => context.push(RoutePaths.settings),
           ),
-          const _Divider(),
-          _menuItem(
+          const AppDivider(),
+          MenuItemTile(
             icon: Iconsax.messageQuestion,
             label: 'Help and Support',
             onTap: () => context.push(RoutePaths.helpSupport),
           ),
-          const _Divider(),
-          _menuItem(
+          const AppDivider(),
+          MenuItemTile(
             icon: Iconsax.documentText,
             label: 'T & C',
             onTap: () => context.push(RoutePaths.termsAndConditions),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _menuItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: AppTheme.grey700),
-            const SizedBox(width: 12),
-            Expanded(child: Text(label, style: AppTextTheme.bodyLarge)),
-            const Icon(Iconsax.arrowRight03, size: 18, color: AppTheme.grey400),
-          ],
-        ),
       ),
     );
   }
@@ -275,11 +256,4 @@ class _ProfileView extends StatelessWidget {
   }
 }
 
-class _Divider extends StatelessWidget {
-  const _Divider();
 
-  @override
-  Widget build(BuildContext context) {
-    return const Divider(height: 1, color: AppTheme.grey200);
-  }
-}

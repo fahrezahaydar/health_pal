@@ -12,6 +12,7 @@ import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/loader/dot_loader.dart';
 import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
 import '../widget/clinic_card.dart';
@@ -250,6 +251,6 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(child: DotLoader());
   }
 }

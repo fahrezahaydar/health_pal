@@ -6,6 +6,7 @@ import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/indicators/dots_indicator.dart';
 import '../../domain/entity/banner_entity.dart';
 
 class BannerCarousel extends StatefulWidget {
@@ -84,7 +85,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
         ),
         const SizedBox(height: 8),
-        _DotsIndicator(
+        DotsIndicator(
           count: banners.length,
           currentIndex: _currentPage,
         ),
@@ -148,27 +149,4 @@ class _BannerCard extends StatelessWidget {
   }
 }
 
-class _DotsIndicator extends StatelessWidget {
-  const _DotsIndicator({required this.count, required this.currentIndex});
 
-  final int count;
-  final int currentIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (i) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: i == currentIndex ? 24 : 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: i == currentIndex ? AppTheme.primary : AppTheme.grey300,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        );
-      }),
-    );
-  }
-}
