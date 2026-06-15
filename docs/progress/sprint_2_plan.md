@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 5/30 tasks (17%)
+**Overall:** 9/30 tasks (30%) — Pool A 90% done
 
 ### Pool A — Critical Bugs
 
@@ -32,9 +32,9 @@
 | A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ✅ Done | `a6eb2e8` | Add try/catch wrapper di `loadProfile()`. Pastikan cubit selalu emit terminal state (Loaded/Error), tidak stuck di Loading. `flutter analyze` 0 issues. |
 | A8 | Notification count from API | 2h | ✅ Done | `2a65e05` | Add `NotificationCubit` to HomePage MultiBlocProvider. Trigger `loadNotifications` after GreetingLoaded (alongside existing UpcomingCubit). GreetingSection `unreadCount` param replaces hardcoded 5. AppBadge hidden when count=0. `flutter analyze` 0 issues. |
 | A9 | Empty state CTA copy fix | 0.1h | ✅ Done | `558c99a` | "Book Appointment" → "Cari Dokter" di upcoming_card.dart:179. Sinkron dengan PRD §6.2 + Wireframe 06 §Empty. `flutter analyze` 0 issues. |
-| A10 | Postgres delete_user() RPC migration | 1h | ⬜ Not Started | — | — |
+| A10 | Postgres delete_user() RPC migration | 1h | ❌ Blocked | `003_delete_user_rpc.sql` (committed) | SQL file created (`supabase/migrations/003_delete_user_rpc.sql`). Needs backend to `supabase db push` to deploy. Unblocks BUG-004-D runtime safety. |
 
-**Pool A Progress: 1/10 done (10%)**
+**Pool A Progress: 9/10 done (90%) — 1 blocked (A10: backend migration)**
 
 ### Pool B — Home Refactor
 
@@ -90,7 +90,7 @@
 
 **Pool E Progress: 0/5 done (0%)**
 
-**Overall Total: 1/30 done (3%)** · **Total estimasi: 95 jam** · **Estimasi selesai: ~4 jam (A1)**
+**Overall Total: 9/30 done (30%)** · **Total estimasi: 95 jam** · **Pool A selesai 9/10 — tinggal B1+ next**
 
 ### Status Legend
 
