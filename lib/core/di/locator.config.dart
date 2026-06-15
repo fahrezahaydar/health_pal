@@ -92,6 +92,8 @@ import 'package:health_pal/features/home/presentation/bloc/banner/banner_cubit.d
     as _i15;
 import 'package:health_pal/features/home/presentation/bloc/greeting/greeting_cubit.dart'
     as _i365;
+import 'package:health_pal/features/home/presentation/bloc/nearby/nearby_cubit.dart'
+    as _i1068;
 import 'package:health_pal/features/home/presentation/bloc/specialization/specialization_cubit.dart'
     as _i244;
 import 'package:health_pal/features/home/presentation/bloc/upcoming/upcoming_cubit.dart'
@@ -341,6 +343,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i511.GetUserProfileUseCase>(
       () => _i511.GetUserProfileUseCase(gh<_i196.HomeRepository>()),
+    );
+    gh.factory<_i1068.NearbyCubit>(
+      () => _i1068.NearbyCubit(gh<_i995.GetNearbyClinicsUseCase>()),
     );
     gh.factory<_i481.LocCubit>(
       () => _i481.LocCubit(gh<_i995.GetNearbyClinicsUseCase>()),

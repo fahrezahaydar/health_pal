@@ -15,12 +15,14 @@ import '../bloc/banner/banner_cubit.dart';
 import '../bloc/banner/banner_state.dart';
 import '../bloc/greeting/greeting_cubit.dart';
 import '../bloc/greeting/greeting_state.dart';
+import '../bloc/nearby/nearby_cubit.dart';
 import '../bloc/specialization/specialization_cubit.dart';
 import '../bloc/specialization/specialization_state.dart';
 import '../bloc/upcoming/upcoming_cubit.dart';
 import '../bloc/upcoming/upcoming_state.dart';
 import '../widget/banner_carousel.dart';
 import '../widget/greeting_section.dart';
+import '../widget/nearby_facilities.dart';
 import '../widget/quick_categories.dart';
 import '../widget/search_bar_home.dart';
 import '../widget/upcoming_card.dart';
@@ -52,6 +54,13 @@ class HomePage extends StatelessWidget {
         BlocProvider(create: (context) => getIt<UpcomingCubit>()),
         // Sprint 2 — A8: load notification count (replaces hardcoded 5 badge)
         BlocProvider(create: (context) => getIt<NotificationCubit>()),
+        // Sprint 2 — C3: Nearby Medical Centers section. loadNearby
+        // triggers location permission dialog if not yet granted.
+        // The cubit handles all states (Loading/Loaded/LocationDenied/Error)
+        // and the widget renders accordingly.
+        BlocProvider(
+          create: (context) => getIt<NearbyCubit>()..loadNearby(),
+        ),
       ],
       child: const _HomePageBody(),
     );
@@ -95,6 +104,7 @@ class _HomePageBodyState extends State<_HomePageBody> {
         context.read<SpecializationCubit>().loadSpecializations(),
         if (profileId.isNotEmpty)
           context.read<UpcomingCubit>().loadUpcoming(profileId),
+        context.read<NearbyCubit>().loadNearby(),
       ];
       await Future.wait(futures);
     } finally {
@@ -258,25 +268,31 @@ class _HomePageBodyState extends State<_HomePageBody> {
                     );
                   },
                 ),
-                const SizedBox(height: 24),
-                BlocBuilder<SpecializationCubit, SpecializationState>(
-                  builder: (context, state) {
-                    final isLoading = state is SpecializationLoading;
-                    // Sprint 2 — C1: mock 8 specializations (2 rows × 4
-                    // columns per Wireframe 06 grid) saat loading agar
-                    // QuickCategories render grid skeleton.
-                    final specializations = isLoading
-                        ? _skeletonSpecializations
-                        : (state is SpecializationLoaded
-                            ? state.specializations
-                            : const <SpecializationEntity>[]);
-                    return Skeletonizer(
-                      enabled: isLoading,
-                      child: QuickCategories(specializations: specializations),
-                    );
-                  },
-                ),
-              ],
+              const SizedBox(height: 24),
+              BlocBuilder<SpecializationCubit, SpecializationState>(
+                builder: (context, state) {
+                  final isLoading = state is SpecializationLoading;
+                  // Sprint 2 — C1: mock 8 specializations (2 rows × 4
+                  // columns per Wireframe 06 grid) saat loading agar
+                  // QuickCategories render grid skeleton.
+                  final specializations = isLoading
+                      ? _skeletonSpecializations
+                      : (state is SpecializationLoaded
+                          ? state.specializations
+                          : const <SpecializationEntity>[]);
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: QuickCategories(specializations: specializations),
+                  );
+                },
+              ),
+              // Sprint 2 — C3: Nearby Medical Centers section.
+              // Horizontal list of clinic cards. Handles all states:
+              // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
+              // klinik", LocationDenied → "Izinkan Lokasi" button,
+              // Error → retry button. Skeletonizer built-in to widget.
+              const NearbyFacilities(),
+            ],
             ),
           ),
         ),
