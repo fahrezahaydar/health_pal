@@ -6,18 +6,15 @@ import '../../domain/entity/upcoming_appointment_entity.dart';
 
 /// Model untuk "Upcoming Treatment" card di Home Page.
 ///
-/// **Sprint 2 — Task A3 (Fix K3):** slot fields di-parse menggunakan
-/// converters dari `core/network/json_converters.dart` (per TDD 05 §3.2):
-/// - `slotDate` (raw "YYYY-MM-DD") → `DateTime?` via `DateOnlyJsonConverter`
-/// - `slotStart`/`slotEnd` (raw "HH:MM:SS") → `TimeOfDay?` via
-///   `TimeOnlyJsonConverter`
+/// **Sprint 2 — B1:** tetap manual (bukan @freezed) karena JSON shape
+/// nested (`doctors.*`, `doctor_slots.*`) tapi model class flat.
+/// @freezed + generated fromJson hanya support flat JSON.
+/// BannerModel, SpecializationModel, UserProfileModel sudah
+/// di-convert ke @freezed.
 ///
-/// **Sprint 2 — Task A5 (Fix M3):** `status` di-parse via
-/// `BookingStatus.fromJson()` (switch eksplisit) — bukan `firstWhere`
-/// fallback yang pernah dipakai di UpcomingCard._status.
-///
-/// Model masih manual (bukan `@freezed`) — refactor ke `@freezed` +
-/// `@JsonKey` adalah task B1 (Pool B).
+/// - `slotDate` → `DateTime?` via `DateOnlyJsonConverter`
+/// - `slotStart`/`slotEnd` → `TimeOfDay?` via `TimeOnlyJsonConverter`
+/// - `status` → `BookingStatus` via `BookingStatus.fromJson()`
 class UpcomingAppointmentModel {
   static const _dateConverter = DateOnlyJsonConverter();
   static const _timeConverter = TimeOnlyJsonConverter();
@@ -47,7 +44,6 @@ class UpcomingAppointmentModel {
   factory UpcomingAppointmentModel.fromJson(Map<String, dynamic> json) {
     final doctors = json['doctors'] as Map<String, dynamic>?;
     final slots = json['doctor_slots'] as Map<String, dynamic>?;
-
     final clinics = doctors?['clinics'] as Map<String, dynamic>?;
     final specializations =
         doctors?['specializations'] as Map<String, dynamic>?;

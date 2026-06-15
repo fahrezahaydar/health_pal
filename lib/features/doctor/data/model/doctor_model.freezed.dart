@@ -53,7 +53,7 @@ $Res call({
 });
 
 
-
+$SpecializationModelCopyWith<$Res>? get specialization;
 
 }
 /// @nodoc
@@ -87,7 +87,19 @@ as ClinicModel?,specialization: freezed == specialization ? _self.specialization
 as SpecializationModel?,
   ));
 }
+/// Create a copy of DoctorModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SpecializationModelCopyWith<$Res>? get specialization {
+    if (_self.specialization == null) {
+    return null;
+  }
 
+  return $SpecializationModelCopyWith<$Res>(_self.specialization!, (value) {
+    return _then(_self.copyWith(specialization: value));
+  });
+}
 }
 
 
@@ -283,7 +295,7 @@ $Res call({
 });
 
 
-
+@override $SpecializationModelCopyWith<$Res>? get specialization;
 
 }
 /// @nodoc
@@ -318,7 +330,19 @@ as SpecializationModel?,
   ));
 }
 
+/// Create a copy of DoctorModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SpecializationModelCopyWith<$Res>? get specialization {
+    if (_self.specialization == null) {
+    return null;
+  }
 
+  return $SpecializationModelCopyWith<$Res>(_self.specialization!, (value) {
+    return _then(_self.copyWith(specialization: value));
+  });
+}
 }
 
 // dart format on

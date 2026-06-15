@@ -46,16 +46,48 @@ class ClinicEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        address,
-        city,
-        latitude,
-        longitude,
-        phone,
-        imageUrl,
-        distanceMeters,
-        doctorCount,
-        specializations,
-      ];
+    id,
+    name,
+    address,
+    city,
+    latitude,
+    longitude,
+    phone,
+    imageUrl,
+    distanceMeters,
+    doctorCount,
+    specializations,
+  ];
+
+  static List<ClinicEntity> mock() {
+    return const [
+      ClinicEntity(
+        id: 'sk-1',
+        name: 'Loading Clinic Name Placeholder',
+        address: 'Loading address placeholder',
+        latitude: 0,
+        longitude: 0,
+        distanceMeters: 1500,
+        doctorCount: 5,
+      ),
+      ClinicEntity(
+        id: 'sk-2',
+        name: 'Loading Clinic Name Placeholder 2',
+        address: 'Loading address placeholder 2',
+        latitude: 0,
+        longitude: 0,
+        distanceMeters: 2500,
+        doctorCount: 3,
+      ),
+      ClinicEntity(
+        id: 'sk-3',
+        name: 'Loading Clinic Name Placeholder 3',
+        address: 'Loading address placeholder 3',
+        latitude: 0,
+        longitude: 0,
+        distanceMeters: 3500,
+        doctorCount: 8,
+      ),
+    ];
+  }
 }
