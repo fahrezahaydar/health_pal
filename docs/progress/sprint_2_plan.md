@@ -41,8 +41,8 @@
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
 | B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | `1f00d75` | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
-| B2 | HomeLocalDataSource @lazySingleton | 0.1h | ✅ Done | (in B2+B3 commit) | Changed `@injectable` → `@lazySingleton`. build_runner regenerated DI. |
-| B3 | Result.Failure.code ke enum FailureCode | 2h | ✅ Done | (in B2+B3 commit) | `code: String` → `FailureCode` (enum). Factory `Result.failure` no longer uses `.name`. GreetingCubit enum compare langsung (no `.name`). `edit_profile_cubit.dart` compatible (toString works with enum). |
+| B2 | HomeLocalDataSource @lazySingleton | 0.1h | ✅ Done | `7b3ba96` | Changed `@injectable` → `@lazySingleton`. build_runner regenerated DI. |
+| B3 | Result.Failure.code ke enum FailureCode | 2h | ✅ Done | `7b3ba96` | `code: String` → `FailureCode` (enum). Factory `Result.failure` no longer uses `.name`. GreetingCubit enum compare langsung (no `.name`). `edit_profile_cubit.dart` compatible (toString works with enum). |
 | B4 | Cache user profile | 1h | ⬜ Not Started | — | — |
 | B5 | Use CacheService generic di Home | 2h | ⬜ Not Started | — | — |
 | B6 | Cache invalidation hook | 0.5h | ⬜ Not Started | — | — |
