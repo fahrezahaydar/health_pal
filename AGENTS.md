@@ -42,6 +42,24 @@ lib/
 - **injectable + get_it** for DI
 - `.env` file required with `SUPABASE_URL` and `SUPABASE_ANON_KEY`
 
+## Icon Convention (Sprint 2+)
+- **Default: pakai `Material Icons`** (`Icons.search`, `Icons.calendar`, dll) untuk fitur/icon BARU.
+- **Jangan pakai `Iconsax` di code baru** — suffix convention `iconsax_latest ^1.0.0` sering error (mis. `search_normal` vs `search`, `arrow_left` vs `arrowLeft01`).
+- Setiap kali pakai Material icon, **WAJIB** tambahkan TODO comment di file Dart:
+  ```dart
+  // TODO: change to iconsax — currently Material fallback (iconsax_latest 1.0.0 suffix error-prone)
+  final IconData _icon = Icons.search;
+  ```
+- User (Project Owner) yang akan swap ke `Iconsax.X` icon yang benar secara manual setelah lihat TODO list.
+- **Existing code** yang sudah pakai `Iconsax.X` (sudah committed) **TIDAK boleh diubah** — biarin sampai owner decide.
+- Reason: mempercepat delivery Sprint 2 + mengurangi cycle "cari nama icon yang valid" di iconsax_latest 1.0.0.
+
+### Cara kerja
+1. Implementasi fitur baru → pakai `Icons.X` (Material) + tambah TODO comment.
+2. Commit conventional.
+3. Owner review, swap ke `Iconsax.X` yang sesuai + hapus TODO.
+4. Future code baru: lihat existing TODO comments untuk pattern yang dipakai.
+
 ## Sprint 1 — Testing Policy
 - **TIDAK BOLEH membuat file test apapun** selama implementasi feature.
 - Fokus implementasi: Data Layer → Domain Layer → Presentation Layer → DI → `flutter analyze`.
