@@ -16,6 +16,7 @@ import '../bloc/banner/banner_state.dart';
 import '../bloc/greeting/greeting_cubit.dart';
 import '../bloc/greeting/greeting_state.dart';
 import '../bloc/nearby/nearby_cubit.dart';
+import '../bloc/nearby/nearby_state.dart';
 import '../bloc/specialization/specialization_cubit.dart';
 import '../bloc/specialization/specialization_state.dart';
 import '../bloc/upcoming/upcoming_cubit.dart';
@@ -312,8 +313,25 @@ class _HomePageBodyState extends State<_HomePageBody> {
               // Horizontal list of clinic cards. Handles all states:
               // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
               // klinik", LocationDenied → "Izinkan Lokasi" button,
-              // Error → retry button. Skeletonizer built-in to widget.
-              const NearbyFacilities(),
+              // Error → retry button.
+              BlocBuilder<NearbyCubit, NearbyState>(
+                builder: (context, state) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: switch (state) {
+                      NearbyInitial() => const NearbyFacilitiesLoading(),
+                      NearbyLoading() => const NearbyFacilitiesLoading(),
+                      NearbyLoaded(:final clinics) =>
+                        NearbyFacilitiesLoaded(clinics: clinics),
+                      NearbyEmpty() => const NearbyFacilitiesEmpty(),
+                      NearbyLocationDenied(:final reason) =>
+                        NearbyFacilitiesLocationDenied(reason: reason),
+                      NearbyError(:final message) =>
+                        NearbyFacilitiesError(message: message),
+                    },
+                  );
+                },
+              ),
             ],
             ),
           ),
