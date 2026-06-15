@@ -9,9 +9,16 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/light_icon_button.dart';
 
 class GreetingSection extends StatelessWidget {
-  const GreetingSection({super.key, required this.nickname});
+  const GreetingSection({
+    super.key,
+    required this.nickname,
+    this.unreadCount = 0,
+  });
 
   final String nickname;
+  // Sprint 2 — A8: unreadCount dari NotificationCubit (was hardcoded 5).
+  // Jika 0, AppBadge tidak muncul (hidden per _show == false).
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +33,10 @@ class GreetingSection extends StatelessWidget {
           ),
           LightIconButton(
             onTap: () => context.push(RoutePaths.notificationSettings),
-            icon: const AppBadge(
-              count: 5,
-              child: Icon(
+            icon: AppBadge(
+              // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
+              count: unreadCount > 0 ? unreadCount : null,
+              child: const Icon(
                 Iconsax.notificationBingStyle5,
                 color: AppTheme.grey900,
               ),

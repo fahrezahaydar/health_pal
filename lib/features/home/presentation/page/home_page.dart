@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:health_pal/core/di/locator.dart';
 import 'package:health_pal/core/services/app_services.dart';
 
+import '../../../profile/presentation/bloc/notification/notification_cubit.dart';
+import '../../../profile/presentation/bloc/notification/notification_state.dart';
 import '../../domain/entity/banner_entity.dart';
 import '../../domain/entity/specialization_entity.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
@@ -46,6 +48,8 @@ class HomePage extends StatelessWidget {
               getIt<SpecializationCubit>()..loadSpecializations(),
         ),
         BlocProvider(create: (context) => getIt<UpcomingCubit>()),
+        // Sprint 2 — A8: load notification count (replaces hardcoded 5 badge)
+        BlocProvider(create: (context) => getIt<NotificationCubit>()),
       ],
       child: const _HomePageBody(),
     );
@@ -64,6 +68,10 @@ class _HomePageBody extends StatelessWidget {
             if (state is GreetingLoaded) {
               if (state.profileId.isNotEmpty) {
                 context.read<UpcomingCubit>().loadUpcoming(state.profileId);
+                // Sprint 2 — A8: load unread notification count after profile loaded
+                context
+                    .read<NotificationCubit>()
+                    .loadNotifications(state.profileId);
               }
               // FIX-7: Guard profile completeness. Jika profile incomplete
               // (misalnya network failure fallback di FIX-2 atau server-side
@@ -86,13 +94,24 @@ class _HomePageBody extends StatelessWidget {
           },
           child: ListView(
             children: [
-              BlocSelector<GreetingCubit, GreetingState, String>(
-                selector: (state) => switch (state) {
-                  GreetingLoaded(:final nickname) => nickname,
-                  _ => '',
-                },
-                builder: (context, nickname) {
-                  return GreetingSection(nickname: nickname);
+              BlocBuilder<NotificationCubit, NotificationListState>(
+                builder: (context, notifState) {
+                  final unread = switch (notifState) {
+                    NotificationLoaded(:final unreadCount) => unreadCount,
+                    _ => 0,
+                  };
+                  return BlocSelector<GreetingCubit, GreetingState, String>(
+                    selector: (state) => switch (state) {
+                      GreetingLoaded(:final nickname) => nickname,
+                      _ => '',
+                    },
+                    builder: (context, nickname) {
+                      return GreetingSection(
+                        nickname: nickname,
+                        unreadCount: unread,
+                      );
+                    },
+                  );
                 },
               ),
               // Sprint 2 — A1: Search Bar widget (stateless, tap → doctor search)
