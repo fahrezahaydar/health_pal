@@ -12,6 +12,7 @@ _UserProfileModel _$UserProfileModelFromJson(Map<String, dynamic> json) =>
       nickname: json['nickname'] as String,
       avatarUrl: json['avatar_url'] as String?,
       isProfileComplete: json['is_profile_complete'] as bool? ?? false,
+      notifReminderEnabled: json['notif_reminder_enabled'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$UserProfileModelToJson(_UserProfileModel instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$UserProfileModelToJson(_UserProfileModel instance) =>
       'nickname': instance.nickname,
       'avatar_url': instance.avatarUrl,
       'is_profile_complete': instance.isProfileComplete,
+      'notif_reminder_enabled': instance.notifReminderEnabled,
     };

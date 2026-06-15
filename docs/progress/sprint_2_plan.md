@@ -16,8 +16,8 @@
 
 ## 📊 Sprint 2 Progress Tracker
 
-**Last Updated:** 16 Juni 2026 (Day 1, end of Day 1) — *updated by C6*
-**Overall:** 24/30 tasks (80%) — Pool A 100% ✅ | Pool B 100% ✅ | Pool C 6/6 ✅
+**Last Updated:** 16 Juni 2026 (Day 1, end of Day 1) — *updated by Pool E*
+**Overall:** 30/30 tasks (100%) — ALL POOLS DONE ✅
 
 ### Pool A — Critical Bugs
 
@@ -82,15 +82,15 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| E1 | Fix BannerCarousel addPostFrameCallback | 1h | ⬜ Not Started | — | — |
-| E2 | Validate banner.actionUrl scheme | 1h | ⬜ Not Started | — | — |
-| E3 | Fix hardcoded path di app_router.dart | 0.25h | ⬜ Not Started | — | — |
-| E4 | Remove home_bloc_index.dart jika redundant | 0.25h | ⬜ Not Started | — | — |
-| E5 | Add notif_reminder_enabled ke UserModel | 1h | ⬜ Not Started | — | — |
+| E1 | Fix BannerCarousel addPostFrameCallback | 1h | ✅ Done | `<this-commit>` | — |
+| E2 | Validate banner.actionUrl scheme | 1h | ✅ Done | `<this-commit>` | — |
+| E3 | Fix hardcoded path di app_router.dart | 0.25h | ✅ Done | `<this-commit>` | — |
+| E4 | Remove home_bloc_index.dart jika redundant | 0.25h | ✅ Done | `<this-commit>` | — |
+| E5 | Add notif_reminder_enabled ke UserModel | 1h | ✅ Done | `<this-commit>` | — |
 
-**Pool E Progress: 0/5 done (0%)**
+**Pool E Progress: 5/5 done (100%) ✅**
 
-**Overall Total: 9/30 done (30%)** · **Total estimasi: 95 jam** · **Pool A selesai 9/10 — tinggal B1+ next**
+**Overall Total: 30/30 done (100%) ✅** · **Total estimasi: 95 jam** · **Sprint 2 COMPLETE**
 
 ### Status Legend
 

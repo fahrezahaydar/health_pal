@@ -23,6 +23,27 @@ class _BannerCarouselState extends State<BannerCarousel> {
   int _currentPage = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // Sprint 2 — E1: pindah dari addPostFrameCallback di build() ke
+    // initState + didUpdateWidget. Build bisa dipanggil multiple times
+    // (parent rebuild, state change, Skeletonizer enabled toggle),
+    // tiap kali addPostFrameCallback baru ditambahkan — menyebabkan
+    // multiple timer racing. initState hanya sekali, didUpdateWidget
+    // handle perubahan banner count (skeleton → real data).
+    _startAutoScroll(widget.banners.length);
+  }
+
+  @override
+  void didUpdateWidget(BannerCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.banners.length != widget.banners.length) {
+      _currentPage = 0;
+      _startAutoScroll(widget.banners.length);
+    }
+  }
+
+  @override
   void dispose() {
     _autoScrollTimer?.cancel();
     _pageController.dispose();
@@ -47,10 +68,6 @@ class _BannerCarouselState extends State<BannerCarousel> {
   Widget build(BuildContext context) {
     final banners = widget.banners;
     if (banners.isEmpty) return const SizedBox.shrink();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startAutoScroll(banners.length);
-    });
 
     return Column(
       children: [
@@ -85,8 +102,15 @@ class _BannerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (banner.actionUrl != null) {
-          context.push(banner.actionUrl!);
+        final url = banner.actionUrl;
+        // Sprint 2 — E2: validasi scheme URL. Hanya izinkan http/https
+        // (eksternal) atau / (internal route). Blokir javascript://,
+        // data://, atau scheme berbahaya lainnya.
+        if (url != null &&
+            (url.startsWith('http://') ||
+                url.startsWith('https://') ||
+                url.startsWith('/'))) {
+          context.push(url);
         }
       },
       child: Container(

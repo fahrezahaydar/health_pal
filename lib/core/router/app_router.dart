@@ -307,7 +307,7 @@ void handleNotificationNavigation(
     case 'booking_cancelled':
     case 'booking_reminder':
       if (appointmentId != null) {
-        context.push('/booking-history/$appointmentId');
+        context.push(RoutePaths.bookingDetail.replaceAll(':appointmentId', appointmentId));
       } else {
         context.push(RoutePaths.bookingHistory);
       }

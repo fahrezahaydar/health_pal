@@ -14,6 +14,7 @@ abstract class UserProfileModel with _$UserProfileModel {
     required String nickname,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     @JsonKey(name: 'is_profile_complete') @Default(false) bool isProfileComplete,
+    @JsonKey(name: 'notif_reminder_enabled') @Default(true) bool notifReminderEnabled,
   }) = _UserProfileModel;
 
   /// Custom fromJson karena `nickname` nullable di DB (ERD §2.2).
@@ -25,6 +26,9 @@ abstract class UserProfileModel with _$UserProfileModel {
         // Sprint 2 — C4: avatar_url nullable dari DB.
         avatarUrl: json['avatar_url'] as String?,
         isProfileComplete: json['is_profile_complete'] as bool? ?? false,
+        // Sprint 2 — E5: notif_reminder_enabled. Default true di DB.
+        notifReminderEnabled:
+            json['notif_reminder_enabled'] as bool? ?? true,
       );
 
   UserProfileEntity toEntity() => UserProfileEntity(
@@ -32,5 +36,6 @@ abstract class UserProfileModel with _$UserProfileModel {
         nickname: nickname,
         avatarUrl: avatarUrl,
         isProfileComplete: isProfileComplete,
+        notifReminderEnabled: notifReminderEnabled,
       );
 }

@@ -5,14 +5,17 @@ class UserProfileEntity extends Equatable {
   final String nickname;
   final String? avatarUrl;
   final bool isProfileComplete;
+  final bool notifReminderEnabled;
 
   const UserProfileEntity({
     required this.id,
     required this.nickname,
     this.avatarUrl,
     this.isProfileComplete = false,
+    this.notifReminderEnabled = true,
   });
 
   @override
-  List<Object?> get props => [id, nickname, avatarUrl, isProfileComplete];
+  List<Object?> get props =>
+      [id, nickname, avatarUrl, isProfileComplete, notifReminderEnabled];
 }
