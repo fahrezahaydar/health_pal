@@ -16,15 +16,15 @@
 
 ## 📊 Sprint 2 Progress Tracker
 
-**Last Updated:** 16 Juni 2026 (Day 1)
-**Overall:** 1/30 tasks (3%)
+**Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
+**Overall:** 2/30 tasks (7%)
 
 ### Pool A — Critical Bugs
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
 | A1 | Search Bar widget | 4h | ✅ Done | `0b7d603` | Stateless widget, tap → /doctor/search, integrated to HomePage below GreetingSection. `flutter analyze` 0 issues. |
-| A2 | Fix getUpcoming order | 1h | ⬜ Not Started | — | — |
+| A2 | Fix getUpcoming order | 1h | ✅ Done | (this commit) | Filter: `inFilter('status', [pending,upcoming])` (was 2x neq). Order: `slot_date asc, referencedTable: 'doctor_slots'` (was `created_at desc`). Align dengan API Contract §6.5. `flutter analyze` 0 issues. |
 | A3 | Fix slot date/time typing | 3h | ⬜ Not Started | — | — |
 | A4 | Fix HomePage SupabaseClient import | 1h | ⬜ Not Started | — | — |
 | A5 | Fix BookingStatus.firstWhere unsafe | 1h | ⬜ Not Started | — | — |

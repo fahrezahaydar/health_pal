@@ -28,14 +28,22 @@ class HomeRemoteDataSource {
   }
 
   Future<UpcomingAppointmentModel?> fetchUpcoming(String profileId) async {
+    // Sprint 2 — A2 (Fix K2): align with API Contract §6.5.
+    // - Filter: status IN (pending, upcoming) — was neq('completed') + neq('cancelled')
+    //   (semantically equivalent for 4-status enum, but explicit IN is future-proof
+    //   if new statuses are added).
+    // - Order: doctor_slots.slot_date ASC — was created_at DESC.
+    //   PostgREST nested order via `referencedTable: 'doctor_slots'`.
+    //   Catatan API §6.5: "jika gagal, fallback: order di Flutter side" — limit=1
+    //   means re-sorting after fetch is impossible, so kita trust PostgREST here.
+    //   If runtime error, alternatif: bump limit ke N + sort in Dart + take first.
     final result = await _client
         .from('appointments')
         .select(
             '*, doctors(id, full_name, photo_url, clinics(name), specializations(name)), doctor_slots(slot_date, slot_start, slot_end)')
         .eq('patient_id', profileId)
-        .neq('status', 'completed')
-        .neq('status', 'cancelled')
-        .order('created_at', ascending: false)
+        .inFilter('status', ['pending', 'upcoming'])
+        .order('slot_date', ascending: true, referencedTable: 'doctor_slots')
         .limit(1)
         .maybeSingle();
 
