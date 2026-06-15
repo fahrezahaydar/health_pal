@@ -13,6 +13,7 @@ import '../../../../widgets/dialog/app_loading_dialog.dart';
 import '../../../../widgets/form/app_form.dart';
 import '../../../../widgets/form/app_form_field.dart';
 import '../../../../widgets/form/app_form_pin_field.dart';
+import '../../../../core/utils/validators.dart';
 import '../bloc/forget_password/forget_password_state.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -111,9 +112,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
 class ForgetPassword extends StatelessWidget {
   const ForgetPassword({super.key});
-  bool _isValidEmail(String value) {
-    return RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +149,7 @@ class ForgetPassword extends StatelessWidget {
                 if (value.isEmpty) {
                   return 'Email wajib diisi';
                 }
-                if (!_isValidEmail(value)) {
+                if (Validators.email(value) != null) {
                   return 'Format email tidak valid';
                 }
                 return null;

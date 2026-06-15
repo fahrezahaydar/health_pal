@@ -10,7 +10,7 @@
 | Feature | Audit Status | Extraction Status | Candidates | Extracted |
 |---------|-------------|-------------------|-----------|-----------|
 | home | Completed | Partial | 3 | 3 |
-| auth | Pending | Not Started | — | — |
+| auth | Completed | Completed | 1 (utility) | 1 (→ `Validators.email()`) |
 | booking | Pending | Not Started | — | — |
 | doctor | Pending | Not Started | — | — |
 | loc | Completed | Completed | 1 | 0 (rejected — too trivial; switched to DotLoader instead) |

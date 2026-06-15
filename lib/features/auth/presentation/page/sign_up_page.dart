@@ -6,6 +6,7 @@ import 'package:iconsax_latest/iconsax.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/validators.dart';
 import '../../../../widgets/button/outline_button.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/form/app_form.dart';
@@ -26,10 +27,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   final _isShowPassword = ValueNotifier(false);
-
-  bool _isValidEmail(String value) {
-    return RegExp(r'^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value);
-  }
 
   @override
   void dispose() {
@@ -128,7 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     if (value.isEmpty) {
                                       return 'Email wajib diisi';
                                     }
-                                    if (!_isValidEmail(value)) {
+                                    if (Validators.email(value) != null) {
                                       return 'Format email tidak valid';
                                     }
                                     return null;
