@@ -34,9 +34,9 @@
 | Sign Up (03) | ✅ Dialog | — | ✅ Inline error | ✅ → create profile | ❌ | Sama, offline handling lemah |
 | Create Profile (04) | ✅ Dialog | — | ✅ Snackbar | ✅ → home | ❌ | Upload avatar progress tidak ada |
 | Forgot Password (05) | ✅ Per step | — | ✅ Inline + Snackbar | ✅ Popup → pop | ❌ | **Paling lengkap: 3 sub-step dalam 1 Cubit** ✅ |
-| Home (06) | ⚠️ Partial | ✅ Upcoming empty + CTA | ❌ | ✅ | ⚠️ Indirect | Loading per section (skeleton) tapi tidak ada global error state |
-| Doctor Search (08) | ✅ Shimmer | ✅ "Dokter tidak ditemukan" | ✅ Snackbar | ✅ | ❌ | Network error → snackbar, tidak ke `/no-internet` |
-| Doctor Detail (09) | ✅ Shimmer on slot | ✅ "Tidak ada jadwal" | ✅ Snackbar | ✅ | ❌ | Sama, no redirect ke no-internet |
+| Home (06) | ⚠️ Partial | ✅ Upcoming empty + CTA | ❌ | ✅ | ⚠️ Indirect | Loading per section via Skeletonizer (reuse production widgets — NO dedicated skeleton files) tapi tidak ada global error state |
+| Doctor Search (08) | ✅ Shimmer (DEPRECATED — migrate to Skeletonizer) | ✅ "Dokter tidak ditemukan" | ✅ Snackbar | ✅ | ❌ | Network error → snackbar, tidak ke `/no-internet` |
+| Doctor Detail (09) | ✅ Shimmer on slot (DEPRECATED — migrate to Skeletonizer: reuse slot widget via `Skeletonizer(enabled: true, child: slotWidget)`) | ✅ "Tidak ada jadwal" | ✅ Snackbar | ✅ | ❌ | Sama, no redirect ke no-internet |
 | Book Appointment (10) | ✅ Dialog | — | ✅ Dialog (409/500) | ✅ /booking/success | ❌ | Conflict 409 → refresh slot, **best handled** ✅ |
 | Booking Success (11) | — | — | — | ✅ Full screen | — | Sederhana, OK |
 | Booking History (12) | ✅ Loading more | ✅ Per-tab empty | ✅ Snackbar | ✅ | ❌ | Pagination loading OK |
@@ -63,7 +63,7 @@
 | 3 | **Edit Profile / Create Profile** | Upload avatar progress tidak ada | Tambah `UploadProgress(0-100%)` state dengan progress bar di dialog |
 | 4 | **Sign In / Sign Up** | Network error hanya snackbar, tidak redirect `/no-internet` | Tambah logic: `NetworkException` → redirect ke `/no-internet` |
 | 5 | **Home (06)** | Global error state tidak ada; per-section error parsing | Tambah `HomeError` state + retry-all button |
-| 6 | **Loc (07)** | Loading state di wireframe hilang | Tambah skeleton + map loading indicator |
+| 6 | **Loc (07)** | Loading state di wireframe hilang | Tambah skeletonizer loading (reuse production widget via `Skeletonizer(enabled: true, child: ...)`) + map loading indicator |
 | 7 | **Session timeout (idle)** | Tidak ada flow | Tambah state `SessionIdle` setelah 5 menit inaktif → show dialog "Session expired" → re-login |
 | 8 | **Token refresh** | Ada di TDD 06 tapi tidak ada di USER_FLOW | Tambah user-facing state: subtle indicator saat token refresh gagal |
 | 9 | **Force update / Maintenance** | Tidak ada | Tambah minimal dokumentasi cara handle (FCM silent push atau app version check API) |
@@ -242,7 +242,7 @@ enum Gender {
 | L3 | **Custom enum fallback untuk backward compat** | Flutter | `Gender.values.byName(json['gender'])` → wrap try-catch dengan fallback `Gender.other` |
 | L4 | **DTO version migration strategy** | Flutter | Dokumentasikan: tambah field baru di API aman karena `json_serializable` skip unknown. Hapus field butuh major version bump |
 | L5 | **API deprecation header** | API | Tambah header `Sunset` dan `Deprecation` saat akan deprecate endpoint lama |
-| L6 | **Loading state di Loc (07)** | UX | Tambah skeleton + map loading indicator |
+| L6 | **Loading state di Loc (07)** | UX | Tambah skeletonizer + map loading indicator (reuse production widgets — jangan buat dedicated skeleton files) |
 | L7 | **Empty state di Profile (14)** | UX | Tambah placeholder saat nickname/avatar null |
 | L8 | **Token refresh UX indicator** | UX | Subtle snackbar "Sesi diperpanjang" saat auto-refresh berjalan |
 | L9 | **Doctor list response trim** | API | Trim `experience_years`, `consultation_fee` dari `select` jika tidak dipakai di wireframe, atau tampilkan di UI |

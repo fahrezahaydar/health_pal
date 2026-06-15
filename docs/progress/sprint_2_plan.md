@@ -55,7 +55,7 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| C1 | Skeleton/shimmer loader per section | 4h | ⬜ Not Started | — | — |
+| C1 | Skeletonizer loader per section (reuse production widgets) | 4h | ⬜ Not Started | — | — |
 | C2 | Pull-to-refresh RefreshIndicator | 2h | ⬜ Not Started | — | — |
 | C3 | Nearby Medical Centers section | 16h | ⬜ Not Started | — | — |
 | C4 | Profile photo di Greeting | 2h | ⬜ Not Started | — | — |
@@ -140,7 +140,7 @@ Sprint 2 BUKAN sprint untuk fitur besar. Sprint 2 adalah **sprint stabilisasi**:
 1. **Hardening** — fix 4 critical bugs Home + BUG-002-FIX-3.
 2. **Completion** — implement 2 section Home yang hilang (Search Bar, Nearby Medical Centers).
 3. **Refactor** — standarisasi Home Models ke `@freezed`, fix arsitektur violations.
-4. **Polish** — pull-to-refresh, skeleton loader, error UI.
+4. **Polish** — pull-to-refresh, Skeletonizer loader, error UI.
 5. **Cross-feature Audit** — audit 5 fitur lain (bukan Home) untuk catch bug sebelum release.
 
 ### 1.3 Sprint 2 Anti-Scope (Penting)
@@ -264,7 +264,7 @@ Total: **30 task items, ~95 jam kerja** (10 hari × ~9.5 jam/hari). Dipecah jadi
 
 | # | Task | File Target | Sumber | Estimasi | Owner | Sprint Day |
 |---|---|---|---|:---:|---|:---:|
-| C1 | **Add skeleton/shimmer loader** per section (4 widget) | 4 widget files | home audit L2, TDD 12 §4.17 | 4h | Frontend | Day 5 |
+| C1 | **Add Skeletonizer loader** per section (wrap production widgets — NO dedicated skeleton files) | 4 widget files | home audit L2, TDD 12 §4.17, ADR Skeletonizer | 4h | Frontend | Day 5 |
 | C2 | **Add pull-to-refresh** dengan `RefreshIndicator` di HomePage | `home_page.dart` | home audit L1, Wireframe 06 §Pull | 2h | Frontend | Day 5 |
 | C3 | **Implement Nearby Medical Centers section** (use `get_nearby_clinics` RPC) | `home/data/model/clinic_model.dart` (new) + `home/data/datasource/home_remote_datasource.dart` + `home/domain/usecase/get_nearby_clinics_usecase.dart` (new) + `NearbyFacilities` widget (new) + 1 cubit (new) | home audit M5, Wireframe 06 §6, TDD 12 Fase 9.5 | 16h ⚠️ OVER CAPACITY | Frontend + Backend | Day 6-8 |
 | C4 | **Profile photo di Greeting** (PRD §6.2 compliance) — tambah `photoUrl` ke UserProfileEntity + render | `greeting_section.dart` + `user_profile_entity.dart` | home audit L3, PRD §6.2 | 2h | Frontend | Day 5 |
@@ -309,7 +309,7 @@ Total: **30 task items, ~95 jam kerja** (10 hari × ~9.5 jam/hari). Dipecah jadi
 | **2** | 17 Jun (Rabu) | A1 (4h), A3 (3h), A5 (1h), A8 (2h — jika Search Bar selesai) | — | — | — | `feat(home): search bar widget + slot date typing` |
 | **3** | 18 Jun (Kamis) | A10 (1h — backend coordination) | B1 (4h — @freezed), B2, B3, B4 (3.1h) | — | — | `refactor(home): @freezed models + Result.Failure enum + cache profile` |
 | **4** | 19 Jun (Jumat) | — | B1 (lanjut jika belum), B5, B6, B7, B8 (5h) | — | — | `refactor(core): CacheService + ErrorHandler.handleWithAuthCheck + withRetry` |
-| **5** | 22 Jun (Senin) | — | — | C1 (4h — skeleton), C2 (2h), C4 (2h) | — | `feat(home): skeleton loader + pull-to-refresh + profile photo` |
+| **5** | 22 Jun (Senin) | — | — | C1 (4h — skeletonizer), C2 (2h), C4 (2h) | — | `feat(home): skeletonizer loading + pull-to-refresh + profile photo` |
 
 **Week 1 total: 36 jam target**
 
@@ -394,13 +394,21 @@ Keterangan: P0=Pool A, R=Pool B Refactor, U=Pool C UX, N=Nearby, A=Audit
 
 **Implementation:** Wrap `BlocSelector` dengan `BlocBuilder` + `buildWhen: (prev, curr) => curr is *Error`. Atau pakai `MultiBlocListener`.
 
-### 6.6 AD-6: Skeleton Loader — Shimmer Package
-**Decision:** Pakai `shimmer: ^3.0.0` (sudah di pubspec) untuk skeleton loader. Setiap section (Banner, Upcoming, Categories, Greeting, Nearby) punya skeleton variant-nya.
+### 6.6 AD-6: Skeleton Loader — Skeletonizer Package (OVERRIDES prior shimmer decision)
+**Decision:** Pakai `skeletonizer: ^1.4.0` sebagai **SATU-SATUNYA** loading skeleton solution. **shimmer: ^3.0.0 resmi DEPRECATED.**
+
+**Arsitektur:**
+- **DILARANG** membuat dedicated skeleton widgets (e.g. `banner_skeleton.dart`).
+- **WAJIB** reuse production widget langsung via `Skeletonizer(enabled: ..., child: ...)`.
+- Pattern: setiap section (Banner, Upcoming, Categories, Greeting, Nearby) dibungkus `Skeletonizer` — tidak perlu file terpisah.
 
 **Rationale:**
-- Package sudah ada, no new dependency.
-- Konsisten dengan design system (animated placeholder).
-- Implementasi cepat (~1h per section).
+- Skeletonizer otomatis render skeleton placeholder untuk Text, Image, Container — tanpa dedicated variant.
+- Mengurangi boilerplate: 1 widget wrapper vs 4 skeleton variant files.
+- Konsisten dengan "reuse production widget" pattern.
+- Migration path: `shimmer` import → `skeletonizer` import; hapus `shimmer` dari pubspec.
+
+**Controlled exception:** Hanya diizinkan dengan komentar `/* justify: skeletonizer cannot replace X because ... */`.
 
 ### 6.7 AD-7: Pull-to-Refresh — Single RefreshIndicator
 **Decision:** Wrap `ListView` di HomePage dengan single `RefreshIndicator`. Trigger 4 cubit re-load (Greeting, Banner, Specialization, Upcoming) — note: Upcoming akan re-trigger via Greeting loaded, jadi cukup 3 explicit calls.
@@ -623,13 +631,11 @@ Output: Sprint 3 backlog (prioritas: test layer? dark mode? favorites? booking r
 
 ## Lampiran A — Sprint 2 File Touch List (Predicted)
 
-### Files Created (Estimated 8 new)
+### Files Created (Estimated 5 new — 3 skeleton files ELIMINATED per ADR Skeletonizer)
 
 ```
 lib/features/home/presentation/widget/search_bar.dart                    (A1)
-lib/features/home/presentation/widget/banner_skeleton.dart               (C1)
-lib/features/home/presentation/widget/upcoming_skeleton.dart             (C1)
-lib/features/home/presentation/widget/categories_skeleton.dart          (C1)
+(C1: NO dedicated skeleton files — reuse production widgets via Skeletonizer(enabled:..., child:...))
 lib/features/home/presentation/widget/nearby_facilities.dart             (C3)
 lib/features/home/presentation/bloc/nearby/nearby_cubit.dart             (C3)
 lib/features/home/presentation/bloc/nearby/nearby_state.dart             (C3)
@@ -721,11 +727,11 @@ git commit -m "refactor(core): CacheService + ErrorHandler.handleWithAuthCheck +
 - B7: ErrorHandler.handleWithAuthCheck + auto-logout on 401
 - B8: withRetry<T> with exponential backoff"
 
-# Day 5 — Skeleton + Pull-to-refresh + Profile photo
+# Day 5 — Skeletonizer + Pull-to-refresh + Profile photo
 git add -A
-git commit -m "feat(home): skeleton loader + pull-to-refresh + profile photo
+git commit -m "feat(home): skeletonizer loading + pull-to-refresh + profile photo
 
-- C1: Shimmer skeleton per section (4 widgets)
+- C1: Skeletonizer loading per section (reuse production widgets via Skeletonizer(enabled:..., child:...))
 - C2: RefreshIndicator with 3-cubit reload
 - C4: Profile photo in Greeting (user_profiles.avatar_url)"
 
@@ -761,6 +767,7 @@ Refs: home_page_audit.md template"
 | AD-3 | @freezed refactor 1-by-1 | Jika ditemukan dependency cycle antar models |
 | AD-4 | Result.Failure.code: String → enum | Jika ada breaking change downstream (mis. 5+ call site yang resist) |
 | AD-7 | Single RefreshIndicator | Jika section butuh independent refresh (e.g. user wants to refresh banner only) |
+| AD-6 (Revised) | Skeletonizer instead of Shimmer | Jika Skeletonizer tidak support edge case tertentu (e.g. custom animated skeleton) — butuh `/* justify */` comment |
 
 ---
 

@@ -11,6 +11,7 @@ Refer to `docs/` for detailed guidance:
 | `docs/user_flow/USER_FLOW.md` | 7 Mermaid flow diagrams |
 | `docs/tdd/01-arsitektur.md` through `docs/tdd/12-task-breakdown.md` | Complete TDD (12 docs) |
 | `docs/wireframe/` | 21 per-page wireframes |
+| `docs/adr/` | Architecture Decision Records |
 
 ## Quick Commands
 ```powershell
@@ -41,6 +42,23 @@ lib/
 - **Bloc/Cubit** for state management
 - **injectable + get_it** for DI
 - `.env` file required with `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+
+## Skeleton Loading Rule (Architectural Standard)
+- **WAJIB** pakai `skeletonizer: ^1.4.0` untuk semua loading skeleton UI.
+- **DILARANG** membuat dedicated skeleton widgets (mis. `banner_skeleton.dart`, `upcoming_skeleton.dart`) — reuse production widget langsung via `Skeletonizer(enabled: ..., child: ...)`.
+- Pengecualian hanya diizinkan dengan komentar `/* justify: skeletonizer cannot replace X because ... */`.
+- Loading state pattern:
+  ```dart
+  // ✅ BENAR — reuse production widget
+  Skeletonizer(
+    enabled: state is Loading,
+    child: BannerCarousel(banners: mockBanners),
+  )
+
+  // ❌ SALAH — dedicated skeleton file
+  // class BannerSkeleton extends StatelessWidget { ... }
+  ```
+- **shimmer: ^3.0.0** resmi **DEPRECATED** sejak ADR Skeletonizer. Migrasi: hapus `shimmer` dari pubspec, ganti semua import dengan `skeletonizer`. Jika ada shimmer code yang sudah committed, jangan ubah (owner decide via TODO list).
 
 ## Icon Convention (Sprint 2+)
 - **Default: pakai `Material Icons`** (`Icons.search`, `Icons.calendar`, dll) untuk fitur/icon BARU.

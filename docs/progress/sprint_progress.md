@@ -134,7 +134,7 @@ a56fffe  fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD)
 2. 🔴 **CRITICAL:** Deploy Postgres `delete_user()` migration (unblock BUG-004-D).
 3. 🟡 **HIGH:** Refactor Home Models ke @freezed (consistency dengan Doctor/Booking).
 4. 🟡 **HIGH:** Implement Nearby Medical Centers section (wireframe 06 §6 + TDD 12 Fase 9.5).
-5. 🟡 **MEDIUM:** Add skeleton loader + pull-to-refresh + error UI.
+5. 🟡 **MEDIUM:** Add Skeletonizer-based loader + pull-to-refresh + error UI.
 6. 🟡 **MEDIUM:** Refactor RoutePaths (`:bookingId` → `:appointmentId`).
 7. 🟡 **MEDIUM:** Buat icon reference table di `docs/reference/icons.md`.
 8. 🟢 **LOW:** Profile + Notification folder refactor.
@@ -158,7 +158,7 @@ a56fffe  fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD)
 | Presentation | Auth | ✅ | 11 files | 4 BLoC, 4 pages (login/signup/create/forgot), full impl 14-15KB each |
 | Data | Home | 🟡 | 6 files | Remote + Local DataSource, 4 Models (Banner, Spec, Upcoming, Profile) — **per audit 15 Jun: Models manual, not @freezed** |
 | Domain | Home | ✅ | 9 files | 4 Entities, 1 Repository, 4 UseCase |
-| Presentation | Home | 🟡 | 11 files | 4 Cubit+State, 1 Page, 4 Widgets, 1 BlocIndex — **per audit 15 Jun: Search Bar missing, Nearby Medical Centers missing, no skeleton, no pull-to-refresh, no error UI, K1-K4 bugs** |
+| Presentation | Home | 🟡 | 11 files | 4 Cubit+State, 1 Page, 4 Widgets, 1 BlocIndex — **per audit 15 Jun: Search Bar missing, Nearby Medical Centers missing, no skeletonizer loading, no pull-to-refresh, no error UI, K1-K4 bugs** |
 | Data | Doctor | ✅ | 8 files | DoctorModel/DoctorSlotModel (@freezed) + ClinicModel + RemoteDataSource + RepositoryImpl |
 | Domain | Doctor | ✅ | 6 files | 3 Entities, 1 Repository, 3 UseCase |
 | Presentation | Doctor | ✅ | 8 files | 2 Cubits (Search+Detail), 2 Pages, 3 Widgets |
@@ -337,7 +337,7 @@ a56fffe  fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD)
 | shared_preferences | ✅ | ^2.5.5 | Runtime | OK |
 | flutter_native_splash | ✅ | ^2.4.7 | Dev | OK |
 | iconsax_latest | ✅ | ^1.0.0 | Runtime | OK |
-| shimmer | ✅ | ^3.0.0 | Runtime | OK |
+| ~~shimmer~~ skeletonizer | ~~✅~~ ✅ (migrated) | ~~^3.0.0~~ ^1.4.0 | Runtime | OK — shimmer DEPRECATED per ADR Skeletonizer |
 | smooth_page_indicator | ✅ | ^2.0.1 | Runtime | OK |
 | cached_network_image | ✅ | ^3.4.1 | Runtime | OK |
 | provider | ✅ | ^6.1.5+1 | Runtime | OK |
@@ -709,7 +709,7 @@ Berdasarkan audit, urutan pengerjaan Sprint 1:
 
 | Week | Hari | Pool | Output |
 |---|:---:|---|---|
-| **Week 1** (16-22 Jun) | Day 1-5 | A → B → C | Critical bugs fixed, Home refactored, skeleton+pull-to-refresh+photo added |
+| **Week 1** (16-22 Jun) | Day 1-5 | A → B → C | Critical bugs fixed, Home refactored, skeletonizer+pull-to-refresh+photo added |
 | **Week 2** (23-29 Jun) | Day 6-10 | C (Nearby Centers) → D (Audits) | Nearby Centers live, 5 cross-feature audit docs published, Sprint 2 closed |
 
 ### Definition of Success

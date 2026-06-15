@@ -119,7 +119,7 @@
 | **Tap "Book Appointment"** | Tap | Navigasi ke `/booking/:doctorId` dengan extra: `{doctor, suggestedSlotId?}` |
 | **Tap "Lihat Peta"** | Tap | Buka Google Maps URL `https://maps.google.com/?q=lat,lng` |
 | **Tap "Lihat semua ulasan"** | Tap | Expand / halaman ulasan (v1.1) |
-| **Slot loading** | API call | Tampilkan shimmer pada slot area |
+| **Slot loading** | API call | Tampilkan skeletonizer pada slot area (reuse slot widget via `Skeletonizer(enabled: true, child: slotWidget)`) |
 | **Slot error** | API error | Snackbar: "Gagal memuat jadwal" |
 
 **BLoC:** `DoctorDetailCubit` — states: `loading`, `loaded(doctor, slotCount7Days, sampleSlots, reviews)`, `error`.

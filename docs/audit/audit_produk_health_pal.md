@@ -95,7 +95,7 @@
 | 4 | Toggle Notifikasi di Profile + sub-menu Notification — ambigu fungsi (reminder booking vs push umum?) | Perlu pemisahan state yang jelas | Medium |
 | 5 | Doctor Detail tidak menampilkan jumlah slot tersedia per hari di date chip — user harus tap dulu untuk tahu availability | UX friction, BRD klaim "seamless" terlanggar | Medium |
 | 6 | Book Appointment menampilkan full date picker padahal tanggal sudah dipilih di Detail. Default value, tidak perlu picker penuh | UI tidak efisien | Medium |
-| 7 | Tidak ada loading skeleton di wireframe selain shimmer — fragmentasi loading UX | Implementasi loading state tidak standar | Low |
+| 7 | Tidak ada loading skeleton di wireframe selain shimmer — fragmentasi loading UX | Implementasi loading state tidak standar. **Resolved:** ADR Skeletonizer menetapkan `skeletonizer: ^1.4.0` sebagai standard. shimmer DEPRECATED. | Low |
 | 8 | Bottom Sheet konfirmasi di Book Appointment redundan dengan summary card di atas — user mengkonfirmasi hal yang sama 2x | Tap tambahan, menurunkan "seamless" claim | Low |
 | 9 | No Internet page — `21-no-internet.md` adalah fallback generik, tapi flow diagram menunjukkan redirect ke `/no-internet` dari 4 lokasi berbeda. Perlu strategi cache per-fitur | Risk: poor offline UX, meski sudah di-address di NFR §11 | Low |
 | 10 | Iconografi pakai emoji (🏠 📍 📋 👤) — emoji rendering tidak konsisten di Android vs iOS (terutama iOS) | Visual inconsistency | Low |
@@ -141,7 +141,7 @@
 | L4 | Tambah "Bahasa" filter di Doctor Detail (PRD §6.4 menyebut "bahasa konsultasi" tapi tidak ada filter) | UX/PRD | Tambah filter bahasa atau hapus dari list elemen jika belum supported. |
 | L5 | Pertimbangkan deep linking untuk banner promo (`action_url` di API sudah ada, belum ada handler di Flutter) | Flutter Readiness | Tambah `app_links` package handling di `app_router.dart`. |
 | L6 | Tambah "Lihat Peta" inline mini-map di Doctor Detail (bukan link external) | UX | Tingkatkan konversi booking dengan visual context. |
-| L7 | Standarkan placeholder loading (`SkeletonLoader` atau `Shimmer`) | Flutter Readiness | Pilih satu library, dokumentasikan di design system. |
+| L7 | Standarkan placeholder loading | Flutter Readiness | **RESOLVED:** ADR Skeletonizer — `skeletonizer: ^1.4.0` adalah satu-satunya solusi. shimmer DEPRECATED. Dokumentasi di AGENTS.md §Skeleton Loading Rule. |
 | L8 | Review apakah `BookingHistoryCubit` perlu di-rename jadi `BookingHistoryBloc` (sesuai TDD tabel 5.4) | Dokumentasi | Pilih satu konvensi. |
 
 ---

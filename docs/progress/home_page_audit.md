@@ -54,7 +54,7 @@
 | 10 | TDD Caching (banner 5m, spec 7d) | **75%** | 🟡 |
 | 11 | TDD Error Handling (Result + ErrorHandler) | **85%** | 🟢 |
 | 12 | Pull-to-refresh | **0%** | 🔴 |
-| 13 | Skeleton / Shimmer loader | **0%** | 🔴 |
+| 13 | Skeletonizer loader (reuse production widgets — NO dedicated skeleton files) | **0%** | 🔴 |
 | 14 | Code quality (`flutter analyze`) | **0 issue** | 🟢 |
 | 15 | Defensive routing (BUG-001/FIX-7) | **100%** | 🟢 |
 | | **Rata-rata** | **~77 / 100** | **🟡** |
@@ -112,7 +112,7 @@ TOTAL             ███████▌░ ~77% 🟡
 
 🟢 **LOW:**
 10. **No pull-to-refresh** — wireframe 06 §"Pull To Refresh" + TDD 12 §4 (tidak eksplisit disebut tapi implicit di fase).
-11. **No skeleton/shimmer** — TDD 12 §4.17 menyebutkan, deferred.
+11. **No Skeletonizer loader** — TDD 12 §4.17 menyebutkan, deferred. Per ADR Skeletonizer, menggunakan `skeletonizer: ^1.4.0` dengan reuse production widgets (bukan dedicated skeleton files).
 12. **Quick Categories icon hardcoded** — `_getIcon(name)` di QuickCategories line 110-121 fallback ke `Iconsax.user` untuk hampir semua kategori.
 13. **User profile tidak di-cache** — TDD 08 §2 menentukan cache session, implementasi selalu remote.
 14. **Cache key naming deviation** — TDD 08 §3 contoh: `${key}_saved_at`, implementasi: `${key}_time`.
@@ -208,7 +208,7 @@ TOTAL             ███████▌░ ~77% 🟡
 | Wireframe Spec | Implementation | Verdict |
 |---|---|:---:|
 | Order: Greeting → Banner → Upcoming → Categories → Nearby | HomePage orchestrate via `MultiBlocProvider` (4 cubit) dengan trigger `UpcomingCubit.loadUpcoming()` di dalam `BlocListener<GreetingCubit>` saat `GreetingLoaded` | ✅ |
-| Setiap section pakai skeleton loader secara independen | TIDAK ADA — pakai `SizedBox.shrink()` atau `BlocSelector` returning default empty/null saat loading | 🔴 TDD 12 §4.17 menyebutkan shimmer/skeleton, **deferred** |
+| Setiap section pakai Skeletonizer loader secara independen | TIDAK ADA — pakai `SizedBox.shrink()` atau `BlocSelector` returning default empty/null saat loading | 🔴 TDD 12 §4.17 menyebutkan skeletonizer loading, **deferred**. Per ADR Skeletonizer: reuse production widgets via `Skeletonizer(enabled:..., child:...)` — NO dedicated skeleton files |
 
 ### 2.5 Pull To Refresh
 
@@ -1169,7 +1169,7 @@ Tapi TIDAK ADA widget yang consume `*Error` state. `BlocSelector` hanya extract 
 | # | Issue | File | Severity | Impact |
 |---|---|---|:---:|---|
 | L1 | **No pull-to-refresh** | (missing `RefreshIndicator`) | 🟢 | Wireframe 06 §"Pull To Refresh" eksplisit. |
-| L2 | **No skeleton/shimmer loader** | (deferred) | 🟢 | TDD 12 §4.17. Saat ini `SizedBox.shrink()` saat loading — blank. |
+| L2 | **No Skeletonizer loader** | (deferred) | 🟢 | TDD 12 §4.17, ADR Skeletonizer. Saat ini `SizedBox.shrink()` saat loading — blank. Fix: wrap production widgets with `Skeletonizer(enabled: ..., child: ...)`. |
 | L3 | **No profile photo di Greeting** | `greeting_section.dart` | 🟢 | PRD §6.2 minta "foto profil kecil di kanan atas". Saat ini hanya bell. |
 | L4 | **`GreetingCubit` tidak di-inject `SupabaseClient`** | `greeting_cubit.dart` | 🟢 | Auth id disupply dari HomePage (violation). Sebaiknya Cubit inject Supabase. |
 | L5 | **Notification route pakai hardcoded path** | `app_router.dart:310, 312, 317` | 🟢 | Beberapa pakai `RoutePaths.xxx`, beberapa hardcoded `/booking-history/...`. |
@@ -1202,7 +1202,7 @@ Tapi TIDAK ADA widget yang consume `*Error` state. `BlocSelector` hanya extract 
 | 6 | **Refactor Home Models** ke `@freezed` + `@JsonKey` per-field | 4 files di `home/data/model/` | 4 jam | Frontend |
 | 7 | **Implement Nearby Medical Centers** section dengan `get_nearby_clinics` RPC | `home/data/model/clinic_model.dart` (new) + `home/data/datasource/home_remote_datasource.dart` + `home/domain/usecase/get_nearby_clinics_usecase.dart` (new) + `NearbyFacilities` widget (new) + 1 cubit (new) + `facility_detail_page.dart` (new) | 16 jam (per TDD 12 Fase 9.5) | Frontend + Backend |
 | 8 | **Add pull-to-refresh** dengan `RefreshIndicator` di HomePage | `home_page.dart` | 2 jam | Frontend |
-| 9 | **Add skeleton/shimmer loader** per section | 4 widget files | 4 jam | Frontend |
+| 9 | **Add Skeletonizer loader** per section (wrap production widgets — NO dedicated skeleton files) | 0 new widget files | 4 jam | Frontend |
 | 10 | **Fix HomePage import SupabaseClient** violation: inject via `GreetingCubit` atau `AppServices` | `home_page.dart` + `greeting_cubit.dart` | 1 jam | Frontend |
 | 11 | **Notification count dari API** (replace hardcoded 5) | `greeting_section.dart` + butuh endpoint | 2 jam | Frontend + Backend |
 | 12 | **Empty state CTA copy** "Book Appointment" → "Cari Dokter" | `upcoming_card.dart:173` | 5 menit | Frontend |
@@ -1244,7 +1244,7 @@ Tapi TIDAK ADA widget yang consume `*Error` state. `BlocSelector` hanya extract 
 - [ ] M16 (retry policy) implemented
 - [ ] M14 (error UI) implemented
 - [ ] L1 (pull-to-refresh) implemented
-- [ ] L2 (skeleton loader) implemented
+- [ ] L2 (Skeletonizer loader) implemented — reuse production widgets, NO dedicated skeleton files
 - [ ] `flutter analyze` 0 issues
 - [ ] M5 (Nearby Medical Centers) implemented per TDD 12 Fase 9.5
 - [ ] Minimal smoke test: Home → Search → Doctor Detail → Book → Home shows upcoming

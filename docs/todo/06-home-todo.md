@@ -66,7 +66,7 @@
 - **SupabaseClient** — sudah di DI
 - **Supabase Auth session** — sudah (Fase 2 selesai)
 - **Connectivity** — `connectivity_plus` sudah di pubspec
-- **Shimmer** — sudah di pubspec (buat skeleton loader)
+- **skeletonizer** — sudah di pubspec (reuse production widgets via `Skeletonizer(enabled:..., child:...)`). **shimmer: ^3.0.0 resmi DEPRECATED** per ADR Skeletonizer.
 
 ### Catatan Penting
 1. **Nearby Medical Centers** — documented di `docs/todo/08-facility-todo.md`. PostgreSQL function `get_nearby_clinics` (Haversine), dependencies: `geolocator` + `google_maps_flutter`. Implementasi sebelum Push Notification (Fase 10).
@@ -110,7 +110,7 @@
 | **D** | **Refinements (Ditunda)** | **⏸️ Ditunda** |
 | D.1 | Nearby Medical Centers | 📋 [08-facility-todo.md](08-facility-todo.md) — documented, awaiting implementation |
 | D.2 | SearchBar → /doctor/search | ⏸️ |
-| D.3 | Shimmer/skeleton loader | ⏸️ |
+| D.3 | Skeletonizer loader (reuse production widgets — NO dedicated skeleton files) | ⏸️ |
 | D.4 | Pull-to-refresh | ⏸️ |
 
 ---
@@ -161,7 +161,7 @@
 |---|---|---|---|
 | D.1 | Nearby Medical Centers | **Low** | Butuh edge function + google_maps_flutter (Fase 9) |
 | D.2 | SearchBar → /doctor/search | **Medium** | Search widget di home_page.dart |
-| D.3 | Shimmer/skeleton loader | **Medium** | Pakai shimmer: ^3.0.0 |
+| D.3 | Skeletonizer loader | **Medium** | Pakai `skeletonizer: ^1.4.0` — reuse production widgets via `Skeletonizer(enabled: ..., child: ...)`. shimmer DEPRECATED. |
 | D.4 | Pull-to-refresh | **Medium** | RefreshIndicator reload semua section |
 
 ---

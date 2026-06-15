@@ -299,7 +299,7 @@ Order loading:
 4. Categories
 5. Nearby Facilities
 
-Setiap section menggunakan skeleton loader secara independen.
+Setiap section menggunakan Skeletonizer loader secara independen — reuse production widget langsung via `Skeletonizer(enabled: true, child: sectionWidget)`, bukan dedicated skeleton files.
 
 ---
 

@@ -214,7 +214,7 @@
 | 4.14 | Buat `UpcomingCard` widget | 1 | Card appointment terdekat | 4.2 |
 | 4.15 | Buat `QuickCategories` widget | 1 | Grid specializations | 4.3 |
 | 4.16 | Handle: empty state (no upcoming) | 1 | CTA "Cari Dokter Sekarang" | 4.11 |
-| 4.17 | Handle: banner loading + error state | 1 | Shimmer / error placeholder | 4.11 |
+| 4.17 | Handle: banner loading + error state | 1 | Skeletonizer (reuse BannerCarousel widget via `Skeletonizer(enabled:..., child:...)`) / error placeholder | 4.11 |
 | 4.18 | Integrasi: tap search bar → navigate `/doctor/search` | 1 | `context.push(RoutePaths.doctorSearch)` | 4.11, 1.15 |
 | 4.19 | Integrasi: tap category → navigate `/loc` with filter preset | 1 | `context.go('/loc', extra: filter)` | 4.11 |
 | 4.20 | Integrasi: tap upcoming card → navigate booking detail | 1 | `context.push('/booking-history/:id')` | 4.11 |

@@ -77,7 +77,7 @@
 | Clear Button | `Icon(Iconsax.closeCircle)` | Hapus text + reset results |
 | Filter Chips | `ListView` horizontal | `specializations` list |
 | Doctor Card | Same as `LocPage` reusable card | `GET /rest/v1/doctors?full_name=ilike.*keyword*` |
-| Loading | Shimmer / `DotLoader` | Selama API call |
+| Loading | Skeletonizer (reuse production card widget via `Skeletonizer(enabled: true, child: DoctorCard(...))`) | Selama API call |
 | Empty State | `Column(Icon, Text)` | Array response = 0 |
 | Pagination | `ScrollController` listener | Infinite scroll, limit=20 |
 

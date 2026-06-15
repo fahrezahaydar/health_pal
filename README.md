@@ -34,7 +34,7 @@
 | **Networking** | `supabase_flutter` (no Dio/http — Supabase adalah sole backend) |
 | **Local Cache** | `shared_preferences` + Hive (planned v2) |
 | **Utilities** | `flutter_dotenv` (env), `intl` (date format), `connectivity_plus` (offline) |
-| **UI Kit** | `google_fonts` + `iconsax_latest` + `shimmer` + `lottie` (no Material) |
+| **UI Kit** | `google_fonts` + `iconsax_latest` + `skeletonizer` + `lottie` (no Material) |
 | **Native Bridge** | `image_picker`, `url_launcher` |
 
 ---
@@ -317,7 +317,7 @@ dart run build_runner build --force-jit --delete-conflicting-outputs
 | `provider` | ^6.1.5+1 | InheritedWidget helper |
 | `google_fonts` | ^8.0.2 | Typography |
 | `iconsax_latest` | ^1.0.0 | Icon set |
-| `shimmer` | ^3.0.0 | Loading skeleton |
+| ~~`shimmer`~~ `skeletonizer` | ~~^3.0.0~~ ^1.4.0 | ~~Loading skeleton~~ Skeleton loading (ADR Skeletonizer — shimmer DEPRECATED) |
 | `lottie` | ^3.3.1 | Lottie animation |
 | `smooth_page_indicator` | ^2.0.1 | Onboarding page indicator |
 | `cached_network_image` | ^3.4.1 | Image cache |

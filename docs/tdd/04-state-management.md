@@ -106,12 +106,43 @@ class FeatureError extends FeatureState {
 }
 ```
 
+### Skeletonizer Loading Pattern (WAJIB — ADR Skeletonizer)
+
+Setiap `Loading` state HARUS menggunakan `Skeletonizer` untuk me-reuse production widget:
+
+```dart
+// ✅ WAJIB: Skeletonizer dengan reuse production widget
+class BannerWidget extends StatelessWidget {
+  const BannerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BannerCubit, BannerState>(
+      builder: (context, state) => switch (state) {
+        BannerInitial() => const SizedBox.shrink(),
+        BannerLoading() => Skeletonizer(
+            enabled: true,
+            child: BannerCarousel(banners: mockBanners), // reuse production widget
+          ),
+        BannerLoaded(:final banners) => BannerCarousel(banners: banners),
+        BannerError(:final message) => ErrorPlaceholder(message: message),
+      },
+    );
+  }
+}
+```
+
+**Aturan:**
+- `Skeletonizer(enabled: true, child: productionWidget)` — jangan buat `BannerSkeleton` widget terpisah.
+- Gunakan data dummy/mock untuk `child` saat loading (skeletonizer otomatis mengganti konten dengan placeholder).
+- Pengecualian hanya diizinkan dengan komentar `/* justify: cannot use skeletonizer because ... */`.
+
 ### Standar State Naming
 
 | Nama State | Makna |
 |---|---|
 | `{Nama}Initial` | Default, belum ada interaksi |
-| `{Nama}Loading` | Sedang memuat data (tampilkan shimmer/loader) |
+| `{Nama}Loading` | Sedang memuat data (tampilkan Skeletonizer loader — reuse production widget via `Skeletonizer(enabled: true, child: ...)`) |
 | `{Nama}Loaded` | Data tersedia (tampilkan konten) |
 | `{Nama}Error` | Gagal (tampilkan error + retry) |
 | `{Nama}Success` | Operasi berhasil (tampilkan konfirmasi) |
