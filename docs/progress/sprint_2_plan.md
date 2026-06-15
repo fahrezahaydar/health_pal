@@ -55,7 +55,7 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| C1 | Skeletonizer loader per section (reuse production widgets) | 4h | ✅ Done | `<this-commit>` | Wrap 4 sections (Greeting, Banner, Upcoming, Categories) dengan `Skeletonizer(enabled: state is *Loading, child: ...)`. Mock const data (non-empty) inline di `_HomePageBody` agar production widget tetap render shape. SearchBarHome skip (static, no loading state). `flutter analyze` 0 issues. |
+| C1 | Skeletonizer loader per section (reuse production widgets) | 4h | ✅ Done | `9339739` | Wrap 4 sections (Greeting, Banner, Upcoming, Categories) dengan `Skeletonizer(enabled: state is *Loading, child: ...)`. Mock const data (non-empty) inline di `_HomePageBody` agar production widget tetap render shape. SearchBarHome skip (static, no loading state). `flutter analyze` 0 issues. |
 | C2 | Pull-to-refresh RefreshIndicator | 2h | ⬜ Not Started | — | — |
 | C3 | Nearby Medical Centers section | 16h | ⬜ Not Started | — | — |
 | C4 | Profile photo di Greeting | 2h | ⬜ Not Started | — | — |
