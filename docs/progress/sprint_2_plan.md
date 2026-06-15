@@ -14,6 +14,96 @@
 
 ---
 
+## 📊 Sprint 2 Progress Tracker
+
+**Last Updated:** 16 Juni 2026 (Day 1)
+**Overall:** 1/30 tasks (3%)
+
+### Pool A — Critical Bugs
+
+| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
+|------|-----------|---------|--------|--------|---------|
+| A1 | Search Bar widget | 4h | 🔄 In Progress (final commit pending) | — | Stateless widget, tap → /doctor/search, integrated to HomePage below GreetingSection |
+| A2 | Fix getUpcoming order | 1h | ⬜ Not Started | — | — |
+| A3 | Fix slot date/time typing | 3h | ⬜ Not Started | — | — |
+| A4 | Fix HomePage SupabaseClient import | 1h | ⬜ Not Started | — | — |
+| A5 | Fix BookingStatus.firstWhere unsafe | 1h | ⬜ Not Started | — | — |
+| A6 | Fix route path :bookingId → :appointmentId | 0.25h | ⬜ Not Started | — | — |
+| A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ⬜ Not Started | — | — |
+| A8 | Notification count from API | 2h | ⬜ Not Started | — | — |
+| A9 | Empty state CTA copy fix | 0.1h | ⬜ Not Started | — | — |
+| A10 | Postgres delete_user() RPC migration | 1h | ⬜ Not Started | — | — |
+
+**Pool A Progress: 1/10 done (10%)**
+
+### Pool B — Home Refactor
+
+| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
+|------|-----------|---------|--------|--------|---------|
+| B1 | Refactor Home Models ke @freezed | 4h | ⬜ Not Started | — | — |
+| B2 | HomeLocalDataSource @lazySingleton | 0.1h | ⬜ Not Started | — | — |
+| B3 | Result.Failure.code ke enum FailureCode | 2h | ⬜ Not Started | — | — |
+| B4 | Cache user profile | 1h | ⬜ Not Started | — | — |
+| B5 | Use CacheService generic di Home | 2h | ⬜ Not Started | — | — |
+| B6 | Cache invalidation hook | 0.5h | ⬜ Not Started | — | — |
+| B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
+| B8 | Implement withRetry | 0.5h | ⬜ Not Started | — | — |
+
+**Pool B Progress: 0/8 done (0%)**
+
+### Pool C — Home UX Polish
+
+| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
+|------|-----------|---------|--------|--------|---------|
+| C1 | Skeleton/shimmer loader per section | 4h | ⬜ Not Started | — | — |
+| C2 | Pull-to-refresh RefreshIndicator | 2h | ⬜ Not Started | — | — |
+| C3 | Nearby Medical Centers section | 16h | ⬜ Not Started | — | — |
+| C4 | Profile photo di Greeting | 2h | ⬜ Not Started | — | — |
+| C5 | Quick Categories icon mapping | 2h | ⬜ Not Started | — | — |
+| C6 | Error UI untuk *Error states | 3h | ⬜ Not Started | — | — |
+
+**Pool C Progress: 0/6 done (0%)**
+
+### Pool D — Cross-Feature Audit
+
+| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
+|------|-----------|---------|--------|--------|---------|
+| D1 | Audit Doctor page | 2h | ⬜ Not Started | — | — |
+| D2 | Audit Booking flow | 2h | ⬜ Not Started | — | — |
+| D3 | Audit Loc tab | 1.5h | ⬜ Not Started | — | — |
+| D4 | Audit Profile + Settings | 2h | ⬜ Not Started | — | — |
+| D5 | Audit Onboarding + Auth + FCM | 2.5h | ⬜ Not Started | — | — |
+| D6 | Sprint 2 audit summary | 1h | ⬜ Not Started | — | — |
+| D7 | Icon reference table docs/reference/icons.md | 1h | ⬜ Not Started | — | — |
+
+**Pool D Progress: 0/7 done (0%)**
+
+### Pool E — Optional
+
+| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
+|------|-----------|---------|--------|--------|---------|
+| E1 | Fix BannerCarousel addPostFrameCallback | 1h | ⬜ Not Started | — | — |
+| E2 | Validate banner.actionUrl scheme | 1h | ⬜ Not Started | — | — |
+| E3 | Fix hardcoded path di app_router.dart | 0.25h | ⬜ Not Started | — | — |
+| E4 | Remove home_bloc_index.dart jika redundant | 0.25h | ⬜ Not Started | — | — |
+| E5 | Add notif_reminder_enabled ke UserModel | 1h | ⬜ Not Started | — | — |
+
+**Pool E Progress: 0/5 done (0%)**
+
+**Overall Total: 1/30 done (3%)** · **Total estimasi: 95 jam** · **Estimasi selesai: ~4 jam (A1)**
+
+### Status Legend
+
+| Symbol | Meaning |
+|---|---|
+| ⬜ | Not Started |
+| 🔄 | In Progress |
+| ✅ | Done |
+| ❌ | Blocked |
+| ⏭️ | Deferred |
+
+---
+
 ## Daftar Isi
 
 1. [Verdict & Sprint Theme](#1-verdict--sprint-theme)

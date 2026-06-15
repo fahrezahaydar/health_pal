@@ -19,6 +19,7 @@ import '../bloc/upcoming/upcoming_state.dart';
 import '../widget/banner_carousel.dart';
 import '../widget/greeting_section.dart';
 import '../widget/quick_categories.dart';
+import '../widget/search_bar_home.dart';
 import '../widget/upcoming_card.dart';
 
 class HomePage extends StatelessWidget {
@@ -89,6 +90,9 @@ class _HomePageBody extends StatelessWidget {
                   return GreetingSection(nickname: nickname);
                 },
               ),
+              // Sprint 2 — A1: Search Bar widget (stateless, tap → doctor search)
+              // Per Wireframe 06 §2 + PRD §6.2 + home_page_audit.md §13.1 K1
+              const SearchBarHome(),
               BlocSelector<BannerCubit, BannerState, List<BannerEntity>>(
                 selector: (state) => switch (state) {
                   BannerLoaded(:final banners) => banners,
