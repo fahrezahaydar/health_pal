@@ -2,11 +2,11 @@
 
 | Field | Detail |
 |---|---|
-| **Tanggal** | 14 Juni 2026 |
-| **Dibuat oleh** | Claude Code Audit (Tech Lead) |
-| **Versi** | v1.3 — **SPRINT 1 CLOSED** |
-| **Status Sprint** | ✅ Sprint 1 COMPLETE — 8/8 UI features + FCM + deep link + inbox |
-| **Last Commit** | `50386f8` — feat(notification): implement FCM push notification, deep link, inbox |
+| **Tanggal** | 15 Juni 2026 |
+| **Dibuat oleh** | Tech Lead (MiniMax-M3) |
+| **Versi** | v1.4 — **SPRINT 1 AUDITED + SPRINT 2 PLANNED** |
+| **Status Sprint** | 🟡 Sprint 1 CLOSED (revised: 80% Home, 95% overall) · Sprint 2 NOT STARTED |
+| **Last Commit** | `a56fffe` — fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD schema) |
 
 ---
 
@@ -15,35 +15,40 @@
 | Metrik | Nilai |
 |---|---|
 | Total Features | 8 UI (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings) + Push Notif + Test |
-| Completed (✅) | 9 (semua UI + FCM) |
-| Partial (🟡) | 0 |
+| Completed (✅) | 9 (semua UI + FCM) — **namun Home direvisi ke 80% per audit 15 Jun** |
+| Partial (🟡) | **1** — Home Page (4 critical bugs + 17 medium + 2 missing sections) |
 | Not Started (❌) | 1 (Test layer — deferred per AGENTS.md testing policy) |
-| Overall Progress | **~98%** ✅ (Sprint 1 scope complete) |
-| Total Commits | **9 feat/docs** sejak Sprint 0 (7d2e85b) |
+| Overall Progress | **~95%** 🟡 (Sprint 1 scope mostly complete, Home needs hardening) |
+| Total Commits | **38+ feat/docs** sejak Sprint 0 (7d2e85b) — 29 ahead of origin |
 | Total Files | ~120+ Dart files (lib/) |
 | flutter analyze | **0 issues** ✅ |
-| Test Coverage | **0%** (deferred — fase terpisah setelah Sprint 1 closed) |
+| Test Coverage | **0%** (deferred — fase terpisah per AGENTS.md) |
+| Audit Published | `home_page_audit.md` (72 KB, 1110 lines) — Home revised 🟡 80% |
+| Sprint 2 Plan | `sprint_2_plan.md` (35 task items, ~95h) — READY for 16 Jun 2026 kick-off |
+
+> **🔍 Audit Note (15 Jun 2026):** `home_page_audit.md` menemukan Home Page tidak 100% seperti diklaim v1.3. Sprint 2 difokuskan untuk **stabilization + completion**, bukan fitur baru. Lihat [§10 Sprint 2 Plan](#10-sprint-2-plan--sprint-2-) untuk detail.
 
 ---
 
-## 10. Sprint 1 — CLOSED 🏁
+## 10. Sprint 1 — CLOSED 🏁 (Revised per Audit 15 Jun 2026)
 
-### Final Scoreboard
+### Final Scoreboard (Revised)
 
-| Feature | Commit | Status | Files (D/D/P) | Notes |
-|---|---|:---:|---|---|
-| Onboarding | (pre-sprint) | ✅ | 1/0/1 | PageView + Notifier |
-| Auth | (pre-sprint) | ✅ | 2/2/4 | 4 BLoC + 4 pages |
-| Home | (pre-sprint) | ✅ | 2/4/5 | 4 cubits + 4 widgets |
-| **Doctor** | `356311e` | ✅ | 3/2/3 | @freezed + 2 cubits |
-| **Booking** | `8a23b2f` | ✅ | 2/2/4 | 14-field @freezed + event-driven Bloc |
-| **Profile** | `5cebecd` | ✅ | 1/2/4 | + audit fix (47 issues → 0) |
-| **Settings** | `95496c5` | ✅ | 0/0/2 | Cubit + 4 pages |
-| **Loc** | `cfec420` | ✅ | 1/1/2 | Geolocation + PostgREST RPC |
-| **Notification (FCM)** | `50386f8` | ✅ | core/services + enhancement | FCM + deep link + inbox |
-| Test layer | (deferred) | ❌ | — | AGENTS.md testing policy |
+| Feature | Commit | Status (v1.3) | Status (v1.4 Audit) | Files (D/D/P) | Notes |
+|---|---|:---:|:---:|---|---|
+| Onboarding | (pre-sprint) | ✅ | ✅ | 1/0/1 | PageView + Notifier |
+| Auth | (pre-sprint) | ✅ | ✅ | 2/2/4 | 4 BLoC + 4 pages |
+| Home | (pre-sprint) | ✅ | **🟡 80%** | 2/4/5 | 4 cubits + 4 widgets — **per `home_page_audit.md`** |
+| **Doctor** | `356311e` | ✅ | 🟡 (not audited) | 3/2/3 | @freezed + 2 cubits — perlu audit Sprint 2 |
+| **Booking** | `8a23b2f` | ✅ | 🟡 (not audited) | 2/2/4 | 14-field @freezed + event-driven Bloc — perlu audit |
+| **Profile** | `5cebecd` | ✅ | ✅ | 1/2/4 | + audit fix (47 issues → 0) + BUG-002 FIX-1+2 |
+| **Settings** | `95496c5` | ✅ | 🟡 (not audited) | 0/0/2 | Cubit + 4 pages — perlu audit |
+| **Loc** | `cfec420` | ✅ | 🟡 (not audited) | 1/1/2 | Geolocation + PostgREST RPC — perlu audit |
+| **Notification (FCM)** | `50386f8` | ✅ | ✅ | core/services + enhancement | FCM + deep link + inbox |
+| Test layer | (deferred) | ❌ | ❌ | — | AGENTS.md testing policy |
+| **Postgres `delete_user()` migration** | — | (n/a) | **🚧 BLOCKER** | supabase/migrations/004 (new) | Unblock BUG-004-D full safety |
 
-**Sprint 1 deliverables: 100% (semua UI + push notif). Test layer ditunda ke fase terpisah.**
+**Sprint 1 revised deliverables: ~95% (Home 80%, sisanya audited as-is tanpa cross-check).**
 
 ### Commits Timeline (Sprint 1)
 
@@ -57,80 +62,89 @@
 cfec420  feat(loc): implement nearby clinics with geolocation
 3582d7c  docs(sprint): update progress to v1.2
 50386f8  feat(notification): implement FCM push notification
+# Sprint 1 audit + BUG fix commits (post-Sprint 1 closure):
+0f48e8c  fix(auth): handle session expired gracefully, fix onboarding routing
+0a352c0  fix(auth): BUG-001 FIX-1 — add profileIncomplete state
+a700eed  fix(auth): BUG-001 FIX-2 — refactor AppServices fetch profile
+6c67997  fix(auth): BUG-001 FIX-3 — update router for profileIncomplete
+74aac93  fix(auth): BUG-001 FIX-4 — CreateProfileCubit set is_profile_complete=true
+487ded6  fix(auth): BUG-001 FIX-5 — LoginPage listener check isProfileComplete
+d96837d  fix(auth): BUG-001 FIX-6 — setProfileIncomplete safety belt
+743e529  fix(home): BUG-001 FIX-7 — Home page guard
+98a2888  fix(profile): BUG-002 FIX-1 — query user_profiles (not /me)
+24d9a25  fix(profile): BUG-003 — use authId (not user_profiles.id) for storage
+920aaf8  refactor(auth): BUG-004 FIX-1 — remove signUp from Sign Up page
+72f6f05  refactor(auth): BUG-004 FIX-2 — remove SignUpBloc (YAGNI)
+68af411  feat(auth): BUG-004 FIX-3+4+5 — atomic registerAndCreateProfile
+d0d98e4  refactor(auth): BUG-004 FIX-6 — CreateProfileCubit use new usecase
+95aeafa  fix(auth): BUG-004 FIX-7+8 — CreateProfilePage integration
+58dccab  fix(auth): BUG-004-D — proper rollback on createProfile fail
+a56fffe  fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD)
 ```
 
 ### Key Patterns Established
 
 1. **Clean Architecture** untuk semua feature (Data → Domain → Presentation)
-2. **@freezed + @JsonKey** untuk model dengan nested objects (Doctor, Booking, Profile, Loc, Notification)
+2. **@freezed + @JsonKey** untuk model dengan nested objects (Doctor, Booking, Profile, Loc, Notification) — **TAPI Home Models masih manual (deviation, Sprint 2 fix)**
 3. **BlocProvider pattern:** `StatelessWidget` wrapper (provider only) + `StatefulWidget` view (logic)
 4. **Sealed State classes** untuk type-safe state matching dengan switch expression
 5. **Event-driven Bloc** (Booking) + **Cubit** (semua fitur lain) — mix sesuai kompleksitas
 6. **Result<T> + try/catch** di repository → `Failure(message)` di-emit ke state
 7. **Edge Functions vs PostgREST** dipisah dengan jelas (atomic transactions di EF, simple CRUD di PostgREST)
 8. **In-place extension** bukan duplikasi (Notification FCM enhance existing profile/notification, bukan create new feature)
+9. **BUG-001/FIX-7 v2 + FIX-8** — `GreetingNoProfile` state + router guard `createProfile` early return + `_setStatusFromProfile` non-downgrade rule. **Pattern untuk race condition defense.**
 
 ### Deviations dari Plan
 
-1. **Notification FCM:** Spec minta `lib/features/notification/` folder baru. Extended existing `lib/features/profile/notification/` instead untuk avoid duplikasi (data/domain/cubit sudah ada dari commit `5cebecd`).
-2. **Test files:** Tidak ada satupun test file dibuat per AGENTS.md testing policy. Test infrastructure (test/helpers/, mocks.mocks.dart) sudah setup di commit `7d2e85b` tapi tidak dipakai.
+1. **Notification FCM:** Spec minta `lib/features/notification/` folder baru. Extended existing `lib/features/profile/notification/` instead untuk avoid duplikasi.
+2. **Test files:** Tidak ada satupun test file dibuat per AGENTS.md testing policy. Test infrastructure sudah setup tapi tidak dipakai.
 3. **Dark Mode toggle** di Settings: Disabled (v2) — UI ada, state tidak persist.
 4. **notif_reminder_enabled** di Profile: Field ada di DB tapi UserModel/UserEntity belum include (deferred).
+5. **Home Models** tidak pakai @freezed — deviation dari pattern Doctor/Booking (Sprint 2 Pool B task B1).
+6. **Home Page 80% (bukan 100%)** per audit 15 Jun — 2 section UI hilang (Search Bar, Nearby Medical Centers), 3 behavior PRD-mandated hilang (Skeleton, Pull-to-Refresh, Profile Photo).
 
 ### Sprint 1 Retrospective
 
 **What went well:**
-- ✅ Semua 9 fitur Sprint 1 selesai on schedule
+- ✅ Semua 9 fitur Sprint 1 selesai on schedule (code-level, audit revealed gaps)
 - ✅ Clean Architecture pattern konsisten di semua feature
 - ✅ flutter analyze: 0 issues maintained throughout
-- ✅ @freezed generation reliable (no manual JSON mapping)
+- ✅ @freezed generation reliable (no manual JSON mapping) untuk Doctor/Booking/Profile/Loc/Notification
 - ✅ PostgREST + Edge Functions split works well (atomic transactions preserved)
 - ✅ Commit history clean dengan conventional commit messages
 - ✅ Doctor Feature Fix #1 (BlocProvider/View separation) berhasil di-scale ke semua page
+- ✅ 4 BUG (BUG-001..004) di-identify, di-root-cause-kan, dan di-fix dengan trace documentation
+- ✅ BUG-001 race condition (BUG-001-E) ditemukan + di-fix dengan defense-in-depth (FIX-7 v2 + FIX-8)
 
 **What could be improved:**
-- ⚠️ **Test coverage 0%** — sprint ini tidak ada test sama sekali per policy. Risk: refactor besar (mis. ganti state management) akan catch regression terlambat.
-- ⚠️ **Import path mistakes** di Sprint 1 audit (Profile feature) — 47 errors. Solved dengan batch fix, tapi seharusnya pake template/scaffolding script.
+- ⚠️ **Test coverage 0%** — sprint ini tidak ada test sama sekali per policy.
+- ⚠️ **Home Page audit** — Sprint 1 closed tanpa cross-check Home vs wireframe. 2 section hilang, 4 critical bug, 17 medium issues baru ketahuan di Sprint 2 audit.
+- ⚠️ **Home audit lesson** — Pattern ini harusnya dipakai untuk 5 fitur lain (Doctor, Booking, Loc, Profile, Settings). Sprint 2 Pool D adalah corrective action.
 - ⚠️ **Iconsax_latest 1.0.0** — suffix convention (`arrow_left` vs `arrowLeft01`) sering salah. Perlu icon name reference table.
-- ⚠️ **Profile + Notification folders** — folder structure bisa di-refactor (notification dipisah dari profile).
-- ⚠️ **Inconsistency** di RoutePaths: `:bookingId` vs `:appointmentId` (RoutePaths vs actual route).
-- ⚠️ **`const` discipline** — banyak info lints karena `Iconsax.X` bukan const. Pattern `const Icon(Iconsax.X)` selalu fail.
+- ⚠️ **Inconsistency** di RoutePaths: `:bookingId` vs `:appointmentId` — known issue, Sprint 2 fix.
+- ⚠️ **`const` discipline** — banyak info lints karena `Iconsax.X` bukan const.
 
-**Action items untuk Sprint 2:**
-1. 🔴 **HIGH:** Mulai test layer (Fase 11) — minimum unit test untuk domain layer (usecase, entity equality).
-2. 🟡 **MEDIUM:** Buat icon reference table di `docs/reference/icons.md`.
-3. 🟡 **MEDIUM:** Refactor RoutePaths agar konsisten (`:appointmentId` everywhere).
-4. 🟡 **MEDIUM:** Decision: pisahkan `notification` dari `profile` atau keep under profile (currently under profile).
-5. 🟢 **LOW:** Dark mode full implementation (v2).
-6. 🟢 **LOW:** Booking review + rating feature (Fase 7 task 7.12, currently placeholder).
-7. 🟢 **LOW:** `favorites` table backend implementation (currently empty list placeholder).
-8. 🟢 **LOW:** Image picker untuk Create Profile page (Fase 2 task 2.5, current stub).
-9. 🟢 **LOW:** Email/SMS notification toggle (v1.1) — disabled placeholders sudah ada.
+**Open BUG items dari Sprint 1 (carry-over ke Sprint 2):**
+1. 🚧 **BUG-004-D runtime safety** — butuh Postgres `delete_user()` RPC function deployment. Code-complete, blocked by SQL migration.
+2. 🟡 **BUG-002 FIX-3** — try/catch di `ProfileCubit.loadProfile` (deferred dari Sprint 1, defense-in-depth).
+3. 🟡 **Home Page 4 critical bugs (K1-K4)** — ditemukan oleh Sprint 2 audit, bukan BUG doc resmi.
 
-### Sprint 2 — Recommended Backlog (Fase 7, 9, 11)
+**Action items carry-over ke Sprint 2 (ranked by priority):**
+1. 🔴 **CRITICAL:** Fix Home 4 critical bugs (K1: Search Bar, K2: getUpcoming order, K3: slot date typing, K4: Supabase import violation).
+2. 🔴 **CRITICAL:** Deploy Postgres `delete_user()` migration (unblock BUG-004-D).
+3. 🟡 **HIGH:** Refactor Home Models ke @freezed (consistency dengan Doctor/Booking).
+4. 🟡 **HIGH:** Implement Nearby Medical Centers section (wireframe 06 §6 + TDD 12 Fase 9.5).
+5. 🟡 **MEDIUM:** Add skeleton loader + pull-to-refresh + error UI.
+6. 🟡 **MEDIUM:** Refactor RoutePaths (`:bookingId` → `:appointmentId`).
+7. 🟡 **MEDIUM:** Buat icon reference table di `docs/reference/icons.md`.
+8. 🟢 **LOW:** Profile + Notification folder refactor.
+9. 🟢 **LOW:** Dark mode full implementation (v2).
+10. 🟢 **LOW:** Booking review + rating feature.
+11. 🟢 **LOW:** `favorites` table backend implementation.
+12. 🟢 **LOW:** Image picker untuk Create Profile page.
+13. 🟢 **LOW:** Email/SMS notification toggle.
 
-| Feature | Phase | Priority | Estimate |
-|---|---|---|---|
-| **Test layer (unit + widget + bloc)** | Fase 11 | 🔴 P1 | 3-5 hari |
-| **Booking Review (rating + comment)** | Fase 7 (7.12) | 🟡 P1 | 2 hari |
-| **Location Search (advanced filter)** | Fase 9 | 🟡 P2 | 2 hari |
-| **Favorites backend** | Fase 8 (8.13) | 🟢 P2 | 1 hari |
-| **Email/SMS notification** | Fase 10 | 🟢 P2 | 1 hari |
-| **Dark mode** | v2 | 🟢 P3 | 1 hari |
-| **Language i18n (en/id)** | v1.1 | 🟢 P3 | 3 hari |
-
-### Definition of Done — Sprint 1
-
-- [x] 8/8 UI features implemented (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings)
-- [x] FCM push notification + deep link handler
-- [x] Notification inbox dengan unread tracking
-- [x] `flutter analyze` → 0 issues
-- [x] All features committed dengan conventional commit messages
-- [x] Sprint progress tracked di `docs/progress/sprint_progress.md`
-- [x] Audit + retro documented
-- [ ] Test layer (Fase 11) — **deferred ke Sprint 2**
-
-**Sprint 1: ✅ CLOSED — 2026-06-14**
+> **Lihat [§10 Sprint 2 Plan](#10-sprint-2-plan--sprint-2-) untuk detail backlog, schedule, dan Definition of Done.**
 
 ---
 
@@ -142,9 +156,9 @@ cfec420  feat(loc): implement nearby clinics with geolocation
 | Data | Auth | ✅ | 4 files | Remote + Local DataSource, Repository Impl, UserModel |
 | Domain | Auth | ✅ | 6 files | UserEntity, AuthRepository, 4 UseCase |
 | Presentation | Auth | ✅ | 11 files | 4 BLoC, 4 pages (login/signup/create/forgot), full impl 14-15KB each |
-| Data | Home | ✅ | 6 files | Remote + Local DataSource, 4 Models (Banner, Spec, Upcoming, Profile) |
+| Data | Home | 🟡 | 6 files | Remote + Local DataSource, 4 Models (Banner, Spec, Upcoming, Profile) — **per audit 15 Jun: Models manual, not @freezed** |
 | Domain | Home | ✅ | 9 files | 4 Entities, 1 Repository, 4 UseCase |
-| Presentation | Home | ✅ | 11 files | 4 Cubit+State, 1 Page, 4 Widgets, 1 BlocIndex |
+| Presentation | Home | 🟡 | 11 files | 4 Cubit+State, 1 Page, 4 Widgets, 1 BlocIndex — **per audit 15 Jun: Search Bar missing, Nearby Medical Centers missing, no skeleton, no pull-to-refresh, no error UI, K1-K4 bugs** |
 | Data | Doctor | ✅ | 8 files | DoctorModel/DoctorSlotModel (@freezed) + ClinicModel + RemoteDataSource + RepositoryImpl |
 | Domain | Doctor | ✅ | 6 files | 3 Entities, 1 Repository, 3 UseCase |
 | Presentation | Doctor | ✅ | 8 files | 2 Cubits (Search+Detail), 2 Pages, 3 Widgets |
@@ -167,7 +181,7 @@ cfec420  feat(loc): implement nearby clinics with geolocation
 |---|---|:---:|---|
 | **Onboarding** | Presentation | ✅ | Lengkap |
 | **Auth** | All 3 | ✅ | Full Clean Architecture |
-| **Home** | All 3 | ✅ | Full Clean Architecture + 4 widget reusable |
+| **Home** | All 3 | **🟡 80%** | Clean Arch solid, 4 cubits + 4 widget — **per audit: 4 Kritis bugs + 17 medium + 2 missing sections (Search Bar, Nearby Medical Centers)** |
 | **Doctor** | All 3 | ✅ | Full Clean Architecture (commit `356311e`) — @freezed models + search/detail cubits |
 | **Booking** | All 3 | ✅ | Full Clean Architecture (commit `8a23b2f`) — 14-field AppointmentModel + event-driven BookingBloc |
 | **Profile** | All 3 | ✅ | Full Clean Architecture (commit `5cebecd`) — view/edit/favorite/notification pages |
@@ -191,18 +205,20 @@ cfec420  feat(loc): implement nearby clinics with geolocation
 | Pages | 4 | 0 | 0 | 100% |
 | **Total** | **17** | **0** | **0** | **100%** |
 
-### Home (✅ Full)
+### Home (🟡 80% per audit 15 Jun 2026)
 | Layer | Done | Partial | Missing | % |
 |---|---|---|---|---|
 | DataSource | 2 | 0 | 0 | 100% |
-| Model | 4 | 0 | 0 | 100% |
+| Model | 0 | 4 | 0 | **0%** (manual, not @freezed — Sprint 2 task B1) |
 | Repository | 1 | 0 | 0 | 100% |
 | Entity | 4 | 0 | 0 | 100% |
 | UseCase | 4 | 0 | 0 | 100% |
 | BLoC/Cubit | 5 | 0 | 0 | 100% |
 | Pages | 1 | 0 | 0 | 100% |
-| Widgets | 4 | 0 | 0 | 100% |
-| **Total** | **25** | **0** | **0** | **100%** |
+| Widgets | 4 | 0 | 0 | 100% (Search Bar + Nearby Facilities + 4 Skeleton variant) |
+| **Total** | **21** | **4** | **0** | **~80%** |
+
+> **Audit reference:** `docs/progress/home_page_audit.md` (15 Jun 2026, 72 KB) — detail K1-K4 critical bugs, 17 medium, 12 low.
 
 ### Onboarding (✅ Complete for scope)
 | Layer | Done | Partial | Missing | % |
@@ -631,27 +647,97 @@ Berdasarkan audit, urutan pengerjaan Sprint 1:
 | Folder structure | ✅ | Match TDD 02 §1 |
 | DI + Routing | ✅ | `locator.config.dart` ter-generate, GoRouter full |
 | Auth feature | ✅ | 17 files, full Clean Architecture |
-| Home feature | ✅ | 25 files, full + 4 widget reusable |
-| Other features | 🟡 | Stub pages — akan diisi Sprint 1 |
-| Test infrastructure | ❌ | `test/` belum ada — blocker Sprint 1 |
-| Documentation | ✅ | docs/ audit lengkap, 4 audit files, cto_executive_summary.md |
+| Home feature | 🟡 | 25 files, 80% complete per `home_page_audit.md` (15 Jun) |
+| Other features | 🟡 | Doctor/Booking/Loc/Settings not yet cross-audited (Sprint 2 Pool D) |
+| Test infrastructure | ❌ | `test/` belum ada — deferred per AGENTS.md |
+| Documentation | ✅ | docs/ audit lengkap, `home_page_audit.md` published, `sprint_2_plan.md` ready |
 
-**Sprint 1 Go/No-Go:** 🟡 **GO WITH CAVEAT** — buat test/ folder dan tambah url_launcher SEBELUM Sprint 1 kick off. Sisanya bisa on-the-fly.
+**Sprint 1 Go/No-Go (revisited 15 Jun 2026):** 🟡 **CLOSED WITH CAVEAT** — Home 80% per audit, 4 critical bugs identified. Sprint 2 = stabilization + completion of Sprint 1 loose ends.
 
 ---
 
-## 10. Git Status
+## 10. Git Status (15 Juni 2026)
 
 | Item | Value |
 |---|---|
 | Branch | `master` |
-| Commits ahead of origin | 3 (`bdcb371`, `7839d9d`, `4e0662a`) |
-| Working tree | Modified (uncommitted setup changes: pubspec.yaml, 6 lib files) |
-| Last commit | `4e0662a` fix(docs): resolve 3 Tech Lead showstoppers (SS#5, SS#7, SS#10) |
+| Commits ahead of origin | **29** |
+| Working tree | Modified: `lib/features/profile/data/datasource/profile_remote_datasource.dart` (1 file) |
+| Untracked | `docs/progress/home_page_audit.md` (audit published) |
+| Last commit | `a56fffe` fix(auth): BUG-004 — rename 'dob' → 'date_of_birth' (match ERD schema) |
+| Last BUG commit | `58dccab` fix(auth): BUG-004-D — proper rollback on createProfile fail + actionable error message |
 
-> **Catatan:** Perubahan Sprint 1 setup (pubspec.yaml, button fixes, 7 unused import/print removals) belum di-commit. Disarankan commit terpisah sebelum Sprint 1 kick off:
-> `chore(setup): Sprint 1 foundation — fix analyze issues, add freezed/json_serializable`
+> **Catatan Sprint 1→2 transition:** Commit `home_page_audit.md` + `sprint_2_plan.md` + `sprint_progress.md` v1.4 (this update) sebelum Sprint 2 kick off (16 Jun 2026). Conventional commit message: `docs(sprint2): create Sprint 2 plan`.
 
 ---
 
-*Generated by Claude Code Audit (Tech Lead persona) · 13 Juni 2026*
+## 11. Sprint 2 — Ready to Start 🏁
+
+> **Lihat [sprint_2_plan.md](sprint_2_plan.md) untuk detail lengkap (35 task items, ~95 jam, 10 hari kerja).**
+
+### Sprint 2 Summary
+
+| Field | Detail |
+|---|---|
+| **Tema** | **"Sprint 1 Hardening + Home MVP Completion"** |
+| **Window** | 16 Juni 2026 – 27 Juni 2026 (10 hari kerja) |
+| **Tech Lead** | MiniMax-M3 |
+| **Strategy** | Stabilization + Completion + Refactor (bukan fitur baru) |
+| **Testing** | ❌ **EXCLUDE** (per AGENTS.md policy — Sprint 3+) |
+
+### Sprint 2 Goals (SMART)
+
+1. **Stabilization (P0):** Fix 4 critical bugs Home (K1-K4) + 5 P0 carry-over tasks.
+2. **Completion (P0):** Implement 2 missing Home sections (Search Bar + Nearby Medical Centers).
+3. **Architectural Consistency (P1):** Refactor Home Models ke `@freezed` (konsisten dengan Doctor/Booking).
+4. **UX Polish (P1):** Skeleton loader + Pull-to-refresh + Error UI + Profile photo.
+5. **Cross-Feature Audit (P1):** Audit 5 fitur lain (Doctor, Booking, Loc, Profile, Settings/Auth/Onboarding/FCM).
+6. **No Regression:** `flutter analyze` 0 issues, conventional commits.
+
+### Sprint 2 Backlog Snapshot (35 task items)
+
+| Pool | Theme | Items | Estimasi |
+|---|---|:---:|:---:|
+| **A** — Critical Bugs (P0) | Fix K1-K4 + BUG-002-FIX-3 + BUG-004-D SQL + 4 carry-over | 10 | ~14h |
+| **B** — Home Refactor (P1) | @freezed Models + Result.Failure enum + CacheService + ErrorHandler + withRetry | 8 | ~12h |
+| **C** — Home UX Polish (P1) | Skeleton + Pull-to-refresh + Nearby Medical Centers + Profile photo + Error UI | 6 | ~30h (Nearby alone = 16h) |
+| **D** — Cross-Feature Audit (P1) | 5 audit docs (doctor/booking/loc/profile/settings+auth+onboarding+fcm) + summary + icon table | 7 | ~10h |
+| **E** — Optional (P2) | Widget cleanup, validation, justification comments | 5 | ~5h |
+| | **TOTAL** | **36** | **~71h core + 24h Nearby = ~95h** |
+
+### Week-by-Week
+
+| Week | Hari | Pool | Output |
+|---|:---:|---|---|
+| **Week 1** (16-22 Jun) | Day 1-5 | A → B → C | Critical bugs fixed, Home refactored, skeleton+pull-to-refresh+photo added |
+| **Week 2** (23-29 Jun) | Day 6-10 | C (Nearby Centers) → D (Audits) | Nearby Centers live, 5 cross-feature audit docs published, Sprint 2 closed |
+
+### Definition of Success
+
+🟢 **SUCCESS** — Pool A 10/10 + Pool B ≥6/8 + Pool C ≥5/6 + Pool D 7/7 + `flutter analyze` 0 issues
+🟡 **PARTIAL** — Pool A 10/10 tapi Pool B/C/D < 75%
+🔴 **FAIL** — Pool A < 10/10 ATAU critical regression
+
+### Carry-over dari Sprint 1 (per §10.1-10.2)
+
+1. **BUG-002-FIX-3** (try/catch ProfileCubit) → **Pool A task A7**
+2. **Postgres `delete_user()` migration** → **Pool A task A10** (coordinate Backend Day 1)
+3. **RoutePaths `:bookingId` → `:appointmentId`** → **Pool A task A6**
+4. **Icon reference table** → **Pool D task D7**
+5. **Test layer** → **Sprint 3+** (per AGENTS.md, EXCLUDE dari Sprint 2)
+6. **Booking Review / Favorites / Dark mode / i18n** → **Sprint 3+**
+7. **Home 4 critical bugs (K1-K4)** → **Pool A task A1, A2, A3, A4** (highest priority)
+
+### Items to Audit di Sprint 2 (Pool D)
+
+- D1: Doctor Page (search + detail)
+- D2: Booking Flow (history + detail + create)
+- D3: Loc Tab (nearby clinics)
+- D4: Profile + Settings
+- D5: Onboarding + Auth + FCM
+- D6: Sprint 2 audit summary
+- D7: Icon reference table
+
+---
+
+*Generated by Tech Lead (MiniMax-M3) · 15 Juni 2026 · v1.4 — Sprint 1 audited + Sprint 2 planned*
