@@ -26,6 +26,7 @@ import '../widget/nearby_facilities.dart';
 import '../widget/quick_categories.dart';
 import '../widget/search_bar_home.dart';
 import '../widget/upcoming_card.dart';
+import '../../../../widgets/loader/error_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -200,30 +201,37 @@ class _HomePageBodyState extends State<_HomePageBody> {
                     };
                     return BlocBuilder<GreetingCubit, GreetingState>(
                       builder: (context, greetingState) {
-                        final isLoading = greetingState is GreetingLoading;
-                        // Sprint 2 — C4: pass avatarUrl from GreetingState
-                        // to GreetingSection. avatarUrl null saat loading
-                        // (Skeletonizer can't bone-ify Image.network — it
-                        // just shows the placeholder container), non-null
-                        // saat loaded. BlocSelector replaced with direct
-                        // state read to avoid duplicating the selector for
-                        // avatarUrl (previously selected only nickname).
-                        final nickname = isLoading
-                            ? 'Halo'
-                            : (greetingState is GreetingLoaded
-                                ? greetingState.nickname
-                                : '');
-                        final avatarUrl = greetingState is GreetingLoaded
-                            ? greetingState.avatarUrl
-                            : null;
-                        return Skeletonizer(
-                          enabled: isLoading,
-                          child: GreetingSection(
-                            nickname: nickname,
-                            avatarUrl: avatarUrl,
-                            unreadCount: unread,
-                          ),
-                        );
+                        return switch (greetingState) {
+                          GreetingLoading() => Skeletonizer(
+                              enabled: true,
+                              child: GreetingSection(
+                                nickname: 'Halo',
+                                unreadCount: unread,
+                              ),
+                            ),
+                          GreetingLoaded(:final nickname, :final avatarUrl) =>
+                            GreetingSection(
+                              nickname: nickname,
+                              avatarUrl: avatarUrl,
+                              unreadCount: unread,
+                            ),
+                          GreetingError(:final message) => ErrorSection(
+                              message: message,
+                              onRetry: () {
+                                final authId = GetIt.instance<AppServices>()
+                                        .currentAuthId ??
+                                    '';
+                                if (authId.isNotEmpty) {
+                                  context
+                                      .read<GreetingCubit>()
+                                      .loadProfile(authId);
+                                }
+                              },
+                            ),
+                          // GreetingNoProfile — handled by BlocListener
+                          // (redirect to CreateProfile). No UI needed here.
+                          _ => const SizedBox.shrink(),
+                        };
                       },
                     );
                   },
@@ -235,56 +243,69 @@ class _HomePageBodyState extends State<_HomePageBody> {
                 // static). Per AD-6 — skeletonizer HANYA untuk data-driven
                 // sections.
                 const SearchBarHome(),
-                BlocBuilder<BannerCubit, BannerState>(
-                  builder: (context, state) {
-                    final isLoading = state is BannerLoading;
-                    // Sprint 2 — C1: mock banners saat loading agar
-                    // BannerCarousel render 3 skeleton cards (default
-                    // empty list returns SizedBox.shrink per widget code,
-                    // no skeleton possible).
-                    final banners = isLoading
-                        ? _skeletonBanners
-                        : (state is BannerLoaded
-                            ? state.banners
-                            : const <BannerEntity>[]);
-                    return Skeletonizer(
-                      enabled: isLoading,
-                      child: BannerCarousel(banners: banners),
-                    );
-                  },
-                ),
+              BlocBuilder<BannerCubit, BannerState>(
+                builder: (context, state) {
+                  return switch (state) {
+                    BannerLoading() => const Skeletonizer(
+                        enabled: true,
+                        child: BannerCarousel(banners: _skeletonBanners),
+                      ),
+                    BannerLoaded(:final banners) =>
+                      BannerCarousel(banners: banners),
+                    BannerError(:final message) => ErrorSection(
+                        message: message,
+                        onRetry: () =>
+                            context.read<BannerCubit>().loadBanners(),
+                      ),
+                    _ => const SizedBox.shrink(),
+                  };
+                },
+              ),
                 const SizedBox(height: 24),
-                BlocBuilder<UpcomingCubit, UpcomingState>(
-                  builder: (context, state) {
-                    final isLoading = state is UpcomingLoading;
-                    // Sprint 2 — C1: mock upcoming saat loading agar
-                    // UpcomingCard render appointment-card layout (bukan
-                    // empty state) untuk Skeletonizer paint bones.
-                    final upcoming = isLoading
-                        ? _skeletonUpcoming
-                        : (state is UpcomingLoaded ? state.upcoming : null);
-                    return Skeletonizer(
-                      enabled: isLoading,
-                      child: UpcomingCard(upcoming: upcoming),
-                    );
-                  },
-                ),
+              BlocBuilder<UpcomingCubit, UpcomingState>(
+                builder: (context, state) {
+                  return switch (state) {
+                    UpcomingLoading() => const Skeletonizer(
+                        enabled: true,
+                        child: UpcomingCard(upcoming: _skeletonUpcoming),
+                      ),
+                    UpcomingLoaded(:final upcoming) =>
+                      UpcomingCard(upcoming: upcoming),
+                    UpcomingError(:final message) => ErrorSection(
+                        message: message,
+                        onRetry: () {
+                          final gs = context.read<GreetingCubit>().state;
+                          if (gs is GreetingLoaded) {
+                            context
+                                .read<UpcomingCubit>()
+                                .loadUpcoming(gs.profileId);
+                          }
+                        },
+                      ),
+                    _ => const UpcomingCard(upcoming: null),
+                  };
+                },
+              ),
               const SizedBox(height: 24),
               BlocBuilder<SpecializationCubit, SpecializationState>(
                 builder: (context, state) {
-                  final isLoading = state is SpecializationLoading;
-                  // Sprint 2 — C1: mock 8 specializations (2 rows × 4
-                  // columns per Wireframe 06 grid) saat loading agar
-                  // QuickCategories render grid skeleton.
-                  final specializations = isLoading
-                      ? _skeletonSpecializations
-                      : (state is SpecializationLoaded
-                          ? state.specializations
-                          : const <SpecializationEntity>[]);
-                  return Skeletonizer(
-                    enabled: isLoading,
-                    child: QuickCategories(specializations: specializations),
-                  );
+                  return switch (state) {
+                    SpecializationLoading() => const Skeletonizer(
+                        enabled: true,
+                        child: QuickCategories(
+                          specializations: _skeletonSpecializations,
+                        ),
+                      ),
+                    SpecializationLoaded(:final specializations) =>
+                      QuickCategories(specializations: specializations),
+                    SpecializationError(:final message) => ErrorSection(
+                        message: message,
+                        onRetry: () => context
+                            .read<SpecializationCubit>()
+                            .loadSpecializations(),
+                      ),
+                    _ => const SizedBox.shrink(),
+                  };
                 },
               ),
               // Sprint 2 — C3: Nearby Medical Centers section.
