@@ -22,15 +22,28 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit(this._getProfile, this._appServices)
     : super(const ProfileInitial());
 
+  /// Load profile dari repository.
+  ///
+  /// **Sprint 2 — A7 (BUG-002-FIX-3):** wrap dengan try/catch agar
+  /// unexpected exception (format error, null-pointer di mapper, dll)
+  /// tidak bikin cubit stuck di `ProfileLoading`. Selalu emit terminal
+  /// state (`ProfileLoaded` atau `ProfileError`).
   Future<void> loadProfile() async {
     emit(const ProfileLoading());
-    final result = await _getProfile();
-    switch (result) {
-      case Success<UserEntity>(:final data):
-        emit(ProfileLoaded(data));
-      case Failure(:final message):
-        debugPrint('ProfileCubit.loadProfile error: $message');
-        emit(ProfileError(message: message));
+    try {
+      final result = await _getProfile();
+      switch (result) {
+        case Success<UserEntity>(:final data):
+          emit(ProfileLoaded(data));
+        case Failure(:final message):
+          debugPrint('ProfileCubit.loadProfile error: $message');
+          emit(ProfileError(message: message));
+      }
+    } catch (e, stack) {
+      debugPrint('ProfileCubit.loadProfile unexpected: $e\n$stack');
+      emit(const ProfileError(
+        message: 'Terjadi kesalahan tak terduga. Silakan coba lagi.',
+      ));
     }
   }
 
