@@ -13,12 +13,14 @@ class MenuItemTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    required this.onTap,
+    this.onTap,
+    this.trailing,
   });
 
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,10 @@ class MenuItemTile extends StatelessWidget {
             Icon(icon, size: 20, color: AppTheme.grey700),
             const SizedBox(width: 12),
             Expanded(child: Text(label, style: AppTextTheme.bodyLarge)),
-            const Icon(Iconsax.arrowRight03, size: 18, color: AppTheme.grey400),
+            if (trailing != null)
+              trailing!
+            else if (onTap != null)
+              const Icon(Iconsax.arrowRight03, size: 18, color: AppTheme.grey400),
           ],
         ),
       ),

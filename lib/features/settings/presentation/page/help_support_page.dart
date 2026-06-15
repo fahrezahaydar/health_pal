@@ -10,6 +10,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/layouts/card_container.dart';
+import '../../../../widgets/shared/app_divider.dart';
+import '../../../../widgets/shared/contact_card.dart';
+import '../../../../widgets/shared/faq_tile.dart';
+import '../../../../widgets/shared/section_label.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
@@ -54,120 +59,32 @@ class HelpSupportPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           // ── FAQ Section ──
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.grey200),
-            ),
-            child: Column(
-              children: [
-                for (int i = 0; i < _faqs.length; i++) ...[
-                  _faqTile(_faqs[i]),
-                  if (i < _faqs.length - 1)
-                    const Divider(height: 1, color: AppTheme.grey200),
-                ],
+          CardContainer(
+            children: [
+              for (int i = 0; i < _faqs.length; i++) ...[
+                FaqTile(question: _faqs[i].question, answer: _faqs[i].answer),
+                if (i < _faqs.length - 1) const AppDivider(),
               ],
-            ),
+            ],
           ),
           const SizedBox(height: 24),
 
           // ── Contact Us Section ──
-          _sectionLabel('Hubungi Kami'),
-          _contactCard(
+          const SectionLabel(text: 'Hubungi Kami'),
+          ContactCard(
             icon: Iconsax.sms,
             label: 'Email',
             value: 'support@healthpal.app',
             onTap: () => _launchUrl('mailto:support@healthpal.app'),
           ),
           const SizedBox(height: 8),
-          _contactCard(
+          ContactCard(
             icon: Iconsax.call,
             label: 'Telepon',
             value: '021-12345678',
             onTap: () => _launchUrl('tel:+622112345678'),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _faqTile(_FaqItem faq) {
-    return Theme(
-      // Hilangkan default ExpansionTile divider lines.
-      data: ThemeData().copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        tilePadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        childrenPadding:
-            const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        leading: const Icon(Iconsax.messageQuestion, color: AppTheme.primary),
-        title: Text(
-          faq.question,
-          style: AppTextTheme.bodyLarge,
-        ),
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              faq.answer,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _sectionLabel(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: 8, left: 4),
-        child: Text(
-          text,
-          style: AppTextTheme.bodySmall.copyWith(
-            color: AppTheme.grey600,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
-      );
-
-  Widget _contactCard({
-    required IconData icon,
-    required String label,
-    required String value,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.grey200),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: AppTheme.primary),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: AppTextTheme.labelSmall
-                        .copyWith(color: AppTheme.grey500),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(value, style: AppTextTheme.bodyMedium),
-                ],
-              ),
-            ),
-            const Icon(Iconsax.arrowRight03, color: AppTheme.grey400, size: 18),
-          ],
-        ),
       ),
     );
   }

@@ -16,7 +16,7 @@
 | loc | Completed | Completed | 1 | 0 (rejected — too trivial; switched to DotLoader instead) |
 | onboarding | Completed | Completed | 0 | — |
 | profile | Completed | Completed | 4 | 4 |
-| settings | Pending | Not Started | — | — |
+| settings | Completed | Completed | 7 | 7 (5 extract + 2 replace) |
 
 ---
 
