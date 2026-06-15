@@ -18,16 +18,18 @@ class GreetingLoading extends GreetingState {
 class GreetingLoaded extends GreetingState {
   final String nickname;
   final String profileId;
+  final String? avatarUrl;
   final bool isProfileComplete;
 
   const GreetingLoaded({
     this.nickname = '',
     this.profileId = '',
+    this.avatarUrl,
     this.isProfileComplete = false,
   });
 
   @override
-  List<Object?> get props => [nickname, profileId, isProfileComplete];
+  List<Object?> get props => [nickname, profileId, avatarUrl, isProfileComplete];
 }
 
 class GreetingError extends GreetingState {

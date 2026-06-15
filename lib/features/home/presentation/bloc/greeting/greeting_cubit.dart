@@ -21,6 +21,7 @@ class GreetingCubit extends Cubit<GreetingState> {
         emit(GreetingLoaded(
           nickname: result.data.nickname,
           profileId: result.data.id,
+          avatarUrl: result.data.avatarUrl,
           isProfileComplete: result.data.isProfileComplete,
         ));
         return result.data.id;

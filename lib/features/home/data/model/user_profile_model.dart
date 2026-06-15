@@ -12,6 +12,7 @@ abstract class UserProfileModel with _$UserProfileModel {
   const factory UserProfileModel({
     required String id,
     required String nickname,
+    @JsonKey(name: 'avatar_url') String? avatarUrl,
     @JsonKey(name: 'is_profile_complete') @Default(false) bool isProfileComplete,
   }) = _UserProfileModel;
 
@@ -21,12 +22,15 @@ abstract class UserProfileModel with _$UserProfileModel {
       UserProfileModel(
         id: json['id'] as String,
         nickname: json['nickname'] as String? ?? json['full_name'] as String,
+        // Sprint 2 — C4: avatar_url nullable dari DB.
+        avatarUrl: json['avatar_url'] as String?,
         isProfileComplete: json['is_profile_complete'] as bool? ?? false,
       );
 
   UserProfileEntity toEntity() => UserProfileEntity(
         id: id,
         nickname: nickname,
+        avatarUrl: avatarUrl,
         isProfileComplete: isProfileComplete,
       );
 }

@@ -16,8 +16,8 @@
 
 ## 📊 Sprint 2 Progress Tracker
 
-**Last Updated:** 16 Juni 2026 (Day 1, end of Day 1) — *updated by C3*
-**Overall:** 21/30 tasks (70%) — Pool A 100% ✅ | Pool B 100% ✅ | Pool C 3/6
+**Last Updated:** 16 Juni 2026 (Day 1, end of Day 1) — *updated by C4*
+**Overall:** 22/30 tasks (73%) — Pool A 100% ✅ | Pool B 100% ✅ | Pool C 4/6
 
 ### Pool A — Critical Bugs
 
@@ -58,11 +58,11 @@
 | C1 | Skeletonizer loader per section (reuse production widgets) | 4h | ✅ Done | `9339739` | Wrap 4 sections (Greeting, Banner, Upcoming, Categories) dengan `Skeletonizer(enabled: state is *Loading, child: ...)`. Mock const data (non-empty) inline di `_HomePageBody` agar production widget tetap render shape. SearchBarHome skip (static, no loading state). `flutter analyze` 0 issues. |
 | C2 | Pull-to-refresh RefreshIndicator | 2h | ✅ Done | `b2e0cb0` | Wrap `ListView` dengan single `RefreshIndicator`. `onRefresh` trigger 3 cubit (Banner, Specialization, Upcoming) — NOT Greeting per AD-7 caveat (loadProfile sensitive/BUG-001). Get profileId from `GreetingCubit.state` (skip if not GreetingLoaded). Convert `_HomePageBody` to StatefulWidget with `_isRefreshing` guard (anti-spam — ignore re-pull while refreshing). `flutter analyze` 0 issues. |
 | C3 | Nearby Medical Centers section | 16h | ✅ Done | `d465e42` | Reuse `GetNearbyClinicsUseCase` from `loc/` (no duplication). New `NearbyCubit` + `NearbyState` (sealed: Initial/Loading/Loaded/Empty/LocationDenied/Error) with geolocator permission flow. New `NearbyFacilities` widget (horizontal card list, header with "See All", 5 state-aware UIs). Skeletonizer wraps skeleton loading state. Integrated into `HomePage` (`MultiBlocProvider` + `ListView` + `_onRefresh`). No deferred routes (`/facilities`, `/facilities/:id` — Sprint 3 backlog). Reuses `loc/` domain + data layer. `flutter analyze` 0 issues. |
-| C4 | Profile photo di Greeting | 2h | ⬜ Not Started | — | — |
+| C4 | Profile photo di Greeting | 2h | ✅ Done | `<this-commit>` | Add `avatarUrl` to `UserProfileEntity` + `UserProfileModel` (freezed) + `GreetingLoaded` state + `GreetingCubit.loadProfile`. New `_ProfileAvatar` in `GreetingSection` (48x48 `ClipOval`, `Image.network` + first-letter fallback using `nickname[0]` — no Material CircleAvatar). HomePage `BlocSelector` replaced with direct state read for both `nickname` + `avatarUrl`. `flutter analyze` 0 issues. |
 | C5 | Quick Categories icon mapping | 2h | ⬜ Not Started | — | — |
 | C6 | Error UI untuk *Error states | 3h | ⬜ Not Started | — | — |
 
-**Pool C Progress: 3/6 done (50%)**
+**Pool C Progress: 4/6 done (67%)**
 
 ### Pool D — Cross-Feature Audit
 

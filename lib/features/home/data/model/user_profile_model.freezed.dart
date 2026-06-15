@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserProfileModel {
 
- String get id; String get nickname;@JsonKey(name: 'is_profile_complete') bool get isProfileComplete;
+ String get id; String get nickname;@JsonKey(name: 'avatar_url') String? get avatarUrl;@JsonKey(name: 'is_profile_complete') bool get isProfileComplete;
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserProfileModelCopyWith<UserProfileModel> get copyWith => _$UserProfileModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nickname,isProfileComplete);
+int get hashCode => Object.hash(runtimeType,id,nickname,avatarUrl,isProfileComplete);
 
 @override
 String toString() {
-  return 'UserProfileModel(id: $id, nickname: $nickname, isProfileComplete: $isProfileComplete)';
+  return 'UserProfileModel(id: $id, nickname: $nickname, avatarUrl: $avatarUrl, isProfileComplete: $isProfileComplete)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserProfileModelCopyWith<$Res>  {
   factory $UserProfileModelCopyWith(UserProfileModel value, $Res Function(UserProfileModel) _then) = _$UserProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String nickname,@JsonKey(name: 'is_profile_complete') bool isProfileComplete
+ String id, String nickname,@JsonKey(name: 'avatar_url') String? avatarUrl,@JsonKey(name: 'is_profile_complete') bool isProfileComplete
 });
 
 
@@ -65,11 +65,12 @@ class _$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nickname = null,Object? isProfileComplete = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nickname = null,Object? avatarUrl = freezed,Object? isProfileComplete = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nickname, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nickname, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
-return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
+return $default(_that.id,_that.nickname,_that.avatarUrl,_that.isProfileComplete);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nickname, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nickname, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel():
-return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
+return $default(_that.id,_that.nickname,_that.avatarUrl,_that.isProfileComplete);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nickname, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nickname, @JsonKey(name: 'avatar_url')  String? avatarUrl, @JsonKey(name: 'is_profile_complete')  bool isProfileComplete)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
-return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
+return $default(_that.id,_that.nickname,_that.avatarUrl,_that.isProfileComplete);case _:
   return null;
 
 }
@@ -211,11 +212,12 @@ return $default(_that.id,_that.nickname,_that.isProfileComplete);case _:
 @JsonSerializable()
 
 class _UserProfileModel extends UserProfileModel {
-  const _UserProfileModel({required this.id, required this.nickname, @JsonKey(name: 'is_profile_complete') this.isProfileComplete = false}): super._();
+  const _UserProfileModel({required this.id, required this.nickname, @JsonKey(name: 'avatar_url') this.avatarUrl, @JsonKey(name: 'is_profile_complete') this.isProfileComplete = false}): super._();
   factory _UserProfileModel.fromJson(Map<String, dynamic> json) => _$UserProfileModelFromJson(json);
 
 @override final  String id;
 @override final  String nickname;
+@override@JsonKey(name: 'avatar_url') final  String? avatarUrl;
 @override@JsonKey(name: 'is_profile_complete') final  bool isProfileComplete;
 
 /// Create a copy of UserProfileModel
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfileModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nickname,isProfileComplete);
+int get hashCode => Object.hash(runtimeType,id,nickname,avatarUrl,isProfileComplete);
 
 @override
 String toString() {
-  return 'UserProfileModel(id: $id, nickname: $nickname, isProfileComplete: $isProfileComplete)';
+  return 'UserProfileModel(id: $id, nickname: $nickname, avatarUrl: $avatarUrl, isProfileComplete: $isProfileComplete)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$UserProfileModelCopyWith<$Res> implements $UserProfileMod
   factory _$UserProfileModelCopyWith(_UserProfileModel value, $Res Function(_UserProfileModel) _then) = __$UserProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String nickname,@JsonKey(name: 'is_profile_complete') bool isProfileComplete
+ String id, String nickname,@JsonKey(name: 'avatar_url') String? avatarUrl,@JsonKey(name: 'is_profile_complete') bool isProfileComplete
 });
 
 
@@ -268,11 +270,12 @@ class __$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nickname = null,Object? isProfileComplete = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nickname = null,Object? avatarUrl = freezed,Object? isProfileComplete = null,}) {
   return _then(_UserProfileModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

@@ -201,26 +201,27 @@ class _HomePageBodyState extends State<_HomePageBody> {
                     return BlocBuilder<GreetingCubit, GreetingState>(
                       builder: (context, greetingState) {
                         final isLoading = greetingState is GreetingLoading;
-                        // Sprint 2 — C1: Skeletonizer wrap for GreetingSection.
-                        // When loading, Skeletonizer paints bones over the
-                        // "Halo, " text + notification icon. When loaded,
-                        // Skeletonizer is disabled — real content shows.
-                        // SearchBarHome is intentionally NOT wrapped (no
-                        // loading state — purely static tap target).
+                        // Sprint 2 — C4: pass avatarUrl from GreetingState
+                        // to GreetingSection. avatarUrl null saat loading
+                        // (Skeletonizer can't bone-ify Image.network — it
+                        // just shows the placeholder container), non-null
+                        // saat loaded. BlocSelector replaced with direct
+                        // state read to avoid duplicating the selector for
+                        // avatarUrl (previously selected only nickname).
+                        final nickname = isLoading
+                            ? 'Halo'
+                            : (greetingState is GreetingLoaded
+                                ? greetingState.nickname
+                                : '');
+                        final avatarUrl = greetingState is GreetingLoaded
+                            ? greetingState.avatarUrl
+                            : null;
                         return Skeletonizer(
                           enabled: isLoading,
-                          child:
-                              BlocSelector<GreetingCubit, GreetingState, String>(
-                            selector: (state) => switch (state) {
-                              GreetingLoaded(:final nickname) => nickname,
-                              _ => '',
-                            },
-                            builder: (context, nickname) {
-                              return GreetingSection(
-                                nickname: isLoading ? 'Halo' : nickname,
-                                unreadCount: unread,
-                              );
-                            },
+                          child: GreetingSection(
+                            nickname: nickname,
+                            avatarUrl: avatarUrl,
+                            unreadCount: unread,
                           ),
                         );
                       },
