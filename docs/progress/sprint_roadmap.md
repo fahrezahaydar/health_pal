@@ -12,11 +12,13 @@
 |--------|------|-------|--------------|---------|
 | Sprint 1 | Foundation | Auth, Home, Doctor, Booking, Profile, Loc, Settings, Notif | — | ✅ DONE |
 | Sprint 2 | Home Hardening | Bug fixes, Refactor, UX Polish (Skeletonizer, Pull-to-refresh, Nearby, Photo, Icons, Error UI) | `home_page_audit.md` | ✅ DONE |
-| Sprint 3 | Settings + Loc | Settings page audit + polish, Loc tab audit + polish | `settings_audit.md` + `loc_audit.md` | 2 minggu |
-| Sprint 4 | Doctor | Doctor Search + Detail audit + polish | `doctor_audit.md` | 2 minggu |
-| Sprint 5 | Booking | Booking flow audit + polish (create, history, detail, cancel) | `booking_audit.md` | 2 minggu |
-| Sprint 6 | Profile + Auth | Profile/Settings/Onboarding/Auth/FCM audit + polish + icon reference | `profile_audit.md` + `onboarding_auth_fcm_audit.md` | 2 minggu |
-| Sprint 7 | Testing Phase | Test coverage ≥ 80% across all features | — | 2 minggu |
+| Sprint 3 | Settings | Settings pages — audit + polish | `settings_audit.md` | 2 minggu |
+| Sprint 4 | Loc | Location tab — audit + polish | `loc_audit.md` | 2 minggu |
+| Sprint 5 | Doctor | Doctor Search + Detail — audit + polish | `doctor_audit.md` | 2 minggu |
+| Sprint 6 | Booking | Booking flow (create, history, detail, cancel) — audit + polish | `booking_audit.md` | 2 minggu |
+| Sprint 7 | Profile | Profile, Edit Profile, Favorites — audit + polish | `profile_audit.md` | 2 minggu |
+| Sprint 8 | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | `onboarding_auth_fcm_audit.md` | 2 minggu |
+| Sprint 9 | Testing | Test coverage ≥ 80% across all features | — | 2 minggu |
 | **Beta** | Launch | Final QA, manual testing, README, deploy | — | — |
 
 ---
@@ -64,43 +66,74 @@ Onboarding ──→ Auth ──→ Home ←── Notification
 
 ---
 
-## Sprint 3 — Settings + Loc
+## Sprint 3 — Settings
 
 **Window:** TBD (2 minggu setelah Sprint 2 closing)
-**Tema:** "Quick Wins — Audit + Polish Pages Paling Sederhana"
+**Tema:** "Quick Win — Audit + Polish Halaman Paling Sederhana"
 
 ### Sprint Opening Audit (Day 1-2)
-- **D3: Audit Loc Tab** → `docs/progress/loc_audit.md`
-- **D4 (partial): Audit Settings** → `docs/progress/settings_audit.md`
+- **Audit Settings** → `docs/progress/settings_audit.md`
 - Referensi template: `docs/progress/home_page_audit.md`
 - Output: todo list untuk Sprint 3
 
 ### Estimated Backlog (Day 3-10)
 
-| Feature | Estimated Tasks | Ringkasan |
-|---------|---------------|-----------|
-| Settings | 5-10 tasks | Fix findings dari audit: hardcoded text, missing state handling, layout issues, Theme consistency |
-| Loc | 8-12 tasks | Fix findings dari audit: loading state, error handling, PermissionDenied UI, Skeletonizer |
-| Shared | 2-3 tasks | Generalize ErrorSection (dari Sprint 2 C6) untuk reuse cross-feature, icon consistency pass |
+| Area | Tasks | Ringkasan |
+|------|-------|-----------|
+| Settings page | 3-5 | Layout consistency, Theme, hardcoded text check |
+| Help & Support | 2-3 | Konten statis, link verification |
+| Terms & Conditions | 1-2 | Konten statis |
+| No Internet page | 2-3 | Skeletonizer fallback? Connectivity check logic |
+| Shared | 2-3 | Generalize ErrorSection (Sprint 2 C6) untuk reuse cross-feature |
+
+**Total estimasi:** ~5-7 hari kerja
+**Mengapa 2 minggu:** Sprint pertama setelah Sprint 2 — ada setup sprint + audit Day 1-2 + buffer.
 
 ### Definition of Done
-- [ ] Audit doc `loc_audit.md` published
-- [ ] Audit doc `settings_audit.md` published
-- [ ] Semua critical findings dari audit di-fix
+- [ ] `settings_audit.md` published
+- [ ] Semua critical findings di-fix
 - [ ] flutter analyze 0 issues
-- [ ] Skeletonizer pattern applied (if loading states missing)
-- [ ] ErrorSection pattern applied (if error states missing)
+- [ ] Skeletonizer + ErrorSection patterns applied (jika missing)
 - [ ] `sprint_roadmap.md` updated
 
 ---
 
-## Sprint 4 — Doctor
+## Sprint 4 — Loc (Location Tab)
 
 **Window:** TBD (2 minggu setelah Sprint 3)
+**Tema:** "Location — Nearby Clinics Map & List"
+
+### Sprint Opening Audit (Day 1-2)
+- **Audit Loc Tab** → `docs/progress/loc_audit.md`
+- Referensi template: `docs/progress/home_page_audit.md`
+
+### Estimated Backlog (Day 3-10)
+- Fix findings dari audit Loc tab
+- Known gaps:
+  - Location permission flow (sudah ada di LocCubit, audit UX)
+  - Loading state + skeleton (Skeletonizer)
+  - Error handing + retry (ErrorSection)
+  - "Lihat Peta" URL launcher
+  - Radius filter UI
+  - Clinic card polish (image placeholder, distance display)
+
+**Total estimasi:** ~6-8 hari kerja
+
+### Definition of Done
+- [ ] `loc_audit.md` published
+- [ ] Semua critical findings di-fix
+- [ ] flutter analyze 0 issues
+- [ ] `sprint_roadmap.md` updated
+
+---
+
+## Sprint 5 — Doctor
+
+**Window:** TBD (2 minggu setelah Sprint 4)
 **Tema:** "Doctor Search & Detail — Core Feature Stabilization"
 
 ### Sprint Opening Audit (Day 1-2)
-- **D1: Audit Doctor Page** → `docs/progress/doctor_audit.md`
+- **Audit Doctor Page** → `docs/progress/doctor_audit.md`
 - Referensi template: `docs/progress/home_page_audit.md`
 
 ### Estimated Backlog
@@ -112,6 +145,8 @@ Onboarding ──→ Auth ──→ Home ←── Notification
   - Empty state ketika no doctors found
   - Error handling untuk network failure
 
+**Dependency:** None (independent feature)
+
 ### Definition of Done
 - [ ] `doctor_audit.md` published
 - [ ] Semua critical findings di-fix
@@ -120,13 +155,13 @@ Onboarding ──→ Auth ──→ Home ←── Notification
 
 ---
 
-## Sprint 5 — Booking
+## Sprint 6 — Booking
 
-**Window:** TBD (2 minggu setelah Sprint 4)
+**Window:** TBD (2 minggu setelah Sprint 5)
 **Tema:** "Booking Flow — Most Complex Feature"
 
 ### Sprint Opening Audit (Day 1-2)
-- **D2: Audit Booking Flow** → `docs/progress/booking_audit.md`
+- **Audit Booking Flow** → `docs/progress/booking_audit.md`
 - Referensi template: `docs/progress/home_page_audit.md`
 
 ### Estimated Backlog
@@ -140,6 +175,8 @@ Onboarding ──→ Auth ──→ Home ←── Notification
   - Success page after booking
   - Skeletonizer + ErrorSection patterns
 
+**Dependency:** Doctor (search dokter → booking — butuh Doctor selesai)
+
 ### Definition of Done
 - [ ] `booking_audit.md` published
 - [ ] Semua critical findings di-fix
@@ -148,26 +185,46 @@ Onboarding ──→ Auth ──→ Home ←── Notification
 
 ---
 
-## Sprint 6 — Profile + Auth + Onboarding + FCM
+## Sprint 7 — Profile
 
-**Window:** TBD (2 minggu setelah Sprint 5)
-**Tema:** "User Management — Final Feature Polish"
+**Window:** TBD (2 minggu setelah Sprint 6)
+**Tema:** "Profile & Favorites — User Identity Polish"
 
 ### Sprint Opening Audit (Day 1-2)
-- **D4 (partial): Audit Profile** → `docs/progress/profile_audit.md`
-- **D5: Audit Onboarding + Auth + FCM** → `docs/progress/onboarding_auth_fcm_audit.md`
-- **D7: Icon reference table** → `docs/reference/icons.md`
+- **Audit Profile** → `docs/progress/profile_audit.md`
+- Referensi template: `docs/progress/home_page_audit.md`
 
 ### Estimated Backlog
-Sprint paling ringan (sebagian besar feature sudah production-ready). Fokus pada:
-- Profile: avatar upload flow polish, Skeletonizer loading, ErrorSection
-- Auth: race condition handling, session timeout UI
-- Onboarding: review + final polish
-- FCM: notification settings page
-- Icon reference: mapping semua Iconsax → Material Icons
+- Profile page: avatar upload, data display, loading states
+- Edit Profile: form validation, save flow
+- Favorites page: list, remove, empty state
 
 ### Definition of Done
 - [ ] `profile_audit.md` published
+- [ ] Semua critical findings di-fix
+- [ ] flutter analyze 0 issues
+- [ ] `sprint_roadmap.md` updated
+
+---
+
+## Sprint 8 — Auth + Onboarding + FCM
+
+**Window:** TBD (2 minggu setelah Sprint 7)
+**Tema:** "Auth Ecosystem — Final Audit & Icon Reference"
+
+### Sprint Opening Audit (Day 1-2)
+- **Audit Onboarding + Auth + FCM** → `docs/progress/onboarding_auth_fcm_audit.md`
+- **Icon reference table** → `docs/reference/icons.md`
+
+### Estimated Backlog
+- Auth: session handling, token refresh, edge cases (BUG-001/004 sudah fix, verify)
+- Onboarding: final polish, review
+- FCM: notification settings page integration
+- Icon reference: mapping semua Iconsax → Material Icons
+
+**Catatan:** Semua feature ini sudah production-ready ✅ di Sprint 1. Sprint 8 mostly audit + verification + dokumentasi.
+
+### Definition of Done
 - [ ] `onboarding_auth_fcm_audit.md` published
 - [ ] `docs/reference/icons.md` published
 - [ ] Semua critical findings di-fix
@@ -176,9 +233,9 @@ Sprint paling ringan (sebagian besar feature sudah production-ready). Fokus pada
 
 ---
 
-## Sprint 7 — Testing Phase
+## Sprint 9 — Testing Phase
 
-**Window:** TBD (2 minggu setelah Sprint 6)
+**Window:** TBD (2 minggu setelah Sprint 8)
 **Tema:** "Test Coverage ≥ 80%"
 
 ### Scope
@@ -189,8 +246,7 @@ Sprint paling ringan (sebagian besar feature sudah production-ready). Fokus pada
   - Home Page (6 sections)
   - Doctor Search + Detail
   - Booking History + Detail + Create
-  - Profile + Settings
-  - Loc
+  - Profile + Settings + Loc
 - Integration test flow kritis:
   - Auth flow (sign-up → create-profile → home)
   - Booking flow (search doctor → book → confirmation)
