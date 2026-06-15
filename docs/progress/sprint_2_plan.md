@@ -29,7 +29,7 @@
 | A4 | Fix HomePage SupabaseClient import | 1h | ✅ Done | `bca0c68` | Tambah `AppServices.currentAuthId` getter. HomePage baca via `GetIt.instance<AppServices>().currentAuthId`. Remove SupabaseClient import. TDD 01 §3.3 restored. `flutter analyze` 0 issues. |
 | A5 | Fix BookingStatus.firstWhere unsafe | 1h | ✅ Done | `6af98dc` | Tambah `@JsonValue` ke `BookingStatus` enum. `BookingStatus.fromJson()` dengan switch eksplisit (bukan firstWhere). Entity/model status: `BookingStatus` (was `String`). UpcomingCard pakai `appointment.status` langsung. `flutter analyze` 0 issues. |
 | A6 | Fix route path :bookingId → :appointmentId | 0.25h | ✅ Done | `422e3c5` | `route_paths.dart` rename param. `upcoming_card.dart` replaceAll fix. Bonus: booking_history_page.dart was using `:appointmentId` with old `:bookingId` path → broken nav fixed. `flutter analyze` 0 issues. |
-| A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ✅ Done | `45e66fb` | Add try/catch wrapper di `loadProfile()`. Pastikan cubit selalu emit terminal state (Loaded/Error), tidak stuck di Loading. `flutter analyze` 0 issues. |
+| A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ✅ Done | `a6eb2e8` | Add try/catch wrapper di `loadProfile()`. Pastikan cubit selalu emit terminal state (Loaded/Error), tidak stuck di Loading. `flutter analyze` 0 issues. |
 | A8 | Notification count from API | 2h | ⬜ Not Started | — | — |
 | A9 | Empty state CTA copy fix | 0.1h | ⬜ Not Started | — | — |
 | A10 | Postgres delete_user() RPC migration | 1h | ⬜ Not Started | — | — |
