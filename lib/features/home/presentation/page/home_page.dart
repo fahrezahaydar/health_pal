@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:health_pal/core/di/locator.dart';
 import 'package:health_pal/core/services/app_services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entity/banner_entity.dart';
 import '../../domain/entity/specialization_entity.dart';
@@ -31,7 +30,13 @@ class HomePage extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) {
-            final authId = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+            // Sprint 2 — A4 (Fix K4): was `getIt<SupabaseClient>().auth.currentUser?.id`
+            // — TDD 01 §3.3 dependency rule violation (presentation
+            // touches data layer directly). Sekarang via AppServices
+            // (singleton global state owner). Pattern konsisten dengan
+            // BlocListener di bawah yang juga pakai `GetIt.instance<AppServices>()`.
+            final authId =
+                GetIt.instance<AppServices>().currentAuthId ?? '';
             return getIt<GreetingCubit>()..loadProfile(authId);
           },
         ),

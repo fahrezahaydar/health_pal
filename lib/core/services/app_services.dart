@@ -31,6 +31,23 @@ class AppServices extends ChangeNotifier {
   AppStatus _status = AppStatus.loading;
   AppStatus get status => _status;
 
+  /// Auth user ID saat ini (Supabase `auth.users.id` = `authId`
+  /// foreign key di `user_profiles`), atau `null` jika belum login /
+  /// session expired.
+  ///
+  /// **Sprint 2 — A4 (Fix K4):** dulu HomePage baca langsung dari
+  /// `getIt<SupabaseClient>().auth.currentUser?.id` — itu violation
+  /// TDD 01 §3.3 dependency rule (presentation tidak boleh akses
+  /// data layer langsung). Sekarang presentation baca via AppServices
+  /// (singleton global state) — pattern yang sudah dipakai untuk
+  /// `setProfileIncomplete()` di BlocListener HomePage.
+  ///
+  /// Returns `null` saat:
+  /// - Belum login (currentUser == null)
+  /// - Session expired
+  /// - Token refresh in progress
+  String? get currentAuthId => _supabaseClient.auth.currentUser?.id;
+
   /// Inisialisasi awal — dipanggil SEBELUM runApp().
   ///
   /// Keputusan routing:
