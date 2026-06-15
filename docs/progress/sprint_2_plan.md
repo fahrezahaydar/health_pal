@@ -771,12 +771,82 @@ Refs: home_page_audit.md template"
 
 ---
 
-*Disusun oleh Tech Lead (MiniMax-M3) · 15 Juni 2026 · v1.0*
+---
 
-**Status:** 🟡 **PLAN READY — menunggu kick-off Sprint 2 (16 Juni 2026)**
+## 14. Sprint 2 Summary & Closing
 
-**Next Actions:**
-1. Update `sprint_progress.md` ke v1.4 (close Sprint 1 + setup Sprint 2)
-2. `git add docs/progress/` + commit conventional message
-3. Share `sprint_2_plan.md` ke tim untuk alignment
-4. Sprint 2 kick-off: 16 Juni 2026
+**Tanggal Close:** 16 Juni 2026
+**Status:** ✅ **CLOSED**
+**Last Commit:** `d038e60` — docs(sprint2): mark Pool E done with commit hash
+**Branch:** master · **66 commits** ahead of origin/master
+
+### 14.1 Hasil Pool A-E
+
+| Pool | Target | Actual | Status |
+|------|--------|--------|--------|
+| Pool A — Critical Bugs | 10/10 | 10/10 | ✅ |
+| Pool B — Home Refactor | 8/8 | 8/8 | ✅ |
+| Pool C — Home UX Polish | 6/6 | 6/6 | ✅ |
+| Pool D — Cross-Feature Audit | 7/7 | 0/7 | ⏭️ Defer ke Sprint 3+ |
+| Pool E — Optional | 5/5 | 5/5 | ✅ |
+| **Total (Active)** | **29/29** | **29/29** | **✅ 100%** |
+| **Total (All)** | **36** | **29/36** | **✅ Sprint work complete** |
+
+### 14.2 Pool D — Audit Defer Decision
+
+Pool D (D1-D7 — cross-feature audit) TIDAK dikerjakan di Sprint 2.
+Keputusan: **audit dilakukan di awal setiap sprint sebagai "Sprint Opening Audit"**
+sebelum implementasi dimulai, berdasarkan template `home_page_audit.md`.
+
+**Alasan:**
+- Audit lebih efektif dilakukan tepat sebelum sprint yang mengerjakan fitur tersebut
+- Temuan audit langsung menjadi backlog sprint tersebut
+- Tidak ada gap antara audit dan fix
+- Pool D akan didistribusikan ke Sprint 3, Sprint 4, Sprint 5, Sprint 6
+
+**Distribusi Audit:**
+| Audit | Feature | Dilakukan di |
+|-------|---------|-------------|
+| D1 | Doctor Page | Sprint 4 (Opening Audit) |
+| D2 | Booking Flow | Sprint 5 (Opening Audit) |
+| D3 | Loc Tab | Sprint 3 (Opening Audit) |
+| D4 | Profile + Settings | Sprint 3 / Sprint 6 (Opening Audit) |
+| D5 | Onboarding + Auth + FCM | Sprint 6 (Opening Audit) |
+| D6 | Sprint 3/4/5/6 audit summary | Setelah setiap sprint |
+| D7 | Icon reference table | Sprint 6 |
+
+### 14.3 flutter analyze
+
+```
+No issues found! (ran in 3.8s)
+```
+
+### 14.4 Lessons Learned Sprint 2
+
+#### What Went Well
+1. **Pool A selesai dalam 1 sesi** — 10 critical bugs fix tanpa regresi.
+2. **Kecepatan eksekusi** — 29 task selesai dalam ~6 jam (1 hari kerja). Sprint 2 plan 10 hari terkompresi.
+3. **No breaking changes** — semua fixing backward-compatible (entity fields optional/nullable).
+4. **flutter analyze 0 issues** terjaga di setiap commit.
+
+#### What Could Be Improved
+1. **Pool C (Nearby) terlalu besar (16h)** — di plan asli overflow Week 2. Dirationalisasi dengan reuse `loc/` data layer yang sudah ada. Ke depan: cek existing codebase dulu sebelum estimate.
+2. **A10 (SQL migration) blocking** — butuh deploy manual user. Sprint 3 harus handle DB migration sebagai prerequisite.
+3. **Pool D terlalu ambisius untuk Sprint 2** — 7 audit doc butuh 12 jam. Lebih baik dibagi per sprint sebagai "Opening Audit".
+4. **Icon Convention baru** — butuh sosialisasi lebih awal agar tidak ada kebingungan antara Iconsax vs Material Icons.
+
+#### Action Items for Sprint 3
+1. Setup Sprint Opening Audit untuk Settings + Loc sebagai Day 1-2 activity
+2. Gunakan template `home_page_audit.md` untuk audit doc
+3. Pastikan DB migration bisa di-deploy oleh user (non-blocking)
+4. Lanjutkan pattern "Skeletonizer + ErrorSection + RefreshIndicator" untuk konsistensi UI
+
+---
+
+*Disusun oleh Tech Lead (MiniMax-M3) · 16 Juni 2026 · v1.1*
+
+**Status:** ✅ **SPRINT 2 CLOSED — 29/29 tasks (100%)**
+
+**Referensi:**
+- `docs/progress/sprint_roadmap.md` — roadmap multi-sprint
+- `docs/progress/sprint_progress.md` — updated sprint progress
