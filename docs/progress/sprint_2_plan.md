@@ -40,7 +40,7 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | (in B1 commit) | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
+| B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | `1f00d75` | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
 | B2 | HomeLocalDataSource @lazySingleton | 0.1h | ⬜ Not Started | — | — |
 | B3 | Result.Failure.code ke enum FailureCode | 2h | ⬜ Not Started | — | — |
 | B4 | Cache user profile | 1h | ⬜ Not Started | — | — |
