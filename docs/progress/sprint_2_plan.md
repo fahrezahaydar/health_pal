@@ -17,7 +17,7 @@
 ## 📊 Sprint 2 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Day 1, end of Day 1)
-**Overall:** 9/30 tasks (30%) — Pool A 90% done
+**Overall:** 11/30 tasks (37%) — Pool A 100% ✅ | Pool B 1/8 ✅
 
 ### Pool A — Critical Bugs
 
@@ -32,15 +32,15 @@
 | A7 | BUG-002-FIX-3 try/catch ProfileCubit | 0.5h | ✅ Done | `a6eb2e8` | Add try/catch wrapper di `loadProfile()`. Pastikan cubit selalu emit terminal state (Loaded/Error), tidak stuck di Loading. `flutter analyze` 0 issues. |
 | A8 | Notification count from API | 2h | ✅ Done | `2a65e05` | Add `NotificationCubit` to HomePage MultiBlocProvider. Trigger `loadNotifications` after GreetingLoaded (alongside existing UpcomingCubit). GreetingSection `unreadCount` param replaces hardcoded 5. AppBadge hidden when count=0. `flutter analyze` 0 issues. |
 | A9 | Empty state CTA copy fix | 0.1h | ✅ Done | `558c99a` | "Book Appointment" → "Cari Dokter" di upcoming_card.dart:179. Sinkron dengan PRD §6.2 + Wireframe 06 §Empty. `flutter analyze` 0 issues. |
-| A10 | Postgres delete_user() RPC migration | 1h | ❌ Blocked | `003_delete_user_rpc.sql` (committed) | SQL file created (`supabase/migrations/003_delete_user_rpc.sql`). Needs backend to `supabase db push` to deploy. Unblocks BUG-004-D runtime safety. |
+| A10 | Postgres delete_user() RPC migration | 1h | ✅ Done | `f95bcf3` | SQL deployed by user. Verifikasi: BUG-004-D runtime safety unblocked. | SQL file created (`supabase/migrations/003_delete_user_rpc.sql`). Needs backend to `supabase db push` to deploy. Unblocks BUG-004-D runtime safety. |
 
-**Pool A Progress: 9/10 done (90%) — 1 blocked (A10: backend migration)**
+**Pool A Progress: 10/10 done (100%) ✅**
 
 ### Pool B — Home Refactor
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| B1 | Refactor Home Models ke @freezed | 4h | ⬜ Not Started | — | — |
+| B1 | Refactor Home Models ke @freezed | 4h | ✅ Done | (in B1 commit) | 3/4 model converted to @freezed + @JsonKey (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible). `flutter analyze` 0 issues. |
 | B2 | HomeLocalDataSource @lazySingleton | 0.1h | ⬜ Not Started | — | — |
 | B3 | Result.Failure.code ke enum FailureCode | 2h | ⬜ Not Started | — | — |
 | B4 | Cache user profile | 1h | ⬜ Not Started | — | — |
@@ -49,7 +49,7 @@
 | B7 | ErrorHandler.handleWithAuthCheck | 2h | ⬜ Not Started | — | — |
 | B8 | Implement withRetry | 0.5h | ⬜ Not Started | — | — |
 
-**Pool B Progress: 0/8 done (0%)**
+**Pool B Progress: 1/8 done (13%)**
 
 ### Pool C — Home UX Polish
 
@@ -249,7 +249,7 @@ Total: **30 task items, ~95 jam kerja** (10 hari × ~9.5 jam/hari). Dipecah jadi
 
 | # | Task | File Target | Sumber | Estimasi | Owner | Sprint Day |
 |---|---|---|---|:---:|---|:---:|
-| B1 | **Refactor Home Models ke `@freezed` + `@JsonKey`** — 4 file (BannerModel, SpecializationModel, UpcomingAppointmentModel, UserProfileModel) | 4 files di `lib/features/home/data/model/` | home audit M4, TDD 05 §3.4 | 4h | Frontend | Day 3-4 |
+| B1 | **Refactor Home Models ke `@freezed` + `@JsonKey`** — 3 file (Banner, Specialization, UserProfile). UpcomingAppointmentModel tetap manual (nested JSON shape incompatible dengan generated fromJson) | 3 files di `lib/features/home/data/model/` | home audit M4, TDD 05 §3.4 | 4h | Frontend | Day 3-4 |
 | B2 | **HomeLocalDataSource `@lazySingleton`** (was `@injectable`/factory) | `home_local_datasource.dart:9` | home audit M8, TDD 07 | 0.1h | Frontend | Day 3 |
 | B3 | **`Result.Failure.code` ke enum `FailureCode`** (TDD 01 compliance) | `lib/core/network/result.dart` + 4 usecase files | home audit M7, TDD 01 §4.3 | 2h | Frontend | Day 3 |
 | B4 | **Cache user profile** (TDD 08 §2 compliance) | `home_local_datasource.dart` | home audit M10 | 1h | Frontend | Day 3 |

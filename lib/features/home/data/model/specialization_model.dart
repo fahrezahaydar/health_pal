@@ -1,42 +1,33 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entity/specialization_entity.dart';
 
-class SpecializationModel {
-  final String id;
-  final String name;
-  final String? iconUrl;
+part 'specialization_model.freezed.dart';
+part 'specialization_model.g.dart';
 
-  const SpecializationModel({
-    required this.id,
-    required this.name,
-    this.iconUrl,
-  });
+@freezed
+abstract class SpecializationModel with _$SpecializationModel {
+  const SpecializationModel._();
 
-  factory SpecializationModel.fromJson(Map<String, dynamic> json) {
-    return SpecializationModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      iconUrl: json['icon_url'] as String?,
-    );
-  }
+  const factory SpecializationModel({
+    required String id,
+    required String name,
+    @JsonKey(name: 'icon_url') String? iconUrl,
+  }) = _SpecializationModel;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'icon_url': iconUrl,
-    };
-  }
-
-  SpecializationEntity toEntity() => SpecializationEntity(
-        id: id,
-        name: name,
-        iconUrl: iconUrl,
-      );
+  factory SpecializationModel.fromJson(Map<String, dynamic> json) =>
+      _$SpecializationModelFromJson(json);
 
   factory SpecializationModel.fromEntity(SpecializationEntity entity) =>
       SpecializationModel(
         id: entity.id,
         name: entity.name,
         iconUrl: entity.iconUrl,
+      );
+
+  SpecializationEntity toEntity() => SpecializationEntity(
+        id: id,
+        name: name,
+        iconUrl: iconUrl,
       );
 }

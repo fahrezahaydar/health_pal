@@ -1,47 +1,24 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entity/banner_entity.dart';
 
-class BannerModel {
-  final String id;
-  final String title;
-  final String? imageUrl;
-  final String? actionUrl;
-  final int displayOrder;
+part 'banner_model.freezed.dart';
+part 'banner_model.g.dart';
 
-  const BannerModel({
-    required this.id,
-    required this.title,
-    this.imageUrl,
-    this.actionUrl,
-    this.displayOrder = 0,
-  });
+@freezed
+abstract class BannerModel with _$BannerModel {
+  const BannerModel._();
 
-  factory BannerModel.fromJson(Map<String, dynamic> json) {
-    return BannerModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      imageUrl: json['image_url'] as String?,
-      actionUrl: json['action_url'] as String?,
-      displayOrder: (json['display_order'] as num?)?.toInt() ?? 0,
-    );
-  }
+  const factory BannerModel({
+    required String id,
+    required String title,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'action_url') String? actionUrl,
+    @JsonKey(name: 'display_order') @Default(0) int displayOrder,
+  }) = _BannerModel;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'image_url': imageUrl,
-      'action_url': actionUrl,
-      'display_order': displayOrder,
-    };
-  }
-
-  BannerEntity toEntity() => BannerEntity(
-        id: id,
-        title: title,
-        imageUrl: imageUrl,
-        actionUrl: actionUrl,
-        displayOrder: displayOrder,
-      );
+  factory BannerModel.fromJson(Map<String, dynamic> json) =>
+      _$BannerModelFromJson(json);
 
   factory BannerModel.fromEntity(BannerEntity entity) => BannerModel(
         id: entity.id,
@@ -49,5 +26,13 @@ class BannerModel {
         imageUrl: entity.imageUrl,
         actionUrl: entity.actionUrl,
         displayOrder: entity.displayOrder,
+      );
+
+  BannerEntity toEntity() => BannerEntity(
+        id: id,
+        title: title,
+        imageUrl: imageUrl,
+        actionUrl: actionUrl,
+        displayOrder: displayOrder,
       );
 }

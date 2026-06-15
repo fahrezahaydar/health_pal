@@ -1,23 +1,28 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entity/user_profile_entity.dart';
 
-class UserProfileModel {
-  final String id;
-  final String nickname;
-  final bool isProfileComplete;
+part 'user_profile_model.freezed.dart';
+part 'user_profile_model.g.dart';
 
-  const UserProfileModel({
-    required this.id,
-    required this.nickname,
-    this.isProfileComplete = false,
-  });
+@freezed
+abstract class UserProfileModel with _$UserProfileModel {
+  const UserProfileModel._();
 
-  factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    return UserProfileModel(
-      id: json['id'] as String,
-      nickname: json['nickname'] as String? ?? json['full_name'] as String,
-      isProfileComplete: json['is_profile_complete'] as bool? ?? false,
-    );
-  }
+  const factory UserProfileModel({
+    required String id,
+    required String nickname,
+    @JsonKey(name: 'is_profile_complete') @Default(false) bool isProfileComplete,
+  }) = _UserProfileModel;
+
+  /// Custom fromJson karena `nickname` nullable di DB (ERD §2.2).
+  /// Fallback ke `full_name` jika nickname null.
+  factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
+      UserProfileModel(
+        id: json['id'] as String,
+        nickname: json['nickname'] as String? ?? json['full_name'] as String,
+        isProfileComplete: json['is_profile_complete'] as bool? ?? false,
+      );
 
   UserProfileEntity toEntity() => UserProfileEntity(
         id: id,
