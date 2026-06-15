@@ -82,11 +82,11 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| E1 | Fix BannerCarousel addPostFrameCallback | 1h | ✅ Done | `<this-commit>` | — |
-| E2 | Validate banner.actionUrl scheme | 1h | ✅ Done | `<this-commit>` | — |
-| E3 | Fix hardcoded path di app_router.dart | 0.25h | ✅ Done | `<this-commit>` | — |
-| E4 | Remove home_bloc_index.dart jika redundant | 0.25h | ✅ Done | `<this-commit>` | — |
-| E5 | Add notif_reminder_enabled ke UserModel | 1h | ✅ Done | `<this-commit>` | — |
+| E1 | Fix BannerCarousel addPostFrameCallback | 1h | ✅ Done | `6150c5e` | — |
+| E2 | Validate banner.actionUrl scheme | 1h | ✅ Done | `6150c5e` | — |
+| E3 | Fix hardcoded path di app_router.dart | 0.25h | ✅ Done | `6150c5e` | — |
+| E4 | Remove home_bloc_index.dart jika redundant | 0.25h | ✅ Done | `6150c5e` | — |
+| E5 | Add notif_reminder_enabled ke UserModel | 1h | ✅ Done | `6150c5e` | — |
 
 **Pool E Progress: 5/5 done (100%) ✅**
 
