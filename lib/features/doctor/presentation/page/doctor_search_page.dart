@@ -22,6 +22,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/debouncer.dart';
 import '../../../../widgets/card/doctor_card.dart';
 import '../../../../widgets/loader/dot_loader.dart';
+import '../../../../widgets/loader/loading_view.dart';
+import '../../../../widgets/shared/empty_state_view.dart';
 import '../../../home/domain/entity/specialization_entity.dart';
 import '../../domain/entity/doctor_entity.dart';
 import '../bloc/search/search_cubit.dart';
@@ -179,18 +181,17 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
             child: BlocBuilder<SearchCubit, SearchState>(
               builder: (context, state) {
                 return switch (state) {
-                  SearchInitial() => _buildEmpty(
+                  SearchInitial() => const EmptyStateView(
                       icon: Icons.search,
-                      message:
-                          'Cari dokter berdasarkan nama atau spesialisasi',
+                      message: 'Cari dokter berdasarkan nama atau spesialisasi',
                     ),
-                  SearchLoading() => const _LoadingView(),
-                  SearchEmpty() => _buildEmpty(
+                  SearchLoading() => const LoadingView(),
+                  SearchEmpty() => const EmptyStateView(
                       icon: Icons.search_off,
                       message: 'Dokter tidak ditemukan',
                       hint: 'Coba gunakan kata kunci lain',
                     ),
-                  SearchError(:final message) => _buildEmpty(
+                  SearchError(:final message) => EmptyStateView(
                       icon: Icons.error_outline,
                       message: 'Gagal memuat data',
                       hint: message,
@@ -237,54 +238,4 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     );
   }
 
-  Widget _buildEmpty({
-    required IconData icon,
-    required String message,
-    String? hint,
-    VoidCallback? onRetry,
-  }) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 64, color: AppTheme.grey300),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              style: AppTextTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            if (hint != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                hint,
-                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-                textAlign: TextAlign.center,
-              ),
-            ],
-            if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              OutlinedButton(
-                onPressed: onRetry,
-                child: const Text('Coba lagi'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(padding: EdgeInsets.all(24), child: DotLoader()),
-    );
-  }
 }

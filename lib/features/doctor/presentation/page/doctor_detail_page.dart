@@ -23,6 +23,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/shared/label_value_row.dart';
 import '../../domain/entity/doctor_entity.dart';
 import '../../domain/entity/doctor_slot_entity.dart';
 import '../bloc/doctor_detail/doctor_detail_cubit.dart';
@@ -216,7 +217,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (doctor.education != null && doctor.education!.isNotEmpty) ...[
-            const _InfoRow(
+            const LabelValueRow(
               icon: Icons.school_outlined,
               label: 'Pendidikan',
             ),
@@ -231,7 +232,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
             const SizedBox(height: 12),
           ],
           if (doctor.experienceYears > 0)
-            _InfoRow(
+            LabelValueRow(
               icon: Icons.work_outline,
               label: 'Pengalaman',
               value: '${doctor.experienceYears} tahun',
@@ -239,7 +240,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
           if (doctor.description != null &&
               doctor.description!.isNotEmpty) ...[
             const SizedBox(height: 12),
-            const _InfoRow(
+            const LabelValueRow(
               icon: Icons.info_outline,
               label: 'Tentang',
             ),
@@ -253,7 +254,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
             ),
           ],
           const SizedBox(height: 12),
-          _InfoRow(
+          LabelValueRow(
             icon: Icons.local_hospital_outlined,
             label: 'Klinik',
             value: doctor.clinicName,
@@ -275,7 +276,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
             ),
           ],
           const SizedBox(height: 12),
-          _InfoRow(
+          LabelValueRow(
             icon: Icons.payments_outlined,
             label: 'Biaya',
             value: formatRupiah(doctor.consultationFee),
@@ -368,37 +369,4 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    this.value,
-    this.valueColor,
-  });
 
-  final IconData icon;
-  final String label;
-  final String? value;
-  final Color? valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 18, color: AppTheme.grey500),
-        const SizedBox(width: 8),
-        Text('$label: ',
-            style: AppTextTheme.bodyMedium.copyWith(color: AppTheme.grey700)),
-        if (value != null && value!.isNotEmpty)
-          Expanded(
-            child: Text(
-              value!,
-              style: AppTextTheme.bodyMedium
-                  .copyWith(color: valueColor ?? AppTheme.grey900),
-            ),
-          ),
-      ],
-    );
-  }
-}

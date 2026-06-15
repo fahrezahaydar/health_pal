@@ -12,7 +12,7 @@
 | home | Completed | Partial | 3 | 3 |
 | auth | Completed | Completed | 1 (utility) | 1 (→ `Validators.email()`) |
 | booking | Pending | Not Started | — | — |
-| doctor | Pending | Not Started | — | — |
+| doctor | Completed | Completed | 3 | 3 |
 | loc | Completed | Completed | 1 | 0 (rejected — too trivial; switched to DotLoader instead) |
 | onboarding | Completed | Completed | 0 | — |
 | profile | Completed | Completed | 4 | 4 |
