@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 
+import '../../../../core/enums/booking_status.dart';
+
 /// Entity untuk "Upcoming Treatment" card di Home Page.
 ///
 /// **Sprint 2 — Task A3 (Fix K3):** slot fields sudah typed
@@ -10,12 +12,16 @@ import 'package:flutter/material.dart' show TimeOfDay;
 /// - `slotStart`, `slotEnd` = `TimeOfDay?` (TIME-only, parsed via
 ///   `TimeOnlyJsonConverter`)
 ///
-/// `status` masih `String` — mapping ke `BookingStatus` enum adalah
-/// task A5 (terpisah).`@JsonValue` enum mapping per TDD 05 §3.1.
+/// **Sprint 2 — Task A5 (Fix M3):** `status` sudah typed ke
+/// `BookingStatus` enum (bukan `String`), jadi UI tidak perlu
+/// `BookingStatus.values.firstWhere(...)` yang fallback ke
+/// `pending` tanpa warning. Pakai `BookingStatus.fromJson()` di
+/// model, yang pakai `switch` eksplisit untuk semua known status
+/// dan `_ => BookingStatus.pending` untuk unknown value.
 ///
-/// Nullable (bukan default magic value) untuk safety:
-/// jika API kirim null/malformed, tidak ada epoch-0 atau 00:00 default
-/// yang confusing di UI.
+/// `slotDate`, `slotStart`, `slotEnd` nullable (bukan magic default)
+/// untuk safety: jika API kirim null/malformed, tidak ada epoch-0 atau
+/// 00:00 default yang confusing di UI.
 class UpcomingAppointmentEntity extends Equatable {
   final String id;
   final String doctorName;
@@ -25,7 +31,7 @@ class UpcomingAppointmentEntity extends Equatable {
   final DateTime? slotDate;
   final TimeOfDay? slotStart;
   final TimeOfDay? slotEnd;
-  final String status;
+  final BookingStatus status;
 
   const UpcomingAppointmentEntity({
     required this.id,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' show TimeOfDay;
 
+import '../../../../core/enums/booking_status.dart';
 import '../../../../core/network/json_converters.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
 
@@ -11,11 +12,12 @@ import '../../domain/entity/upcoming_appointment_entity.dart';
 /// - `slotStart`/`slotEnd` (raw "HH:MM:SS") → `TimeOfDay?` via
 ///   `TimeOnlyJsonConverter`
 ///
-/// Model masih manual (bukan `@freezed`) — refactor ke `@freezed` +
-/// `@JsonKey` adalah task B1 (Pool B). Untuk A3, kita pakai converters
-/// secara inline di `fromJson`.
+/// **Sprint 2 — Task A5 (Fix M3):** `status` di-parse via
+/// `BookingStatus.fromJson()` (switch eksplisit) — bukan `firstWhere`
+/// fallback yang pernah dipakai di UpcomingCard._status.
 ///
-/// `status` masih `String` — enum mapping adalah A5.
+/// Model masih manual (bukan `@freezed`) — refactor ke `@freezed` +
+/// `@JsonKey` adalah task B1 (Pool B).
 class UpcomingAppointmentModel {
   static const _dateConverter = DateOnlyJsonConverter();
   static const _timeConverter = TimeOnlyJsonConverter();
@@ -28,7 +30,7 @@ class UpcomingAppointmentModel {
   final DateTime? slotDate;
   final TimeOfDay? slotStart;
   final TimeOfDay? slotEnd;
-  final String status;
+  final BookingStatus status;
 
   const UpcomingAppointmentModel({
     required this.id,
@@ -59,7 +61,7 @@ class UpcomingAppointmentModel {
       slotDate: _dateConverter.fromJson(slots?['slot_date'] as String?),
       slotStart: _timeConverter.fromJson(slots?['slot_start'] as String?),
       slotEnd: _timeConverter.fromJson(slots?['slot_end'] as String?),
-      status: json['status'] as String? ?? '',
+      status: BookingStatus.fromJson(json['status'] as String?),
     );
   }
 

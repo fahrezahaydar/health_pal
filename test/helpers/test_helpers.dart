@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart' show TimeOfDay;
 
+import 'package:health_pal/core/enums/booking_status.dart';
 import 'package:health_pal/features/auth/domain/entity/user_entity.dart';
 import 'package:health_pal/features/home/domain/entity/banner_entity.dart';
 import 'package:health_pal/features/home/domain/entity/specialization_entity.dart';
@@ -87,7 +88,8 @@ class TestData {
       slotDate: DateTime(2026, 6, 15),
       slotStart: const TimeOfDay(hour: 9, minute: 0),
       slotEnd: const TimeOfDay(hour: 9, minute: 30),
-      status: 'upcoming',
+      // Sprint 2 — A5: status sekarang BookingStatus enum (bukan String).
+      status: BookingStatus.upcoming,
     );
   }
 

@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
 
-import '../../../../core/enums/booking_status.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -39,11 +38,8 @@ class _AppointmentCard extends StatelessWidget {
 
   final UpcomingAppointmentEntity appointment;
 
-  BookingStatus get _status => BookingStatus.values.firstWhere(
-    (e) => e.name == appointment.status,
-    orElse: () => BookingStatus.pending,
-  );
-
+  // Sprint 2 — A5: status sudah typed BookingStatus di entity,
+  // tidak perlu firstWhere fallback. Gunakan langsung appointment.status.
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -92,7 +88,7 @@ class _AppointmentCard extends StatelessWidget {
                 ],
               ),
             ),
-            StatusBadge(status: _status),
+            StatusBadge(status: appointment.status),
           ],
         ),
       ),

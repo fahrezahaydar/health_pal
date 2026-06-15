@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 
+import '../../../core/enums/booking_status.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/home/domain/entity/upcoming_appointment_entity.dart';
 import '../../../features/home/presentation/widget/upcoming_card.dart';
@@ -11,6 +12,7 @@ import '../../../features/home/presentation/widget/upcoming_card.dart';
 // non-const (runtime-evaluated), dan `_mockSlotStart`/`_mockSlotEnd`
 // pakai `const TimeOfDay` yang const-constructible tapi di sini
 // disatukan lewat variable.
+// Sprint 2 — A5: status sekarang BookingStatus enum (bukan String).
 final UpcomingAppointmentEntity _mockUpcoming = UpcomingAppointmentEntity(
   id: 'appt-1',
   doctorName: 'Dr. Budi Santoso',
@@ -20,7 +22,7 @@ final UpcomingAppointmentEntity _mockUpcoming = UpcomingAppointmentEntity(
   slotDate: DateTime(2024, 1, 15),
   slotStart: const TimeOfDay(hour: 9, minute: 0),
   slotEnd: const TimeOfDay(hour: 9, minute: 30),
-  status: 'pending',
+  status: BookingStatus.pending,
 );
 
 @Preview(name: 'Upcoming Default', group: 'Upcoming Card')
