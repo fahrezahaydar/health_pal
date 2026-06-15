@@ -1,6 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
@@ -107,16 +106,20 @@ class _CategoryItem extends StatelessWidget {
     );
   }
 
+  // Sprint 2 — C5: Replace all Iconsax icons with Material Icons
+  // fallback. Owner will swap to Iconsax equivalents via TODO list.
+  // Icon mapping is heuristic by specialization name substring.
   IconData _getIcon(String name) {
     final lower = name.toLowerCase();
-    if (lower.contains('dent')) return Iconsax.user;
-    if (lower.contains('card')) return Iconsax.heart;
-    if (lower.contains('pulm') || lower.contains('lung')) return Iconsax.user;
-    if (lower.contains('neuro')) return Iconsax.user;
-    if (lower.contains('gastro')) return Iconsax.user;
-    if (lower.contains('lab')) return Iconsax.user;
-    if (lower.contains('vacc')) return Iconsax.user;
-    if (lower.contains('gener')) return Iconsax.user;
-    return Iconsax.user;
+    if (lower.contains('dent')) return Icons.medical_services;
+    if (lower.contains('card')) return Icons.favorite;
+    if (lower.contains('pulm') || lower.contains('lung')) return Icons.air;
+    if (lower.contains('neuro')) return Icons.psychology;
+    if (lower.contains('gastro')) return Icons.science;
+    if (lower.contains('lab')) return Icons.biotech;
+    if (lower.contains('vacc')) return Icons.vaccines;
+    if (lower.contains('gener')) return Icons.person;
+    // TODO: change to iconsax — currently Material fallback
+    return Icons.local_hospital;
   }
 }
