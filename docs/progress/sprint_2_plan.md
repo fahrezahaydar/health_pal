@@ -46,8 +46,8 @@
 | B4 | Cache user profile | 1h | ✅ Done | `78e5696` | Add profile cache (TTL 5 menit) to `HomeLocalDataSource`. Repo fallback: remote → cache → failure. `clearAll()` now also clears profile. `flutter analyze` 0 issues. |
 | B5 | Use CacheService generic di Home | 2h | ✅ Done | `a8de100` | Refactor HomeLocalDataSource to use `CacheService` instead of `SharedPreferences` directly. Added `setInt`/`getInt` to CacheService (for TTL). DI regen OK. |
 | B6 | Cache invalidation hook | 0.5h | ✅ Done | `a8de100` | Inject `HomeLocalDataSource` into `AppServices`. Call `clearAll()` on `logout()` + `_onAuthStateChange.signedOut`. Identity-safe (clearAll idempotent). |
-| B7 | ErrorHandler.handleWithAuthCheck | 2h | ✅ Done | (in B7+B8 commit) | Add static `handleWithAuthCheck` — callback `onUnauthorized`. Demo usage in `getUserProfile` (auto-logout on 401 via `AppServices.logout()`). |
-| B8 | Implement withRetry | 0.5h | ✅ Done | (in B7+B8 commit) | Create `lib/core/utils/retry.dart` — exponential backoff (1s, 2s, 4s) for SocketException/TimeoutException. Applied to `getBanners` in HomeRepositoryImpl. |
+| B7 | ErrorHandler.handleWithAuthCheck | 2h | ✅ Done | `79420e0` | Add static `handleWithAuthCheck` — callback `onUnauthorized`. Demo usage in `getUserProfile` (auto-logout on 401 via `AppServices.logout()`). |
+| B8 | Implement withRetry | 0.5h | ✅ Done | `79420e0` | Create `lib/core/utils/retry.dart` — exponential backoff (1s, 2s, 4s) for SocketException/TimeoutException. Applied to `getBanners` in HomeRepositoryImpl. |
 
 **Pool B Progress: 8/8 done (100%) ✅**
 
