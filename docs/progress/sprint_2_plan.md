@@ -23,7 +23,7 @@
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|---------|--------|--------|---------|
-| A1 | Search Bar widget | 4h | 🔄 In Progress (final commit pending) | — | Stateless widget, tap → /doctor/search, integrated to HomePage below GreetingSection |
+| A1 | Search Bar widget | 4h | ✅ Done | `0b7d603` | Stateless widget, tap → /doctor/search, integrated to HomePage below GreetingSection. `flutter analyze` 0 issues. |
 | A2 | Fix getUpcoming order | 1h | ⬜ Not Started | — | — |
 | A3 | Fix slot date/time typing | 3h | ⬜ Not Started | — | — |
 | A4 | Fix HomePage SupabaseClient import | 1h | ⬜ Not Started | — | — |
