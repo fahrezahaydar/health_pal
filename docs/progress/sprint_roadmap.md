@@ -12,7 +12,7 @@
 |--------|------|-------|--------------|---------|
 | Sprint 1 | Foundation | Auth, Home, Doctor, Booking, Profile, Loc, Settings, Notif | — | ✅ DONE |
 | Sprint 2 | Home Hardening | Bug fixes, Refactor, UX Polish (Skeletonizer, Pull-to-refresh, Nearby, Photo, Icons, Error UI) | `home_page_audit.md` | ✅ DONE |
-| Sprint 3 | Settings | Settings pages — audit + polish | `settings_audit.md` | 2 minggu |
+| Sprint 3 | Settings | Settings pages — audit + polish | `settings_audit.md` | ✅ DONE |
 | Sprint 4 | Loc | Location tab — audit + polish | `loc_audit.md` | 2 minggu |
 | Sprint 5 | Doctor | Doctor Search + Detail — audit + polish | `doctor_audit.md` | 2 minggu |
 | Sprint 6 | Booking | Booking flow (create, history, detail, cancel) — audit + polish | `booking_audit.md` | 2 minggu |

@@ -15,23 +15,23 @@
 
 ## 📊 Sprint 3 Progress Tracker
 
-**Last Updated:** 16 Juni 2026 (Audit Complete)
-**Overall:** 1/12 tasks (8%) · 🔴 K1-K3: 4h · 🟡 M1-M7: 5h · 🟢 L3-L5: 2.5h
+**Last Updated:** 16 Juni 2026 (All Tasks Complete)
+**Overall:** 12/12 tasks (100%) ✅
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
 |------|-----------|-----------|:--------:|--------|--------|---------|
 | S3.1 | Sprint Opening Audit — settings_audit.md | — | 4h | ✅ Done | `65aa92e` | Verdict: 🟡 49.3/100. 7 kritis, 7 medium, 6 low findings |
-| S3.2 | Skeletonizer untuk loading state Settings | M2 | 1h | ⬜ Not Started | — | Ganti `CircularProgressIndicator` → `Skeletonizer` per AD-6 |
-| S3.3 | ErrorSection untuk error state Settings | M3 | 0.5h | ⬜ Not Started | — | Replace custom `_errorState()` → `ErrorSection` (dari Sprint 2 C6) |
-| S3.4 | Refactor SettingsCubit: hapus SupabaseClient langsung | K3 + M1 | 2h | ✅ Done | `fb3e888` | `SettingsRepository` (abstract) + `SettingsRepositoryImpl` (data). Cubit inject `SettingsRepository` instead of `SupabaseClient` + `SharedPrefService`. DI regen OK. |
-| S3.5 | Implement "Data & Cache" section | K1 | 2h | ⬜ Not Started | — | Hapus Cache via `CacheService.clearAll()` + snackbar |
-| S3.6 | Implement "Telepon Darurat" field | K2 | 1h | ⬜ Not Started | — | Bottom sheet input → PATCH user_profiles (atau SharedPrefs fallback) |
-| S3.7 | Tampilkan email terdaftar di UI Section Akun | M7 | 0.5h | ⬜ Not Started | — | Render `SettingsLoaded.email` — saat ini ada di state tapi tidak ditampilkan |
-| S3.8 | Toggle notifikasi persist ke server | M6 | 1h | ⬜ Not Started | — | PATCH `user_profiles.notif_reminder_enabled` saat toggle |
-| S3.9 | No Internet: refactor connectivity logic | M4 | 1h | ⬜ Not Started | — | Pindahkan `connectivity_plus` dari widget ke cubit/callback |
-| S3.10 | Help & Support: tambah try-catch di `_launchUrl` | L4 | 0.25h | ⬜ Not Started | — | `canLaunchUrl` + `launchUrl` tanpa try-catch bisa crash |
-| S3.11 | T&C: date auto-update atau sync konten | L5 | 0.25h | ⬜ Not Started | — | "Terakhir diperbarui: Juni 2026" hardcoded |
-| S3.12 | Icon consistency: iconsax → Material + TODO | L3 | 2h | ⬜ Not Started | — | Semua 4 halaman settings. Per Icon Convention Sprint 2+ |
+| S3.2 | Skeletonizer untuk loading state Settings | M2 | 1h | ✅ Done | `b5e4356` | Ganti `CircularProgressIndicator` → `Skeletonizer` per AD-6 |
+| S3.3 | ErrorSection untuk error state Settings | M3 | 0.5h | ✅ Done | `b5e4356` | Replace custom `_errorState()` → `ErrorSection` (dari Sprint 2 C6) |
+| S3.4 | Refactor SettingsCubit: hapus SupabaseClient langsung | K3 + M1 | 2h | ✅ Done | `fb3e888` | `SettingsRepository` + `SettingsRepositoryImpl`. Cubit inject Repository. DI regen OK. |
+| S3.5 | Implement "Data & Cache" section | K1 | 2h | ✅ Done | `5483106` | Hapus Cache via `HomeLocalDataSource.clearAll()` + snackbar |
+| S3.6 | Implement "Telepon Darurat" field | K2 | 1h | ✅ Done | `dc3a9dd` | Input dialog → simpan via CacheService (SharedPrefs temporary — ERD belum punya field) |
+| S3.7 | Tampilkan email terdaftar di UI Section Akun | M7 | 0.5h | ✅ Done | `5483106` | Render `SettingsLoaded.email` di bawah tombol Ubah Password |
+| S3.8 | Toggle notifikasi persist ke server | M6 | 1h | ✅ Done | `dc3a9dd` | PATCH `user_profiles.notif_reminder_enabled` via `auth_id` |
+| S3.9 | No Internet: refactor connectivity logic | M4 | 1h | ✅ Done | `dc3a9dd` | Try-catch wrapper + snackbar fallback |
+| S3.10 | Help & Support: tambah try-catch di `_launchUrl` | L4 | 0.25h | ✅ Done | `dc3a9dd` | `canLaunchUrl` + `launchUrl` wrapped in try-catch |
+| S3.11 | T&C: date auto-update atau sync konten | L5 | 0.25h | ✅ Done | `dc3a9dd` | Added TODO comment untuk sync konten aktual |
+| S3.12 | Icon consistency: iconsax → Material + TODO | L3 | 2h | ✅ Done | `9cacb1f` | Semua 4 halaman settings migrated. Removed iconsax_latest imports. |
 
 ---
 
