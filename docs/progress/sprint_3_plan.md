@@ -15,21 +15,23 @@
 
 ## 📊 Sprint 3 Progress Tracker
 
-**Last Updated:** 16 Juni 2026 (Sprint 3 Planned)
-**Overall:** 0 tasks (0%)
+**Last Updated:** 16 Juni 2026 (Audit Complete)
+**Overall:** 1/12 tasks (8%) · 🔴 K1-K3: 4h · 🟡 M1-M7: 5h · 🟢 L3-L5: 2.5h
 
-| Task | Deskripsi | Estimasi | Status | Commit | Catatan |
-|------|-----------|---------|--------|--------|---------|
-| S3.1 | Sprint Opening Audit — settings_audit.md | 4h | ⬜ Not Started | — | Day 1-2 |
-| S3.2 | Skeletonizer untuk loading state Settings | 2h | ⬜ Not Started | — | Per AD-6, reuse production widget |
-| S3.3 | ErrorSection untuk error state Settings | 1h | ⬜ Not Started | — | Reuse dari Sprint 2 C6 |
-| S3.4 | Refactor SettingsCubit — data layer | 3h | ⬜ Not Started | — | Build repo + datasource (current: direct SupabaseClient + SharedPref) |
-| S3.5 | Implement "Data & Cache" section | 2h | ⬜ Not Started | — | Wireframe 18 §Data & Cache — Hapus Cache, Hapus Data Lokal |
-| S3.6 | Implement "Telepon Darurat" field | 1h | ⬜ Not Started | — | Wireframe 18 catatan kaki |
-| S3.7 | Help & Support page — audit + polish | 2h | ⬜ Not Started | — | FAQ, Contact cards |
-| S3.8 | Terms & Conditions page — audit + polish | 1h | ⬜ Not Started | — | Static content verification |
-| S3.9 | No Internet page — audit + polish | 2h | ⬜ Not Started | — | Cubit/state pattern (current: inline connectivity_plus) |
-| S3.10 | Icon consistency pass (iconsax → Material + TODO) | 2h | ⬜ Not Started | — | Per Icon Convention Sprint 2+ |
+| Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
+|------|-----------|-----------|:--------:|--------|--------|---------|
+| S3.1 | Sprint Opening Audit — settings_audit.md | — | 4h | ✅ Done | `65aa92e` | Verdict: 🟡 49.3/100. 7 kritis, 7 medium, 6 low findings |
+| S3.2 | Skeletonizer untuk loading state Settings | M2 | 1h | ⬜ Not Started | — | Ganti `CircularProgressIndicator` → `Skeletonizer` per AD-6 |
+| S3.3 | ErrorSection untuk error state Settings | M3 | 0.5h | ⬜ Not Started | — | Replace custom `_errorState()` → `ErrorSection` (dari Sprint 2 C6) |
+| S3.4 | Refactor SettingsCubit: hapus SupabaseClient langsung | K3 + M1 | 2h | ⬜ Not Started | — | Inject `AppServices` (sama seperti A4) + buat `SettingsRepository` |
+| S3.5 | Implement "Data & Cache" section | K1 | 2h | ⬜ Not Started | — | Hapus Cache via `CacheService.clearAll()` + snackbar |
+| S3.6 | Implement "Telepon Darurat" field | K2 | 1h | ⬜ Not Started | — | Bottom sheet input → PATCH user_profiles (atau SharedPrefs fallback) |
+| S3.7 | Tampilkan email terdaftar di UI Section Akun | M7 | 0.5h | ⬜ Not Started | — | Render `SettingsLoaded.email` — saat ini ada di state tapi tidak ditampilkan |
+| S3.8 | Toggle notifikasi persist ke server | M6 | 1h | ⬜ Not Started | — | PATCH `user_profiles.notif_reminder_enabled` saat toggle |
+| S3.9 | No Internet: refactor connectivity logic | M4 | 1h | ⬜ Not Started | — | Pindahkan `connectivity_plus` dari widget ke cubit/callback |
+| S3.10 | Help & Support: tambah try-catch di `_launchUrl` | L4 | 0.25h | ⬜ Not Started | — | `canLaunchUrl` + `launchUrl` tanpa try-catch bisa crash |
+| S3.11 | T&C: date auto-update atau sync konten | L5 | 0.25h | ⬜ Not Started | — | "Terakhir diperbarui: Juni 2026" hardcoded |
+| S3.12 | Icon consistency: iconsax → Material + TODO | L3 | 2h | ⬜ Not Started | — | Semua 4 halaman settings. Per Icon Convention Sprint 2+ |
 
 ---
 
@@ -75,18 +77,15 @@ Berikut gap yang sudah teridentifikasi SEBELUM audit formal. Akan diverifikasi u
 
 ### 2.1 Task Details
 
-#### S3.1 Sprint Opening Audit (4h)
+#### S3.1 ✅ Sprint Opening Audit ✅
 
-Buat `docs/progress/settings_audit.md` dengan template `home_page_audit.md`:
-- 15 sections (Executive Summary, Wireframe vs Code, PRD vs Code, API vs Code, ERD vs Code, User Flow vs Code, TDD Compliance x 6, Bug Catalog, TODO, Score Card)
-- Verifikasi pra-audit findings F1-F10
-- Identifikasi temuan baru di luar F1-F10
-- Output: todo list untuk Sprint 3
+**Done:** `65aa92e` — docs(sprint3): settings audit complete
 
-**Files:**
-- `docs/progress/settings_audit.md` (new)
+**Output:** `docs/progress/settings_audit.md` (460 lines, 15 sections)
+**Verdict:** 🟡 49.3/100
+**Key findings:** 2 🔴 missing features (Data & Cache, Telepon Darurat), 1 🔴 arsitektur (SupabaseClient di Cubit), 7 🟡 medium, 6 🟢 low
 
-#### S3.2 Skeletonizer untuk Loading State (2h)
+#### S3.2 Skeletonizer untuk Loading State (1h) — Ref: M2
 
 Ganti `CircularProgressIndicator` di Settings page dengan `Skeletonizer` pattern:
 - Settings page: skeleton untuk card container (3 section × 2-3 items)
@@ -106,11 +105,9 @@ Skeletonizer(
 - `lib/features/settings/presentation/page/settings_page.dart` (modify)
 - `lib/features/settings/presentation/page/help_support_page.dart` (modify)
 
-#### S3.3 ErrorSection untuk Error State (1h)
+#### S3.3 ErrorSection untuk Error State (0.5h) — Ref: M3
 
-Replace custom error widget di Settings page dengan `ErrorSection` dari `lib/widgets/loader/error_section.dart`:
-- Tambah padding/context yang sesuai
-- Hapus custom error state widget
+Replace custom error widget di Settings page dengan `ErrorSection` dari `lib/widgets/loader/error_section.dart`.
 
 **Pattern:**
 ```dart
@@ -123,18 +120,16 @@ SettingsError(:final message) => ErrorSection(
 **Files:**
 - `lib/features/settings/presentation/page/settings_page.dart` (modify)
 
-#### S3.4 Refactor SettingsCubit — Data Layer (3h)
+#### S3.4 Refactor SettingsCubit: hapus SupabaseClient (2h) — Ref: K3 + M1
 
-**Problem:** `SettingsCubit` injects `SharedPrefService` + `SupabaseClient`. Ini melanggar TDD 01 §3.3 (presentation tidak boleh langsung akses data layer).
+**Problem:** SettingsCubit injects `SharedPrefService` + `SupabaseClient`. Melanggar TDD 01 §3.3 (presentation ↔ data layer). Sama seperti bug K4 di Home yang di-fix Sprint 2 A4.
 
-**Fix:** Buat data/domain layer untuk Settings:
-1. `SettingsRepository` abstract (`lib/features/settings/domain/repository/settings_repository.dart`)
-2. `SettingsRepositoryImpl` (`lib/features/settings/data/repository/settings_repository_impl.dart`)
-3. Pindahkan SharedPrefService + SupabaseClient logic ke repository
-4. SettingsCubit inject SettingsRepository (bukan SharedPrefService + SupabaseClient langsung)
+**Fix (lightweight — rekomendasi):**
+1. Inject `AppServices` untuk auth-related operations (sama seperti fix A4)
+2. Inject `SettingsRepository` baru untuk data settings
+3. Buat `SettingsRepository` abstract + `SettingsRepositoryImpl`
+4. Pindahkan SharedPrefService + SupabaseClient logic ke repository
 5. Run build_runner untuk DI regeneration
-
-**Alternative (lightweight):** Pakai `AppServices` sebagai single source of truth untuk authId dan operasi terkait user — sama seperti fix A4 di Home.
 
 **Files:**
 - `lib/features/settings/domain/repository/settings_repository.dart` (new)
@@ -142,101 +137,96 @@ SettingsError(:final message) => ErrorSection(
 - `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify)
 - DI config (auto-regenerated)
 
-#### S3.5 Implement "Data & Cache" Section (2h)
+#### S3.5 Implement "Data & Cache" Section (2h) — Ref: K1
 
 **Wireframe:** 18-settings.md §"Data & Cache"
 
 **Feature spec:**
-- "Hapus Cache" — clear all SharedPreferences cache (cache banner, specialization, profile)
-- "Hapus Data Lokal" — clear semua local data termasuk FCM token (user tetap login, next sync akan re-create token)
+- "Hapus Cache" — `CacheService.clearAll()` (existing)
+- "Hapus Data Lokal" — clear local data (FCM token, dll). Login tetap aman.
 
 **Implementation:**
 1. Tambah 2 `MenuItemTile` di Settings page (antara Preferensi dan Aplikasi section)
-2. "Hapus Cache" → `CacheService.clearAll()` (existing method dari Sprint 2 B5/B6)
-3. "Hapus Data Lokal" → `HomeLocalDataSource.clearAll()` + `CacheService.clearAll()` + `SharedPrefService.clear()`
-4. Konfirmasi dialog sebelum eksekusi (reuse `AppConfirmDialog`)
-5. Snackbar sukses setelah selesai
+2. Konfirmasi dialog sebelum eksekusi (reuse `AppConfirmDialog`)
+3. Snackbar sukses setelah selesai
 
 **Files:**
 - `lib/features/settings/presentation/page/settings_page.dart` (modify)
-- `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify — tambah method)
+- `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify)
 
-#### S3.6 Implement "Telepon Darurat" Field (1h)
+#### S3.6 Implement "Telepon Darurat" Field (1h) — Ref: K2
 
-**Wireframe:** 18-settings.md catatan kaki
+**Wireframe:** 18-settings.md §Akun
 
 **Feature spec:**
-- Settings page footer: "Anda dapat menambahkan nomor telepon darurat" + icon telepon
+- Settings page footer: "Anda dapat menambahkan nomor telepon darurat"
 - Tap → input dialog (masukkan nomor telepon)
-- Simpan ke `user_profiles.emergency_phone` (ERD — perlu verifikasi field exists)
-
-**ERD check:** Cek `docs/erd/erd_healh_pal.md` — field `emergency_phone` di `user_profiles`?
-
-**Note:** Jika field ERD belum ada, butuh SQL migration. Jika tidak, bisa simpan di SharedPreferences sebagai temporary solution.
+- ERD check: `user_profiles.emergency_phone` — `docs/erd/erd_healh_pal.md` **tidak punya field ini**.
+- Jika tidak ada: simpan di SharedPreferences temporary + catat SQL migration needed
 
 **Files:**
 - `lib/features/settings/presentation/page/settings_page.dart` (modify)
-- `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify — tambah method)
+- `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify)
 
-#### S3.7 Help & Support — Audit + Polish (2h)
+#### S3.7 Tampilkan Email Terdaftar (0.5h) — Ref: M7
 
-**Wireframe:** 19-help-support.md
+**Wireframe:** 18-settings.md §Akun — menampilkan email user (read-only)
 
-**Verifikasi:**
-- FAQ item sesuai wireframe?
-- Email: `support@healthpal.app` — routing valid?
-- Telepon: `021-12345678` — routing valid?
-- `url_launcher` call sudah pakai error handling?
+**Status:** `SettingsLoaded.email` sudah ada di state cubit, tapi **tidak di-render** di UI.
 
-**Polish:**
-- Tambah Skeletonizer untuk loading state (jika ada)
-- Error handling untuk `_launchUrl` (current: `await canLaunchUrl` + `await launchUrl` tanpa try-catch)
+**Fix:** Tambah `MenuItemTile` atau `ListTile` di section Akun yang menampilkan `state.email`.
 
 **Files:**
-- `lib/features/settings/presentation/page/help_support_page.dart` (modify)
+- `lib/features/settings/presentation/page/settings_page.dart` (modify)
 
-#### S3.8 Terms & Conditions — Audit + Polish (1h)
+#### S3.8 Toggle Notifikasi Persist ke Server (1h) — Ref: M6
 
-**Wireframe:** 20-tnc.md
+**Problem:** Toggle notifikasi hanya simpan ke `SharedPrefs`, tidak sync ke Supabase.
 
-**Verifikasi:**
-- Semua section (6 item) ada?
-- Tanggal "Terakhir diperbarui: Juni 2026" — update ke tanggal aktual
-- Layout konsisten dengan wireframe?
+**Fix:** `toggleNotification()` → PATCH `user_profiles.notif_reminder_enabled` via Supabase.
 
 **Files:**
-- `lib/features/settings/presentation/page/terms_and_conditions_page.dart` (modify)
+- `lib/features/settings/presentation/bloc/settings/settings_cubit.dart` (modify)
 
-#### S3.9 No Internet Page — Audit + Polish (2h)
+#### S3.9 No Internet: Refactor Connectivity Logic (1h) — Ref: M4
 
-**Wireframe:** 21-no-internet.md
+**Problem:** `Connectivity().checkConnectivity()` langsung dipanggil di widget `NoInternetPage`.
 
-**Problem:** `Connectivity().checkConnectivity()` langsung dipanggil di widget (StatefulWidget dengan state internal).
-
-**Fix:**
-1. Buat `NoInternetCubit` (opsional — atau jadikan stateless dengan callback)
-2. Pindahkan logika connectivity ke cubit
-3. Handle loading state (saat checking)
-4. Handle error state (connectivity gagal)
-5. Skeletonizer? Halaman ini tidak streaming data, jadi skeleton tidak terlalu relevan.
-
-**Alternative:** Simplify — tetap StatefulWidget tapi refactor retry logic ke method yang lebih clean. Tidak perlu cubit untuk halaman sesederhana ini.
+**Fix:** Simplify — tetap StatefulWidget, refactor retry logic ke method terpisah. Tidak perlu cubit baru (halaman terlalu sederhana). Alternatif: buat `ConnectivityService` di `core/services/`.
 
 **Files:**
 - `lib/features/settings/presentation/page/no_internet_page.dart` (modify)
 
-#### S3.10 Icon Consistency Pass (2h)
+#### S3.10 Help & Support: tambah try-catch `_launchUrl` (0.25h) — Ref: L4
 
-**Problem:** Settings pages menggunakan `iconsax_latest` langsung. Per Icon Convention:
-- New code → Material Icons + `// TODO: change to iconsax`
-- Existing Iconsax code → jangan diubah
+**Problem:** `_launchUrl` menggunakan `canLaunchUrl` + `launchUrl` tanpa try-catch. Jika URL tidak valid, throw unhandled exception.
+
+**Fix:** Bungkus dalam try-catch, tampilkan snackbar jika gagal.
+
+**Files:**
+- `lib/features/settings/presentation/page/help_support_page.dart` (modify)
+
+#### S3.11 T&C: Date Auto-Update (0.25h) — Ref: L5
+
+**Problem:** "Terakhir diperbarui: Juni 2026" — hardcoded di `terms_and_conditions_page.dart:76`.
+
+**Fix:** `'Terakhir diperbarui: ${DateFormat.yMMMM(Locale('id')).format(DateTime(2026, 6))}'` atau sync dengan konten.
+
+**Files:**
+- `lib/features/settings/presentation/page/terms_and_conditions_page.dart` (modify)
+
+#### S3.12 Icon Consistency: iconsax → Material + TODO (2h) — Ref: L3
 
 **Approach:**
-- Settings page: ganti `Iconsax.*` → `Icons.*` + TODO comment
-- Help & Support page: ganti `Iconsax.*` → `Icons.*` + TODO comment
-- Terms & Conditions page: ganti `Iconsax.*` → `Icons.*` + TODO comment
-- No Internet page: ganti `Iconsax.*` → `Icons.*` + TODO comment
-- Hapus import `iconsax_latest` jika semua icon sudah diganti
+- Settings page: ganti `Iconsax.*` → `Icons.*` + `// TODO: change to iconsax`
+- Help & Support page: ganti `Iconsax.*` → `Icons.*` + TODO
+- Terms & Conditions page: ganti `Iconsax.*` → `Icons.*` + TODO
+- No Internet page: ganti `Iconsax.*` → `Icons.*` + TODO
+- Hapus import `iconsax_latest` dari file yang sudah full Material
+
+**Important Notes (per Icon Convention):**
+- Jangan ubah existing Iconsax code di file LAIN (hanya settings pages)
+- Setiap icon WAJIB TODO comment
 
 ---
 
@@ -244,16 +234,16 @@ SettingsError(:final message) => ErrorSection(
 
 | Day | Tasks | Detail |
 |:---:|-------|--------|
-| Day 1 | S3.1 — Audit | `settings_audit.md` — verifikasi F1-F10 + temuan baru |
-| Day 2 | S3.1 — Audit (lanjutan) | Finalisasi audit doc, publish, alignment tim |
-| Day 3 | S3.4 — Refactor data layer | SettingsRepository + impl, DI regen |
-| Day 4 | S3.2 + S3.3 — Skeletonizer + ErrorSection | Polish loading/error states |
-| Day 5 | S3.5 — Data & Cache section | Implementasi section baru |
-| Day 6 | S3.6 — Telepon Darurat | Input dialog + save |
-| Day 7 | S3.7 + S3.8 — Help + TnC polish | Audit findings fix |
-| Day 8 | S3.9 — No Internet refactor | Connectivity logic cleanup |
-| Day 9 | S3.10 — Icon consistency | Iconsax → Material + TODO |
-| Day 10 | Buffer + Flutter analyze + Commit | Final QA, 0 issues |
+| Day 1 | S3.1 ✅ DONE | Audit selesai — `65aa92e` |
+| Day 2 | S3.4 — Refactor data layer | SettingsRepository + impl, DI regen, hapus SupabaseClient dari Cubit |
+| Day 3 | S3.2 + S3.3 — Skeletonizer + ErrorSection | Polish loading/error states |
+| Day 4 | S3.5 — Data & Cache section | Hapus Cache + Hapus Data Lokal |
+| Day 5 | S3.6 + S3.7 — Telepon Darurat + Email | Input dialog + tampilkan email di UI |
+| Day 6 | S3.8 + S3.9 — Toggle persist + No Internet | PATCH ke server + connectivity refactor |
+| Day 7 | S3.10 + S3.11 — Help try-catch + T&C date | Error handling + date sync |
+| Day 8 | S3.12 — Icon consistency | Iconsax → Material + TODO (semua 4 halaman) |
+| Day 9 | Buffer catch-up | Task overflow |
+| Day 10 | Flutter analyze + Final Commit | 0 issues + commit semua task |
 
 ---
 
