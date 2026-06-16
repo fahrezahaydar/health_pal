@@ -6,7 +6,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
@@ -69,7 +68,8 @@ class _LocView extends StatelessWidget {
                             .copyWith(color: AppTheme.blue, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Iconsax.arrowDown01,
+                      // TODO: change to iconsax — currently Material fallback
+                      const Icon(Icons.arrow_drop_down,
                           size: 12, color: AppTheme.blue),
                     ],
                   ),
@@ -167,8 +167,9 @@ class _LocView extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: AppTheme.lightPink,
               ),
+              // TODO: change to iconsax — currently Material fallback
               child: const Icon(
-                Iconsax.locationCross,
+                Icons.location_disabled,
                 size: 60,
                 color: AppTheme.darkRed,
               ),
@@ -205,7 +206,8 @@ class _LocView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Iconsax.hospital,
+            // TODO: change to iconsax — currently Material fallback
+            const Icon(Icons.local_hospital,
                 size: 80, color: AppTheme.grey300),
             const SizedBox(height: 16),
             Text('Tidak Ada Klinik',

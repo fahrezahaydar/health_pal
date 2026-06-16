@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_text_theme.dart';
@@ -12,17 +11,15 @@ class ClinicCard extends StatelessWidget {
 
   final ClinicEntity clinic;
 
-  factory ClinicCard.skeleton() => ClinicCard(
-        clinic: ClinicEntity.mock().first,
-      );
-
   Future<void> _openMaps() async {
-    final uri = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}',
-    );
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    try {
+      final uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}',
+      );
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -54,14 +51,14 @@ class ClinicCard extends StatelessWidget {
                           clinic.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, _, _) => const Icon(
-                            Iconsax.hospital,
+                            Icons.local_hospital, // TODO: change to iconsax
                             color: AppTheme.grey400,
                             size: 32,
                           ),
                         ),
                       )
                     : const Icon(
-                        Iconsax.hospital,
+                        Icons.local_hospital, // TODO: change to iconsax
                         color: AppTheme.grey400,
                         size: 32,
                       ),
@@ -80,7 +77,8 @@ class ClinicCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Iconsax.location,
+                        // TODO: change to iconsax — currently Material fallback
+const Icon(Icons.location_on,
                             size: 12, color: AppTheme.grey500),
                         const SizedBox(width: 4),
                         Expanded(
@@ -145,7 +143,8 @@ class ClinicCard extends StatelessWidget {
             const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Iconsax.people, size: 14, color: AppTheme.grey500),
+              // TODO: change to iconsax — currently Material fallback
+const Icon(Icons.people, size: 14, color: AppTheme.grey500),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -159,7 +158,7 @@ class ClinicCard extends StatelessWidget {
                 child: LightOutlineButton(
                   label: 'Lihat Peta',
                   icon: const Icon(
-                    Iconsax.map,
+                    Icons.map, // TODO: change to iconsax
                     size: 14,
                     color: AppTheme.primary,
                   ),
