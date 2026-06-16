@@ -132,6 +132,10 @@ import 'package:health_pal/features/profile/presentation/bloc/notification/notif
     as _i372;
 import 'package:health_pal/features/profile/presentation/bloc/profile/profile_cubit.dart'
     as _i516;
+import 'package:health_pal/features/settings/data/repository/settings_repository_impl.dart'
+    as _i42;
+import 'package:health_pal/features/settings/domain/repository/settings_repository.dart'
+    as _i768;
 import 'package:health_pal/features/settings/presentation/bloc/settings/settings_cubit.dart'
     as _i1053;
 import 'package:injectable/injectable.dart' as _i526;
@@ -191,6 +195,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.factory<_i768.SettingsRepository>(
+      () => _i42.SettingsRepositoryImpl(
+        gh<_i454.SupabaseClient>(),
+        gh<_i167.SharedPrefService>(),
+      ),
+    );
     gh.factory<_i506.DoctorRepository>(
       () => _i112.DoctorRepositoryImpl(gh<_i158.DoctorRemoteDataSource>()),
     );
@@ -203,13 +213,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
         gh<_i613.AuthRepository>(),
         gh<_i444.HomeLocalDataSource>(),
-      ),
-    );
-    gh.factory<_i1053.SettingsCubit>(
-      () => _i1053.SettingsCubit(
-        gh<_i167.SharedPrefService>(),
-        gh<_i605.AppServices>(),
-        gh<_i454.SupabaseClient>(),
       ),
     );
     gh.factory<_i572.ProfileRepository>(
@@ -319,6 +322,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i685.SignInBloc>(
       () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
+    );
+    gh.factory<_i1053.SettingsCubit>(
+      () => _i1053.SettingsCubit(
+        gh<_i768.SettingsRepository>(),
+        gh<_i605.AppServices>(),
+      ),
     );
     gh.factory<_i516.ProfileCubit>(
       () => _i516.ProfileCubit(
