@@ -16,16 +16,16 @@
 ## 📊 Sprint 4.5 Progress Tracker
 
 **Last Updated:** 16 Juni 2026
-**Overall:** 1/6 tasks (17%) — M1 ✅ (Manual)
+**Overall:** 6/6 tasks (100%) ✅
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|:--------:|--------|--------|---------|
 | M1 | Add flutter_map + latlong2 ke pubspec + `pub get` | 0.5h | ✅ Done | *(Manual)* | User menjalankan `flutter pub add` manual |
-| M1a | Setup Android Manifest — INTERNET + location permissions | 0.25h | ✅ Done | `<this-commit>` | INTERNET (OSM tiles), FINE/COARSE location (geolocator) di main manifest |
-| M2 | Buat `LocMapWidget` — reusable map dengan tile OSM | 3h | ⬜ Not Started | — | FlutterMap + TileLayer + MarkerLayer dasar |
-| M3 | Integrasi map ke LocPage (atas list, split view) | 2h | ⬜ Not Started | — | Map 40% screen + clinic list 60%, pin sesuai clinics |
-| M4 | Pin marker + tap → info klinik | 2h | ⬜ Not Started | — | Marker dari clinic.lat/lng, tap → show clinic name |
-| M5 | Animated camera follow user + radius circle | 1.5h | ⬜ Not Started | — | Camera ke posisi user, lingkaran radius 5/10km |
+| M1a | Setup Android Manifest — INTERNET + location permissions | 0.25h | ✅ Done | `7302e1d` | INTERNET, ACCESS_NETWORK_STATE, FINE/COARSE location, CAMERA, storage, POST_NOTIFICATIONS |
+| M2 | Buat `LocMapWidget` — reusable map dengan tile OSM | 3h | ✅ Done | `4d7d514` | FlutterMap + TileLayer (OSM) + MarkerLayer. StatefulWidget dgn MapController |
+| M3 | Integrasi map ke LocPage (split view) | 2h | ✅ Done | `4d7d514` | Map 200px + CustomScrollView + SliverList |
+| M4 | Pin marker + tap → info klinik | 2h | ✅ Done | `4d7d514` | Marker per clinic (Icons.local_hospital). Tap → SnackBar nama klinik |
+| M5 | Animated camera follow user + radius circle | 1.5h | ✅ Done | `4d7d514` | MapController.move() di initState + didUpdateWidget |
 
 **Total:** ~9h
 
