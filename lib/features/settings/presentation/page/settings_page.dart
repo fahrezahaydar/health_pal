@@ -116,6 +116,17 @@ class _SettingsView extends StatelessWidget {
             label: 'Ubah Password',
             onTap: () => context.push(RoutePaths.forgotPassword),
           ),
+          if (state.email.isNotEmpty) ...[
+            const AppDivider(),
+            MenuItemTile(
+              icon: Iconsax.sms,
+              label: 'Email Terdaftar',
+              trailing: Text(
+                state.email,
+                style: const TextStyle(color: AppTheme.grey500, fontSize: 12),
+              ),
+            ),
+          ],
         ]),
         const SizedBox(height: 16),
 
@@ -136,6 +147,56 @@ class _SettingsView extends StatelessWidget {
             value: state.darkMode,
             onChanged: null,
             disabledHint: 'Segera Hadir',
+          ),
+        ]),
+        const SizedBox(height: 16),
+
+        // ── Section: Data & Cache (Sprint 3 — S3.5) ──
+        const SectionLabel(text: 'Data & Cache'),
+        CardContainer(children: [
+          MenuItemTile(
+            icon: Iconsax.trash,
+            label: 'Hapus Cache',
+            onTap: () async {
+              final confirmed = await AppConfirmDialog.show(
+                context,
+                title: 'Hapus Cache?',
+                message:
+                    'Cache akan dihapus. Data login dan appointment tidak terpengaruh.',
+                confirmLabel: 'Hapus',
+              );
+              if (confirmed == true && context.mounted) {
+                await context.read<SettingsCubit>().clearCache();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cache berhasil dihapus')),
+                  );
+                }
+              }
+            },
+          ),
+          const AppDivider(),
+          MenuItemTile(
+            icon: Iconsax.data,
+            label: 'Hapus Data Lokal',
+            onTap: () async {
+              final confirmed = await AppConfirmDialog.show(
+                context,
+                title: 'Hapus Data Lokal?',
+                message:
+                    'Semua data lokal akan dihapus. Anda tetap login.',
+                confirmLabel: 'Hapus',
+              );
+              if (confirmed == true && context.mounted) {
+                await context.read<SettingsCubit>().clearLocalData();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Data lokal berhasil dihapus')),
+                  );
+                }
+              }
+            },
           ),
         ]),
         const SizedBox(height: 16),

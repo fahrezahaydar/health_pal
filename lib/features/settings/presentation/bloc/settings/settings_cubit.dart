@@ -49,6 +49,14 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(current.copyWith(darkMode: value));
   }
 
+  Future<void> clearCache() async {
+    await _repository.clearCache();
+  }
+
+  Future<void> clearLocalData() async {
+    await _repository.clearLocalData();
+  }
+
   Future<void> logout() async {
     await _appServices.logout();
   }

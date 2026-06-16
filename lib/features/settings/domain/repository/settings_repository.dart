@@ -7,4 +7,8 @@ abstract class SettingsRepository {
   bool isNotifEnabled();
 
   Future<void> setNotifEnabled(bool value);
+
+  Future<void> clearCache();
+
+  Future<void> clearLocalData();
 }
