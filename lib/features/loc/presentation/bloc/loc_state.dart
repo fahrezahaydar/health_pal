@@ -33,26 +33,36 @@ class LocLoaded extends LocState {
   final List<ClinicEntity> clinics;
   final Position currentPosition;
   final double radiusKm;
+  final String? selectedSpecialization;
+  final String sortBy;
 
   const LocLoaded({
     required this.clinics,
     required this.currentPosition,
     this.radiusKm = 10.0,
+    this.selectedSpecialization,
+    this.sortBy = 'distance',
   });
 
   LocLoaded copyWith({
     List<ClinicEntity>? clinics,
     Position? currentPosition,
     double? radiusKm,
+    String? selectedSpecialization,
+    String? sortBy,
   }) =>
       LocLoaded(
         clinics: clinics ?? this.clinics,
         currentPosition: currentPosition ?? this.currentPosition,
         radiusKm: radiusKm ?? this.radiusKm,
+        selectedSpecialization:
+            selectedSpecialization ?? this.selectedSpecialization,
+        sortBy: sortBy ?? this.sortBy,
       );
 
   @override
-  List<Object?> get props => [clinics, currentPosition, radiusKm];
+  List<Object?> get props =>
+      [clinics, currentPosition, radiusKm, selectedSpecialization, sortBy];
 }
 
 class LocError extends LocState {

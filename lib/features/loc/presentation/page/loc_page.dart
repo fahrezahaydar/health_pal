@@ -116,6 +116,10 @@ class _LocView extends StatelessWidget {
     );
   }
 
+  static const _specializations = <String>[
+    'Semua', 'Umum', 'Gigi', 'Kulit', 'Anak', 'Mata', 'THT', 'Jantung', 'Saraf',
+  ];
+
   Widget _loaded(
     BuildContext context,
     List clinics,
@@ -137,6 +141,47 @@ class _LocView extends StatelessWidget {
               style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
             ),
           ),
+          // Sprint 4 — S4.5: Filter Chips (wireframe 07).
+          Container(
+            width: double.infinity,
+            color: AppTheme.white,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: BlocBuilder<LocCubit, LocState>(
+                buildWhen: (prev, curr) =>
+                    curr is LocLoaded &&
+                    (prev is! LocLoaded ||
+                        prev.selectedSpecialization !=
+                            curr.selectedSpecialization),
+                builder: (context, state) {
+                  final selected = state is LocLoaded
+                      ? state.selectedSpecialization
+                      : null;
+                  return Row(
+                    children: _specializations.map((s) {
+                      final isSelected = s == 'Semua'
+                          ? selected == null
+                          : selected == s;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: FilterChip(
+                          label: Text(s),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            context.read<LocCubit>().setFilter(
+                                  s == 'Semua' ? null : s,
+                                );
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16),

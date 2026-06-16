@@ -95,6 +95,18 @@ class LocCubit extends Cubit<LocState> {
     await _load(_lastPosition!, km);
   }
 
+  void setFilter(String? specialization) {
+    final current = state;
+    if (current is! LocLoaded) return;
+    emit(current.copyWith(selectedSpecialization: specialization));
+  }
+
+  void setSortBy(String sortBy) {
+    final current = state;
+    if (current is! LocLoaded) return;
+    emit(current.copyWith(sortBy: sortBy));
+  }
+
   Future<void> _load(Position position, double radiusKm) async {
     final result = await _getClinics(
       lat: position.latitude,
