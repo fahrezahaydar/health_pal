@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
@@ -16,6 +17,7 @@ import '../../../../widgets/loader/error_section.dart';
 import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
 import '../../domain/entity/clinic_entity.dart';
+import '../widget/loc_map_widget.dart';
 import '../../../../widgets/card/clinic_card.dart';
 
 class LocPage extends StatelessWidget {
@@ -94,9 +96,23 @@ class _LocView extends StatelessWidget {
             LocLoading() =>
               Skeletonizer(
                 enabled: true,
-                // Sprint 4 — S4.2: reuse production widget pattern.
-                // ClinicEntity.mock() sudah ada (static factory).
-                child: _loaded(context, ClinicEntity.mock(), 10),
+                child: _loaded(
+                  context,
+                  ClinicEntity.mock(),
+                  10,
+                  Position(
+                    latitude: -6.2088,
+                    longitude: 106.8456,
+                    accuracy: 0,
+                    altitude: 0,
+                    speed: 0,
+                    speedAccuracy: 0,
+                    heading: 0,
+                    timestamp: DateTime(2026, 6, 16),
+                    altitudeAccuracy: 0,
+                    headingAccuracy: 0,
+                  ),
+                ),
               ),
             LocPermissionDenied(:final reason) =>
               _permissionDenied(context, reason),
@@ -108,8 +124,8 @@ class _LocView extends StatelessWidget {
                       context.read<LocCubit>().requestLocationAndLoad(),
                 ),
               ),
-            LocLoaded(:final clinics, :final radiusKm) =>
-              _loaded(context, clinics, radiusKm),
+            LocLoaded(:final clinics, :final radiusKm, :final currentPosition) =>
+              _loaded(context, clinics, radiusKm, currentPosition),
           };
         },
       ),
@@ -124,6 +140,7 @@ class _LocView extends StatelessWidget {
     BuildContext context,
     List<ClinicEntity> clinics,
     double radiusKm,
+    Position currentPosition,
   ) {
     if (clinics.isEmpty) {
       return _emptyState(context, radiusKm);
@@ -143,105 +160,132 @@ class _LocView extends StatelessWidget {
     }
     return RefreshIndicator(
       onRefresh: () => context.read<LocCubit>().refresh(),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: AppTheme.white,
-            child: Text(
-              '${clinics.length} klinik ditemukan dalam ${radiusKm.toStringAsFixed(0)} km',
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
+      child: CustomScrollView(
+        slivers: [
+          // Sprint 4.5 — M2+M3: Map View (40% screen height)
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 200,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: LocMapWidget(
+                  clinics: sorted,
+                  userLat: currentPosition.latitude,
+                  userLng: currentPosition.longitude,
+                  radiusKm: radiusKm,
+                  onMarkerTap: (clinic) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(clinic.name)),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
-          // Sprint 4 — S4.5: Filter Chips (wireframe 07).
-          Container(
-            width: double.infinity,
-            color: AppTheme.white,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          // Info banner
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: AppTheme.white,
+              child: Text(
+                '${clinics.length} klinik ditemukan dalam ${radiusKm.toStringAsFixed(0)} km',
+                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
+              ),
+            ),
+          ),
+          // Filter Chips
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              color: AppTheme.white,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: BlocBuilder<LocCubit, LocState>(
+                  buildWhen: (prev, curr) =>
+                      curr is LocLoaded &&
+                      (prev is! LocLoaded ||
+                          prev.selectedSpecialization !=
+                              curr.selectedSpecialization),
+                  builder: (context, state) {
+                    final selected = state is LocLoaded
+                        ? state.selectedSpecialization
+                        : null;
+                    return Row(
+                      children: _specializations.map((s) {
+                        final isSelected = s == 'Semua'
+                            ? selected == null
+                            : selected == s;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: FilterChip(
+                            label: Text(s),
+                            selected: isSelected,
+                            onSelected: (_) {
+                              context.read<LocCubit>().setFilter(
+                                    s == 'Semua' ? null : s,
+                                  );
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          // Sort row
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: BlocBuilder<LocCubit, LocState>(
                 buildWhen: (prev, curr) =>
                     curr is LocLoaded &&
-                    (prev is! LocLoaded ||
-                        prev.selectedSpecialization !=
-                            curr.selectedSpecialization),
+                    (prev is! LocLoaded || prev.sortBy != curr.sortBy),
                 builder: (context, state) {
-                  final selected = state is LocLoaded
-                      ? state.selectedSpecialization
-                      : null;
+                  final sortBy = state is LocLoaded ? state.sortBy : 'distance';
                   return Row(
-                    children: _specializations.map((s) {
-                      final isSelected = s == 'Semua'
-                          ? selected == null
-                          : selected == s;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: FilterChip(
-                          label: Text(s),
-                          selected: isSelected,
-                          onSelected: (_) {
-                            context.read<LocCubit>().setFilter(
-                                  s == 'Semua' ? null : s,
-                                );
-                          },
-                        ),
-                      );
-                    }).toList(),
+                    children: [
+                      const Icon(Icons.sort, size: 16, color: AppTheme.grey500),
+                      const SizedBox(width: 6),
+                      ...['distance', 'name', 'doctor_count'].map((value) {
+                        final label = switch (value) {
+                          'distance' => 'Jarak',
+                          'name' => 'Nama',
+                          'doctor_count' => 'Dokter',
+                          _ => value,
+                        };
+                        final isSelected = sortBy == value;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(label, style: const TextStyle(fontSize: 12)),
+                            selected: isSelected,
+                            onSelected: (_) =>
+                                context.read<LocCubit>().setSortBy(value),
+                          ),
+                        );
+                      }),
+                    ],
                   );
                 },
               ),
             ),
           ),
-          // Sprint 4 — S4.6: Sort Dropdown.
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: BlocBuilder<LocCubit, LocState>(
-              buildWhen: (prev, curr) =>
-                  curr is LocLoaded &&
-                  (prev is! LocLoaded || prev.sortBy != curr.sortBy),
-              builder: (context, state) {
-                final sortBy = state is LocLoaded ? state.sortBy : 'distance';
-                return Row(
-                  children: [
-                    // TODO: change to iconsax — currently Material fallback
-                    const Icon(Icons.sort, size: 16, color: AppTheme.grey500),
-                    const SizedBox(width: 6),
-                    ...['distance', 'name', 'doctor_count'].map((value) {
-                      final label = switch (value) {
-                        'distance' => 'Jarak',
-                        'name' => 'Nama',
-                        'doctor_count' => 'Dokter',
-                        _ => value,
-                      };
-                      final isSelected = sortBy == value;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(label, style: const TextStyle(fontSize: 12)),
-                          selected: isSelected,
-                          onSelected: (_) =>
-                              context.read<LocCubit>().setSortBy(value),
-                        ),
-                      );
-                    }),
-                  ],
-                );
-              },
-            ),
-          ),
           const SizedBox(height: 8),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: clinics.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, i) {
-                final c = clinics[i];
-                return ClinicCard(clinic: c);
-              },
-            ),
+          // Clinic list
+          SliverList.separated(
+            itemCount: sorted.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, i) {
+              final c = sorted[i];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClinicCard(clinic: c),
+              );
+            },
           ),
         ],
       ),
