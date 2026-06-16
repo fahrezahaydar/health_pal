@@ -122,11 +122,24 @@ class _LocView extends StatelessWidget {
 
   Widget _loaded(
     BuildContext context,
-    List clinics,
+    List<ClinicEntity> clinics,
     double radiusKm,
   ) {
     if (clinics.isEmpty) {
       return _emptyState(context, radiusKm);
+    }
+    // Sprint 4 — S4.6: sort clinics based on sortBy state.
+    final sorted = List<ClinicEntity>.of(clinics);
+    final sortBy = context.read<LocCubit>().state is LocLoaded
+        ? (context.read<LocCubit>().state as LocLoaded).sortBy
+        : 'distance';
+    switch (sortBy) {
+      case 'name':
+        sorted.sort((a, b) => a.name.compareTo(b.name));
+      case 'doctor_count':
+        sorted.sort((a, b) => b.doctorCount.compareTo(a.doctorCount));
+      default:
+        sorted.sort((a, b) => a.distanceMeters.compareTo(b.distanceMeters));
     }
     return RefreshIndicator(
       onRefresh: () => context.read<LocCubit>().refresh(),
@@ -179,6 +192,43 @@ class _LocView extends StatelessWidget {
                   );
                 },
               ),
+            ),
+          ),
+          // Sprint 4 — S4.6: Sort Dropdown.
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: BlocBuilder<LocCubit, LocState>(
+              buildWhen: (prev, curr) =>
+                  curr is LocLoaded &&
+                  (prev is! LocLoaded || prev.sortBy != curr.sortBy),
+              builder: (context, state) {
+                final sortBy = state is LocLoaded ? state.sortBy : 'distance';
+                return Row(
+                  children: [
+                    // TODO: change to iconsax — currently Material fallback
+                    const Icon(Icons.sort, size: 16, color: AppTheme.grey500),
+                    const SizedBox(width: 6),
+                    ...['distance', 'name', 'doctor_count'].map((value) {
+                      final label = switch (value) {
+                        'distance' => 'Jarak',
+                        'name' => 'Nama',
+                        'doctor_count' => 'Dokter',
+                        _ => value,
+                      };
+                      final isSelected = sortBy == value;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(label, style: const TextStyle(fontSize: 12)),
+                          selected: isSelected,
+                          onSelected: (_) =>
+                              context.read<LocCubit>().setSortBy(value),
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              },
             ),
           ),
           const SizedBox(height: 8),
