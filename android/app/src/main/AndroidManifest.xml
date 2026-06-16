@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sprint 4.5 — M1a: INTERNET untuk flutter_map OSM tiles + Supabase -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Geolocator (existing) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="health_pal"
         android:name="${applicationName}"

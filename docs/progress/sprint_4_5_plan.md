@@ -16,11 +16,12 @@
 ## 📊 Sprint 4.5 Progress Tracker
 
 **Last Updated:** 16 Juni 2026
-**Overall:** 0/5 tasks (0%)
+**Overall:** 1/6 tasks (17%) — M1 ✅ (Manual)
 
 | Task | Deskripsi | Estimasi | Status | Commit | Catatan |
 |------|-----------|:--------:|--------|--------|---------|
-| M1 | Add flutter_map + latlong2 ke pubspec + `pub get` | 0.5h | ⬜ Not Started | — | ADR 002: flutter_map: ^7.0.0, latlong2: ^0.9.0 |
+| M1 | Add flutter_map + latlong2 ke pubspec + `pub get` | 0.5h | ✅ Done | *(Manual)* | User menjalankan `flutter pub add` manual |
+| M1a | Setup Android Manifest — INTERNET + location permissions | 0.25h | ✅ Done | `<this-commit>` | INTERNET (OSM tiles), FINE/COARSE location (geolocator) di main manifest |
 | M2 | Buat `LocMapWidget` — reusable map dengan tile OSM | 3h | ⬜ Not Started | — | FlutterMap + TileLayer + MarkerLayer dasar |
 | M3 | Integrasi map ke LocPage (atas list, split view) | 2h | ⬜ Not Started | — | Map 40% screen + clinic list 60%, pin sesuai clinics |
 | M4 | Pin marker + tap → info klinik | 2h | ⬜ Not Started | — | Marker dari clinic.lat/lng, tap → show clinic name |
