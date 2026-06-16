@@ -69,31 +69,51 @@ Onboarding ──→ Auth ──→ Home ←── Notification
 ## Sprint 3 — Settings
 
 **Window:** TBD (2 minggu setelah Sprint 2 closing)
-**Tema:** "Quick Win — Audit + Polish Halaman Paling Sederhana"
+**Tema:** "Quick Win — Settings Page Audit & Polish"
+**Plan:** `docs/progress/sprint_3_plan.md`
+
+### Pra-Audit Findings (Identified Pre-Sprint)
+
+| # | Temuan | Tingkat | Detail |
+|---|--------|---------|--------|
+| F1 | Missing "Data & Cache" section | 🔴 | Wireframe 18 §Data & Cache — tidak ada di implementasi |
+| F2 | Missing "Telepon Darurat" field | 🟡 | Wireframe 18 catatan kaki — tidak ada |
+| F3 | SettingsCubit pakai SupabaseClient langsung | 🟡 | Architecture violation (sama seperti K4 di Sprint 2) |
+| F4 | Tidak ada data/domain layer | 🟡 | Hanya presentation layer |
+| F5 | Loading state pakai CircularProgressIndicator | 🟡 | Harus Skeletonizer (AD-6) |
+| F6 | Error state custom (bukan ErrorSection) | 🟢 | Tidak reusable |
+| F7 | iconsax langsung tanpa Material fallback | 🟢 | Melanggar Icon Convention |
+| F8 | NoInternetPage inline connectivity_plus | 🟡 | Logic di widget langsung |
+| F9 | Dark Mode toggle adalah stub | 🟢 | Tidak menyimpan preferensi |
 
 ### Sprint Opening Audit (Day 1-2)
 - **Audit Settings** → `docs/progress/settings_audit.md`
 - Referensi template: `docs/progress/home_page_audit.md`
-- Output: todo list untuk Sprint 3
+- Verifikasi F1-F9 + cari temuan baru
 
-### Estimated Backlog (Day 3-10)
+### Backlog (Day 3-10)
 
-| Area | Tasks | Ringkasan |
-|------|-------|-----------|
-| Settings page | 3-5 | Layout consistency, Theme, hardcoded text check |
-| Help & Support | 2-3 | Konten statis, link verification |
-| Terms & Conditions | 1-2 | Konten statis |
-| No Internet page | 2-3 | Skeletonizer fallback? Connectivity check logic |
-| Shared | 2-3 | Generalize ErrorSection (Sprint 2 C6) untuk reuse cross-feature |
-
-**Total estimasi:** ~5-7 hari kerja
-**Mengapa 2 minggu:** Sprint pertama setelah Sprint 2 — ada setup sprint + audit Day 1-2 + buffer.
+| Task | Deskripsi | Estimasi |
+|------|-----------|:--------:|
+| S3.1 | Sprint Opening Audit (settings_audit.md) | 4h |
+| S3.2 | Skeletonizer untuk loading state Settings | 2h |
+| S3.3 | ErrorSection untuk error state Settings | 1h |
+| S3.4 | Refactor SettingsCubit — data layer (repository pattern) | 3h |
+| S3.5 | Implement "Data & Cache" section (Hapus Cache, Hapus Data Lokal) | 2h |
+| S3.6 | Implement "Telepon Darurat" field | 1h |
+| S3.7 | Help & Support — audit + polish | 2h |
+| S3.8 | Terms & Conditions — audit + polish | 1h |
+| S3.9 | No Internet page — refactor connectivity logic | 2h |
+| S3.10 | Icon consistency pass (iconsax → Material + TODO comments) | 2h |
+| | **Total** | **~20h** |
 
 ### Definition of Done
 - [ ] `settings_audit.md` published
-- [ ] Semua critical findings di-fix
+- [ ] Semua findings di-fix
+- [ ] Loading: Skeletonizer · Error: ErrorSection · Icon: Material + TODO
+- [ ] SettingsCubit tidak langsung inject SupabaseClient
+- [ ] "Data & Cache" + "Telepon Darurat" terimplementasi
 - [ ] flutter analyze 0 issues
-- [ ] Skeletonizer + ErrorSection patterns applied (jika missing)
 - [ ] `sprint_roadmap.md` updated
 
 ---

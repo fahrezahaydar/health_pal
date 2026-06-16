@@ -24,8 +24,8 @@
 | flutter analyze | **0 issues** ✅ |
 | Test Coverage | **0%** (deferred — Sprint 7 Testing Phase) |
 | Audit Published | `home_page_audit.md` (72 KB, 1110 lines) — Home revised ✅ 100% |
-| Sprint Roadmap | `sprint_roadmap.md` — Sprint 3-7 planned |
-| Sprint 3 Plan | (TBD — Sprint Opening Audit: Settings + Loc) |
+| Sprint Roadmap | `sprint_roadmap.md` — Sprint 3-9 planned |
+| Sprint 3 Plan | `sprint_3_plan.md` — Settings audit + polish (10 tasks, ~20h) |
 
 > **✅ Sprint 2 Complete (16 Jun 2026):** 29/29 tasks done. Home Page fully hardened (4 critical bugs fixed, 17 medium resolved, 3 missing sections added). Flutter analyze 0 issues. Lihat `sprint_roadmap.md` untuk rencana Sprint 3-7.
 
