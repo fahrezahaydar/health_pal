@@ -16,13 +16,13 @@
 ## 📊 Sprint 4 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Sprint 4 Planned)
-**Overall:** 1/11 tasks (9%) — S4.1 Audit ✅ · 🟡 Score: 64.3/100
+**Overall:** 3/11 tasks (27%) — S4.1+S4.2+S4.3 ✅
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
 |------|-----------|-----------|:--------:|--------|--------|---------|
 | S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ✅ Done | `dd69370` | Verdict: 🟡 64.3/100. Wireframe 30%, Architecture 100%. Rekomendasi: tetap clinic-based |
-| S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ⬜ Not Started | — | Ganti `DotLoader` → `Skeletonizer` per AD-6. Pakai `ClinicEntity.mock()` (sudah ada) |
-| S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ⬜ Not Started | — | Replace custom `_errorView()` → `ErrorSection` (dari Sprint 2 C6) |
+| S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ✅ Done | `d15e8be` | Ganti `DotLoader` → `Skeletonizer` per AD-6. Pakai `ClinicEntity.mock()` (sudah ada) |
+| S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ✅ Done | `d15e8be` | Replace custom `_errorView()` → `ErrorSection` (dari Sprint 2 C6) |
 | S4.4 | Implementasi City Input fallback | M3 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
 | S4.5 | Implementasi Filter Chips (spesialisasi) | M4 | 3h | ⬜ Not Started | — | Horizontal chips dari specialization list → filter clinic list |
 | S4.6 | Implementasi Sort Dropdown | M5 | 1.5h | ⬜ Not Started | — | Sort by distance / doctor_count / name (client-side sorting) |
