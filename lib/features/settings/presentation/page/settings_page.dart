@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/router/route_paths.dart';
@@ -19,6 +20,7 @@ import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
 import '../../../../widgets/layouts/card_container.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/app_divider.dart';
 import '../../../../widgets/shared/menu_item_tile.dart';
 import '../../../../widgets/shared/section_label.dart';
@@ -68,8 +70,27 @@ class _SettingsView extends StatelessWidget {
           return switch (state) {
             SettingsInitial() ||
             SettingsLoading() =>
-              const Center(child: CircularProgressIndicator()),
-            SettingsError(:final message) => _errorState(context, message),
+              Skeletonizer(
+                enabled: true,
+                child: _loaded(
+                  context,
+                  const SettingsLoaded(
+                    notifEnabled: false,
+                    darkMode: false,
+                    email: 'email@example.com',
+                  ),
+                ),
+              ),
+            SettingsError(:final message) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 48),
+                  child: ErrorSection(
+                    message: message,
+                    onRetry: () =>
+                        context.read<SettingsCubit>().loadSettings(),
+                  ),
+                ),
+              ),
             SettingsLoaded() => _loaded(context, state),
           };
         },
@@ -169,33 +190,4 @@ class _SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _errorState(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.warning2, size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal memuat pengaturan', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.read<SettingsCubit>().loadSettings(),
-              child: const Text('Coba lagi'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
-
-// (SupabaseClient moved to SettingsCubit — not used in this page)

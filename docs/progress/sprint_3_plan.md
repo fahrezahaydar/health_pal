@@ -23,7 +23,7 @@
 | S3.1 | Sprint Opening Audit — settings_audit.md | — | 4h | ✅ Done | `65aa92e` | Verdict: 🟡 49.3/100. 7 kritis, 7 medium, 6 low findings |
 | S3.2 | Skeletonizer untuk loading state Settings | M2 | 1h | ⬜ Not Started | — | Ganti `CircularProgressIndicator` → `Skeletonizer` per AD-6 |
 | S3.3 | ErrorSection untuk error state Settings | M3 | 0.5h | ⬜ Not Started | — | Replace custom `_errorState()` → `ErrorSection` (dari Sprint 2 C6) |
-| S3.4 | Refactor SettingsCubit: hapus SupabaseClient langsung | K3 + M1 | 2h | ⬜ Not Started | — | Inject `AppServices` (sama seperti A4) + buat `SettingsRepository` |
+| S3.4 | Refactor SettingsCubit: hapus SupabaseClient langsung | K3 + M1 | 2h | ✅ Done | `fb3e888` | `SettingsRepository` (abstract) + `SettingsRepositoryImpl` (data). Cubit inject `SettingsRepository` instead of `SupabaseClient` + `SharedPrefService`. DI regen OK. |
 | S3.5 | Implement "Data & Cache" section | K1 | 2h | ⬜ Not Started | — | Hapus Cache via `CacheService.clearAll()` + snackbar |
 | S3.6 | Implement "Telepon Darurat" field | K2 | 1h | ⬜ Not Started | — | Bottom sheet input → PATCH user_profiles (atau SharedPrefs fallback) |
 | S3.7 | Tampilkan email terdaftar di UI Section Akun | M7 | 0.5h | ⬜ Not Started | — | Render `SettingsLoaded.email` — saat ini ada di state tapi tidak ditampilkan |
