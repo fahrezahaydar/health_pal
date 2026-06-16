@@ -16,11 +16,11 @@
 ## 📊 Sprint 4 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Sprint 4 Planned)
-**Overall:** 0 tasks (0%)
+**Overall:** 1/9 tasks (11%) — S4.1 Audit ✅
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
 |------|-----------|-----------|:--------:|--------|--------|---------|
-| S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ⬜ Not Started | — | Day 1-2 |
+| S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ✅ Done | `<this-commit>` | Verdict: 🟡 64.3/100. Wireframe 30%, Architecture 100%. Rekomendasi: tetap clinic-based (update wireframe) |
 | S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ⬜ Not Started | — | Ganti `DotLoader` → `Skeletonizer` per AD-6 |
 | S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ⬜ Not Started | — | Replace custom `_errorView()` → `ErrorSection` |
 | S4.4 | Implementasi City Input fallback | K1 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
