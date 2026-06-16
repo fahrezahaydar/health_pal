@@ -60,7 +60,7 @@ Aplikasi mobile-first dengan alur booking singkat (Cari Dokter → Pilih Dokter 
 | **Autentikasi** | Supabase Auth (Email + Google Sign-In) |
 | **Push Notification** | Firebase Cloud Messaging (FCM) |
 | **Pembayaran (MVP)** | Simulasi / Dummy (tanpa gateway nyata) |
-| **Maps & Geolocation** | Google Maps SDK / geolocator package |
+| **Maps & Geolocation** | flutter_map (OpenStreetMap) / geolocator package (*Google Maps diganti Sprint 4 — ADR: gratis, no API key) |
 | **Storage (foto profil, dokumen)** | Supabase Storage |
 
 ---
@@ -206,7 +206,7 @@ Muncul sekali setelah akun pertama kali dibuat. User wajib melengkapi sebelum ma
 
 | Elemen | Requirement |
 |---|---|
-| **Peta** | Google Maps Widget menampilkan posisi user + pin lokasi klinik/dokter |
+| **Peta** | flutter_map (OpenStreetMap) menampilkan posisi user + pin lokasi klinik/dokter — *Deferred ke Sprint 5 (AD-8: gratis, no API key)* |
 | **Izin Lokasi** | Request permission geolocation saat pertama buka tab; jika ditolak → tampilkan fallback input kota manual |
 | **Search & Filter** | Search bar nama dokter / spesialisasi + filter chips (spesialisasi, jarak, rating) |
 | **List Dokter** | Card list di bawah peta: foto, nama, spesialisasi, klinik, rating, jarak dari lokasi user |

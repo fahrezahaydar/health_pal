@@ -4,7 +4,7 @@
 |---|---|
 | **Route** | `/loc` (Shell Tab 1) |
 | **Component** | `LocPage` |
-| **Status** | 🔧 Proposed |
+| **Status** | 🟡 Implemented (list-only — Map View deferred ke Sprint 5 via flutter_map) |
 
 ---
 
@@ -75,7 +75,7 @@
 
 | Component | Widget | Data Source |
 |---|---|---|
-| Map View | `GoogleMap` widget | `google_maps_flutter` |
+| Map View | `FlutterMap` widget | `flutter_map` (OpenStreetMap) — *Deferred to Sprint 5 (AD-8: gratis, no API key)* |
 | Pin Marker | `Marker` | Koordinat dari `clinics.lat` + `clinics.lng` |
 | Location Permission | `FutureBuilder` | `geolocator` package |
 | City Input (fallback) | `AppTextFormField` | Manual input |

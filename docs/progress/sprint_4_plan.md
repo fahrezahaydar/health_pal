@@ -26,7 +26,7 @@
 | S4.4 | Implementasi City Input fallback | M3 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
 | S4.5 | Implementasi Filter Chips (spesialisasi) | M4 | 3h | ⬜ Not Started | — | Horizontal chips dari specialization list → filter clinic list |
 | S4.6 | Implementasi Sort Dropdown | M5 | 1.5h | ⬜ Not Started | — | Sort by distance / doctor_count / name (client-side sorting) |
-| S4.7 | Map View: feasibility study + stub | K1 | 2h | ⬜ Not Started | — | google_maps_flutter compatibility check. Jika compatible: stub widget 1 marker. Defer full impl ke Sprint 5 |
+| S4.7 | Map View: feasibility study + deferred | K1 | 2h | ✅ Deferred | — | google_maps_flutter diganti flutter_map (gratis, no API key). Full implementasi di Sprint 5 (Doctor). Semua dokumen sudah diupdate (PRD §6.3, wireframe 07) |
 | S4.8 | Icon consistency: iconsax → Material + TODO | M6 | 1.5h | ✅ Done | `bdd2d51` | `loc_page.dart` + `clinic_card.dart` — semua icon migrated. Hapus import iconsax_latest |
 | S4.9 | "Lihat Peta" try-catch + hapus dead code | L1 + L2 | 0.5h | ✅ Done | `bdd2d51` | `_openMaps` try-catch + hapus `ClinicCard.skeleton()` factory |
 | S4.10 | Update wireframe 07: clinic-based → sync decision | K2 | 1h | ⬜ Not Started | — | Update `docs/wireframe/07-location-search.md` — ganti Doctor Cards → Clinic Cards, hapus Map sebagai primary (defer) |
