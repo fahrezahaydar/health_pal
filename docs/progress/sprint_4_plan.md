@@ -16,19 +16,21 @@
 ## 📊 Sprint 4 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Sprint 4 Planned)
-**Overall:** 1/9 tasks (11%) — S4.1 Audit ✅
+**Overall:** 1/11 tasks (9%) — S4.1 Audit ✅ · 🟡 Score: 64.3/100
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
 |------|-----------|-----------|:--------:|--------|--------|---------|
-| S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ✅ Done | `<this-commit>` | Verdict: 🟡 64.3/100. Wireframe 30%, Architecture 100%. Rekomendasi: tetap clinic-based (update wireframe) |
-| S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ⬜ Not Started | — | Ganti `DotLoader` → `Skeletonizer` per AD-6 |
-| S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ⬜ Not Started | — | Replace custom `_errorView()` → `ErrorSection` |
-| S4.4 | Implementasi City Input fallback | K1 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
-| S4.5 | Implementasi Filter Chips (spesialisasi) | K2 | 3h | ⬜ Not Started | — | Filter horizontal chips → filter clinic list |
-| S4.6 | Implementasi Sort Dropdown | K3 | 2h | ⬜ Not Started | — | Sort by jarak / doctor_count / name |
-| S4.7 | Map View: feasibility study + stub | F1 | 2h | ⬜ Not Started | — | google_maps_flutter integration atau defer ke Sprint 5 |
-| S4.8 | LocCubit: hapus iconsax + loading polish | L1 | 1h | ⬜ Not Started | — | Icon consistency (Material + TODO) + Skeletonizer |
-| S4.9 | "Lihat Peta" error handling | L2 | 0.5h | ⬜ Not Started | — | try-catch di `_openMaps` |
+| S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ✅ Done | `dd69370` | Verdict: 🟡 64.3/100. Wireframe 30%, Architecture 100%. Rekomendasi: tetap clinic-based |
+| S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ⬜ Not Started | — | Ganti `DotLoader` → `Skeletonizer` per AD-6. Pakai `ClinicEntity.mock()` (sudah ada) |
+| S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ⬜ Not Started | — | Replace custom `_errorView()` → `ErrorSection` (dari Sprint 2 C6) |
+| S4.4 | Implementasi City Input fallback | M3 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
+| S4.5 | Implementasi Filter Chips (spesialisasi) | M4 | 3h | ⬜ Not Started | — | Horizontal chips dari specialization list → filter clinic list |
+| S4.6 | Implementasi Sort Dropdown | M5 | 1.5h | ⬜ Not Started | — | Sort by distance / doctor_count / name (client-side sorting) |
+| S4.7 | Map View: feasibility study + stub | K1 | 2h | ⬜ Not Started | — | google_maps_flutter compatibility check. Jika compatible: stub widget 1 marker. Defer full impl ke Sprint 5 |
+| S4.8 | Icon consistency: iconsax → Material + TODO | M6 | 1.5h | ⬜ Not Started | — | `loc_page.dart` + `clinic_card.dart`. Hapus import iconsax_latest jika semua icon sudah diganti |
+| S4.9 | "Lihat Peta" try-catch + hapus dead code | L1 + L2 | 0.5h | ⬜ Not Started | — | `_openMaps` wrap try-catch + hapus `ClinicCard.skeleton()` factory (tidak dipakai) |
+| S4.10 | Update wireframe 07: clinic-based → sync decision | K2 | 1h | ⬜ Not Started | — | Update `docs/wireframe/07-location-search.md` — ganti Doctor Cards → Clinic Cards, hapus Map sebagai primary (defer) |
+| S4.11 | Final QA + flutter analyze + commit | — | 1h | ⬜ Not Started | — | 0 issues + update sprint_4_plan tracker + sprint_roadmap |
 
 ---
 
@@ -228,16 +230,16 @@ Future<void> _openMaps() async {
 
 | Day | Tasks | Detail |
 |:---:|-------|--------|
-| Day 1 | S4.1 — Audit | `loc_audit.md` — verifikasi F1-F9 |
-| Day 2 | S4.1 — Audit lanjutan | Finalisasi, publish, alignment |
-| Day 3 | S4.2 + S4.3 — Skeletonizer + ErrorSection | Polish loading/error |
-| Day 4 | S4.7 — Map View feasibility | google_maps_flutter check, stub |
-| Day 5 | S4.4 — City Input fallback | Wireframe fallback |
-| Day 6 | S4.5 — Filter Chips | Horizontal chips + filter logic |
-| Day 7 | S4.6 — Sort Dropdown | Enum sorting |
-| Day 8 | S4.8 — Icon consistency | iconsax → Material + TODO |
-| Day 9 | S4.9 — Error handling + buffer | `_openMaps` try-catch |
-| Day 10 | Flutter analyze + Final Commit | 0 issues |
+| Day 1 | S4.1 ✅ DONE | Audit selesai — `dd69370` |
+| Day 2 | S4.2 + S4.3 — Skeletonizer + ErrorSection | Polish loading/error states |
+| Day 3 | S4.7 — Map View feasibility | google_maps_flutter check, stub widget |
+| Day 4 | S4.4 — City Input fallback | Input kota manual saat location denied |
+| Day 5 | S4.5 — Filter Chips | Horizontal chips + filter logic |
+| Day 6 | S4.6 — Sort Dropdown | Enum sorting by distance/name/count |
+| Day 7 | S4.8 — Icon consistency | iconsax → Material + TODO |
+| Day 8 | S4.9 + S4.10 — Error handling + Wireframe update | try-catch, dead code, sync wireframe |
+| Day 9 | Buffer catch-up | Task overflow |
+| Day 10 | S4.11 — Final QA + flutter analyze + Commit | 0 issues |
 
 ---
 
