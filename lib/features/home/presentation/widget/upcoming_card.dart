@@ -1,13 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_latest/iconsax.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../../../widgets/card/status_badge.dart';
-import '../../../../widgets/shared/info_row.dart';
+import '../../../../widgets/card/upcoming_appointment_card.dart';
 import '../../domain/entity/upcoming_appointment_entity.dart';
 
 class UpcomingCard extends StatelessWidget {
@@ -25,98 +24,10 @@ class UpcomingCard extends StatelessWidget {
           Text('Upcoming Treatment', style: AppTextTheme.headlineSmall),
           const SizedBox(height: 12),
           if (upcoming != null)
-            _AppointmentCard(appointment: upcoming!)
+            UpcomingAppointmentCard.fromEntity(upcoming!)
           else
             const _EmptyState(),
         ],
-      ),
-    );
-  }
-}
-
-class _AppointmentCard extends StatelessWidget {
-  const _AppointmentCard({required this.appointment});
-
-  final UpcomingAppointmentEntity appointment;
-
-  // Sprint 2 — A5: status sudah typed BookingStatus di entity,
-  // tidak perlu firstWhere fallback. Gunakan langsung appointment.status.
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // Sprint 2 — A6 (Fix M2): path param renamed to :appointmentId
-      // (was :bookingId). booking_history_page.dart already uses
-      // :appointmentId in replaceAll — dulu path mismatch caused
-      // broken navigation there.
-      onTap: () => context.push(
-        RoutePaths.bookingDetail.replaceAll(':appointmentId', appointment.id),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.grey200),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDoctorAvatar(),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(appointment.doctorName, style: AppTextTheme.titleLarge),
-                  const SizedBox(height: 2),
-                  Text(
-                    appointment.specializationName,
-                    style: AppTextTheme.bodySmall.copyWith(
-                      color: AppTheme.grey500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  InfoRow(
-                    icon: Iconsax.calendar,
-                    // Sprint 2 — A3: format slotDate (DateTime?) + slotStart
-                    // (TimeOfDay?) via DateFormatter nullable variants.
-                    // Output: "15 Jun 2026 • 09:00" per Wireframe 06 §4.
-                    text:
-                        '${DateFormatter.toFullDateOrDash(appointment.slotDate)} • '
-                        '${DateFormatter.toTimeOfDayStringOrDash(appointment.slotStart)}',
-                  ),
-                  const SizedBox(height: 4),
-                  InfoRow(
-                    icon: Iconsax.location,
-                    text: appointment.clinicName,
-                  ),
-                ],
-              ),
-            ),
-            StatusBadge(status: appointment.status),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDoctorAvatar() {
-    return ClipOval(
-      child: Container(
-        width: 56,
-        height: 56,
-        color: AppTheme.grey100,
-        alignment: Alignment.center,
-        child: appointment.doctorPhoto != null
-            ? Image.network(
-                appointment.doctorPhoto!,
-                width: 56,
-                height: 56,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) =>
-                    const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
-              )
-            : const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
       ),
     );
   }
@@ -161,6 +72,18 @@ class _EmptyState extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class UpcomingCardLoading extends StatelessWidget {
+  const UpcomingCardLoading({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Skeletonizer(
+      enabled: true,
+      child: UpcomingCard(upcoming: UpcomingAppointmentEntity.mock()),
     );
   }
 }

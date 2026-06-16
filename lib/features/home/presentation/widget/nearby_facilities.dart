@@ -4,40 +4,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/card/nearby_clinic_card.dart';
+import '../../../../widgets/layouts/header_title.dart';
 import '../../../loc/domain/entity/clinic_entity.dart';
 import '../bloc/nearby/nearby_cubit.dart';
-
-class _HeaderTitle extends StatelessWidget {
-  const _HeaderTitle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Nearby Medical Centers', style: AppTextTheme.headlineSmall),
-              GestureDetector(
-                onTap: () {
-                  // TODO: route to /facilities (Sprint 3)
-                },
-                child: Text(
-                  'See All',
-                  style: AppTextTheme.bodySmall.copyWith(color: AppTheme.blue),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
-    );
-  }
-}
 
 class NearbyFacilitiesLoaded extends StatelessWidget {
   final List<ClinicEntity> clinics;
@@ -49,7 +19,7 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _HeaderTitle(),
+        const HeaderTitle(title: 'Nearby Medical Centers'),
         SizedBox(
           height: 180,
           child: ListView.separated(
@@ -58,7 +28,7 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
             itemCount: clinics.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) =>
-                _NearbyCard(clinic: clinics[index]),
+                NearbyClinicCard.fromEntity(clinics[index]),
           ),
         ),
       ],
@@ -86,9 +56,8 @@ class NearbyFacilitiesEmpty extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _HeaderTitle(),
+        HeaderTitle(title: 'Nearby Medical Centers'),
         _StatusBody(
-          // TODO: change to iconsax — currently Material fallback
           icon: Icons.location_off,
           message: 'Tidak ada klinik di sekitar lokasi Anda.',
           buttonLabel: 'Cari Lagi',
@@ -108,7 +77,7 @@ class NearbyFacilitiesLocationDenied extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _HeaderTitle(),
+        const HeaderTitle(title: 'Nearby Medical Centers'),
         _StatusBody(
           // TODO: change to iconsax — currently Material fallback
           icon: Icons.location_disabled,
@@ -130,7 +99,7 @@ class NearbyFacilitiesError extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _HeaderTitle(),
+        const HeaderTitle(title: 'Nearby Medical Centers'),
         _StatusBody(
           // TODO: change to iconsax — currently Material fallback
           icon: Icons.error_outline,
@@ -199,104 +168,3 @@ class _StatusBody extends StatelessWidget {
   }
 }
 
-class _NearbyCard extends StatelessWidget {
-  final ClinicEntity clinic;
-
-  const _NearbyCard({required this.clinic});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // TODO: route to /facilities/:id (Sprint 3)
-      },
-      child: Container(
-        width: 200,
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.grey200),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: clinic.imageUrl != null
-                  ? Image.network(
-                      clinic.imageUrl!,
-                      width: 200,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const _PlaceholderImage(),
-                    )
-                  : const _PlaceholderImage(),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      clinic.name,
-                      style: AppTextTheme.titleLarge,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        // TODO: change to iconsax — currently Material fallback
-                        const Icon(
-                          Icons.location_on,
-                          size: 14,
-                          color: AppTheme.grey400,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          clinic.distanceDisplay,
-                          style: AppTextTheme.bodySmall.copyWith(
-                            color: AppTheme.grey500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text(
-                      clinic.doctorCountDisplay,
-                      style: AppTextTheme.labelSmall.copyWith(
-                        color: AppTheme.grey500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderImage extends StatelessWidget {
-  const _PlaceholderImage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      height: 100,
-      color: AppTheme.grey100,
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.local_hospital,
-        size: 32,
-        color: AppTheme.grey400,
-      ),
-    );
-  }
-}

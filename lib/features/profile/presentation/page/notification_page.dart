@@ -21,7 +21,7 @@ import '../../../../core/services/fcm_service.dart';
 import '../../domain/entity/notification_entity.dart';
 import '../bloc/notification/notification_cubit.dart';
 import '../bloc/notification/notification_state.dart';
-import '../widget/notification_card.dart';
+import '../../../../widgets/card/notification_card.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});

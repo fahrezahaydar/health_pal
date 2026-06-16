@@ -1,16 +1,11 @@
-// lib/features/booking/presentation/widget/appointment_card.dart
-//
-// Card reusable untuk menampilkan 1 appointment di list.
-// Digunakan di Booking History page (TabBar 5 status).
-
 import 'package:flutter/material.dart';
 
-import '../../../../core/enums/booking_status.dart';
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../../../widgets/card/status_badge.dart';
-import '../../domain/entity/appointment_entity.dart';
+import '../../core/enums/booking_status.dart';
+import '../../core/theme/app_text_theme.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/utils/date_formatter.dart';
+import '../../features/booking/domain/entity/appointment_entity.dart';
+import 'status_badge.dart';
 
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard({
@@ -21,6 +16,17 @@ class AppointmentCard extends StatelessWidget {
 
   final AppointmentEntity appointment;
   final VoidCallback? onTap;
+
+  factory AppointmentCard.skeleton() => const AppointmentCard(
+        appointment: AppointmentEntity(
+          id: 'sk-1',
+          patientId: '',
+          doctorId: '',
+          slotId: '',
+          status: 'pending',
+          consultationFeeSnapshot: 0,
+        ),
+      );
 
   BookingStatus get _status => switch (appointment.status) {
         'pending' => BookingStatus.pending,
@@ -45,7 +51,6 @@ class AppointmentCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Foto ──
             Container(
               width: 48,
               height: 48,
@@ -69,7 +74,6 @@ class AppointmentCard extends StatelessWidget {
                   : const Icon(Icons.person, color: AppTheme.grey400, size: 28),
             ),
             const SizedBox(width: 12),
-            // ── Info ──
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +101,6 @@ class AppointmentCard extends StatelessWidget {
                 ],
               ),
             ),
-            // ── Status Badge ──
             StatusBadge(status: _status),
           ],
         ),
@@ -114,5 +117,4 @@ class AppointmentCard extends StatelessWidget {
     if (start == null || end == null) return dateStr;
     return '$dateStr • $start - $end';
   }
-
 }

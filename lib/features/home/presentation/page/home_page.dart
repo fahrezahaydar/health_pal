@@ -5,12 +5,8 @@ import 'package:health_pal/core/di/locator.dart';
 import 'package:health_pal/core/services/app_services.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../../core/enums/booking_status.dart';
 import '../../../profile/presentation/bloc/notification/notification_cubit.dart';
 import '../../../profile/presentation/bloc/notification/notification_state.dart';
-import '../../domain/entity/banner_entity.dart';
-import '../../domain/entity/specialization_entity.dart';
-import '../../domain/entity/upcoming_appointment_entity.dart';
 import '../bloc/banner/banner_cubit.dart';
 import '../bloc/banner/banner_state.dart';
 import '../bloc/greeting/greeting_cubit.dart';
@@ -114,42 +110,6 @@ class _HomePageBodyState extends State<_HomePageBody> {
     }
   }
 
-  // Sprint 2 — C1: Skeletonizer mock data (non-empty) for production
-  // widgets whose default empty-data branch returns SizedBox.shrink.
-  // Per AGENTS.md: DILARANG dedicated skeleton widget files — reuse
-  // production widget langsung via Skeletonizer(enabled:..., child:...).
-  // When `state is *Loading`, the production widget receives this
-  // non-empty data so Skeletonizer can paint bone placeholders over
-  // the resulting layout. Once loaded, the real data replaces these.
-  // Hoisted to static const so we don't allocate per-rebuild.
-  static const _skeletonBanners = <BannerEntity>[
-    BannerEntity(id: 'sk-1', title: 'Loading banner placeholder 1'),
-    BannerEntity(id: 'sk-2', title: 'Loading banner placeholder 2'),
-    BannerEntity(id: 'sk-3', title: 'Loading banner placeholder 3'),
-  ];
-  static const _skeletonSpecializations = <SpecializationEntity>[
-    SpecializationEntity(id: 'sk-1', name: 'Loading spec 1'),
-    SpecializationEntity(id: 'sk-2', name: 'Loading spec 2'),
-    SpecializationEntity(id: 'sk-3', name: 'Loading spec 3'),
-    SpecializationEntity(id: 'sk-4', name: 'Loading spec 4'),
-    SpecializationEntity(id: 'sk-5', name: 'Loading spec 5'),
-    SpecializationEntity(id: 'sk-6', name: 'Loading spec 6'),
-    SpecializationEntity(id: 'sk-7', name: 'Loading spec 7'),
-    SpecializationEntity(id: 'sk-8', name: 'Loading spec 8'),
-  ];
-  static const _skeletonUpcoming = UpcomingAppointmentEntity(
-    id: 'sk-1',
-    doctorName: 'Loading Doctor Name Placeholder',
-    clinicName: 'Loading Clinic Name Placeholder',
-    specializationName: 'Loading Specialization Placeholder',
-    // Intentionally null slot fields — DateFormatter returns "—" for
-    // null, Skeletonizer paints bones over the dash.
-    slotDate: null,
-    slotStart: null,
-    slotEnd: null,
-    status: BookingStatus.upcoming,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,10 +207,7 @@ class _HomePageBodyState extends State<_HomePageBody> {
               BlocBuilder<BannerCubit, BannerState>(
                 builder: (context, state) {
                   return switch (state) {
-                    BannerLoading() => const Skeletonizer(
-                        enabled: true,
-                        child: BannerCarousel(banners: _skeletonBanners),
-                      ),
+                    BannerLoading() => const BannerCarouselLoading(),
                     BannerLoaded(:final banners) =>
                       BannerCarousel(banners: banners),
                     BannerError(:final message) => ErrorSection(
@@ -266,10 +223,7 @@ class _HomePageBodyState extends State<_HomePageBody> {
               BlocBuilder<UpcomingCubit, UpcomingState>(
                 builder: (context, state) {
                   return switch (state) {
-                    UpcomingLoading() => const Skeletonizer(
-                        enabled: true,
-                        child: UpcomingCard(upcoming: _skeletonUpcoming),
-                      ),
+                    UpcomingLoading() => const UpcomingCardLoading(),
                     UpcomingLoaded(:final upcoming) =>
                       UpcomingCard(upcoming: upcoming),
                     UpcomingError(:final message) => ErrorSection(
@@ -291,12 +245,8 @@ class _HomePageBodyState extends State<_HomePageBody> {
               BlocBuilder<SpecializationCubit, SpecializationState>(
                 builder: (context, state) {
                   return switch (state) {
-                    SpecializationLoading() => const Skeletonizer(
-                        enabled: true,
-                        child: QuickCategories(
-                          specializations: _skeletonSpecializations,
-                        ),
-                      ),
+                    SpecializationLoading() =>
+                      const QuickCategoriesLoading(),
                     SpecializationLoaded(:final specializations) =>
                       QuickCategories(specializations: specializations),
                     SpecializationError(:final message) => ErrorSection(
@@ -341,7 +291,3 @@ class _HomePageBodyState extends State<_HomePageBody> {
   }
 }
 
-// Sprint 2 — C1: Skeletonizer needs valid BookingStatus value for
-// mock _skeletonUpcoming. Using BookingStatus.upcoming — enum value
-// is const-evaluable so static const _skeletonUpcoming compiles fine.
-// (No need for private alias; enum is imported above.)

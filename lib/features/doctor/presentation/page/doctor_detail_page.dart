@@ -28,7 +28,7 @@ import '../../domain/entity/doctor_entity.dart';
 import '../../domain/entity/doctor_slot_entity.dart';
 import '../bloc/doctor_detail/doctor_detail_cubit.dart';
 import '../bloc/doctor_detail/doctor_detail_state.dart';
-import '../widget/doctor_card_detail.dart';
+import '../../../../widgets/card/doctor_card_detail.dart';
 import '../widget/slot_availability_text.dart';
 
 class DoctorDetailPage extends StatelessWidget {

@@ -15,7 +15,7 @@ import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/loader/dot_loader.dart';
 import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
-import '../widget/clinic_card.dart';
+import '../../../../widgets/card/clinic_card.dart';
 
 class LocPage extends StatelessWidget {
   const LocPage({super.key});

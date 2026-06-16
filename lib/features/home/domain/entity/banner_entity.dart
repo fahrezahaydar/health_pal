@@ -15,6 +15,12 @@ class BannerEntity extends Equatable {
     this.displayOrder = 0,
   });
 
+  static List<BannerEntity> mock() => const [
+        BannerEntity(id: 'sk-1', title: 'Loading banner placeholder 1'),
+        BannerEntity(id: 'sk-2', title: 'Loading banner placeholder 2'),
+        BannerEntity(id: 'sk-3', title: 'Loading banner placeholder 3'),
+      ];
+
   @override
   List<Object?> get props => [id, title, imageUrl, actionUrl, displayOrder];
 }

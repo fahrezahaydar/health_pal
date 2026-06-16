@@ -15,6 +15,11 @@ class UserProfileEntity extends Equatable {
     this.notifReminderEnabled = true,
   });
 
+  static const UserProfileEntity mock = UserProfileEntity(
+    id: 'sk-1',
+    nickname: 'Loading',
+  );
+
   @override
   List<Object?> get props =>
       [id, nickname, avatarUrl, isProfileComplete, notifReminderEnabled];

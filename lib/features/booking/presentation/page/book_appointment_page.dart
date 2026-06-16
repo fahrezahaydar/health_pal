@@ -29,7 +29,7 @@ import '../../../../widgets/button/primary_button.dart';
 import '../bloc/booking/booking_bloc.dart';
 import '../bloc/booking/booking_event.dart';
 import '../bloc/booking/booking_state.dart';
-import '../widget/booking_summary_card.dart';
+import '../../../../widgets/card/booking_summary_card.dart';
 
 class BookAppointmentPage extends StatelessWidget {
   const BookAppointmentPage({super.key, required this.doctorId});

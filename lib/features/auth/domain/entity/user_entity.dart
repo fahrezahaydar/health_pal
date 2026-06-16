@@ -23,6 +23,14 @@ class UserEntity extends Equatable {
     this.isProfileComplete = false,
   });
 
+  static UserEntity mock() => const UserEntity(
+        id: 'sk-1',
+        authId: 'sk-auth',
+        fullName: 'Loading Name',
+        email: 'loading@email.com',
+        nickname: 'Loading',
+      );
+
   @override
   List<Object?> get props => [
         id,

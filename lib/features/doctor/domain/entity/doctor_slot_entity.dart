@@ -29,6 +29,14 @@ class DoctorSlotEntity extends Equatable {
     return endMin - startMin;
   }
 
+  static DoctorSlotEntity mock() => DoctorSlotEntity(
+        id: 'sk-1',
+        doctorId: 'sk-doctor',
+        slotDate: DateTime(2024, 1, 15),
+        startTime: const TimeOfDay(hour: 9, minute: 0),
+        endTime: const TimeOfDay(hour: 9, minute: 30),
+      );
+
   /// Helper: format "09:00" untuk display.
   String get startTimeDisplay {
     final h = startTime.hour.toString().padLeft(2, '0');

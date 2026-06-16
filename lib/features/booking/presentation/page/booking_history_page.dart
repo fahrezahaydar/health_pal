@@ -17,7 +17,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
-import '../widget/appointment_card.dart';
+import '../../../../widgets/card/appointment_card.dart';
 
 class BookingHistoryPage extends StatefulWidget {
   const BookingHistoryPage({super.key});

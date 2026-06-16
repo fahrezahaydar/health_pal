@@ -1,25 +1,20 @@
-// lib/features/loc/presentation/widget/clinic_card.dart
-//
-// Card reusable untuk menampilkan 1 klinik di Loc page.
-// - Foto / placeholder
-// - Nama + alamat
-// - Jarak (formatted)
-// - Doctor count + specializations (jika ada)
-// - Tombol "Lihat Peta" → url_launcher ke Google Maps
-
 import 'package:flutter/material.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/button/outline_button.dart';
-import '../../domain/entity/clinic_entity.dart';
+import '../../core/theme/app_text_theme.dart';
+import '../../core/theme/app_theme.dart';
+import '../../features/loc/domain/entity/clinic_entity.dart';
+import '../button/outline_button.dart';
 
 class ClinicCard extends StatelessWidget {
   const ClinicCard({super.key, required this.clinic});
 
   final ClinicEntity clinic;
+
+  factory ClinicCard.skeleton() => ClinicCard(
+        clinic: ClinicEntity.mock().first,
+      );
 
   Future<void> _openMaps() async {
     final uri = Uri.parse(
@@ -42,11 +37,9 @@ class ClinicCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: foto + nama + jarak ──
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Foto (placeholder kalau null)
               Container(
                 width: 72,
                 height: 72,
@@ -102,7 +95,6 @@ class ClinicCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    // Distance badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -124,8 +116,6 @@ class ClinicCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-
-          // ── Specializations (jika ada) ──
           if (clinic.specializations != null &&
               clinic.specializations!.isNotEmpty)
             Wrap(
@@ -150,12 +140,9 @@ class ClinicCard extends StatelessWidget {
                       ))
                   .toList(),
             ),
-
           if (clinic.specializations != null &&
               clinic.specializations!.isNotEmpty)
             const SizedBox(height: 12),
-
-          // ── Doctor count + lihat peta button ──
           Row(
             children: [
               const Icon(Iconsax.people, size: 14, color: AppTheme.grey500),

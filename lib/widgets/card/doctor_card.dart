@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
+import '../../features/doctor/domain/entity/doctor_entity.dart';
 
 class DoctorCard extends StatelessWidget {
   const DoctorCard({
@@ -22,6 +23,24 @@ class DoctorCard extends StatelessWidget {
   final String? clinic;
   final String? photoUrl;
   final VoidCallback? onTap;
+
+  factory DoctorCard.fromEntity(DoctorEntity entity, {VoidCallback? onTap}) {
+    return DoctorCard(
+      name: entity.fullName,
+      specialization: entity.specializationName,
+      rating: entity.ratingAvg,
+      fee: entity.consultationFee,
+      clinic: entity.clinicName,
+      photoUrl: entity.photoUrl,
+      onTap: onTap,
+    );
+  }
+
+  factory DoctorCard.skeleton() => const DoctorCard(
+        name: 'Loading...',
+        specialization: 'Loading...',
+        clinic: 'Loading...',
+      );
 
   @override
   Widget build(BuildContext context) {

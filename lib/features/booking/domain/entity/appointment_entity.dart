@@ -46,6 +46,17 @@ class AppointmentEntity extends Equatable {
     this.slot,
   });
 
+  static AppointmentEntity mock() => AppointmentEntity(
+        id: 'sk-1',
+        patientId: 'sk-patient',
+        doctorId: 'sk-doctor',
+        slotId: 'sk-slot',
+        status: 'pending',
+        consultationFeeSnapshot: 0,
+        doctor: AppointmentDoctorEntity.mock(),
+        slot: AppointmentSlotEntity.mock(),
+      );
+
   /// Derived: display name untuk doctor.
   String get doctorName => doctor?.fullName ?? 'Dokter';
 
@@ -121,6 +132,14 @@ class AppointmentDoctorEntity extends Equatable {
     this.clinicPhone,
   });
 
+  static AppointmentDoctorEntity mock() => const AppointmentDoctorEntity(
+        id: 'sk-1',
+        fullName: 'Loading Doctor',
+        experienceYears: 0,
+        specializationName: 'Umum',
+        clinicName: 'Klinik',
+      );
+
   @override
   List<Object?> get props => [
         id,
@@ -144,6 +163,12 @@ class AppointmentSlotEntity extends Equatable {
     required this.startTime,
     required this.endTime,
   });
+
+  static AppointmentSlotEntity mock() => AppointmentSlotEntity(
+        slotDate: DateTime(2024, 1, 15),
+        startTime: const TimeOfDay(hour: 9, minute: 0),
+        endTime: const TimeOfDay(hour: 9, minute: 30),
+      );
 
   String get startTimeDisplay {
     final h = startTime.hour.toString().padLeft(2, '0');

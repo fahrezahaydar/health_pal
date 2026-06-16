@@ -1,15 +1,16 @@
-// lib/features/booking/presentation/widget/booking_summary_card.dart
+// lib/widgets/card/booking_summary_card.dart
 //
 // Card yang menampilkan ringkasan booking — digunakan di bottom sheet
 // konfirmasi Book Appointment page.
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/network/json_converters.dart';
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../../../widgets/shared/info_row.dart';
+import '../../core/network/json_converters.dart';
+import '../../core/theme/app_text_theme.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/utils/date_formatter.dart';
+import '../../features/booking/domain/entity/appointment_entity.dart';
+import '../shared/info_row.dart';
 
 class BookingSummaryCard extends StatelessWidget {
   const BookingSummaryCard({
@@ -28,6 +29,26 @@ class BookingSummaryCard extends StatelessWidget {
   final String startTime;
   final String endTime;
   final double fee;
+
+  factory BookingSummaryCard.fromEntity(AppointmentEntity entity) {
+    return BookingSummaryCard(
+      doctorName: entity.doctorName,
+      specializationName: entity.specializationName,
+      date: entity.slotDate ?? DateTime(2024, 1, 15),
+      startTime: entity.startTimeDisplay ?? '',
+      endTime: entity.endTimeDisplay ?? '',
+      fee: entity.consultationFeeSnapshot,
+    );
+  }
+
+  factory BookingSummaryCard.skeleton() => BookingSummaryCard(
+        doctorName: '---',
+        specializationName: '---',
+        date: DateTime(2024, 1, 15),
+        startTime: '--:--',
+        endTime: '--:--',
+        fee: 0,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -61,5 +82,4 @@ class BookingSummaryCard extends StatelessWidget {
       ),
     );
   }
-
 }

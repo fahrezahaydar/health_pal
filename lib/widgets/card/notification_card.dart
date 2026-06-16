@@ -1,17 +1,9 @@
-// lib/features/profile/presentation/widget/notification_card.dart
-//
-// Card reusable untuk menampilkan 1 notifikasi di Notification Inbox page.
-// - Unread indicator (dot biru di kiri, atau paleBlue background)
-// - Type-aware icon
-// - Title + body + relative timestamp
-// - onTap → mark as read + optional deep link navigation
-
 import 'package:flutter/material.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
 
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../domain/entity/notification_entity.dart';
+import '../../core/theme/app_text_theme.dart';
+import '../../core/theme/app_theme.dart';
+import '../../features/profile/domain/entity/notification_entity.dart';
 
 class NotificationCard extends StatelessWidget {
   const NotificationCard({
@@ -22,6 +14,10 @@ class NotificationCard extends StatelessWidget {
 
   final NotificationEntity notification;
   final VoidCallback? onTap;
+
+  factory NotificationCard.skeleton() => NotificationCard(
+        notification: NotificationEntity.mock(),
+      );
 
   IconData get _typeIcon => switch (notification.type) {
         'booking_confirmed' => Iconsax.tickCircle,
@@ -38,7 +34,6 @@ class NotificationCard extends StatelessWidget {
         _ => AppTheme.grey500,
       };
 
-  /// Relative time (Baru saja / Xm / Xh / Xd / Xw).
   String get _relativeTime {
     final now = DateTime.now();
     final diff = now.difference(notification.sentAt);
@@ -65,7 +60,6 @@ class NotificationCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Type icon ──
             Container(
               width: 40,
               height: 40,
@@ -76,14 +70,12 @@ class NotificationCard extends StatelessWidget {
               child: Icon(_typeIcon, size: 22, color: _typeColor),
             ),
             const SizedBox(width: 12),
-            // ── Content ──
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      // Unread dot
                       if (isUnread) ...[
                         Container(
                           width: 8,

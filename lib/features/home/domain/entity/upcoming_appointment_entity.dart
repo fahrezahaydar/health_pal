@@ -45,6 +45,17 @@ class UpcomingAppointmentEntity extends Equatable {
     required this.status,
   });
 
+  static UpcomingAppointmentEntity mock() => const UpcomingAppointmentEntity(
+        id: 'sk-1',
+        doctorName: 'Loading Doctor Name Placeholder',
+        clinicName: 'Loading Clinic Name Placeholder',
+        specializationName: 'Loading Specialization Placeholder',
+        slotDate: null,
+        slotStart: null,
+        slotEnd: null,
+        status: BookingStatus.upcoming,
+      );
+
   @override
   List<Object?> get props => [
         id,

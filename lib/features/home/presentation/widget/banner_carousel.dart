@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/card/banner_card.dart';
 import '../../../../widgets/indicators/dots_indicator.dart';
 import '../../domain/entity/banner_entity.dart';
 
@@ -80,7 +78,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
             itemCount: banners.length,
             itemBuilder: (context, index) {
               final banner = banners[index];
-              return _BannerCard(banner: banner);
+              return BannerCard.fromEntity(banner);
             },
           ),
         ),
@@ -94,59 +92,17 @@ class _BannerCarouselState extends State<BannerCarousel> {
   }
 }
 
-class _BannerCard extends StatelessWidget {
-  const _BannerCard({required this.banner});
-
-  final BannerEntity banner;
+class BannerCarouselLoading extends StatelessWidget {
+  const BannerCarouselLoading({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        final url = banner.actionUrl;
-        // Sprint 2 — E2: validasi scheme URL. Hanya izinkan http/https
-        // (eksternal) atau / (internal route). Blokir javascript://,
-        // data://, atau scheme berbahaya lainnya.
-        if (url != null &&
-            (url.startsWith('http://') ||
-                url.startsWith('https://') ||
-                url.startsWith('/'))) {
-          context.push(url);
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: AppTheme.grey200,
-          borderRadius: BorderRadius.circular(12),
-          image: banner.imageUrl != null
-              ? DecorationImage(
-                  image: NetworkImage(banner.imageUrl!),
-                  fit: BoxFit.cover,
-                )
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: banner.imageUrl == null
-            ? Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Iconsax.gallery, size: 32, color: AppTheme.grey400),
-                    const SizedBox(height: 8),
-                    Text(
-                      banner.title,
-                      style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey600),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              )
-            : null,
-      ),
+    return Skeletonizer(
+      enabled: true,
+      child: BannerCarousel(banners: BannerEntity.mock()),
     );
   }
 }
+
 
 

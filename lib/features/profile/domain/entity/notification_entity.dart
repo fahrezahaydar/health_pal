@@ -37,6 +37,16 @@ class NotificationEntity extends Equatable {
         createdAt: createdAt,
       );
 
+  static NotificationEntity mock() => NotificationEntity(
+        id: 'sk-1',
+        userId: 'sk-user',
+        type: 'booking_confirmed',
+        title: 'Loading title',
+        body: 'Loading body notification',
+        isRead: false,
+        sentAt: DateTime(2024, 1, 15),
+      );
+
   @override
   List<Object?> get props => [
         id,

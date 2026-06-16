@@ -1,13 +1,8 @@
-// lib/features/doctor/presentation/widget/doctor_card_detail.dart
-//
-// Widget header card di halaman Doctor Detail.
-// Menampilkan: foto, nama, spesialisasi, rating, fee, klinik.
-
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../domain/entity/doctor_entity.dart';
+import '../../core/theme/app_text_theme.dart';
+import '../../core/theme/app_theme.dart';
+import '../../features/doctor/domain/entity/doctor_entity.dart';
 
 class DoctorCardDetail extends StatelessWidget {
   const DoctorCardDetail({
@@ -21,6 +16,10 @@ class DoctorCardDetail extends StatelessWidget {
   final VoidCallback? onFavoriteToggle;
   final bool isFavorite;
 
+  factory DoctorCardDetail.skeleton() => DoctorCardDetail(
+        doctor: DoctorEntity.mock(),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,7 +32,6 @@ class DoctorCardDetail extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Foto ──
           Container(
             width: 80,
             height: 80,
@@ -58,7 +56,6 @@ class DoctorCardDetail extends StatelessWidget {
                 : const Icon(Icons.person, color: AppTheme.grey400, size: 40),
           ),
           const SizedBox(width: 12),
-          // ── Info ──
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +106,6 @@ class DoctorCardDetail extends StatelessWidget {
               ],
             ),
           ),
-          // ── Favorite button ──
           IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,

@@ -52,6 +52,15 @@ class DoctorEntity extends Equatable {
   /// Derived: rating text (formatted untuk display).
   String get ratingDisplay => ratingAvg.toStringAsFixed(1);
 
+  static DoctorEntity mock() => const DoctorEntity(
+        id: 'sk-1',
+        clinicId: 'sk-clinic',
+        specializationId: 'sk-spec',
+        fullName: 'Loading Doctor Name',
+        experienceYears: 0,
+        consultationFee: 0,
+      );
+
   @override
   List<Object?> get props => [
         id,
