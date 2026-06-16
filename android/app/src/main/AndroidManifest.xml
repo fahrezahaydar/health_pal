@@ -1,9 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Sprint 4.5 — M1a: INTERNET untuk flutter_map OSM tiles + Supabase -->
+    <!-- Network & Internet — flutter_map (OSM tiles), Supabase, cached_network_image, google_fonts -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Geolocator (existing) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Location — geolocator (Loc tab, Nearby Medical Centers) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- Camera & Storage — image_picker (Profile photo upload, Edit Profile) -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- Notifications — firebase_messaging (Push notification FCM) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="health_pal"
         android:name="${applicationName}"
