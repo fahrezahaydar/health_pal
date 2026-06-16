@@ -7,14 +7,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
-import '../../../../widgets/loader/dot_loader.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
+import '../../domain/entity/clinic_entity.dart';
 import '../../../../widgets/card/clinic_card.dart';
 
 class LocPage extends StatelessWidget {
@@ -90,10 +92,22 @@ class _LocView extends StatelessWidget {
           return switch (state) {
             LocInitial() ||
             LocLoading() =>
-              const _LoadingView(),
+              Skeletonizer(
+                enabled: true,
+                // Sprint 4 — S4.2: reuse production widget pattern.
+                // ClinicEntity.mock() sudah ada (static factory).
+                child: _loaded(context, ClinicEntity.mock(), 10),
+              ),
             LocPermissionDenied(:final reason) =>
               _permissionDenied(context, reason),
-            LocError(:final message) => _errorView(context, message),
+            LocError(:final message) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: ErrorSection(
+                  message: message,
+                  onRetry: () =>
+                      context.read<LocCubit>().requestLocationAndLoad(),
+                ),
+              ),
             LocLoaded(:final clinics, :final radiusKm) =>
               _loaded(context, clinics, radiusKm),
           };
@@ -184,36 +198,6 @@ class _LocView extends StatelessWidget {
     );
   }
 
-  Widget _errorView(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.warning2,
-                size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal Memuat Klinik', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall
-                  .copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.read<LocCubit>().requestLocationAndLoad(),
-              child: const Text('Coba lagi'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _emptyState(BuildContext context, double radiusKm) {
     return Center(
       child: Padding(
@@ -243,14 +227,5 @@ class _LocView extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: DotLoader());
   }
 }
