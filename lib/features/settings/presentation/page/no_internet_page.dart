@@ -23,20 +23,25 @@ class _NoInternetPageState extends State<NoInternetPage> {
 
   Future<void> _retry() async {
     setState(() => _isChecking = true);
-    final connectivityResult = await Connectivity().checkConnectivity();
-    final hasConnection = connectivityResult.any((r) => r != ConnectivityResult.none);
+    try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final hasConnection =
+          connectivityResult.any((r) => r != ConnectivityResult.none);
+      if (!mounted) return;
+      if (hasConnection) {
+        Navigator.of(context).pop();
+        return;
+      }
+    } catch (_) {
+      // Connectivity check failed — treat as no connection
+    }
     if (!mounted) return;
     setState(() => _isChecking = false);
-
-    if (hasConnection) {
-      Navigator.of(context).pop();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Masih tidak ada koneksi. Periksa WiFi atau data seluler.'),
-        ),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Masih tidak ada koneksi. Periksa WiFi atau data seluler.'),
+      ),
+    );
   }
 
   @override

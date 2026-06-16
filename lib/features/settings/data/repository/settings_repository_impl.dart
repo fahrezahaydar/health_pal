@@ -33,8 +33,17 @@ class SettingsRepositoryImpl implements SettingsRepository {
   bool isNotifEnabled() => _prefs.isNotifEnabled;
 
   @override
-  Future<void> setNotifEnabled(bool value) =>
-      _prefs.setNotifEnabled(value);
+  Future<void> setNotifEnabled(bool value, {String? authId}) async {
+    await _prefs.setNotifEnabled(value);
+    // Sprint 3 — S3.8: persist toggle ke Supabase.
+    // Hanya PATCH jika authId tersedia.
+    if (authId != null && authId.isNotEmpty) {
+      await _supabase
+          .from('user_profiles')
+          .update({'notif_reminder_enabled': value})
+          .eq('auth_id', authId);
+    }
+  }
 
   @override
   Future<void> clearCache() => _homeLocal.clearAll();
@@ -44,4 +53,11 @@ class SettingsRepositoryImpl implements SettingsRepository {
     await _cache.clear();
     await _homeLocal.clearAll();
   }
+
+  @override
+  String? getEmergencyPhone() => _cache.getString('emergency_phone');
+
+  @override
+  Future<void> setEmergencyPhone(String phone) =>
+      _cache.setString('emergency_phone', phone);
 }

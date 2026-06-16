@@ -81,7 +81,8 @@ class TermsAndConditionsPage extends StatelessWidget {
                       Text('Syarat & Ketentuan', style: AppTextTheme.titleLarge),
                       const SizedBox(height: 2),
                       Text(
-                        'Terakhir diperbarui: Juni 2026',
+                        // TODO: sync with konten aktual — hardcoded sementara
+                      'Terakhir diperbarui: Juni 2026',
                         style: AppTextTheme.labelSmall
                             .copyWith(color: AppTheme.grey500),
                       ),

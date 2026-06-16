@@ -6,9 +6,13 @@ abstract class SettingsRepository {
 
   bool isNotifEnabled();
 
-  Future<void> setNotifEnabled(bool value);
+  Future<void> setNotifEnabled(bool value, {String? authId});
 
   Future<void> clearCache();
 
   Future<void> clearLocalData();
+
+  String? getEmergencyPhone();
+
+  Future<void> setEmergencyPhone(String phone);
 }

@@ -44,6 +44,39 @@ class SettingsPage extends StatelessWidget {
 class _SettingsView extends StatelessWidget {
   const _SettingsView();
 
+  Future<void> _showEmergencyPhoneDialog(BuildContext context) async {
+    final controller = TextEditingController(
+      text: context.read<SettingsCubit>().getEmergencyPhone(),
+    );
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Telepon Darurat'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(
+            hintText: '+62 812-xxxx-xxxx',
+            labelText: 'Nomor Telepon',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(controller.text),
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+    if (result != null && context.mounted) {
+      await context.read<SettingsCubit>().setEmergencyPhone(result);
+    }
+  }
+
   Future<void> _confirmLogout(BuildContext context) async {
     final confirmed = await AppConfirmDialog.show(
       context,
@@ -127,6 +160,16 @@ class _SettingsView extends StatelessWidget {
               ),
             ),
           ],
+          const AppDivider(),
+          MenuItemTile(
+            icon: Iconsax.call,
+            label: 'Telepon Darurat',
+            trailing: Text(
+              context.read<SettingsCubit>().getEmergencyPhone() ?? '+62 8xx-xxxx',
+              style: const TextStyle(color: AppTheme.grey500, fontSize: 12),
+            ),
+            onTap: () => _showEmergencyPhoneDialog(context),
+          ),
         ]),
         const SizedBox(height: 16),
 

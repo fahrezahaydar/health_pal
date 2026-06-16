@@ -39,7 +39,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     final current = state;
     if (current is! SettingsLoaded) return;
     emit(current.copyWith(notifEnabled: value));
-    await _repository.setNotifEnabled(value);
+    final authId = _appServices.currentAuthId;
+    await _repository.setNotifEnabled(value, authId: authId);
   }
 
   /// Stub: dark mode belum di-implement (v2). Hanya update state.
@@ -55,6 +56,12 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> clearLocalData() async {
     await _repository.clearLocalData();
+  }
+
+  String? getEmergencyPhone() => _repository.getEmergencyPhone();
+
+  Future<void> setEmergencyPhone(String phone) async {
+    await _repository.setEmergencyPhone(phone);
   }
 
   Future<void> logout() async {
