@@ -154,47 +154,83 @@ class _LocView extends StatelessWidget {
   }
 
   Widget _permissionDenied(BuildContext context, String reason) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.lightPink,
-              ),
-              // TODO: change to iconsax — currently Material fallback
-              child: const Icon(
-                Icons.location_disabled,
-                size: 60,
-                color: AppTheme.darkRed,
-              ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.lightPink,
             ),
-            const SizedBox(height: 24),
-            Text('Izin Lokasi Diperlukan',
-                style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              reason,
-              style: AppTextTheme.bodySmall
-                  .copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
+            // TODO: change to iconsax — currently Material fallback
+            child: const Icon(
+              Icons.location_disabled,
+              size: 60,
+              color: AppTheme.darkRed,
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: LightFilledButton(
-                label: 'Izinkan Lokasi',
-                onTap: () =>
-                    context.read<LocCubit>().requestLocationAndLoad(),
+          ),
+          const SizedBox(height: 24),
+          Text('Izin Lokasi Diperlukan',
+              style: AppTextTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            reason,
+            style: AppTextTheme.bodySmall
+                .copyWith(color: AppTheme.grey500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: LightFilledButton(
+              label: 'Izinkan Lokasi',
+              onTap: () =>
+                  context.read<LocCubit>().requestLocationAndLoad(),
+            ),
+          ),
+          const SizedBox(height: 32),
+          // Sprint 4 — S4.4: City input fallback (wireframe 07).
+          // Saat location denied, user bisa masukkan nama kota.
+          // Full implementation (geocoding → filter clinics by city)
+          // membutuhkan endpoint backend — deferred ke Sprint 5.
+          const Row(
+            children: [
+              Expanded(child: Divider()),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text('atau',
+                    style: TextStyle(color: AppTheme.grey400)),
               ),
+              Expanded(child: Divider()),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text('Cari Klinik Berdasarkan Kota',
+              style: AppTextTheme.titleLarge),
+          const SizedBox(height: 12),
+          TextField(
+            decoration: const InputDecoration(
+              hintText: 'Masukkan nama kota',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
             ),
-          ],
-        ),
+            onSubmitted: (city) {
+              if (city.trim().isNotEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Mencari klinik di $city...'),
+                  ),
+                );
+                // TODO: implementasi city-based search (Sprint 5+)
+                // Butuh: geocoding API atau endpoint GET facilities?city=xxx
+              }
+            },
+          ),
+        ],
       ),
     );
   }
