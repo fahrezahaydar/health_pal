@@ -29,19 +29,17 @@
 │  │   [+ More]  [Jarak ▼]       │   │
 │  └──────────────────────────────┘   │
 │                                     │
-│  ┌─ Doctor Card ────────────────┐   │
-│  │ 👤 dr. Budi Santoso, Sp.PD   │   │
-│  │    ⭐ 4.85 (234 ulasan)      │   │
-│  │    🏥 Klinik Sehat Bersama   │   │
-│  │    📍 1.2 km • Bandung       │   │
-│  │    💰 Rp150,000              │   │
+│  ┌─ Clinic Card ────────────────┐   │
+│  │ 🏥 Klinik Sehat Bersama      │   │
+│  │ 📍 1.2 km                    │   │
+│  │ 👨‍⚕️ 5 dokter tersedia        │   │
+│  │ [🗺️ Lihat Peta]              │   │
 │  └──────────────────────────────┘   │
-│  ┌─ Doctor Card ────────────────┐   │
-│  │ 👤 dr. Sari Dewi, Sp.A       │   │
-│  │    ⭐ 4.70 (189 ulasan)      │   │
-│  │    🏥 RS Mitra Husada        │   │
-│  │    📍 2.5 km • Bandung       │   │
-│  │    💰 Rp120,000              │   │
+│  ┌─ Clinic Card ────────────────┐   │
+│  │ 🏥 RS Mitra Husada           │   │
+│  │ 📍 2.5 km                    │   │
+│  │ 👨‍⚕️ 3 dokter tersedia        │   │
+│  │ [🗺️ Lihat Peta]              │   │
 │  └──────────────────────────────┘   │
 │                                     │
 │──────── Bottom Nav Bar ─────────────│
@@ -80,18 +78,18 @@
 | Location Permission | `FutureBuilder` | `geolocator` package |
 | City Input (fallback) | `AppTextFormField` | Manual input |
 | Filter Chips | `ListView` horizontal / `Wrap` | `GET /rest/v1/specializations` |
-| Sort Dropdown | `AppDropdownButton<String>` | Jarak / Rating / Fee |
-| Doctor Card | `Container` with `InkWell` | `POST /functions/v1/doctors-by-location` |
+| Sort Dropdown | `AppDropdownButton<String>` | Jarak / Nama / Jumlah Dokter |
+| Clinic Card | `Container` with `InkWell` | `POST /rest/v1/rpc/get_nearby_clinics` (API §5.5) |
 | Scroll View | `ListView.builder` | Pagination (20 items) |
 
-**Doctor Card Components (reusable widget):**
+**Clinic Card Components (reusable widget):**
 ```
 ┌─────────────────────────────────────┐
-│ ┌────┐                              │
-│ │    │ dr. Budi Santoso, Sp.PD      │
-│ │Foto│ ⭐ 4.85 (234)                │
-│ │    │ 🏥 Klinik Sehat Bersama      │
-│ └────┘ 📍 1.2 km • 💰 Rp150,000    │
+│ ┌────────┐                          │
+│ │        │ Klinik Sehat Bersama     │
+│ │ Foto   │ 📍 1.2 km                │
+│ │ Klinik │ 👨‍⚕️ 5 dokter            │
+│ └────────┘ [🗺️ Lihat Peta]          │
 └─────────────────────────────────────┘
 ```
 
@@ -102,18 +100,17 @@
 | Elemen | Interaksi | Efek |
 |---|---|---|
 | **Tab Loc** | Tap bottom nav ke-2 | Request location permission (jika belum) |
-| **Permission: Allow** | Tap "Allow" | Tampilkan map + pin dokter |
+| **Permission: Allow** | Tap "Allow" | Tampilkan list klinik terdekat |
 | **Permission: Deny** | Tap "Deny" | Tampilkan fallback input kota |
-| **Map** | Drag/zoom | Pin marker reposition |
-| **Tap pin** | Tap marker | Info window: nama klinik |
-| **Filter chip** | Tap chip | Tambah/hapus filter spesialisasi → refresh list |
-| **Sort dropdown** | Pilih opsi | Ubah `order` parameter → refresh list |
-| **Tap doctor card** | Tap | Navigasi ke `/doctor/:doctorId` |
-| **Pull to refresh** | Swipe bawah | Refresh map markers + list dokter |
+| **Filter chip** | Tap chip | Tambah/hapus filter spesialisasi → filter list |
+| **Sort dropdown** | Pilih opsi | Sort list by jarak / nama / jumlah dokter |
+| **Tap clinic card** | Tap | Navigasi ke `/doctor/search?clinic=:clinicId` (Sprint 5) |
+| **Tap "Lihat Peta"** | Tap | Buka Google Maps app dengan pin koordinat klinik |
+| **Pull to refresh** | Swipe bawah | Refresh list klinik |
 
-**BLoC:** `LocCubit` — menyimpan state: koordinat user, radius, specialization filter, list dokter, loading/error.
+**BLoC:** `LocCubit` — menyimpan state: koordinat user, radius, filter spesialisasi, sort mode, list klinik, loading/error.
 
 **Edge Cases:**
 - GPS mati → fallback input kota
-- Tidak ada dokter dalam radius → empty state
-- Semua filter aktif → 0 hasil → "Tidak ada dokter dengan filter ini"
+- Tidak ada klinik dalam radius → empty state: "Tidak ada klinik di radius ini, coba perbesar radius"
+- Semua filter aktif → 0 hasil → "Tidak ada klinik dengan filter ini"
