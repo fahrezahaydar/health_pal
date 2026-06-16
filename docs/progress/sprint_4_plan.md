@@ -16,21 +16,21 @@
 ## 📊 Sprint 4 Progress Tracker
 
 **Last Updated:** 16 Juni 2026 (Sprint 4 Planned)
-**Overall:** 3/11 tasks (27%) — S4.1+S4.2+S4.3 ✅
+**Overall:** 11/11 tasks (100%) ✅
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit | Catatan |
 |------|-----------|-----------|:--------:|--------|--------|---------|
 | S4.1 | Sprint Opening Audit — loc_audit.md | — | 3h | ✅ Done | `dd69370` | Verdict: 🟡 64.3/100. Wireframe 30%, Architecture 100%. Rekomendasi: tetap clinic-based |
 | S4.2 | Skeletonizer untuk loading state Loc | M1 | 1h | ✅ Done | `d15e8be` | Ganti `DotLoader` → `Skeletonizer` per AD-6. Pakai `ClinicEntity.mock()` (sudah ada) |
 | S4.3 | ErrorSection untuk error state Loc | M2 | 0.5h | ✅ Done | `d15e8be` | Replace custom `_errorView()` → `ErrorSection` (dari Sprint 2 C6) |
-| S4.4 | Implementasi City Input fallback | M3 | 2h | ⬜ Not Started | — | Wireframe 07 fallback — input kota manual saat location denied |
-| S4.5 | Implementasi Filter Chips (spesialisasi) | M4 | 3h | ⬜ Not Started | — | Horizontal chips dari specialization list → filter clinic list |
-| S4.6 | Implementasi Sort Dropdown | M5 | 1.5h | ⬜ Not Started | — | Sort by distance / doctor_count / name (client-side sorting) |
-| S4.7 | Map View: feasibility study + deferred | K1 | 2h | ✅ Deferred | — | google_maps_flutter diganti flutter_map (gratis, no API key). Full implementasi di Sprint 5 (Doctor). Semua dokumen sudah diupdate (PRD §6.3, wireframe 07) |
+| S4.4 | Implementasi City Input fallback | M3 | 2h | ✅ Done | `b82e3af` | `_permissionDenied` + city TextField + divider. Snackbar confirmation. Full geocoding deferred ke Sprint 5 |
+| S4.5 | Implementasi Filter Chips (spesialisasi) | M4 | 3h | ✅ Done | `6590ebf` | Horizontal `FilterChip` row (9 spesialisasi). `selectedSpecialization` di state + `setFilter()` di cubit |
+| S4.6 | Implementasi Sort Dropdown | M5 | 1.5h | ✅ Done | `cd2c31a` | `ChoiceChip` 3 mode (Jarak/Nama/Dokter). Client-side sorting via `sortBy` state |
+| S4.7 | Map View: feasibility study + deferred | K1 | 2h | ✅ Deferred | `dde2072` | google_maps_flutter diganti flutter_map (gratis, no API key). Full implementasi di Sprint 5 (Doctor). Semua dokumen sudah diupdate |
 | S4.8 | Icon consistency: iconsax → Material + TODO | M6 | 1.5h | ✅ Done | `bdd2d51` | `loc_page.dart` + `clinic_card.dart` — semua icon migrated. Hapus import iconsax_latest |
 | S4.9 | "Lihat Peta" try-catch + hapus dead code | L1 + L2 | 0.5h | ✅ Done | `bdd2d51` | `_openMaps` try-catch + hapus `ClinicCard.skeleton()` factory |
-| S4.10 | Update wireframe 07: clinic-based → sync decision | K2 | 1h | ⬜ Not Started | — | Update `docs/wireframe/07-location-search.md` — ganti Doctor Cards → Clinic Cards, hapus Map sebagai primary (defer) |
-| S4.11 | Final QA + flutter analyze + commit | — | 1h | ⬜ Not Started | — | 0 issues + update sprint_4_plan tracker + sprint_roadmap |
+| S4.10 | Update wireframe 07: clinic-based → sync decision | K2 | 1h | ✅ Done | `702547c` | Update wireframe — Doctor Cards → Clinic Cards, Map View flutter_map, clinic-based state/interaction spec |
+| S4.11 | Final QA + flutter analyze + commit | — | 1h | ✅ Done | `<this-commit>` | 0 issues. Semua task done. Sprint 4 siap ditutup |
 
 ---
 
