@@ -5,7 +5,6 @@
 // - Contact Us section: email + telepon (url_launcher)
 
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
@@ -50,7 +49,8 @@ class HelpSupportPage extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
+          // TODO: change to iconsax — currently Material fallback
+          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Help & Support', style: AppTextTheme.titleLarge),
@@ -72,14 +72,14 @@ class HelpSupportPage extends StatelessWidget {
           // ── Contact Us Section ──
           const SectionLabel(text: 'Hubungi Kami'),
           ContactCard(
-            icon: Iconsax.sms,
+            icon: Icons.email, // TODO: change to iconsax
             label: 'Email',
             value: 'support@healthpal.app',
             onTap: () => _launchUrl('mailto:support@healthpal.app'),
           ),
           const SizedBox(height: 8),
           ContactCard(
-            icon: Iconsax.call,
+            icon: Icons.phone, // TODO: change to iconsax
             label: 'Telepon',
             value: '021-12345678',
             onTap: () => _launchUrl('tel:+622112345678'),

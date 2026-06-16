@@ -5,7 +5,6 @@
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -63,7 +62,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
                   color: AppTheme.grey100,
                 ),
                 child: const Icon(
-                  Iconsax.wifiSquare,
+                  Icons.wifi_off, // TODO: change to iconsax
                   size: 80,
                   color: AppTheme.grey400,
                 ),

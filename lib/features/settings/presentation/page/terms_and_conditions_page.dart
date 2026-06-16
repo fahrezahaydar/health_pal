@@ -4,7 +4,6 @@
 // Halaman statis, scroll-only. Konten placeholder — akan disiapkan tim legal.
 
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -53,7 +52,8 @@ class TermsAndConditionsPage extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
+          // TODO: change to iconsax — currently Material fallback
+          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Terms & Conditions', style: AppTextTheme.titleLarge),
@@ -71,7 +71,8 @@ class TermsAndConditionsPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Iconsax.documentText,
+                // TODO: change to iconsax — currently Material fallback
+                const Icon(Icons.description,
                     size: 32, color: AppTheme.primary),
                 const SizedBox(width: 12),
                 Expanded(

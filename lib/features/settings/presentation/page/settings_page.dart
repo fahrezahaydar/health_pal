@@ -11,7 +11,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
@@ -139,20 +138,20 @@ class _SettingsView extends StatelessWidget {
         const SectionLabel(text: 'Akun'),
         CardContainer(children: [
           MenuItemTile(
-            icon: Iconsax.user,
+            icon: Icons.person, // TODO: change to iconsax
             label: 'Edit Profile',
             onTap: () => context.push(RoutePaths.editProfile),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.lock,
+            icon: Icons.lock , // TODO: change to iconsax
             label: 'Ubah Password',
             onTap: () => context.push(RoutePaths.forgotPassword),
           ),
           if (state.email.isNotEmpty) ...[
             const AppDivider(),
             MenuItemTile(
-              icon: Iconsax.sms,
+              icon: Icons.email , // TODO: change to iconsax
               label: 'Email Terdaftar',
               trailing: Text(
                 state.email,
@@ -162,7 +161,7 @@ class _SettingsView extends StatelessWidget {
           ],
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.call,
+            icon: Icons.phone , // TODO: change to iconsax
             label: 'Telepon Darurat',
             trailing: Text(
               context.read<SettingsCubit>().getEmergencyPhone() ?? '+62 8xx-xxxx',
@@ -177,7 +176,7 @@ class _SettingsView extends StatelessWidget {
         const SectionLabel(text: 'Preferensi'),
         CardContainer(children: [
           SwitchTile(
-            icon: Iconsax.notification,
+            icon: Icons.notifications , // TODO: change to iconsax
             label: 'Push Notification',
             value: state.notifEnabled,
             onChanged: (v) =>
@@ -185,7 +184,7 @@ class _SettingsView extends StatelessWidget {
           ),
           const AppDivider(),
           SwitchTile(
-            icon: Iconsax.moon,
+            icon: Icons.dark_mode , // TODO: change to iconsax
             label: 'Dark Mode',
             value: state.darkMode,
             onChanged: null,
@@ -198,7 +197,7 @@ class _SettingsView extends StatelessWidget {
         const SectionLabel(text: 'Data & Cache'),
         CardContainer(children: [
           MenuItemTile(
-            icon: Iconsax.trash,
+            icon: Icons.delete , // TODO: change to iconsax
             label: 'Hapus Cache',
             onTap: () async {
               final confirmed = await AppConfirmDialog.show(
@@ -220,7 +219,7 @@ class _SettingsView extends StatelessWidget {
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.data,
+            icon: Icons.storage , // TODO: change to iconsax
             label: 'Hapus Data Lokal',
             onTap: () async {
               final confirmed = await AppConfirmDialog.show(
@@ -248,7 +247,7 @@ class _SettingsView extends StatelessWidget {
         const SectionLabel(text: 'Aplikasi'),
         CardContainer(children: [
           const MenuItemTile(
-            icon: Iconsax.infoCircle,
+            icon: Icons.info , // TODO: change to iconsax
             label: 'Versi Aplikasi',
             trailing: Text(
               'v1.0.0 (build 1)',
@@ -257,13 +256,13 @@ class _SettingsView extends StatelessWidget {
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.documentText,
+            icon: Icons.description , // TODO: change to iconsax
             label: 'Syarat & Ketentuan',
             onTap: () => context.push(RoutePaths.termsAndConditions),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.messageQuestion,
+            icon: Icons.help , // TODO: change to iconsax
             label: 'Bantuan & Dukungan',
             onTap: () => context.push(RoutePaths.helpSupport),
           ),
@@ -273,7 +272,8 @@ class _SettingsView extends StatelessWidget {
         // ── Section: Logout ──
         OutlinedButton.icon(
           onPressed: () => _confirmLogout(context),
-          icon: const Icon(Iconsax.logout01, color: AppTheme.darkRed),
+          // TODO: change to iconsax — currently Material fallback
+          icon: const Icon(Icons.logout, color: AppTheme.darkRed),
           label: const Text(
             'Logout',
             style: TextStyle(
