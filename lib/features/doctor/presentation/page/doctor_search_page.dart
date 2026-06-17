@@ -188,34 +188,38 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
           ),
           // ── Results ──
           Expanded(
-            child: BlocBuilder<SearchCubit, SearchState>(
-              builder: (context, state) {
-                return switch (state) {
-                  SearchInitial() => const EmptyStateView(
-                      icon: Icons.search,
-                      message: 'Cari dokter berdasarkan nama atau spesialisasi',
-                    ),
-                  SearchLoading() => Skeletonizer(
-                      enabled: true,
-                      child: _buildList(_mockDoctors, true),
-                    ),
-                  SearchEmpty() => const EmptyStateView(
-                      icon: Icons.search_off,
-                      message: 'Dokter tidak ditemukan',
-                      hint: 'Coba gunakan kata kunci lain',
-                    ),
-                  SearchError(:final message) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 48),
-                      child: ErrorSection(
-                        message: message,
-                        onRetry: () =>
-                            context.read<SearchCubit>().searchDoctors(null),
+            child: RefreshIndicator(
+              onRefresh: () =>
+                  context.read<SearchCubit>().searchDoctors(_controller.text),
+              child: BlocBuilder<SearchCubit, SearchState>(
+                builder: (context, state) {
+                  return switch (state) {
+                    SearchInitial() => const EmptyStateView(
+                        icon: Icons.search,
+                        message: 'Cari dokter berdasarkan nama atau spesialisasi',
                       ),
-                    ),
-                  SearchLoaded(:final doctors, :final hasMore) =>
-                    _buildList(doctors, hasMore),
-                };
-              },
+                    SearchLoading() => Skeletonizer(
+                        enabled: true,
+                        child: _buildList(_mockDoctors, true),
+                      ),
+                    SearchEmpty() => const EmptyStateView(
+                        icon: Icons.search_off,
+                        message: 'Dokter tidak ditemukan',
+                        hint: 'Coba gunakan kata kunci lain',
+                      ),
+                    SearchError(:final message) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 48),
+                        child: ErrorSection(
+                          message: message,
+                          onRetry: () =>
+                              context.read<SearchCubit>().searchDoctors(null),
+                        ),
+                      ),
+                    SearchLoaded(:final doctors, :final hasMore) =>
+                      _buildList(doctors, hasMore),
+                  };
+                },
+              ),
             ),
           ),
         ],

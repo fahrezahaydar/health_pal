@@ -26,6 +26,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/label_value_row.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entity/doctor_entity.dart';
 import '../../domain/entity/doctor_slot_entity.dart';
 import '../bloc/doctor_detail/doctor_detail_cubit.dart';
@@ -59,6 +60,20 @@ class DoctorDetailView extends StatefulWidget {
 class DoctorDetailViewState extends State<DoctorDetailView> {
   String? _selectedSlotId;
   bool _isFavorite = false;
+
+  Future<void> _openMaps(BuildContext context, DoctorEntity doctor) async {
+    final lat = doctor.clinic?.latitude;
+    final lng = doctor.clinic?.longitude;
+    if (lat == null || lng == null) return;
+    try {
+      final uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+      );
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {}
+  }
 
   @override
   void initState() {
@@ -101,7 +116,10 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
           ),
         ],
       ),
-      body: BlocBuilder<DoctorDetailCubit, DoctorDetailState>(
+      body: RefreshIndicator(
+        onRefresh: () =>
+            context.read<DoctorDetailCubit>().loadDetail(widget.doctorId),
+        child: BlocBuilder<DoctorDetailCubit, DoctorDetailState>(
         builder: (context, state) {
           return switch (state) {
             DoctorDetailInitial() ||
@@ -131,6 +149,7 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
               ),
           };
         },
+      ),
       ),
       bottomNavigationBar: BlocBuilder<DoctorDetailCubit, DoctorDetailState>(
         builder: (context, state) {
@@ -270,19 +289,17 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
           ),
           if (doctor.clinic?.address != null) ...[
             const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 32),
-              child: GestureDetector(
-                onTap: () {
-                  // TODO: buka Google Maps external
-                },
-                child: Text(
-                  '${doctor.clinic!.address}, ${doctor.clinic!.city ?? ''}',
-                  style: AppTextTheme.bodySmall
-                      .copyWith(color: AppTheme.primary),
+              Padding(
+                padding: const EdgeInsets.only(left: 32),
+                child: GestureDetector(
+                  onTap: () => _openMaps(context, doctor),
+                  child: Text(
+                    '${doctor.clinic!.address}, ${doctor.clinic!.city ?? ''}',
+                    style: AppTextTheme.bodySmall
+                        .copyWith(color: AppTheme.primary),
+                  ),
                 ),
               ),
-            ),
           ],
           const SizedBox(height: 12),
           LabelValueRow(
