@@ -15,7 +15,7 @@
 | Sprint 3 | Settings | Settings pages — audit + polish | `settings_audit.md` | ✅ DONE |
 | Sprint 4 | Loc | Location tab — audit + polish + filter/sort/city fallback | `loc_audit.md` | ✅ DONE |
 | Sprint 4.5 | Map View | flutter_map implementation (Loc tab — split map + list) | `docs/adr/002_map_view.md` | ✅ DONE |
-| Sprint 5 | Doctor | Doctor Search + Detail — audit + polish | `doctor_audit.md` | 2 minggu |
+| Sprint 5 | Doctor | Doctor Search + Detail — audit + polish | `doctor_audit.md` | ✅ DONE |
 | Sprint 6 | Booking | Booking flow (create, history, detail, cancel) — audit + polish | `booking_audit.md` | 2 minggu |
 | Sprint 7 | Profile | Profile, Edit Profile, Favorites — audit + polish | `profile_audit.md` | 2 minggu |
 | Sprint 8 | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | `onboarding_auth_fcm_audit.md` | 2 minggu |

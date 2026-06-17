@@ -16,19 +16,19 @@
 ## 📊 Sprint 5 Progress Tracker
 
 **Last Updated:** 16 Juni 2026
-**Overall:** 1/9 tasks (11%) — D1 Audit ✅ · 🟢 Score: 88%
+**Overall:** 9/9 tasks (100%) ✅ · 🟢 Score: 88%
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit |
 |------|-----------|-----------|:--------:|--------|--------|
 | D1 | Sprint Opening Audit — doctor_audit.md | — | 3h | ✅ Done | `5560c36` |
-| D2 | Skeletonizer loading — Search + Detail | K1 | 1.5h | ⬜ Not Started | — |
-| D3 | ErrorSection — Search + Detail | K2 | 0.5h | ⬜ Not Started | — |
-| D4 | Implement "Lihat Peta" (reuse clinic_card pattern) | K3 | 1h | ⬜ Not Started | — |
-| D5 | Pull-to-refresh Doctor Search + Detail | M1 | 1.5h | ⬜ Not Started | — |
-| D6 | Skeletonizer slot loading area | M3 | 1h | ⬜ Not Started | — |
-| D7 | Filter chips dinamis (dari SpecializationCubit) | M2 | 2h | ⬜ Not Started | — |
-| D8 | Search empty state polish + initial state | — | 0.5h | ⬜ Not Started | — |
-| D9 | Final QA + flutter analyze | — | 1h | ⬜ Not Started | — |
+| D2 | Skeletonizer loading — Search + Detail | K1 | 1.5h | ✅ Done | `7870155` |
+| D3 | ErrorSection — Search + Detail | K2 | 0.5h | ✅ Done | `7870155` |
+| D4 | Implement "Lihat Peta" (reuse clinic_card pattern) | K3 | 1h | ✅ Done | `0dc2372` |
+| D5 | Pull-to-refresh Doctor Search + Detail | M1 | 1.5h | ✅ Done | `0dc2372` |
+| D6 | Skeletonizer slot loading area | M3 | 1h | ✅ Done | `7870155` |
+| D7 | Filter chips dinamis (dari SpecializationCubit) | M2 | 2h | ✅ Done | `8a873ca` |
+| D8 | Search empty state polish + initial state | — | 0.5h | ✅ Done | `<this-commit>` |
+| D9 | Final QA + flutter analyze | — | 1h | ✅ Done | `<this-commit>` |
 
 **Total:** ~12h
 
