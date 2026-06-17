@@ -1,5 +1,5 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -20,11 +20,11 @@ class NotificationCard extends StatelessWidget {
       );
 
   IconData get _typeIcon => switch (notification.type) {
-        'booking_confirmed' => Iconsax.tickCircle,
-        'booking_cancelled' => Iconsax.closeCircle,
-        'reminder_h1' => Iconsax.clock,
-        'booking_reminder' => Iconsax.clock,
-        _ => Iconsax.notification,
+        'booking_confirmed' => AppIcons.tickCircle,
+        'booking_cancelled' => AppIcons.closeCircle,
+        'reminder_h1' => AppIcons.clock,
+        'booking_reminder' => AppIcons.clock,
+        _ => AppIcons.notification,
       };
 
   Color get _typeColor => switch (notification.type) {

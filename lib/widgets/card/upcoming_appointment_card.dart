@@ -1,7 +1,7 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../core/enums/booking_status.dart';
 import '../../core/router/route_paths.dart';
@@ -99,14 +99,14 @@ class UpcomingAppointmentCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   InfoRow(
-                    icon: Iconsax.calendar,
+                    icon: AppIcons.calendar,
                     text:
                         '${DateFormatter.toFullDateOrDash(slotDate)} • '
                         '${DateFormatter.toTimeOfDayStringOrDash(slotStart)}',
                   ),
                   const SizedBox(height: 4),
                   InfoRow(
-                    icon: Iconsax.location,
+                    icon: AppIcons.location,
                     text: clinicName ?? '',
                   ),
                 ],
@@ -142,12 +142,12 @@ class _DoctorAvatar extends StatelessWidget {
                 height: 56,
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => const Icon(
-                  Iconsax.user,
+                  AppIcons.user,
                   color: AppTheme.grey400,
                   size: 28,
                 ),
               )
-            : const Icon(Iconsax.user, color: AppTheme.grey400, size: 28),
+            : const Icon(AppIcons.user, color: AppTheme.grey400, size: 28),
       ),
     );
   }

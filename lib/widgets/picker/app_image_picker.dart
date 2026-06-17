@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:health_pal/core/theme/app_icons.dart';
 
 import 'package:flutter/widgets.dart';
-import 'package:iconsax_latest/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/theme/app_text_theme.dart';
@@ -169,7 +169,7 @@ class _Placeholder extends StatelessWidget {
       child: Transform.translate(
         offset: Offset(0, -(size * 0.2)), // geser ke atas ~6% dari size
         child: Icon(
-          Iconsax.profileCircle,
+          AppIcons.profileCircle,
           size: size * 1.4,
           color: AppTheme.grey200,
         ),
@@ -234,7 +234,7 @@ class _EditBadge extends StatelessWidget {
         dimension: size,
         child: Center(
           child: Icon(
-            Iconsax.editStyle4,
+            AppIcons.edit,
             size: size * 0.50,
             color: AppTheme.white,
           ),
@@ -353,20 +353,20 @@ class _PhotoOptionsSheet extends StatelessWidget {
 
                 // options
                 _SheetTile(
-                  icon: Iconsax.cameraStyle4,
+                  icon: AppIcons.camera,
                   label: 'Kamera',
                   onTap: onCamera,
                 ),
                 _SheetDivider(),
                 _SheetTile(
-                  icon: Iconsax.galleryStyle4,
+                  icon: AppIcons.galleryPicker,
                   label: 'Pilih dari Galeri',
                   onTap: onGallery,
                 ),
                 if (hasPhoto && onRemove != null) ...[
                   _SheetDivider(),
                   _SheetTile(
-                    icon: Iconsax.trashStyle4,
+                    icon: AppIcons.trash,
                     label: 'Hapus Foto',
                     iconColor: AppTheme.darkRed,
                     labelColor: AppTheme.darkRed,

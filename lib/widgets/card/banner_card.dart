@@ -1,6 +1,6 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -59,7 +59,7 @@ class BannerCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Iconsax.gallery,
+                      AppIcons.gallery,
                       size: 32,
                       color: AppTheme.grey400,
                     ),

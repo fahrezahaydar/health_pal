@@ -1,5 +1,5 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -24,7 +24,7 @@ class FaqTile extends StatelessWidget {
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        leading: const Icon(Iconsax.messageQuestion, color: AppTheme.primary),
+        leading: const Icon(AppIcons.messageQuestion, color: AppTheme.primary),
         title: Text(question, style: AppTextTheme.bodyLarge),
         children: [
           Align(

@@ -1,6 +1,6 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/router/route_paths.dart';
@@ -48,7 +48,7 @@ class _EmptyState extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Iconsax.calendar, size: 40, color: AppTheme.grey300),
+          const Icon(AppIcons.calendar, size: 40, color: AppTheme.grey300),
           const SizedBox(height: 12),
           Text(
             'No upcoming treatment found.',

@@ -1,7 +1,7 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_pal/widgets/badge/app_badge.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
@@ -49,7 +49,7 @@ class GreetingSection extends StatelessWidget {
               // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
               count: unreadCount > 0 ? unreadCount : null,
               child: const Icon(
-                Iconsax.notificationBingStyle5,
+                AppIcons.notificationBingStyle5,
                 color: AppTheme.grey900,
               ),
             ),

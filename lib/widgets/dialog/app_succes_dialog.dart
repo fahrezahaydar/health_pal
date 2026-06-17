@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:health_pal/core/theme/app_icons.dart';
 
 import 'package:flutter/widgets.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -148,7 +148,7 @@ class AppCustomDialog extends StatelessWidget {
       case AppDialogType.success:
         return const _DialogVisualData(
           icon: Icon(
-            Iconsax.shieldTick,
+            AppIcons.shieldTick,
             size: 72,
             color: Color(0xFF1B5E20),
           ),
@@ -158,7 +158,7 @@ class AppCustomDialog extends StatelessWidget {
       case AppDialogType.error:
         return const _DialogVisualData(
           icon: Icon(
-            Iconsax.closeCircle,
+            AppIcons.closeCircle,
             size: 72,
             color: Color(0xFFB71C1C),
           ),
@@ -168,7 +168,7 @@ class AppCustomDialog extends StatelessWidget {
       case AppDialogType.warning:
         return const _DialogVisualData(
           icon: Icon(
-            Iconsax.warning2,
+            AppIcons.warning2,
             size: 72,
             color: Color(0xFFE65100),
           ),
@@ -178,7 +178,7 @@ class AppCustomDialog extends StatelessWidget {
       case AppDialogType.info:
         return const _DialogVisualData(
           icon: Icon(
-            Iconsax.infoCircle,
+            AppIcons.infoCircle,
             size: 72,
             color: Color(0xFF0D47A1),
           ),

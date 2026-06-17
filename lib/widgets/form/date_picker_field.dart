@@ -1,5 +1,5 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -38,7 +38,7 @@ class DatePickerField extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Iconsax.calendar, color: AppTheme.grey500),
+                const Icon(AppIcons.calendar, color: AppTheme.grey500),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -47,7 +47,7 @@ class DatePickerField extends StatelessWidget {
                   ),
                 ),
                 const Icon(
-                  Iconsax.arrowDown01,
+                  AppIcons.arrowDown01,
                   color: AppTheme.grey400,
                   size: 18,
                 ),

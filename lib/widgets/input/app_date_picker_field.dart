@@ -1,6 +1,6 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_theme.dart';
 
@@ -64,7 +64,7 @@ class AppDatePickerField extends StatelessWidget {
               children: [
                 prefix ??
                     const Icon(
-                      Iconsax.calendar2Style8,
+                      AppIcons.calendar2,
                       size: 18,
                       color: AppTheme.grey500,
                     ),

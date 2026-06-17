@@ -1,6 +1,6 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
@@ -43,7 +43,7 @@ class SearchBarHome extends StatelessWidget {
           child: Row(
             children: [
               const Icon(
-                Iconsax.searchNormal,
+                AppIcons.searchNormal,
                 size: 20,
                 color: AppTheme.grey500,
               ),
@@ -59,7 +59,7 @@ class SearchBarHome extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Iconsax.filter, size: 18, color: AppTheme.grey400),
+              const Icon(AppIcons.filter, size: 18, color: AppTheme.grey400),
             ],
           ),
         ),

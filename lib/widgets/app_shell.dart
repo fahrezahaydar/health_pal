@@ -1,6 +1,6 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -36,10 +36,10 @@ class NavigationShell extends StatelessWidget {
           color: AppTheme.grey400,
         ),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Iconsax.location), label: 'Loc'),
-          BottomNavigationBarItem(icon: Icon(Iconsax.calendar), label: 'History'),
-          BottomNavigationBarItem(icon: Icon(Iconsax.user), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(AppIcons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(AppIcons.location), label: 'Loc'),
+          BottomNavigationBarItem(icon: Icon(AppIcons.calendar), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(AppIcons.user), label: 'Profile'),
         ],
       ),
     );

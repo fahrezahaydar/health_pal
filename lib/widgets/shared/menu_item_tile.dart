@@ -1,5 +1,5 @@
+import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -36,7 +36,7 @@ class MenuItemTile extends StatelessWidget {
             if (trailing != null)
               trailing!
             else if (onTap != null)
-              const Icon(Iconsax.arrowRight03, size: 18, color: AppTheme.grey400),
+              const Icon(AppIcons.arrowRight03, size: 18, color: AppTheme.grey400),
           ],
         ),
       ),
