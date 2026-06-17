@@ -16,6 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/network/json_converters.dart';
@@ -23,6 +24,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/label_value_row.dart';
 import '../../domain/entity/doctor_entity.dart';
 import '../../domain/entity/doctor_slot_entity.dart';
@@ -104,10 +106,17 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
           return switch (state) {
             DoctorDetailInitial() ||
             DoctorDetailLoading() =>
-              const Center(child: CircularProgressIndicator()),
-            DoctorDetailError(:final message) => _buildError(
-                context,
-                message,
+              const Skeletonizer(
+                enabled: true,
+                child: _LoadedSkeleton(),
+              ),
+            DoctorDetailError(:final message) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: ErrorSection(
+                  message: message,
+                  onRetry: () =>
+                      context.read<DoctorDetailCubit>().loadDetail(widget.doctorId),
+                ),
               ),
             DoctorDetailLoaded(
               :final doctor,
@@ -335,38 +344,86 @@ class DoctorDetailViewState extends State<DoctorDetailView> {
     );
   }
 
-  Widget _buildError(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline,
-                size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            const Text('Gagal memuat detail dokter',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF111928),
-                )),
-            const SizedBox(height: 8),
-            Text(message,
-                style:
-                    AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.read<DoctorDetailCubit>().loadDetail(widget.doctorId),
-              child: const Text('Coba lagi'),
-            ),
-          ],
-        ),
-      ),
+}
+
+/// Sprint 5 — D2: Reuse production widget for Skeletonizer.
+/// Factory constructor dengan mock data agar Skeletonizer render bones.
+class _LoadedSkeleton extends StatelessWidget {
+  const _LoadedSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    // ignore: missing_required_param — only used for skeleton
+    return _buildLoadedStatic(
+      context,
+      doctor: DoctorEntity.mock(),
+      sampleSlots: [DoctorSlotEntity.mock()],
+      availableCount: 0,
     );
   }
+}
+
+// Static version of _buildLoaded for skeleton reuse.
+Widget _buildLoadedStatic(
+  BuildContext context, {
+  required DoctorEntity doctor,
+  required List<DoctorSlotEntity> sampleSlots,
+  required int availableCount,
+}) {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DoctorCardDetail(doctor: doctor, isFavorite: false),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.grey200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (doctor.education != null) ...[
+                const LabelValueRow(icon: Icons.school_outlined, label: 'Pendidikan'),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 32),
+                  child: Text(doctor.education!, style: AppTextTheme.bodySmall),
+                ),
+                const SizedBox(height: 12),
+              ],
+              LabelValueRow(icon: Icons.work_outline, label: 'Pengalaman', value: '${doctor.experienceYears} tahun'),
+              const SizedBox(height: 12),
+              LabelValueRow(icon: Icons.local_hospital_outlined, label: 'Klinik', value: doctor.clinicName),
+              const SizedBox(height: 12),
+              LabelValueRow(icon: Icons.payments_outlined, label: 'Biaya', value: 'Rp${doctor.consultationFee.toStringAsFixed(0)}'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Ketersediaan Jadwal', style: AppTextTheme.titleLarge),
+        const SizedBox(height: 8),
+        SlotAvailabilityText(availableCount: availableCount, daysAhead: 7),
+        if (sampleSlots.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text('Preview Slot (5 Pertama)', style: AppTextTheme.titleLarge),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: sampleSlots.map<Widget>((slot) {
+              return ChoiceChip(label: Text(slot.startTimeDisplay), selected: false);
+            }).toList(),
+          ),
+        ],
+        const SizedBox(height: 80),
+      ],
+    ),
+  );
 }
 
 

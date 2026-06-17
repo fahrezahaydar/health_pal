@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
@@ -22,7 +23,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/debouncer.dart';
 import '../../../../widgets/card/doctor_card.dart';
 import '../../../../widgets/loader/dot_loader.dart';
-import '../../../../widgets/loader/loading_view.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../../../home/domain/entity/specialization_entity.dart';
 import '../../domain/entity/doctor_entity.dart';
@@ -41,6 +42,15 @@ class DoctorSearchPage extends StatelessWidget {
     );
   }
 }
+
+const _mockDoctors = [
+  DoctorEntity(id: 'sk-1', clinicId: 'sk-c', specializationId: 'sk-s',
+      fullName: 'Loading Doctor 1', experienceYears: 0, consultationFee: 0),
+  DoctorEntity(id: 'sk-2', clinicId: 'sk-c', specializationId: 'sk-s',
+      fullName: 'Loading Doctor 2', experienceYears: 0, consultationFee: 0),
+  DoctorEntity(id: 'sk-3', clinicId: 'sk-c', specializationId: 'sk-s',
+      fullName: 'Loading Doctor 3', experienceYears: 0, consultationFee: 0),
+];
 
 class DoctorSearchView extends StatefulWidget {
   const DoctorSearchView({super.key});
@@ -185,18 +195,22 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                       icon: Icons.search,
                       message: 'Cari dokter berdasarkan nama atau spesialisasi',
                     ),
-                  SearchLoading() => const LoadingView(),
+                  SearchLoading() => Skeletonizer(
+                      enabled: true,
+                      child: _buildList(_mockDoctors, true),
+                    ),
                   SearchEmpty() => const EmptyStateView(
                       icon: Icons.search_off,
                       message: 'Dokter tidak ditemukan',
                       hint: 'Coba gunakan kata kunci lain',
                     ),
-                  SearchError(:final message) => EmptyStateView(
-                      icon: Icons.error_outline,
-                      message: 'Gagal memuat data',
-                      hint: message,
-                      onRetry: () =>
-                          context.read<SearchCubit>().searchDoctors(null),
+                  SearchError(:final message) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 48),
+                      child: ErrorSection(
+                        message: message,
+                        onRetry: () =>
+                            context.read<SearchCubit>().searchDoctors(null),
+                      ),
                     ),
                   SearchLoaded(:final doctors, :final hasMore) =>
                     _buildList(doctors, hasMore),
