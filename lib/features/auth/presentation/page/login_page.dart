@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -14,6 +14,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../widgets/button/outline_button.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/form/app_form.dart';
 import '../../../../widgets/form/app_form_field.dart';
 import '../../presentation/bloc/sign_in/sign_in_bloc.dart';
@@ -138,7 +139,8 @@ class _LoginPageState extends State<LoginPage> {
                                         AppTextFormField(
                                           name: 'Email',
                                           controller: _emailController,
-                                          prefix: const Icon(Iconsax.smsStyle5),
+                                          // TODO: change to iconsax — currently Material fallback
+prefix: const Icon(Icons.email),
                                           hintText: 'Your Email',
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -158,8 +160,9 @@ class _LoginPageState extends State<LoginPage> {
                                             return AppTextFormField(
                                               name: 'Password',
                                               controller: _passwordController,
+                                              // TODO: change to iconsax — currently Material fallback
                                               prefix: const Icon(
-                                                Iconsax.padlockStyle5,
+                                                Icons.lock,
                                               ),
                                               hintText: 'Password',
                                               isPassword: !value,
@@ -174,10 +177,11 @@ class _LoginPageState extends State<LoginPage> {
                                                   _isShowPassword.value =
                                                       !_isShowPassword.value;
                                                 },
+                                                // TODO: change to iconsax — currently Material fallback
                                                 child: Icon(
                                                   value
-                                                      ? Iconsax.eyeSlash
-                                                      : Iconsax.eye,
+                                                      ? Icons.visibility_off
+                                                      : Icons.visibility,
                                                   color: AppTheme.grey500,
                                                   size: 20,
                                                 ),
@@ -192,26 +196,29 @@ class _LoginPageState extends State<LoginPage> {
 
                                 BlocBuilder<SignInBloc, SignInState>(
                                   builder: (context, state) {
-                                    return Column(
-                                      spacing: 8,
-                                      children: [
-                                        if (state is SignInFailure)
-                                          Text(
-                                            state.message,
-                                            style: AppTextTheme.bodySmall
-                                                .copyWith(
-                                                  color: AppTheme.deepPink,
-                                                ),
+                                    return Skeletonizer(
+                                      enabled: state is SignInLoading,
+                                      child: Column(
+                                        spacing: 8,
+                                        children: [
+                                          if (state is SignInFailure)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 8),
+                                              child: ErrorSection(
+                                                message: state.message,
+                                                onRetry: () =>
+                                                    _onSignIn(context),
+                                              ),
+                                            ),
+                                          LightFilledButton(
+                                            onTap: state is SignInLoading
+                                                ? null
+                                                : () => _onSignIn(context),
+                                            label: 'Sign In',
                                           ),
-                                        LightFilledButton(
-                                          onTap: state is SignInLoading
-                                              ? null
-                                              : () => _onSignIn(context),
-                                          label: state is SignInLoading
-                                              ? 'Loading...'
-                                              : 'Sign In',
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     );
                                   },
                                 ),
