@@ -5,11 +5,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
+import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/card/doctor_card.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../bloc/favorite/favorite_cubit.dart';
 import '../bloc/favorite/favorite_state.dart';
@@ -62,7 +65,20 @@ class FavoritePage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: doctors.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, _) => const SizedBox.shrink(),
+      itemBuilder: (context, index) {
+        final d = doctors[index];
+        return DoctorCard(
+          name: d.fullName,
+          specialization: d.specializationName,
+          rating: d.ratingAvg,
+          fee: d.consultationFee,
+          clinic: d.clinicName,
+          photoUrl: d.photoUrl,
+          onTap: () => context.push(
+            RoutePaths.doctorDetail.replaceAll(':doctorId', d.id),
+          ),
+        );
+      },
     );
   }
 
