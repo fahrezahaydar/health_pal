@@ -18,6 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/network/json_converters.dart';
@@ -26,6 +27,8 @@ import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/loader/error_section.dart';
+import '../../../../widgets/loader/dot_loader.dart';
 import '../bloc/booking/booking_bloc.dart';
 import '../bloc/booking/booking_event.dart';
 import '../bloc/booking/booking_state.dart';
@@ -198,6 +201,11 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                 _datePickerRow(),
                 const SizedBox(height: 16),
                 _slotSection(state),
+                if (state.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: ErrorSection(message: state.errorMessage!),
+                  ),
                 const SizedBox(height: 16),
                 _notesField(),
                 const SizedBox(height: 16),
@@ -285,10 +293,16 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
         Text('Pilih Slot Waktu', style: AppTextTheme.titleLarge),
         const SizedBox(height: 8),
         if (state.isLoadingSlots)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(),
+          const Skeletonizer(
+            enabled: true,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ChoiceChip(label: Text('09:00'), selected: false),
+                ChoiceChip(label: Text('09:30'), selected: false),
+                ChoiceChip(label: Text('10:00'), selected: false),
+              ],
             ),
           )
         else if (state.availableSlots.isEmpty)
@@ -399,7 +413,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
 
   Widget _confirmButton(BookingState state) {
     if (state.isSubmitting) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: DotLoader());
     }
     return LightFilledButton(
       label: 'Konfirmasi Booking',

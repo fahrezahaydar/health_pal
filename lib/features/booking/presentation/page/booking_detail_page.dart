@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
@@ -18,6 +19,7 @@ import '../../../../core/enums/booking_status.dart';
 import '../../../../core/network/json_converters.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/shared/label_value_row.dart';
@@ -76,19 +78,43 @@ class _BookingDetailView extends StatelessWidget {
         ),
         title: Text('Detail Appointment', style: AppTextTheme.titleLarge),
       ),
-      body: BlocBuilder<BookingDetailCubit, BookingDetailState>(
-        builder: (context, state) {
-          return switch (state) {
-            BookingDetailInitial() ||
-            BookingDetailLoading() =>
-              const Center(child: CircularProgressIndicator()),
-            BookingDetailError(:final message) => _errorState(message),
-            BookingDetailLoaded(:final appointment) => _loaded(
-                context,
-                appointment,
-              ),
-          };
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final pid = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+          await context.read<BookingDetailCubit>().loadDetail(
+            patientId: pid,
+            appointmentId: appointmentId,
+          );
         },
+        child: BlocBuilder<BookingDetailCubit, BookingDetailState>(
+          builder: (context, state) {
+            return switch (state) {
+              BookingDetailInitial() ||
+              BookingDetailLoading() =>
+                const Skeletonizer(
+                  enabled: true,
+                  child: _DetailSkeleton(),
+                ),
+              BookingDetailError(:final message) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 48),
+                  child: ErrorSection(
+                    message: message,
+                    onRetry: () {
+                      final pid = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+                      context.read<BookingDetailCubit>().loadDetail(
+                        patientId: pid,
+                        appointmentId: appointmentId,
+                      );
+                    },
+                  ),
+                ),
+              BookingDetailLoaded(:final appointment) => _loaded(
+                  context,
+                  appointment,
+                ),
+            };
+          },
+        ),
       ),
     );
   }
@@ -296,27 +322,27 @@ class _BookingDetailView extends StatelessWidget {
     }
   }
 
-  Widget _errorState(String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline,
-                size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal memuat detail', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+}
+
+class _DetailSkeleton extends StatelessWidget {
+  const _DetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Container(height: 80, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+          const SizedBox(height: 16),
+          Container(height: 200, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+          const SizedBox(height: 16),
+          Container(height: 100, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+        ],
       ),
     );
   }
-
 }

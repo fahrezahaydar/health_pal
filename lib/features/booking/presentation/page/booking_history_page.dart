@@ -8,12 +8,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../widgets/loader/dot_loader.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
@@ -29,6 +32,7 @@ class BookingHistoryPage extends StatefulWidget {
 class _BookingHistoryPageState extends State<BookingHistoryPage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  final _scrollController = ScrollController();
   static const _tabs = [
     ('Semua', null),
     ('Pending', 'pending'),
@@ -42,12 +46,21 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(_onTabChanged);
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<BookingHistoryCubit>().loadMore();
+    }
   }
 
   @override
   void dispose() {
     _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -98,27 +111,45 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
           child: switch (state) {
             BookingHistoryInitial() ||
             BookingHistoryLoading() =>
-              const Center(child: CircularProgressIndicator()),
+              const Skeletonizer(
+                enabled: true,
+                child: _ListSkeleton(),
+              ),
             BookingHistoryLoaded(:final appointments) when appointments.isEmpty =>
               const EmptyStateView(
                 icon: Icons.calendar_today,
                 message: 'Tidak ada appointment',
                 hint: 'Booking pertamamu akan muncul di sini',
               ),
-            BookingHistoryLoaded(:final appointments) => _list(appointments),
-            BookingHistoryError(:final message) => _errorState(message),
+            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(appointments, hasMore),
+            BookingHistoryError(:final message) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: ErrorSection(
+                  message: message,
+                  onRetry: () =>
+                      context.read<BookingHistoryCubit>().refresh(),
+                ),
+              ),
           },
         );
       },
     );
   }
 
-  Widget _list(List appointments) {
+  Widget _list(List appointments, bool hasMore) {
+    // TODO: change to iconsax — currently Material fallback
     return ListView.separated(
+      controller: _scrollController,
       padding: const EdgeInsets.all(16),
-      itemCount: appointments.length,
+      itemCount: appointments.length + (hasMore ? 1 : 0),
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
+        if (index >= appointments.length) {
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: DotLoader()),
+          );
+        }
         final appt = appointments[index];
         return AppointmentCard(
           appointment: appt,
@@ -131,32 +162,22 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
     );
   }
 
-  Widget _errorState(String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppTheme.darkRed,
-            ),
-            const SizedBox(height: 16),
-            Text('Gagal memuat riwayat', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.read<BookingHistoryCubit>().refresh(),
-              child: const Text('Coba lagi'),
-            ),
-          ],
+}
+
+class _ListSkeleton extends StatelessWidget {
+  const _ListSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 5,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (_, i) => Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppTheme.grey100,
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );

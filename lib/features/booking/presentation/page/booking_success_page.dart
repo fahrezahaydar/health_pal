@@ -36,19 +36,30 @@ class BookingSuccessPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // ── Success Icon ──
-              Container(
-                width: 128,
-                height: 128,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.paleGreen,
-                ),
-                child: const Icon(
-                  Icons.check_circle,
-                  size: 80,
-                  color: AppTheme.green,
-                ),
+              // ── Success Icon (animated) — Sprint 6 B5 ──
+              // TODO: change to iconsax — currently Material fallback
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.elasticOut,
+                builder: (context, scale, _) {
+                  return Transform.scale(
+                    scale: scale,
+                    child: Container(
+                      width: 128,
+                      height: 128,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppTheme.paleGreen,
+                      ),
+                      child: const Icon(
+                        Icons.check_circle,
+                        size: 80,
+                        color: AppTheme.green,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 24),
               Text(
