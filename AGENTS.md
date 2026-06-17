@@ -12,13 +12,16 @@ Refer to `docs/` for detailed guidance:
 | `docs/tdd/01-arsitektur.md` through `docs/tdd/12-task-breakdown.md` | Complete TDD (12 docs) |
 | `docs/wireframe/` | 21 per-page wireframes |
 | `docs/adr/` | Architecture Decision Records |
+| `docs/progress/plans/` | Sprint plans (Sprint B-I) |
+| `docs/progress/audits/` | Sprint audit results |
+| `docs/progress/sprint_roadmap.md` | Sprint roadmap (A-I done, J+ TBD) |
+| `docs/reference/icons.md` | Icon mapping table |
 
 ## Quick Commands
 ```powershell
 dart run build_runner build --force-jit  # Codegen (injectable, freezed, json_serializable, mockito)
 dart fix --apply                                          # Auto-fix lint issues
 flutter analyze                                           # Static analysis
-flutter test                                              # Tests
 flutter pub get                                           # Get dependencies
 ```
 
