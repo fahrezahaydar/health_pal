@@ -12,13 +12,13 @@
 
 | Task | Audit Ref | Estimasi | Status |
 |------|-----------|:--------:|--------|
-| P1 | Sprint Opening Audit → `profile_audit.md` | — | ✅ Done |
-| P2 | Skeletonizer loading — semua 4 halaman | K1 | 2h |
-| P3 | ErrorSection — semua 4 halaman | K2 | 1h |
-| P4 | Icon consistency: iconsax → Material + TODO | K3 | 2h |
-| P5 | Favorite page: implement list item render | M1 | 0.5h |
-| P6 | ProfileCubit: hapus SupabaseClient langsung | M3 | 1h |
-| P7 | Final QA + flutter analyze | — | 1h |
+| P1 | Sprint Opening Audit → `profile_audit.md` | — | ✅ Done | `516c12a` |
+| P2 | Skeletonizer loading — semua 4 halaman | K1 | 2h | ✅ Done | `70f8fcd` |
+| P3 | ErrorSection — semua 4 halaman | K2 | 1h | ✅ Done | `70f8fcd` |
+| P4 | Icon consistency: iconsax → Material + TODO | K3 | 2h | ✅ Done | `70f8fcd` |
+| P5 | Favorite page: implement list item render | M1 | 0.5h | ✅ Done | `4f8c3c3` |
+| P6 | ProfileCubit: hapus SupabaseClient langsung | M3 | 1h | ✅ Done *(already correct)* | — |
+| P7 | Final QA + flutter analyze | — | 1h | ✅ Done | — |
 
 **Total:** ~7.5h
 
