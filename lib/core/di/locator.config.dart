@@ -195,17 +195,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
-    gh.factory<_i768.SettingsRepository>(
-      () => _i42.SettingsRepositoryImpl(
-        gh<_i454.SupabaseClient>(),
-        gh<_i167.SharedPrefService>(),
-      ),
-    );
     gh.factory<_i506.DoctorRepository>(
       () => _i112.DoctorRepositoryImpl(gh<_i158.DoctorRemoteDataSource>()),
     );
     gh.lazySingleton<_i444.HomeLocalDataSource>(
       () => _i444.HomeLocalDataSource(gh<_i861.CacheService>()),
+    );
+    gh.factory<_i768.SettingsRepository>(
+      () => _i42.SettingsRepositoryImpl(
+        gh<_i454.SupabaseClient>(),
+        gh<_i167.SharedPrefService>(),
+        gh<_i861.CacheService>(),
+        gh<_i444.HomeLocalDataSource>(),
+      ),
     );
     gh.lazySingleton<_i605.AppServices>(
       () => _i605.AppServices(
@@ -304,9 +306,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i269.CancelAppointmentUseCase>(),
       ),
     );
-    gh.factory<_i401.SearchCubit>(
-      () => _i401.SearchCubit(gh<_i146.GetDoctorsUseCase>()),
-    );
     gh.factory<_i957.ForgotPasswordUseCase>(
       () => _i957.ForgotPasswordUseCase(gh<_i613.AuthRepository>()),
     );
@@ -361,6 +360,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i311.FavoriteCubit>(
       () => _i311.FavoriteCubit(gh<_i204.GetFavoritesUseCase>()),
+    );
+    gh.factory<_i401.SearchCubit>(
+      () => _i401.SearchCubit(
+        gh<_i146.GetDoctorsUseCase>(),
+        gh<_i262.GetSpecializationsUseCase>(),
+      ),
     );
     gh.factory<_i244.SpecializationCubit>(
       () => _i244.SpecializationCubit(gh<_i262.GetSpecializationsUseCase>()),

@@ -16,8 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../../core/di/locator.dart';
-import '../../../../core/network/result.dart';
+import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -27,7 +26,6 @@ import '../../../../widgets/loader/dot_loader.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../../../home/domain/entity/specialization_entity.dart';
-import '../../../home/domain/usecase/get_specializations_usecase.dart';
 import '../../domain/entity/doctor_entity.dart';
 import '../bloc/search/search_cubit.dart';
 import '../bloc/search/search_state.dart';
@@ -66,9 +64,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
   late final ScrollController _scrollController;
   late final Debouncer _debouncer;
   String? _selectedSpecializationId;
-  List<SpecializationEntity> _specializations = [];
 
-  // Static "Semua" chip yang selalu muncul di awal.
   static const _allChip = SpecializationEntity(id: 'all', name: 'Semua');
 
   @override
@@ -78,18 +74,10 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     _scrollController = ScrollController();
     _debouncer = Debouncer(const Duration(milliseconds: 300));
     _scrollController.addListener(_onScroll);
-    _loadSpecializations();
-  }
-
-  Future<void> _loadSpecializations() async {
-    final result = await getIt<GetSpecializationsUseCase>()();
-    if (!mounted) return;
-    switch (result) {
-      case Success<List<SpecializationEntity>>():
-        setState(() => _specializations = result.data);
-      case _:
-        // Fallback untuk jika gagal load — minimal ada "Semua" chip.
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<SearchCubit>().loadSpecializations();
+    });
   }
 
   void _onScroll() {
@@ -175,11 +163,13 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: _specializations.length + 1,
+                itemCount:
+                    context.read<SearchCubit>().specializations.length + 1,
                 itemBuilder: (context, index) {
+                  final specs = context.read<SearchCubit>().specializations;
                   final spec = index == 0
                       ? _allChip
-                      : _specializations[index - 1];
+                      : specs[index - 1];
                   final isAll = spec.id == 'all';
                   final isSelected = isAll
                       ? _selectedSpecializationId == null
@@ -207,6 +197,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                     SearchInitial() => const EmptyStateView(
                         icon: Icons.search,
                         message: 'Cari dokter berdasarkan nama atau spesialisasi',
+                      hint: 'Mulai mengetik untuk mencari',
                       ),
                     SearchLoading() => Skeletonizer(
                         enabled: true,

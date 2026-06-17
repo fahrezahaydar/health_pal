@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/network/result.dart';
+import '../../../../home/domain/entity/specialization_entity.dart';
+import '../../../../home/domain/usecase/get_specializations_usecase.dart';
 import '../../../domain/entity/doctor_entity.dart';
 import '../../../domain/usecase/get_doctors_usecase.dart';
 import 'search_state.dart';
@@ -11,6 +13,9 @@ import 'search_state.dart';
 @injectable
 class SearchCubit extends Cubit<SearchState> {
   final GetDoctorsUseCase _getDoctors;
+  final GetSpecializationsUseCase _getSpecializations;
+
+  List<SpecializationEntity> specializations = [];
 
   /// Internal state for pagination.
   int _offset = 0;
@@ -18,7 +23,8 @@ class SearchCubit extends Cubit<SearchState> {
   String? _lastSpecializationId;
   static const int _pageSize = 20;
 
-  SearchCubit(this._getDoctors) : super(const SearchInitial());
+  SearchCubit(this._getDoctors, this._getSpecializations)
+      : super(const SearchInitial());
 
   /// Search dokter berdasarkan query (nama / spesialisasi).
   /// Reset offset, replace result list.
@@ -75,6 +81,17 @@ class SearchCubit extends Cubit<SearchState> {
         ));
       case Failure<List<DoctorEntity>>():
         emit(SearchError(message: result.message));
+    }
+  }
+
+  /// Load specializations from repository (for filter chips).
+  Future<void> loadSpecializations() async {
+    final result = await _getSpecializations();
+    switch (result) {
+      case Success<List<SpecializationEntity>>():
+        specializations = result.data;
+      case _:
+        specializations = [];
     }
   }
 
