@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
@@ -18,6 +18,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/services/fcm_service.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../domain/entity/notification_entity.dart';
 import '../bloc/notification/notification_cubit.dart';
 import '../bloc/notification/notification_state.dart';
@@ -49,7 +50,8 @@ class _NotificationView extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
+          // TODO: change to iconsax — currently Material fallback
+          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: BlocBuilder<NotificationCubit, NotificationListState>(
@@ -102,12 +104,25 @@ class _NotificationView extends StatelessWidget {
           return switch (state) {
             NotificationInitial() ||
             NotificationLoading() =>
-              const Center(child: CircularProgressIndicator()),
+              const Skeletonizer(
+                enabled: true,
+                child: _NotificationSkeleton(),
+              ),
             NotificationLoaded(:final notifications)
                 when notifications.isEmpty =>
               _emptyState(),
             NotificationLoaded(:final notifications) => _list(context, notifications),
-            NotificationError(:final message) => _errorState(context, message),
+            NotificationError(:final message) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 48),
+                // ignore: prefer_const_constructors — onRetry closure
+                child: ErrorSection(
+                  message: message,
+                  onRetry: () {
+                    final uid = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+                    context.read<NotificationCubit>().loadNotifications(uid);
+                  },
+                ),
+              ),
           };
         },
       ),
@@ -158,7 +173,8 @@ class _NotificationView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Iconsax.notification, size: 80, color: AppTheme.grey300),
+            // TODO: change to iconsax — currently Material fallback
+            const Icon(Icons.notifications, size: 80, color: AppTheme.grey300),
             const SizedBox(height: 16),
             Text('Belum ada notifikasi', style: AppTextTheme.titleLarge),
             const SizedBox(height: 8),
@@ -173,32 +189,22 @@ class _NotificationView extends StatelessWidget {
     );
   }
 
-  Widget _errorState(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.warning2, size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal memuat notifikasi', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () {
-                final userId =
-                    getIt<SupabaseClient>().auth.currentUser?.id ?? '';
-                context.read<NotificationCubit>().loadNotifications(userId);
-              },
-              child: const Text('Coba lagi'),
-            ),
-          ],
+}
+
+class _NotificationSkeleton extends StatelessWidget {
+  const _NotificationSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 5,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (_, i) => Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppTheme.grey100,
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );
