@@ -20,7 +20,7 @@
 
 | Task | Deskripsi | Audit Ref | Estimasi | Status | Commit |
 |------|-----------|-----------|:--------:|--------|--------|
-| D1 | Sprint Opening Audit — doctor_audit.md | — | 3h | ✅ Done | `<this-commit>` |
+| D1 | Sprint Opening Audit — doctor_audit.md | — | 3h | ✅ Done | `5560c36` |
 | D2 | Skeletonizer loading — Search + Detail | K1 | 1.5h | ⬜ Not Started | — |
 | D3 | ErrorSection — Search + Detail | K2 | 0.5h | ⬜ Not Started | — |
 | D4 | Implement "Lihat Peta" (reuse clinic_card pattern) | K3 | 1h | ⬜ Not Started | — |
@@ -45,51 +45,60 @@
 
 `docs/progress/doctor_audit.md` — mengikuti template `home_page_audit.md`
 
-### Pre-Audit Findings
+### Hasil Audit — Temuan Aktual
 
-| # | Temuan | Tingkat | Detail |
-|---|--------|---------|--------|
-| F1 | Loading state masih CircularProgressIndicator / DotLoader | 🟡 | Perlu Skeletonizer (AD-6) |
-| F2 | Error state custom (bukan ErrorSection) | 🟢 | Tidak reusable |
-| F3 | iconsax langsung tanpa Material fallback | 🟢 | Icon Convention violation |
-| F4 | Search bar mungkin tidak ada debounce | 🟡 | Perlu verifikasi audit |
-| F5 | Doctor card layout vs wireframe | 🟡 | Perlu verifikasi audit |
-| F6 | Slot selection UI vs wireframe | 🟡 | Perlu verifikasi audit |
-| F7 | Pull-to-refresh mungkin tidak ada | 🟡 | Perlu verifikasi audit |
-| F8 | "Lihat Peta" di Doctor Detail mungkin tanpa try-catch | 🟢 | Pattern dari Sprint 4 |
+| ID | Temuan | Tingkat | File |
+|----|--------|---------|------|
+| K1 | Loading pakai `LoadingView` / `CircularProgressIndicator` — harus Skeletonizer | 🔴 | `doctor_search_page.dart:188`, `doctor_detail_page.dart:107` |
+| K2 | Error state custom (`_buildError`) — harus ErrorSection | 🔴 | `doctor_detail_page.dart:108-111` |
+| K3 | "Lihat Peta" hanya TODO comment, belum implementasi | 🔴 | `doctor_detail_page.dart:268` |
+| M1 | Pull-to-refresh tidak ada di Search + Detail | 🟡 | `doctor_search_page.dart`, `doctor_detail_page.dart` |
+| M2 | Filter chips hardcoded (4 item) — wireframe harap dinamis | 🟡 | `doctor_search_page.dart:60-66` |
+| M3 | Tidak ada Skeletonizer untuk slot loading area | 🟡 | `doctor_detail_page.dart:169-189` |
+| L1 | Favorite + Share masih stub (onPressed kosong) | 🟢 | `doctor_detail_page.dart:97, 150` |
 
 ---
 
-## 2. Task Details
+## 2. Task Details (Post-Audit)
 
-#### D1 Sprint Opening Audit (3h)
-Buat `doctor_audit.md` — 15 sections, verifikasi F1-F8, identifikasi temuan baru.
+#### D1 ✅ Sprint Opening Audit
+`doctor_audit.md` — 88% score. Temuan: 3 🔴 (K1-K3), 3 🟡 (M1-M3), 2 🟢 (L1).
 
-#### D2 Skeletonizer (1h)
-Ganti loading indicator di Doctor Search + Doctor Detail dengan Skeletonizer wrapping production widget.
+#### D2 Skeletonizer (1.5h) — Ref: K1
+Ganti `LoadingView` / `CircularProgressIndicator` dengan `Skeletonizer` wrapping production widget di:
+- Doctor Search: ganti `SearchLoading() => const LoadingView()` → `Skeletonizer(enabled: true, child: _buildList(mockDoctors, true))`
+- Doctor Detail: ganti `DoctorDetailLoading() => CircularProgressIndicator()` → `Skeletonizer(enabled: true, child: _buildLoaded(...))` dengan `DoctorEntity.mock()` + `DoctorSlotEntity.mock()`
 
-#### D3 ErrorSection (0.5h)
-Ganti custom error widget dengan ErrorSection reusable.
+#### D3 ErrorSection (0.5h) — Ref: K2
+Ganti `_buildError` di Doctor Detail dengan `ErrorSection` dari `lib/widgets/loader/error_section.dart`.
 
-#### D4 Icon Consistency (1.5h)
-Ganti `Iconsax.*` → `Icons.*` + `// TODO: change to iconsax` di doctor pages.
+#### D4 Implement "Lihat Peta" (1h) — Ref: K3
+Reuse `_openMaps` try-catch pattern dari `clinic_card.dart`:
+```dart
+onTap: () async {
+  final uri = Uri.parse(
+    'https://www.google.com/maps/search/?api=1&query=${doctor.clinic!.latitude},${doctor.clinic!.longitude}',
+  );
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+}
+```
 
-#### D5 Search debounce + filter (2h)
-Implementasi debounce pada search bar Doctor Search agar tidak terlalu banyak query.
+#### D5 Pull-to-refresh (1.5h) — Ref: M1
+- Doctor Search: wrap `ListView` with `RefreshIndicator` → `context.read<SearchCubit>().searchDoctors(_controller.text)`
+- Doctor Detail: wrap `SingleChildScrollView` with `RefreshIndicator` → `context.read<DoctorDetailCubit>().loadDetail(widget.doctorId)`
 
-#### D6 Doctor card polish + empty state (2h)
-Polish card layout sesuai wireframe, tambah empty state jika 0 hasil.
+#### D6 Skeletonizer slot loading (1h) — Ref: M3
+Wrap slot preview area (`Wrap` + `ChoiceChip`) with `Skeletonizer` saat state `DoctorDetailLoading`.
 
-#### D7 Slot selection UI polish (2h)
-Polish slot date picker + time slot grid sesuai wireframe 09.
+#### D7 Filter chips dinamis (2h) — Ref: M2
+Ganti hardcoded `_filterSpecs` (4 item) dengan list dari `SpecializationCubit` (existing dari Home feature). Load via `getIt<SpecializationCubit>()` atau inject use case.
 
-#### D8 Pull-to-refresh (1h)
-Tambahkan RefreshIndicator di Doctor Search + Detail.
+#### D8 Empty state polish (0.5h)
+Polish `SearchInitial` + `SearchEmpty` states — konsisten dengan wireframe 08.
 
-#### D9 Lihat Peta try-catch (1h)
-Tambahkan try-catch pattern dari Sprint 4 ke Doctor Detail + clinic map.
-
-#### D10 Final QA (1h)
+#### D9 Final QA (1h)
 flutter analyze 0 issues + update tracker.
 
 ---
