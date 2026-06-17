@@ -16,22 +16,26 @@
 ## 📊 Sprint 5 Progress Tracker
 
 **Last Updated:** 16 Juni 2026
-**Overall:** 0/10 tasks (0%)
+**Overall:** 1/9 tasks (11%) — D1 Audit ✅ · 🟢 Score: 88%
 
-| Task | Deskripsi | Estimasi | Status | Commit |
-|------|-----------|:--------:|--------|--------|
-| D1 | Sprint Opening Audit — doctor_audit.md | 3h | ⬜ Not Started | — |
-| D2 | Skeletonizer loading state Doctor pages | 1h | ⬜ Not Started | — |
-| D3 | ErrorSection untuk error state Doctor | 0.5h | ⬜ Not Started | — |
-| D4 | Icon consistency: iconsax → Material + TODO | 1.5h | ⬜ Not Started | — |
-| D5 | Search bar debounce + real-time filter | 2h | ⬜ Not Started | — |
-| D6 | Doctor card layout polish + empty state | 2h | ⬜ Not Started | — |
-| D7 | Slot selection UI polish | 2h | ⬜ Not Started | — |
-| D8 | Pull-to-refresh Doctor Search + Detail | 1h | ⬜ Not Started | — |
-| D9 | "Lihat Peta" try-catch + clinic map from Loc | 1h | ⬜ Not Started | — |
-| D10 | Final QA + flutter analyze + commit | 1h | ⬜ Not Started | — |
+| Task | Deskripsi | Audit Ref | Estimasi | Status | Commit |
+|------|-----------|-----------|:--------:|--------|--------|
+| D1 | Sprint Opening Audit — doctor_audit.md | — | 3h | ✅ Done | `<this-commit>` |
+| D2 | Skeletonizer loading — Search + Detail | K1 | 1.5h | ⬜ Not Started | — |
+| D3 | ErrorSection — Search + Detail | K2 | 0.5h | ⬜ Not Started | — |
+| D4 | Implement "Lihat Peta" (reuse clinic_card pattern) | K3 | 1h | ⬜ Not Started | — |
+| D5 | Pull-to-refresh Doctor Search + Detail | M1 | 1.5h | ⬜ Not Started | — |
+| D6 | Skeletonizer slot loading area | M3 | 1h | ⬜ Not Started | — |
+| D7 | Filter chips dinamis (dari SpecializationCubit) | M2 | 2h | ⬜ Not Started | — |
+| D8 | Search empty state polish + initial state | — | 0.5h | ⬜ Not Started | — |
+| D9 | Final QA + flutter analyze | — | 1h | ⬜ Not Started | — |
 
-**Total:** ~15h
+**Total:** ~12h
+
+**Skipped:**
+- D4 Icon consistency → sudah ✅ Material Icons (no change needed)
+- D6 Doctor card layout → sudah sesuai wireframe ✅
+- D7 Slot selection → sudah sesuai wireframe ✅
 
 ---
 
