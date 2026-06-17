@@ -1,8 +1,7 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -58,8 +57,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     context.read<ForgotPasswordCubit>().back();
                                   }
                                 },
+                                // TODO: change to iconsax — currently Material fallback
                                 child: const Icon(
-                                  Iconsax.arrowLeft01Style4,
+                                  Icons.arrow_back,
                                   size: 24,
                                 ),
                               ),
@@ -142,7 +142,8 @@ class ForgetPassword extends StatelessWidget {
             AppTextFormField(
               name: 'Email',
               controller: TextEditingController(),
-              prefix: const Icon(Iconsax.smsStyle5),
+              // TODO: change to iconsax — currently Material fallback
+              prefix: const Icon(Icons.email),
               hintText: 'Your Email',
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
@@ -319,7 +320,8 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                 return AppTextFormField(
                   name: 'New Password',
                   controller: _newPasswordController,
-                  prefix: const Icon(Iconsax.padlockStyle5),
+                  // TODO: change to iconsax — currently Material fallback
+                  prefix: const Icon(Icons.lock),
                   hintText: 'Password',
                   isPassword: !value,
                   validator: (value) {
@@ -333,7 +335,8 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                       _isShowNewPassword.value = !_isShowNewPassword.value;
                     },
                     child: Icon(
-                      value ? Iconsax.eyeSlash : Iconsax.eye,
+                      // TODO: change to iconsax — currently Material fallback
+                      value ? Icons.visibility_off : Icons.visibility,
                       color: AppTheme.grey500,
                       size: 20,
                     ),
@@ -347,7 +350,8 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                 return AppTextFormField(
                   name: 'Confirm New Password',
                   controller: _confirmNewPasswordController,
-                  prefix: const Icon(Iconsax.padlockStyle5),
+                  // TODO: change to iconsax — currently Material fallback
+                  prefix: const Icon(Icons.lock),
                   hintText: 'Confirm Password',
                   isPassword: !value,
                   validator: (value) {
@@ -365,7 +369,8 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                           !_isShowConfirmNewPassword.value;
                     },
                     child: Icon(
-                      value ? Iconsax.eyeSlash : Iconsax.eye,
+                      // TODO: change to iconsax — currently Material fallback
+                      value ? Icons.visibility_off : Icons.visibility,
                       color: AppTheme.grey500,
                       size: 20,
                     ),

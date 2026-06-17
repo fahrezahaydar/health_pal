@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import 'package:get_it/get_it.dart';
 
@@ -146,8 +145,9 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                               children: [
                                 GestureDetector(
                                   onTap: () => context.pop(),
+                                  // TODO: change to iconsax — currently Material fallback
                                   child: const Icon(
-                                    Iconsax.arrowLeft01Style4,
+                                    Icons.arrow_back,
                                     size: 24,
                                   ),
                                 ),

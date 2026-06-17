@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
@@ -105,7 +104,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   name: 'Name',
                                   isShowError: false,
                                   hintText: 'Your Name',
-                                  prefix: const Icon(Iconsax.user),
+                                  // TODO: change to iconsax — currently Material fallback
+prefix: const Icon(Icons.person),
                                   controller: _nameController,
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -118,7 +118,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   name: 'Email',
                                   isShowError: false,
                                   controller: _emailController,
-                                  prefix: const Icon(Iconsax.smsStyle5),
+                                  // TODO: change to iconsax — currently Material fallback
+                                  prefix: const Icon(Icons.email),
                                   hintText: 'Your Email',
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
@@ -138,8 +139,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                       name: 'Password',
                                       isShowError: false,
                                       controller: _passwordController,
+                                      // TODO: change to iconsax — currently Material fallback
                                       prefix: const Icon(
-                                        Iconsax.padlockStyle5,
+                                        Icons.lock,
                                       ),
                                       hintText: 'Password',
                                       isPassword: !value,
@@ -154,10 +156,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                           _isShowPassword.value =
                                               !_isShowPassword.value;
                                         },
+                                        // TODO: change to iconsax — currently Material fallback
                                         child: Icon(
                                           value
-                                              ? Iconsax.eyeSlash
-                                              : Iconsax.eye,
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
                                           color: AppTheme.grey500,
                                           size: 20,
                                         ),
