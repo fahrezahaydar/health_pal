@@ -7,19 +7,19 @@
 
 ## Sprint A — Completed (Sprint A through Sprint I)
 
-| Sprint | Letter | Tema | Fitur | Status |
-|--------|--------|------|-------|--------|
-| 1 | **A** | Foundation | Auth, Home, Doctor, Booking, Profile, Loc, Settings, Notif | ✅ Done |
-| 2 | **B** | Home Hardening | Bug fixes, Refactor, UX Polish (Skeletonizer, Pull-to-refresh, Nearby, Photo, Icons, Error UI) | ✅ Done |
-| 3 | **C** | Settings | Settings pages — audit + polish | ✅ Done |
-| 4 | **D** | Loc | Location tab — audit + polish + filter/sort/city fallback | ✅ Done |
-| 4.5 | **E** | Map View | flutter_map implementation (Loc tab — split map + list) | ✅ Done |
-| 5 | **F** | Doctor | Doctor Search + Detail — audit + polish | ✅ Done |
-| 6 | **G** | Booking | Booking flow (create, history, detail, cancel) — audit + polish | ✅ Done |
-| 7 | **H** | Profile | Profile, Edit Profile, Favorites, Notification — audit + polish | ✅ Done |
-| 8 | **I** | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | ✅ Done |
+| Sprint | Tema | Fitur | Status |
+|--------|------|-------|--------|
+| **A1** | Foundation | Auth, Home, Doctor, Booking, Profile, Loc, Settings, Notif | ✅ Done |
+| **A2** | Home Hardening | Bug fixes (2A), Refactor (2B), UX Polish (2C), Audit (2D), Optional (2E) | ✅ Done |
+| **A3** | Settings | Settings pages — audit + polish | ✅ Done |
+| **A4** | Loc | Location tab — audit + polish + filter/sort/city fallback | ✅ Done |
+| **A5** | Map View | flutter_map implementation (Loc tab — split map + list) | ✅ Done |
+| **A6** | Doctor | Doctor Search + Detail — audit + polish | ✅ Done |
+| **A7** | Booking | Booking flow (create, history, detail, cancel) — audit + polish | ✅ Done |
+| **A8** | Profile | Profile, Edit Profile, Favorites, Notification — audit + polish | ✅ Done |
+| **A9** | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | ✅ Done |
 
-**Total: 9 sprints — Semua fitur inti selesai ✅**
+**Total: 9 sprint (A1-A9) — Semua fitur inti selesai ✅**
 
 ---
 
@@ -27,11 +27,10 @@
 
 | Sprint | Fokus | Status |
 |--------|-------|--------|
-| **J** | TBD — Review, Refactor, Optimization | ⬜ Planned |
-| **K** | TBD — Additional Features | ⬜ Planned |
-| ... | ... | ⬜ |
+| **B1** | TBD — Review, Refactor, Optimization | ⬜ Planned |
+| **B2** | TBD — Additional Features | ⬜ Planned |
 
-> *Testing Phase akan direncanakan sebagai Sprint C/D (Sprint K/L) setelah review kebutuhan.*
+> *Testing Phase akan direncanakan di sprint mendatang setelah review kebutuhan.*
 
 ---
 
@@ -56,30 +55,30 @@
 | `docs/progress/sprint_progress.md` | Complete progress tracker |
 | `docs/reference/icons.md` | Icon mapping table |
 
-### Plan Files (per sprint letter)
+### Plan Files
 
 | File | Sprint |
 |------|--------|
-| `plans/sprint_b_plan.md` | Sprint B — Home Hardening |
-| `plans/sprint_c_plan.md` | Sprint C — Settings |
-| `plans/sprint_d_plan.md` | Sprint D — Loc |
-| `plans/sprint_e_plan.md` | Sprint E — Map View |
-| `plans/sprint_f_plan.md` | Sprint F — Doctor |
-| `plans/sprint_g_plan.md` | Sprint G — Booking |
-| `plans/sprint_h_plan.md` | Sprint H — Profile |
-| `plans/sprint_i_plan.md` | Sprint I — Auth + FCM |
+| `plans/sprint_a2_plan.md` | A2 — Home Hardening |
+| `plans/sprint_a3_plan.md` | A3 — Settings |
+| `plans/sprint_a4_plan.md` | A4 — Loc |
+| `plans/sprint_a5_plan.md` | A5 — Map View |
+| `plans/sprint_a6_plan.md` | A6 — Doctor |
+| `plans/sprint_a7_plan.md` | A7 — Booking |
+| `plans/sprint_a8_plan.md` | A8 — Profile |
+| `plans/sprint_a9_plan.md` | A9 — Auth + FCM |
 
-### Audit Files (per sprint letter)
+### Audit Files
 
 | File | Sprint |
 |------|--------|
-| `audits/sprint_a_audit.md` | Sprint A — Home Page |
-| `audits/sprint_c_audit.md` | Sprint C — Settings |
-| `audits/sprint_d_audit.md` | Sprint D — Loc |
-| `audits/sprint_f_audit.md` | Sprint F — Doctor |
-| `audits/sprint_g_audit.md` | Sprint G — Booking |
-| `audits/sprint_h_audit.md` | Sprint H — Profile |
-| `audits/sprint_i_audit.md` | Sprint I — Auth + FCM |
+| `audits/sprint_a1_audit.md` | A1 — Home Page |
+| `audits/sprint_a3_audit.md` | A3 — Settings |
+| `audits/sprint_a4_audit.md` | A4 — Loc |
+| `audits/sprint_a6_audit.md` | A6 — Doctor |
+| `audits/sprint_a7_audit.md` | A7 — Booking |
+| `audits/sprint_a8_audit.md` | A8 — Profile |
+| `audits/sprint_a9_audit.md` | A9 — Auth + FCM |
 
 ---
 

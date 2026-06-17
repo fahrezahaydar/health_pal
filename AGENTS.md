@@ -12,9 +12,9 @@ Refer to `docs/` for detailed guidance:
 | `docs/tdd/01-arsitektur.md` through `docs/tdd/12-task-breakdown.md` | Complete TDD (12 docs) |
 | `docs/wireframe/` | 21 per-page wireframes |
 | `docs/adr/` | Architecture Decision Records |
-| `docs/progress/plans/` | Sprint plans (Sprint B-I) |
-| `docs/progress/audits/` | Sprint audit results |
-| `docs/progress/sprint_roadmap.md` | Sprint roadmap (A-I done, J+ TBD) |
+| `docs/progress/plans/` | Sprint plans (Sprint A2-A9) |
+| `docs/progress/audits/` | Sprint audit results |  
+| `docs/progress/sprint_roadmap.md` | Sprint roadmap (A1-A9 done, B+ TBD) |
 | `docs/reference/icons.md` | Icon mapping table |
 
 ## Quick Commands
