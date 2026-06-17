@@ -9,13 +9,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/app_divider.dart';
 import '../../../../widgets/shared/menu_item_tile.dart';
 import '../../../auth/domain/entity/user_entity.dart';
@@ -61,10 +62,27 @@ class _ProfileView extends StatelessWidget {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           return switch (state) {
-            ProfileInitial() || ProfileLoading() => const Center(
-              child: CircularProgressIndicator(),
+            ProfileInitial() || ProfileLoading() => const Skeletonizer(
+              enabled: true,
+              child: _ProfileSkeleton(),
             ),
-            ProfileError(:final message) => _errorState(context, message),
+            ProfileError(:final message) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ErrorSection(
+                      message: message,
+                      onRetry: () =>
+                          context.read<ProfileCubit>().loadProfile(),
+                    ),
+                    const SizedBox(height: 24),
+                    _logoutButton(context),
+                  ],
+                ),
+              ),
+            ),
             ProfileLoaded(:final user) => _loaded(context, user),
           };
         },
@@ -158,7 +176,7 @@ class _ProfileView extends StatelessWidget {
       child: Column(
         children: [
           MenuItemTile(
-            icon: Iconsax.user,
+            icon: Icons.person, // TODO: change to iconsax
             label: 'Edit Profile',
             onTap: () async {
               // EditProfilePage.pop(true) menandakan data telah berubah.
@@ -172,31 +190,31 @@ class _ProfileView extends StatelessWidget {
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.heart,
+            icon: Icons.favorite , // TODO: change to iconsax
             label: 'Favorite',
             onTap: () => context.push(RoutePaths.favorite),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.notification,
+            icon: Icons.notifications , // TODO: change to iconsax
             label: 'Notification',
             onTap: () => context.push(RoutePaths.notificationSettings),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.setting2,
+            icon: Icons.settings , // TODO: change to iconsax
             label: 'Settings',
             onTap: () => context.push(RoutePaths.settings),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.messageQuestion,
+            icon: Icons.help , // TODO: change to iconsax
             label: 'Help and Support',
             onTap: () => context.push(RoutePaths.helpSupport),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Iconsax.documentText,
+            icon: Icons.description , // TODO: change to iconsax
             label: 'T & C',
             onTap: () => context.push(RoutePaths.termsAndConditions),
           ),
@@ -208,7 +226,8 @@ class _ProfileView extends StatelessWidget {
   Widget _logoutButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: () => _confirmLogout(context),
-      icon: const Icon(Iconsax.logout01, color: AppTheme.darkRed),
+      // TODO: change to iconsax — currently Material fallback
+      icon: const Icon(Icons.logout, color: AppTheme.darkRed),
       label: const Text(
         'Logout',
         style: TextStyle(color: AppTheme.darkRed, fontWeight: FontWeight.w600),
@@ -221,37 +240,41 @@ class _ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _errorState(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.warning2, size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal memuat profil', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.read<ProfileCubit>().loadProfile(),
-              child: const Text('Coba lagi'),
-            ),
-            // FIX-2: Tambah tombol Logout agar user tidak stuck di error
-            // state. Sebelumnya, kalau loadProfile() gagal, user cuma
-            // bisa "Coba lagi" atau paksa close app. Sekarang ada jalan
-            // keluar eksplisit: logout. Pakai _confirmLogout untuk
-            // konsistensi dengan flow logout normal.
-            const SizedBox(height: 24),
-            _logoutButton(context),
-          ],
+}
+
+class _ProfileSkeleton extends StatelessWidget {
+  const _ProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.grey200),
+          ),
+          child: const Column(
+            children: [
+              CircleAvatar(radius: 40),
+              SizedBox(height: 12),
+              Text('Full Name', style: TextStyle(fontSize: 16)),
+            ],
+          ),
         ),
-      ),
+        const SizedBox(height: 16),
+        Container(
+          height: 300,
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.grey200),
+          ),
+        ),
+      ],
     );
   }
 }
