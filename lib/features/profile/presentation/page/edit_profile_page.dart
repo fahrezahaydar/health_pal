@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_latest/iconsax_latest.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
@@ -17,6 +17,7 @@ import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
 import '../../../../widgets/dialog/app_succes_dialog.dart';
+import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/form/app_dropdown_field.dart';
 import '../../../../widgets/form/date_picker_field.dart';
 import '../../../../widgets/form/labeled_text_field.dart';
@@ -164,16 +165,24 @@ class _EditProfileViewState extends State<_EditProfileView> {
             backgroundColor: AppTheme.white,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Iconsax.arrowLeft01, color: AppTheme.grey900),
+              // TODO: change to iconsax — currently Material fallback
+              icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
               onPressed: () => context.pop(),
             ),
             title: Text('Edit Profile', style: AppTextTheme.titleLarge),
           ),
           body: switch (state) {
-            EditProfileInitial() || EditProfileLoading() => const Center(
-              child: CircularProgressIndicator(),
+            EditProfileInitial() || EditProfileLoading() => const Skeletonizer(
+              enabled: true,
+              child: _EditSkeleton(),
             ),
-            EditProfileError(:final message) => _errorView(context, message),
+            EditProfileError(:final message) => Padding(
+              padding: EdgeInsets.symmetric(vertical: 48),
+              child: ErrorSection(
+                message: message,
+                onRetry: () => context.read<EditProfileCubit>().loadEdit(),
+              ),
+            ),
             _ => _formView(context, state),
           },
         );
@@ -271,29 +280,28 @@ class _EditProfileViewState extends State<_EditProfileView> {
     );
   }
 
-  Widget _errorView(BuildContext context, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.warning2, size: 64, color: AppTheme.darkRed),
-            const SizedBox(height: 16),
-            Text('Gagal memuat profil', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.read<EditProfileCubit>().loadEdit(),
-              child: const Text('Coba lagi'),
-            ),
-          ],
-        ),
+}
+
+class _EditSkeleton extends StatelessWidget {
+  const _EditSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          const CircleAvatar(radius: 50),
+          const SizedBox(height: 24),
+          Container(height: 50, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+          const SizedBox(height: 12),
+          Container(height: 50, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+          const SizedBox(height: 12),
+          Container(height: 50, decoration: BoxDecoration(
+            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+        ],
       ),
     );
   }
