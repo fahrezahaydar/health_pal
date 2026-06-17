@@ -12,14 +12,14 @@
 
 | Task | Audit Ref | Estimasi | Status |
 |------|-----------|:--------:|--------|
-| B1 | Sprint Opening Audit → `booking_audit.md` | — | ✅ Done |
-| B2 | Skeletonizer — semua 4 halaman | K1 | 2h |
-| B3 | ErrorSection — history + detail + book_appointment | K2 | 1h |
-| B4 | Pull-to-refresh — detail + book_appointment | M1 | 1h |
-| B5 | Animated checkmark success page | M2 | 0.5h |
-| B6 | TODO comments iconsax — semua file booking | M3 | 0.5h |
-| B7 | Pagination "load more" indicator history | M4 | 1h |
-| B8 | Final QA + flutter analyze | — | 1h |
+| B1 | Sprint Opening Audit → `booking_audit.md` | — | ✅ Done | `d2c8642` |
+| B2 | Skeletonizer — semua 4 halaman | K1 | 2h | ✅ Done | `4da9c15` |
+| B3 | ErrorSection — history + detail + book_appointment | K2 | 1h | ✅ Done | `4da9c15` |
+| B4 | Pull-to-refresh — detail + book_appointment | M1 | 1h | ✅ Done | `4da9c15` |
+| B5 | Animated checkmark success page | M2 | 0.5h | ✅ Done | `4da9c15` |
+| B6 | TODO comments iconsax — semua file booking | M3 | 0.5h | ✅ Done | `4da9c15` |
+| B7 | Pagination "load more" indicator history | M4 | 1h | ✅ Done | `4da9c15` |
+| B8 | Final QA + flutter analyze | — | 1h | ✅ Done | `4da9c15` |
 
 **Skipped:** Icon consistency — sudah ✅ Material Icons (hanya kurang TODO comments)
 
