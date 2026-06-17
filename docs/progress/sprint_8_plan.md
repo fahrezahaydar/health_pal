@@ -12,13 +12,13 @@
 
 | Task | Audit Ref | Estimasi | Status |
 |------|-----------|:--------:|--------|
-| A1 | Sprint Opening Audit → `onboarding_auth_fcm_audit.md` | — | ✅ Done |
-| A2 | Skeletonizer — loading states (login, create-profile) | K1 | 1.5h |
-| A3 | ErrorSection — login error display | K2 | 0.5h |
-| A4 | Icon consistency: iconsax → Material + TODO | K3 | 2h |
-| A5 | Onboarding page audit + polish | L1 | 0.5h |
-| A6 | Icon reference table `docs/reference/icons.md` | D7 | 1.5h |
-| A7 | Final QA + flutter analyze | — | 1h |
+| A1 | Sprint Opening Audit → `onboarding_auth_fcm_audit.md` | — | ✅ Done | `061e30b` |
+| A2 | Skeletonizer — loading states (login) | K1 | 1.5h | ✅ Done | `8e3d75e` |
+| A3 | ErrorSection — login error display | K2 | 0.5h | ✅ Done | `8e3d75e` |
+| A4 | Icon consistency: iconsax → Material + TODO | K3 | 2h | ✅ Done | `202ba84` |
+| A5 | Onboarding page audit + polish | L1 | 0.5h | ✅ Done *(already correct)* | — |
+| A6 | Icon reference table `docs/reference/icons.md` | D7 | 1.5h | ✅ Done | `c81da8a` |
+| A7 | Final QA + flutter analyze | — | 1h | ✅ Done | — |
 
 **Total:** ~7h
 

@@ -18,7 +18,7 @@
 | Sprint 5 | Doctor | Doctor Search + Detail — audit + polish | `doctor_audit.md` | ✅ DONE |
 | Sprint 6 | Booking | Booking flow (create, history, detail, cancel) — audit + polish | `booking_audit.md` | ✅ DONE |
 | Sprint 7 | Profile | Profile, Edit Profile, Favorites, Notification — audit + polish | `profile_audit.md` | ✅ DONE |
-| Sprint 8 | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | `onboarding_auth_fcm_audit.md` | 2 minggu |
+| Sprint 8 | Auth + FCM | Auth, Onboarding, FCM — audit + polish + icon reference | `onboarding_auth_fcm_audit.md` | ✅ DONE |
 | Sprint 9 | Testing | Test coverage ≥ 80% across all features | — | 2 minggu |
 | **Beta** | Launch | Final QA, manual testing, README, deploy | — | — |
 
