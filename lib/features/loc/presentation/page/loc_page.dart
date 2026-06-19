@@ -274,7 +274,7 @@ class _LocView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
           // Clinic list
           SliverList.separated(
             itemCount: sorted.length,
