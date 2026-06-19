@@ -457,9 +457,9 @@ end $$;
 -- =============================================================================
 insert into public.banners (id, title, image_url, action_url, display_order, is_active)
 values
-  (gen_random_uuid(), 'Promo Spesial Konsultasi', null, null, 1, true),
-  (gen_random_uuid(), 'Cek Kesehatan Gratis',     null, null, 2, true),
-  (gen_random_uuid(), 'Vaksinasi Anak',           null, null, 3, true);
+  (gen_random_uuid(), 'Promo Spesial Konsultasi', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/banner/banner_1.png', null, 1, true),
+  (gen_random_uuid(), 'Cek Kesehatan Gratis',     'http://127.0.0.1:54321/storage/v1/object/public/avatars/banner/banner_2.png', null, 2, true),
+  (gen_random_uuid(), 'Vaksinasi Anak',           'http://127.0.0.1:54321/storage/v1/object/public/avatars/banner/banner_3.png', null, 3, true);
 
 -- -- CONTOH: Banner dengan gambar dari storage
 -- -- Prasyarat: jalankan dulu: cd supabase && powershell -File seed-assets.ps1
