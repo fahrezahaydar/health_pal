@@ -26,14 +26,28 @@ class LocPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LocCubit>(
-      create: (_) => getIt<LocCubit>()..requestLocationAndLoad(),
+      create: (_) => getIt<LocCubit>(),
       child: const _LocView(),
     );
   }
 }
 
-class _LocView extends StatelessWidget {
+class _LocView extends StatefulWidget {
   const _LocView();
+
+  @override
+  State<_LocView> createState() => _LocViewState();
+}
+
+class _LocViewState extends State<_LocView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<LocCubit>().requestLocationAndLoad();
+    });
+  }
 
   static const _radiusOptions = <double>[1, 3, 5, 10];
 
