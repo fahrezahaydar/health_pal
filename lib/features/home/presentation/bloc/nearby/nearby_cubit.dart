@@ -18,28 +18,37 @@ class NearbyCubit extends Cubit<NearbyState> {
 
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      print('Location service enabled: $serviceEnabled'); // Debug log
       if (!serviceEnabled) {
-        emit(const NearbyLocationDenied(
-          reason: 'Layanan lokasi tidak aktif. Nyalakan GPS di pengaturan.',
-        ));
+        emit(
+          const NearbyLocationDenied(
+            reason: 'Layanan lokasi tidak aktif. Nyalakan GPS di pengaturan.',
+          ),
+        );
         return;
       }
 
       var permission = await Geolocator.checkPermission();
+      print('Location permission status: $permission'); // Debug log
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          emit(const NearbyLocationDenied(
-            reason: 'Izin lokasi diperlukan untuk menampilkan klinik terdekat.',
-          ));
+          emit(
+            const NearbyLocationDenied(
+              reason:
+                  'Izin lokasi diperlukan untuk menampilkan klinik terdekat.',
+            ),
+          );
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        emit(const NearbyLocationDenied(
-          reason:
-              'Izin lokasi ditolak permanen. Buka Settings untuk mengizinkan.',
-        ));
+        emit(
+          const NearbyLocationDenied(
+            reason:
+                'Izin lokasi ditolak permanen. Buka Settings untuk mengizinkan.',
+          ),
+        );
         return;
       }
 
@@ -58,7 +67,11 @@ class NearbyCubit extends Cubit<NearbyState> {
       switch (result) {
         case Success<List<ClinicEntity>>(:final data):
           if (data.isEmpty) {
-            emit(const NearbyEmpty());
+            emit(
+              const NearbyError(
+                message: 'Tidak ada klinik di sekitar lokasi Anda.',
+              ),
+            );
           } else {
             emit(NearbyLoaded(clinics: data));
           }

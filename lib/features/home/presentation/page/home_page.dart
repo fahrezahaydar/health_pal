@@ -39,8 +39,7 @@ class HomePage extends StatelessWidget {
             // touches data layer directly). Sekarang via AppServices
             // (singleton global state owner). Pattern konsisten dengan
             // BlocListener di bawah yang juga pakai `GetIt.instance<AppServices>()`.
-            final authId =
-                GetIt.instance<AppServices>().currentAuthId ?? '';
+            final authId = GetIt.instance<AppServices>().currentAuthId ?? '';
             return getIt<GreetingCubit>()..loadProfile(authId);
           },
         ),
@@ -56,9 +55,7 @@ class HomePage extends StatelessWidget {
         // triggers location permission dialog if not yet granted.
         // The cubit handles all states (Loading/Loaded/LocationDenied/Error)
         // and the widget renders accordingly.
-        BlocProvider(
-          create: (context) => getIt<NearbyCubit>()..loadNearby(),
-        ),
+        BlocProvider(create: (context) => getIt<NearbyCubit>()..loadNearby()),
       ],
       child: const _HomePageBody(),
     );
@@ -94,8 +91,9 @@ class _HomePageBodyState extends State<_HomePageBody> {
     setState(() => _isRefreshing = true);
     try {
       final greetingState = context.read<GreetingCubit>().state;
-      final profileId =
-          greetingState is GreetingLoaded ? greetingState.profileId : '';
+      final profileId = greetingState is GreetingLoaded
+          ? greetingState.profileId
+          : '';
 
       final futures = <Future<void>>[
         context.read<BannerCubit>().loadBanners(),
@@ -120,9 +118,9 @@ class _HomePageBodyState extends State<_HomePageBody> {
               if (state.profileId.isNotEmpty) {
                 context.read<UpcomingCubit>().loadUpcoming(state.profileId);
                 // Sprint 2 — A8: load unread notification count after profile loaded
-                context
-                    .read<NotificationCubit>()
-                    .loadNotifications(state.profileId);
+                context.read<NotificationCubit>().loadNotifications(
+                  state.profileId,
+                );
               }
               // FIX-7: Guard profile completeness. Jika profile incomplete
               // (misalnya network failure fallback di FIX-2 atau server-side
@@ -164,12 +162,12 @@ class _HomePageBodyState extends State<_HomePageBody> {
                       builder: (context, greetingState) {
                         return switch (greetingState) {
                           GreetingLoading() => Skeletonizer(
-                              enabled: true,
-                              child: GreetingSection(
-                                nickname: 'Halo',
-                                unreadCount: unread,
-                              ),
+                            enabled: true,
+                            child: GreetingSection(
+                              nickname: 'Halo',
+                              unreadCount: unread,
                             ),
+                          ),
                           GreetingLoaded(:final nickname, :final avatarUrl) =>
                             GreetingSection(
                               nickname: nickname,
@@ -177,18 +175,18 @@ class _HomePageBodyState extends State<_HomePageBody> {
                               unreadCount: unread,
                             ),
                           GreetingError(:final message) => ErrorSection(
-                              message: message,
-                              onRetry: () {
-                                final authId = GetIt.instance<AppServices>()
-                                        .currentAuthId ??
-                                    '';
-                                if (authId.isNotEmpty) {
-                                  context
-                                      .read<GreetingCubit>()
-                                      .loadProfile(authId);
-                                }
-                              },
-                            ),
+                            message: message,
+                            onRetry: () {
+                              final authId =
+                                  GetIt.instance<AppServices>().currentAuthId ??
+                                  '';
+                              if (authId.isNotEmpty) {
+                                context.read<GreetingCubit>().loadProfile(
+                                  authId,
+                                );
+                              }
+                            },
+                          ),
                           // GreetingNoProfile — handled by BlocListener
                           // (redirect to CreateProfile). No UI needed here.
                           _ => const SizedBox.shrink(),
@@ -204,85 +202,87 @@ class _HomePageBodyState extends State<_HomePageBody> {
                 // static). Per AD-6 — skeletonizer HANYA untuk data-driven
                 // sections.
                 const SearchBarHome(),
-              BlocBuilder<BannerCubit, BannerState>(
-                builder: (context, state) {
-                  return switch (state) {
-                    BannerLoading() => const BannerCarouselLoading(),
-                    BannerLoaded(:final banners) =>
-                      BannerCarousel(banners: banners),
-                    BannerError(:final message) => ErrorSection(
+                BlocBuilder<BannerCubit, BannerState>(
+                  builder: (context, state) {
+                    return switch (state) {
+                      BannerLoading() => const BannerCarouselLoading(),
+                      BannerLoaded(:final banners) => BannerCarousel(
+                        banners: banners,
+                      ),
+                      BannerError(:final message) => ErrorSection(
                         message: message,
                         onRetry: () =>
                             context.read<BannerCubit>().loadBanners(),
                       ),
-                    _ => const SizedBox.shrink(),
-                  };
-                },
-              ),
+                      _ => const SizedBox.shrink(),
+                    };
+                  },
+                ),
                 const SizedBox(height: 24),
-              BlocBuilder<UpcomingCubit, UpcomingState>(
-                builder: (context, state) {
-                  return switch (state) {
-                    UpcomingLoading() => const UpcomingCardLoading(),
-                    UpcomingLoaded(:final upcoming) =>
-                      UpcomingCard(upcoming: upcoming),
-                    UpcomingError(:final message) => ErrorSection(
+                BlocBuilder<UpcomingCubit, UpcomingState>(
+                  builder: (context, state) {
+                    return switch (state) {
+                      UpcomingLoading() => const UpcomingCardLoading(),
+                      UpcomingLoaded(:final upcoming) => UpcomingCard(
+                        upcoming: upcoming,
+                      ),
+                      UpcomingError(:final message) => ErrorSection(
                         message: message,
                         onRetry: () {
                           final gs = context.read<GreetingCubit>().state;
                           if (gs is GreetingLoaded) {
-                            context
-                                .read<UpcomingCubit>()
-                                .loadUpcoming(gs.profileId);
+                            context.read<UpcomingCubit>().loadUpcoming(
+                              gs.profileId,
+                            );
                           }
                         },
                       ),
-                    _ => const UpcomingCard(upcoming: null),
-                  };
-                },
-              ),
-              const SizedBox(height: 24),
-              BlocBuilder<SpecializationCubit, SpecializationState>(
-                builder: (context, state) {
-                  return switch (state) {
-                    SpecializationLoading() =>
-                      const QuickCategoriesLoading(),
-                    SpecializationLoaded(:final specializations) =>
-                      QuickCategories(specializations: specializations),
-                    SpecializationError(:final message) => ErrorSection(
+                      _ => const UpcomingCard(upcoming: null),
+                    };
+                  },
+                ),
+                const SizedBox(height: 24),
+                BlocBuilder<SpecializationCubit, SpecializationState>(
+                  builder: (context, state) {
+                    return switch (state) {
+                      SpecializationLoading() => const QuickCategoriesLoading(),
+                      SpecializationLoaded(:final specializations) =>
+                        QuickCategories(specializations: specializations),
+                      SpecializationError(:final message) => ErrorSection(
                         message: message,
                         onRetry: () => context
                             .read<SpecializationCubit>()
                             .loadSpecializations(),
                       ),
-                    _ => const SizedBox.shrink(),
-                  };
-                },
-              ),
-              // Sprint 2 — C3: Nearby Medical Centers section.
-              // Horizontal list of clinic cards. Handles all states:
-              // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
-              // klinik", LocationDenied → "Izinkan Lokasi" button,
-              // Error → retry button.
-              BlocBuilder<NearbyCubit, NearbyState>(
-                builder: (context, state) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: switch (state) {
-                      NearbyInitial() => const NearbyFacilitiesLoading(),
-                      NearbyLoading() => const NearbyFacilitiesLoading(),
-                      NearbyLoaded(:final clinics) =>
-                        NearbyFacilitiesLoaded(clinics: clinics),
-                      NearbyEmpty() => const NearbyFacilitiesEmpty(),
-                      NearbyLocationDenied(:final reason) =>
-                        NearbyFacilitiesLocationDenied(reason: reason),
-                      NearbyError(:final message) =>
-                        NearbyFacilitiesError(message: message),
-                    },
-                  );
-                },
-              ),
-            ],
+                      _ => const SizedBox.shrink(),
+                    };
+                  },
+                ),
+                // Sprint 2 — C3: Nearby Medical Centers section.
+                // Horizontal list of clinic cards. Handles all states:
+                // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
+                // klinik", LocationDenied → "Izinkan Lokasi" button,
+                // Error → retry button.
+                BlocBuilder<NearbyCubit, NearbyState>(
+                  builder: (context, state) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: switch (state) {
+                        NearbyInitial() => const NearbyFacilitiesLoading(),
+                        NearbyLoading() => const NearbyFacilitiesLoading(),
+                        NearbyLoaded(:final clinics) => NearbyFacilitiesLoaded(
+                          clinics: clinics,
+                        ),
+                        NearbyLocationDenied(:final reason) =>
+                          NearbyFacilitiesLocationDenied(reason: reason),
+                        NearbyError(:final message) => NearbyFacilitiesError(
+                          message: message,
+                        ),
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
@@ -290,4 +290,3 @@ class _HomePageBodyState extends State<_HomePageBody> {
     );
   }
 }
-

@@ -26,10 +26,6 @@ class NearbyLoaded extends NearbyState {
   List<Object?> get props => [clinics];
 }
 
-class NearbyEmpty extends NearbyState {
-  const NearbyEmpty();
-}
-
 class NearbyLocationDenied extends NearbyState {
   final String reason;
 

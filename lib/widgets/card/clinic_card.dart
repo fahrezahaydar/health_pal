@@ -78,14 +78,18 @@ class ClinicCard extends StatelessWidget {
                     Row(
                       children: [
                         // TODO: change to iconsax — currently Material fallback
-const Icon(Icons.location_on,
-                            size: 12, color: AppTheme.grey500),
+                        const Icon(
+                          Icons.location_on,
+                          size: 12,
+                          color: AppTheme.grey500,
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             clinic.address,
-                            style: AppTextTheme.bodySmall
-                                .copyWith(color: AppTheme.grey500),
+                            style: AppTextTheme.bodySmall.copyWith(
+                              color: AppTheme.grey500,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -104,8 +108,10 @@ const Icon(Icons.location_on,
                       ),
                       child: Text(
                         clinic.distanceDisplay,
-                        style: AppTextTheme.labelSmall
-                            .copyWith(color: AppTheme.blue, fontWeight: FontWeight.w600),
+                        style: AppTextTheme.labelSmall.copyWith(
+                          color: AppTheme.blue,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -121,21 +127,24 @@ const Icon(Icons.location_on,
               runSpacing: 6,
               children: clinic.specializations!
                   .take(3)
-                  .map((s) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
+                  .map(
+                    (s) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.grey100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        s,
+                        style: AppTextTheme.labelSmall.copyWith(
+                          color: AppTheme.grey700,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.grey100,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          s,
-                          style: AppTextTheme.labelSmall
-                              .copyWith(color: AppTheme.grey700),
-                        ),
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           if (clinic.specializations != null &&
@@ -144,21 +153,25 @@ const Icon(Icons.location_on,
           Row(
             children: [
               // TODO: change to iconsax — currently Material fallback
-const Icon(Icons.people, size: 14, color: AppTheme.grey500),
+              const Icon(Icons.people, size: 14, color: AppTheme.grey500),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   clinic.doctorCountDisplay,
-                  style: AppTextTheme.bodySmall
-                      .copyWith(color: AppTheme.grey700),
+                  style: AppTextTheme.bodySmall.copyWith(
+                    color: AppTheme.grey700,
+                  ),
                 ),
               ),
-              SizedBox(
-                width: 120,
+              Flexible(
                 child: LightOutlineButton(
                   label: 'Lihat Peta',
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 6,
+                  ),
                   icon: const Icon(
-                    Icons.map, // TODO: change to iconsax
+                    Icons.map,
                     size: 14,
                     color: AppTheme.primary,
                   ),

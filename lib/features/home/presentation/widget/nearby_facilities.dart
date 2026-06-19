@@ -16,22 +16,24 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const HeaderTitle(title: 'Nearby Medical Centers'),
-        SizedBox(
-          height: 180,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            scrollDirection: Axis.horizontal,
-            itemCount: clinics.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) =>
-                NearbyClinicCard.fromEntity(clinics[index]),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const HeaderTitle(title: 'Nearby Medical Centers'),
+          SizedBox(
+            height: 180,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: clinics.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
+              itemBuilder: (context, index) =>
+                  NearbyClinicCard.fromEntity(clinics[index]),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -44,25 +46,6 @@ class NearbyFacilitiesLoading extends StatelessWidget {
     return Skeletonizer(
       enabled: true,
       child: NearbyFacilitiesLoaded(clinics: ClinicEntity.mock()),
-    );
-  }
-}
-
-class NearbyFacilitiesEmpty extends StatelessWidget {
-  const NearbyFacilitiesEmpty({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        HeaderTitle(title: 'Nearby Medical Centers'),
-        _StatusBody(
-          icon: Icons.location_off,
-          message: 'Tidak ada klinik di sekitar lokasi Anda.',
-          buttonLabel: 'Cari Lagi',
-        ),
-      ],
     );
   }
 }
@@ -96,17 +79,21 @@ class NearbyFacilitiesError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const HeaderTitle(title: 'Nearby Medical Centers'),
-        _StatusBody(
-          // TODO: change to iconsax — currently Material fallback
-          icon: Icons.error_outline,
-          message: message,
-          buttonLabel: 'Coba Lagi',
-        ),
-      ],
+    print('NearbyFacilitiesError: $message'); // Debug log
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+          const HeaderTitle(title: 'Nearby Medical Centers'),
+          _StatusBody(
+            icon: Icons.error_outline,
+            message: message,
+            buttonLabel: 'Coba Lagi',
+          ),
+        ],
+      ),
     );
   }
 }
@@ -124,47 +111,40 @@ class _StatusBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: AppTheme.grey50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.grey200),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 40, color: AppTheme.grey300),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () => context.read<NearbyCubit>().loadNearby(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  buttonLabel,
-                  style: AppTextTheme.bodySmall.copyWith(color: AppTheme.white),
-                ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.grey50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.grey200),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 40, color: AppTheme.grey300),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => context.read<NearbyCubit>().loadNearby(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                buttonLabel,
+                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.white),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
-

@@ -24,6 +24,8 @@ class NavigationShell extends StatelessWidget {
     return Scaffold(
       body: consumer,
       bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         currentIndex: consumer.currentIndex,
         onTap: (index) => consumer.goBranch(index),
         type: BottomNavigationBarType.fixed,
@@ -38,7 +40,10 @@ class NavigationShell extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(AppIcons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(AppIcons.location), label: 'Loc'),
-          BottomNavigationBarItem(icon: Icon(AppIcons.calendar), label: 'History'),
+          BottomNavigationBarItem(
+            icon: Icon(AppIcons.calendar),
+            label: 'History',
+          ),
           BottomNavigationBarItem(icon: Icon(AppIcons.user), label: 'Profile'),
         ],
       ),
