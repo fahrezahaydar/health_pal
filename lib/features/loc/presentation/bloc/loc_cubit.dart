@@ -9,14 +9,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../core/network/result.dart';
 import '../../domain/entity/clinic_entity.dart';
 import '../../domain/usecase/get_nearby_clinics_usecase.dart';
 import 'loc_state.dart';
 
 @injectable
 class LocCubit extends Cubit<LocState> {
-  // ignore: unused_field
-  final GetNearbyClinicsUseCase _getClinics; // akan dipakai lagi setelah deploy
+  final GetNearbyClinicsUseCase _getClinics;
 
   LocCubit(this._getClinics) : super(const LocInitial());
 
@@ -108,86 +108,20 @@ class LocCubit extends Cubit<LocState> {
   }
 
   Future<void> _load(Position position, double radiusKm) async {
-    // TODO: ganti dengan panggil _getClinics setelah function get_nearby_clinics
-    // sudah di-deploy + schema cache di-reload.
-    final dummy = <ClinicEntity>[
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000001',
-        name: 'Klinik Sehat Bersama',
-        address: 'Jl. Merdeka No. 10',
-        city: 'Bandung',
-        latitude: -6.9210,
-        longitude: 107.6087,
-        phone: '022-12345678',
-        imageUrl: null,
-        distanceMeters: 1200,
-        doctorCount: 5,
-      ),
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000002',
-        name: 'RS Mitra Husada',
-        address: 'Jl. Diponegoro No. 45',
-        city: 'Bandung',
-        latitude: -6.9030,
-        longitude: 107.6185,
-        phone: '022-23456789',
-        imageUrl: null,
-        distanceMeters: 1800,
-        doctorCount: 12,
-      ),
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000003',
-        name: 'Klinik Bunda Sehat',
-        address: 'Jl. Riau No. 78',
-        city: 'Bandung',
-        latitude: -6.8950,
-        longitude: 107.6050,
-        phone: '022-34567890',
-        imageUrl: null,
-        distanceMeters: 2800,
-        doctorCount: 3,
-      ),
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000004',
-        name: 'Puskesmas Sukajadi',
-        address: 'Jl. Sukajadi No. 120',
-        city: 'Bandung',
-        latitude: -6.9100,
-        longitude: 107.5850,
-        phone: '022-45678901',
-        imageUrl: null,
-        distanceMeters: 3500,
-        doctorCount: 8,
-      ),
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000005',
-        name: 'Klinik Medika Utama',
-        address: 'Jl. Cihampelas No. 55',
-        city: 'Bandung',
-        latitude: -6.8930,
-        longitude: 107.5950,
-        phone: '022-56789012',
-        imageUrl: null,
-        distanceMeters: 3200,
-        doctorCount: 6,
-      ),
-      const ClinicEntity(
-        id: 'c1a2b3c4-d5e6-7890-clinic-000000000006',
-        name: 'RSIA Hermina',
-        address: 'Jl. Setiabudi No. 89',
-        city: 'Bandung',
-        latitude: -6.8750,
-        longitude: 107.5900,
-        phone: '022-67890123',
-        imageUrl: null,
-        distanceMeters: 5100,
-        doctorCount: 15,
-      ),
-    ];
-    emit(LocLoaded(
-      clinics: dummy,
-      currentPosition: position,
+    final result = await _getClinics(
+      lat: position.latitude,
+      lng: position.longitude,
       radiusKm: radiusKm,
-    ));
+    );
+    switch (result) {
+      case Success<List<ClinicEntity>>(:final data):
+        emit(LocLoaded(
+          clinics: data,
+          currentPosition: position,
+          radiusKm: radiusKm,
+        ));
+      case Failure(:final message):
+        emit(LocError(message: message));
+    }
   }
 }
