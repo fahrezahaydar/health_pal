@@ -18,6 +18,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/debouncer.dart';
@@ -44,12 +45,30 @@ class DoctorSearchPage extends StatelessWidget {
 }
 
 const _mockDoctors = [
-  DoctorEntity(id: 'sk-1', clinicId: 'sk-c', specializationId: 'sk-s',
-      fullName: 'Loading Doctor 1', experienceYears: 0, consultationFee: 0),
-  DoctorEntity(id: 'sk-2', clinicId: 'sk-c', specializationId: 'sk-s',
-      fullName: 'Loading Doctor 2', experienceYears: 0, consultationFee: 0),
-  DoctorEntity(id: 'sk-3', clinicId: 'sk-c', specializationId: 'sk-s',
-      fullName: 'Loading Doctor 3', experienceYears: 0, consultationFee: 0),
+  DoctorEntity(
+    id: 'sk-1',
+    clinicId: 'sk-c',
+    specializationId: 'sk-s',
+    fullName: 'Loading Doctor 1',
+    experienceYears: 0,
+    consultationFee: 0,
+  ),
+  DoctorEntity(
+    id: 'sk-2',
+    clinicId: 'sk-c',
+    specializationId: 'sk-s',
+    fullName: 'Loading Doctor 2',
+    experienceYears: 0,
+    consultationFee: 0,
+  ),
+  DoctorEntity(
+    id: 'sk-3',
+    clinicId: 'sk-c',
+    specializationId: 'sk-s',
+    fullName: 'Loading Doctor 3',
+    experienceYears: 0,
+    consultationFee: 0,
+  ),
 ];
 
 class DoctorSearchView extends StatefulWidget {
@@ -131,11 +150,11 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Nama / Spesialisasi',
-                prefixIcon: const Icon(Icons.search, color: AppTheme.grey400),
+                prefixIcon: const Icon(AppIcons.searchNormal, color: AppTheme.grey400),
                 suffixIcon: _controller.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(
-                          Icons.close,
+                          AppIcons.closeCircle,
                           color: AppTheme.grey400,
                         ),
                         onPressed: () {
@@ -167,9 +186,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                     context.read<SearchCubit>().specializations.length + 1,
                 itemBuilder: (context, index) {
                   final specs = context.read<SearchCubit>().specializations;
-                  final spec = index == 0
-                      ? _allChip
-                      : specs[index - 1];
+                  final spec = index == 0 ? _allChip : specs[index - 1];
                   final isAll = spec.id == 'all';
                   final isSelected = isAll
                       ? _selectedSpecializationId == null
@@ -195,29 +212,31 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                 builder: (context, state) {
                   return switch (state) {
                     SearchInitial() => const EmptyStateView(
-                        icon: Icons.search,
-                        message: 'Cari dokter berdasarkan nama atau spesialisasi',
+                      icon: Icons.search,
+                      message: 'Cari dokter berdasarkan nama atau spesialisasi',
                       hint: 'Mulai mengetik untuk mencari',
-                      ),
+                    ),
                     SearchLoading() => Skeletonizer(
-                        enabled: true,
-                        child: _buildList(_mockDoctors, true),
-                      ),
+                      enabled: true,
+                      child: _buildList(_mockDoctors, true),
+                    ),
                     SearchEmpty() => const EmptyStateView(
-                        icon: Icons.search_off,
-                        message: 'Dokter tidak ditemukan',
-                        hint: 'Coba gunakan kata kunci lain',
-                      ),
+                      icon: Icons.search_off,
+                      message: 'Dokter tidak ditemukan',
+                      hint: 'Coba gunakan kata kunci lain',
+                    ),
                     SearchError(:final message) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 48),
-                        child: ErrorSection(
-                          message: message,
-                          onRetry: () =>
-                              context.read<SearchCubit>().searchDoctors(null),
-                        ),
+                      padding: const EdgeInsets.symmetric(vertical: 48),
+                      child: ErrorSection(
+                        message: message,
+                        onRetry: () =>
+                            context.read<SearchCubit>().searchDoctors(null),
                       ),
-                    SearchLoaded(:final doctors, :final hasMore) =>
-                      _buildList(doctors, hasMore),
+                    ),
+                    SearchLoaded(:final doctors, :final hasMore) => _buildList(
+                      doctors,
+                      hasMore,
+                    ),
                   };
                 },
               ),
@@ -256,5 +275,4 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
       },
     );
   }
-
 }

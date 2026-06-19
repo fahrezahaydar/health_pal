@@ -1,84 +1,62 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:iconsax_latest/iconsax_latest.dart';
 
 /// Centralized icon reference untuk seluruh aplikasi.
 ///
 /// SAAT INI: masih memakai Material Icons (Icons.xxx) sebagai placeholder.
-/// TODO: User akan mengganti value di bawah ini ke Iconsax.xxx yang sesuai.
-/// Setelah semua TODO selesai, `import 'package:flutter/material.dart'`
 /// bisa dihapus dari file ini.
 class AppIcons {
   AppIcons._();
 
   // ── Navigation ──
-  static const IconData arrowBack = Icons.arrow_back; // TODO: ganti ke iconsax
-  static const IconData close = Icons.close; // TODO: ganti ke iconsax
-  static const IconData arrowDropDown = Icons.arrow_drop_down; // TODO: ganti ke iconsax
-  static const IconData sort = Icons.sort; // TODO: ganti ke iconsax
-  static const IconData share = Icons.share_outlined; // TODO: ganti ke iconsax
-  static const IconData editCalendar = Icons.edit_calendar; // TODO: ganti ke iconsax
+  static const IconData arrowBack = Iconsax.arrowLeft01;
+  static const IconData close = Iconsax.closeSquareStyle1;
+  static const IconData arrowDropDown = Iconsax.arrowDown01;
+  static const IconData sort = Iconsax.sortStyle5;
+  static const IconData share = Iconsax.shareStyle4;
+  static const IconData editCalendar = Iconsax.calendarEditStyle4;
 
   // ── Search ──
-  static const IconData search = Icons.search; // TODO: ganti ke iconsax
-  static const IconData searchOff = Icons.search_off; // TODO: ganti ke iconsax
+  static const IconData search = Iconsax.searchNormal;
 
   // ── Auth & Profile ──
-  static const IconData person = Icons.person; // TODO: ganti ke iconsax
-  static const IconData email = Icons.email; // TODO: ganti ke iconsax
-  static const IconData lock = Icons.lock; // TODO: ganti ke iconsax
-  static const IconData visibilityOff = Icons.visibility_off; // TODO: ganti ke iconsax
-  static const IconData visibility = Icons.visibility; // TODO: ganti ke iconsax
-  static const IconData logout = Icons.logout; // TODO: ganti ke iconsax
-  static const IconData settings = Icons.settings; // TODO: ganti ke iconsax
-  static const IconData help = Icons.help; // TODO: ganti ke iconsax
-  static const IconData description = Icons.description; // TODO: ganti ke iconsax
-  static const IconData notifications = Icons.notifications; // TODO: ganti ke iconsax
-  static const IconData favorite = Icons.favorite; // TODO: ganti ke iconsax
-  static const IconData favoriteBorder = Icons.favorite_border; // TODO: ganti ke iconsax
+  static const IconData person = Iconsax.user;
+  static const IconData email = Iconsax.emailSnow;
+  static const IconData lock = Iconsax.lock;
+  static const IconData visibilityOff = Iconsax.eyeSlashStyle2;
+  static const IconData visibility = Iconsax.eye;
+  static const IconData logout = Iconsax.logout02;
+  static const IconData settings = Iconsax.setting2Style1;
+  static const IconData help = Iconsax.infoCircle;
+  static const IconData description = Iconsax.documentText2;
+  static const IconData notifications = Iconsax.notificationBingStyle1;
+  static const IconData favorite = Iconsax.heart;
 
   // ── Booking & Appointment ──
-  static const IconData calendarToday = Icons.calendar_today; // TODO: ganti ke iconsax
-  static const IconData accessTime = Icons.access_time; // TODO: ganti ke iconsax
-  static const IconData checkCircle = Icons.check_circle; // TODO: ganti ke iconsax
-  static const IconData check = Icons.check; // TODO: ganti ke iconsax
+  static const IconData calendarToday = Iconsax.calendar2Style11;
+  static const IconData accessTime = Iconsax.clockStyle10;
+  static const IconData checkCircle = Iconsax.tickCircle;
+  static const IconData check = Iconsax.tickSquareStyle1;
 
   // ── Medical & Clinic ──
-  static const IconData localHospital = Icons.local_hospital; // TODO: ganti ke iconsax
-  static const IconData localHospitalOutlined = Icons.local_hospital_outlined; // TODO: ganti ke iconsax
-  static const IconData locationOn = Icons.location_on; // TODO: ganti ke iconsax
-  static const IconData locationOff = Icons.location_off; // TODO: ganti ke iconsax
-  static const IconData locationDisabled = Icons.location_disabled; // TODO: ganti ke iconsax
-  static const IconData phone = Icons.phone; // TODO: ganti ke iconsax
-  static const IconData myLocation = Icons.my_location; // TODO: ganti ke iconsax
-  static const IconData wifiOff = Icons.wifi_off; // TODO: ganti ke iconsax
-  static const IconData star = Icons.star; // TODO: ganti ke iconsax
-  static const IconData people = Icons.people; // TODO: ganti ke iconsax
-  static const IconData map = Icons.map; // TODO: ganti ke iconsax
-  static const IconData payments = Icons.payments; // TODO: ganti ke iconsax
-  static const IconData paymentsOutlined = Icons.payments_outlined; // TODO: ganti ke iconsax
+  static const IconData localHospital = Iconsax.hospitalStyle3;
+  static const IconData localHospitalOutlined = Iconsax.hospitalStyle4;
+  static const IconData locationOn = Iconsax.location;
+  static const IconData locationOff = Iconsax.locationCrossStyle1;
+  static const IconData locationDisabled = Iconsax.locationSlashStyle1;
+  static const IconData phone = Iconsax.callCallingStyle1;
+  static const IconData myLocation = Iconsax.gps;
+  static const IconData wifiOff = Iconsax.wifi;
+  static const IconData star = Iconsax.star;
+  static const IconData people = Iconsax.peopleStyle1;
+  static const IconData map = Iconsax.map1Style1;
+  static const IconData payments = Iconsax.wallet1Style4;
 
-  // ── Doctor Detail Info ──
-  static const IconData schoolOutlined = Icons.school_outlined; // TODO: ganti ke iconsax
-  static const IconData workOutline = Icons.work_outline; // TODO: ganti ke iconsax
-  static const IconData rateReviewOutlined = Icons.rate_review_outlined; // TODO: ganti ke iconsax
-
-  // ── Error & Status ──
-  static const IconData errorOutline = Icons.error_outline; // TODO: ganti ke iconsax
-  static const IconData infoOutline = Icons.info_outline; // TODO: ganti ke iconsax
-  static const IconData info = Icons.info; // TODO: ganti ke iconsax
+  static const IconData info = Iconsax.infoCircle;
 
   // ── Settings ──
-  static const IconData darkMode = Icons.dark_mode; // TODO: ganti ke iconsax
-  static const IconData delete = Icons.delete; // TODO: ganti ke iconsax
-  static const IconData storage = Icons.storage; // TODO: ganti ke iconsax
-
-  // ── Quick Categories (Home) ──
-  static const IconData medicalServices = Icons.medical_services; // TODO: ganti ke iconsax
-  static const IconData air = Icons.air; // TODO: ganti ke iconsax
-  static const IconData psychology = Icons.psychology; // TODO: ganti ke iconsax
-  static const IconData science = Icons.science; // TODO: ganti ke iconsax
-  static const IconData biotech = Icons.biotech; // TODO: ganti ke iconsax
-  static const IconData vaccines = Icons.vaccines; // TODO: ganti ke iconsax
+  static const IconData darkMode = Iconsax.moonStyle2;
+  static const IconData storage = Iconsax.dataStyle1;
 
   // ═══════════════════════════════════════════════════════════
   //   SUDAH ICONSAX (tidak perlu diganti)
