@@ -41,13 +41,13 @@ class SearchBarHome extends StatelessWidget {
             border: Border.all(color: AppTheme.grey200),
           ),
           child: Row(
+            spacing: 12,
             children: [
               const Icon(
                 AppIcons.searchNormal,
                 size: 20,
                 color: AppTheme.grey500,
               ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   'Cari dokter, klinik, atau spesialisasi...',
@@ -58,7 +58,6 @@ class SearchBarHome extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 8),
               const Icon(AppIcons.filter, size: 18, color: AppTheme.grey400),
             ],
           ),

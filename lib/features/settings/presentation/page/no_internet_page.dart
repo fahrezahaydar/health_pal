@@ -1,8 +1,3 @@
-// lib/features/settings/presentation/page/no_internet_page.dart
-//
-// Halaman No Internet. Per wireframe 21-no-internet.md.
-// Tap "Coba Lagi" → cek connectivity_plus → pop jika online.
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
@@ -19,25 +14,32 @@ class NoInternetPage extends StatefulWidget {
 }
 
 class _NoInternetPageState extends State<NoInternetPage> {
-  bool _isChecking = false;
+  final ValueNotifier<bool> isChecking = ValueNotifier(false);
 
-  Future<void> _retry() async {
-    setState(() => _isChecking = true);
+  Future<void> _retry(BuildContext context) async {
+    isChecking.value = true;
+
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
+
       final hasConnection = connectivityResult.any(
-        (r) => r != ConnectivityResult.none,
+        (result) => result != ConnectivityResult.none,
       );
-      if (!mounted) return;
+
+      if (!context.mounted) return;
+
       if (hasConnection) {
         Navigator.of(context).pop();
         return;
       }
     } catch (_) {
-      // Connectivity check failed — treat as no connection
+      // Ignore
     }
-    if (!mounted) return;
-    setState(() => _isChecking = false);
+
+    if (!context.mounted) return;
+
+    isChecking.value = false;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
@@ -57,7 +59,6 @@ class _NoInternetPageState extends State<NoInternetPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // ── Illustration (icon) ──
               Container(
                 width: 160,
                 height: 160,
@@ -72,23 +73,38 @@ class _NoInternetPageState extends State<NoInternetPage> {
                 ),
               ),
               const SizedBox(height: 32),
+
               Text(
                 'Tidak Ada Koneksi',
                 style: AppTextTheme.headlineLarge,
                 textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 12),
+
               Text(
                 'Periksa koneksi internetmu dan coba lagi.',
                 style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
                 textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 40),
+
               SizedBox(
                 width: double.infinity,
-                child: _isChecking
-                    ? const Center(child: CircularProgressIndicator())
-                    : LightFilledButton(label: 'Coba Lagi', onTap: _retry),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: isChecking,
+                  builder: (context, loading, _) {
+                    if (loading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    return LightFilledButton(
+                      label: 'Coba Lagi',
+                      onTap: () => _retry(context),
+                    );
+                  },
+                ),
               ),
             ],
           ),

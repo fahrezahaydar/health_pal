@@ -1,10 +1,9 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_auto_size_text/flutter_auto_size_text.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/di/locator.dart';
-import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../bloc/onboarding_notifier.dart';
@@ -50,13 +49,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => getIt<OnboardingNotifier>(),
-      child: Consumer<OnboardingNotifier>(
-        builder: (context, vm, _) {
-          return SafeArea(
-            child: ColoredBox(
-              color: AppTheme.white,
+    final ts = Theme.of(context).textTheme;
+    return Scaffold(
+      body: ChangeNotifierProvider(
+        create: (_) => getIt<OnboardingNotifier>(),
+        child: Consumer<OnboardingNotifier>(
+          builder: (context, vm, _) {
+            return SafeArea(
               child: Column(
                 children: [
                   /// IMAGE
@@ -88,7 +87,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextTheme.bodyMedium.copyWith(
+                              style: ts.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.grey700,
                               ),
@@ -98,7 +97,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               textAlign: TextAlign.center,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextTheme.bodySmall.copyWith(
+                              style: ts.bodySmall?.copyWith(
                                 color: AppTheme.grey500,
                               ),
                             ),
@@ -130,7 +129,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           onTap: () => vm.skip(context),
                           child: Text(
                             'Skip',
-                            style: AppTextTheme.bodySmall.copyWith(
+                            style: ts.bodySmall?.copyWith(
                               color: AppTheme.grey500,
                             ),
                           ),
@@ -140,9 +139,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                 ],
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

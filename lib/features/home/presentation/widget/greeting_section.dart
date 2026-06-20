@@ -14,45 +14,35 @@ class GreetingSection extends StatelessWidget {
     super.key,
     required this.nickname,
     this.avatarUrl,
-    this.unreadCount = 0,
+    this.action = const [],
   });
 
   final String nickname;
   // Sprint 2 — C4: avatarUrl dari UserProfile (nullable). Jika null,
   // tampilkan CircleAvatar fallback dengan inisial pertama nickname.
   final String? avatarUrl;
-  // Sprint 2 — A8: unreadCount dari NotificationCubit (was hardcoded 5).
-  // Jika 0, AppBadge tidak muncul (hidden per _show == false).
-  final int unreadCount;
+
+  final List<Widget> action;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: [
-          // Sprint 2 — C4: Profile photo di Greeting.
-          // CircleAvatar 48x48. Jika avatarUrl null, fallback ke inisial
-          // pertama nickname. Tidak pakai Material CircleAvatar —
-          // menggunakan ClipOval + Container + Image.network manual.
-          ProfileAvatar(nickname: nickname, avatarUrl: avatarUrl),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Halo, ${nickname.isNotEmpty ? nickname : ''}',
-              style: AppTextTheme.headlineSmall,
-            ),
+    return Row(
+      children: [
+        // Sprint 2 — C4: Profile photo di Greeting.
+        // CircleAvatar 48x48. Jika avatarUrl null, fallback ke inisial
+        // pertama nickname. Tidak pakai Material CircleAvatar —
+        // menggunakan ClipOval + Container + Image.network manual.
+        ProfileAvatar(nickname: nickname, avatarUrl: avatarUrl),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            'Halo, ${nickname.isNotEmpty ? nickname : ''}',
+            style: AppTextTheme.headlineSmall,
           ),
-          LightIconButton(
-            onTap: () => context.push(RoutePaths.notificationSettings),
-            icon: AppBadge(
-              // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
-              count: unreadCount > 0 ? unreadCount : null,
-              child: const Icon(AppIcons.notification, color: AppTheme.grey900),
-            ),
-          ),
-        ],
-      ),
+        ),
+
+        ...action,
+      ],
     );
   }
 }

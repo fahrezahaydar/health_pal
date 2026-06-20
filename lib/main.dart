@@ -24,7 +24,6 @@ import 'core/di/locator.dart';
 import 'core/router/app_router.dart';
 import 'core/services/app_services.dart';
 import 'core/services/fcm_service.dart';
-import 'core/theme/app_text_theme.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
@@ -137,11 +136,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = GetIt.instance<AppRouter>().router;
 
-    return WidgetsApp.router(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      color: AppTheme.primary,
-      textStyle: AppTextTheme.bodyMedium,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       localizationsDelegates: const [
         DefaultMaterialLocalizations.delegate,
         DefaultWidgetsLocalizations.delegate,

@@ -1,22 +1,29 @@
-import 'package:flutter/widgets.dart'; // Menggunakan widgets.dart
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTextTheme {
   // Constructor konstan agar bisa dipanggil AppTextTheme()
   const AppTextTheme();
 
+  static TextTheme get textTheme => TextTheme(
+    headlineLarge: headlineLarge,
+    headlineMedium: headlineMedium,
+    headlineSmall: headlineSmall,
+    titleLarge: titleLarge,
+    bodyLarge: bodyLarge,
+    bodyMedium: bodyMedium,
+    bodySmall: bodySmall,
+    labelLarge: labelLarge,
+    labelMedium: labelMedium,
+    labelSmall: labelSmall,
+  );
+
   // 🔥 Static getter agar kode lama 'AppTextTheme.ts' tetap jalan
 
   // Base style untuk menghindari pengulangan (DRY)
-  static final TextStyle _baseInter = GoogleFonts.inter(
-    height: 1.5,
-    color: const Color(0xFF111928), // Default text color (grey900)
-  );
+  static final TextStyle _baseInter = GoogleFonts.inter(height: 1.5);
 
-  static final TextStyle _basePoppins = GoogleFonts.poppins(
-    height: 1.5,
-    color: const Color(0xFF111928),
-  );
+  static final TextStyle _basePoppins = GoogleFonts.poppins(height: 1.5);
 
   // ===== HEADINGS =====
   static TextStyle headlineLarge = _baseInter.copyWith(

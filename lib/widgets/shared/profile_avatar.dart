@@ -9,11 +9,7 @@ import '../../core/theme/app_theme.dart';
 /// On load error or when [avatarUrl] is null, shows the first character
 /// of [nickname] uppercased on a tinted primary background.
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({
-    super.key,
-    required this.nickname,
-    this.avatarUrl,
-  });
+  const ProfileAvatar({super.key, required this.nickname, this.avatarUrl});
 
   final String nickname;
   final String? avatarUrl;
@@ -21,34 +17,26 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: SizedBox(
-        width: 48,
-        height: 48,
-        child: avatarUrl != null
-            ? Image.network(
-                avatarUrl!,
-                width: 48,
-                height: 48,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildFallback(),
-              )
-            : _buildFallback(),
-      ),
-    );
-  }
-
-  Widget _buildFallback() {
-    return Container(
-      width: 48,
-      height: 48,
-      color: AppTheme.primary.withValues(alpha: 0.15),
-      alignment: Alignment.center,
-      child: Text(
-        nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
-        style: AppTextTheme.titleLarge.copyWith(
-          color: AppTheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Image.network(
+        avatarUrl ?? '',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) {
+          return Container(
+            width: 42,
+            height: 42,
+            color: AppTheme.primary.withValues(alpha: 0.15),
+            alignment: Alignment.center,
+            child: Text(
+              nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
+              style: AppTextTheme.titleLarge.copyWith(
+                color: AppTheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
