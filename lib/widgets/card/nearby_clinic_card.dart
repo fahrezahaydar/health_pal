@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/loc/domain/entity/clinic_entity.dart';
@@ -23,7 +24,10 @@ class NearbyClinicCard extends StatelessWidget {
   final VoidCallback? onTap;
   final double width;
 
-  factory NearbyClinicCard.fromEntity(ClinicEntity entity, {VoidCallback? onTap}) {
+  factory NearbyClinicCard.fromEntity(
+    ClinicEntity entity, {
+    VoidCallback? onTap,
+  }) {
     return NearbyClinicCard(
       name: entity.name,
       imageUrl: entity.imageUrl,
@@ -34,10 +38,10 @@ class NearbyClinicCard extends StatelessWidget {
   }
 
   factory NearbyClinicCard.skeleton() => const NearbyClinicCard(
-        name: 'Loading...',
-        distanceDisplay: '-- km',
-        doctorCountDisplay: '--',
-      );
+    name: 'Loading...',
+    distanceDisplay: '-- km',
+    doctorCountDisplay: '--',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,8 @@ class NearbyClinicCard extends StatelessWidget {
                       width: width,
                       height: 100,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const PlaceholderImage(height: 100),
+                      errorBuilder: (_, _, _) =>
+                          const PlaceholderImage(height: 100),
                     )
                   : const PlaceholderImage(height: 100),
             ),
@@ -82,9 +87,8 @@ class NearbyClinicCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        // TODO: change to iconsax — currently Material fallback
                         const Icon(
-                          Icons.location_on,
+                          AppIcons.location,
                           size: 14,
                           color: AppTheme.grey400,
                         ),

@@ -10,6 +10,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/card/doctor_card.dart';
@@ -30,8 +31,7 @@ class FavoritePage extends StatelessWidget {
           backgroundColor: AppTheme.white,
           elevation: 0,
           leading: IconButton(
-            // TODO: change to iconsax — currently Material fallback
-            icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
+            icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text('Favorite', style: AppTextTheme.titleLarge),
@@ -47,7 +47,7 @@ class FavoritePage extends StatelessWidget {
                 _emptyState(),
               FavoriteLoaded(:final doctors) => _list(doctors),
               FavoriteError(:final message) => Padding(
-                padding: EdgeInsets.symmetric(vertical: 48),
+                padding: const EdgeInsets.symmetric(vertical: 48),
                 child: ErrorSection(
                   message: message,
                   onRetry: () => context.read<FavoriteCubit>().loadFavorites(),
@@ -89,8 +89,7 @@ class FavoritePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // TODO: change to iconsax — currently Material fallback
-            const Icon(Icons.favorite, size: 80, color: AppTheme.grey300),
+            const Icon(AppIcons.favorite, size: 80, color: AppTheme.grey300),
             const SizedBox(height: 16),
             Text('Belum ada dokter favorit', style: AppTextTheme.titleLarge),
             const SizedBox(height: 8),
@@ -104,7 +103,6 @@ class FavoritePage extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _FavSkeleton extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_theme.dart';
 
 class PlaceholderImage extends StatelessWidget {
@@ -12,7 +13,6 @@ class PlaceholderImage extends StatelessWidget {
 
   final double width;
   final double height;
-  // TODO: change to iconsax — currently Material fallback (iconsax_latest suffix error-prone)
   final IconData? icon;
 
   @override
@@ -23,7 +23,7 @@ class PlaceholderImage extends StatelessWidget {
       color: AppTheme.grey100,
       alignment: Alignment.center,
       child: Icon(
-        icon ?? Icons.local_hospital,
+        icon ?? AppIcons.localHospital,
         size: 32,
         color: AppTheme.grey400,
       ),

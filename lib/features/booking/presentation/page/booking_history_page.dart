@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/loader/dot_loader.dart';
@@ -75,8 +76,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
     return BlocProvider<BookingHistoryCubit>(
       create: (_) {
         // patientId di-derive dari auth user (sama dengan home greeting).
-        final patientId =
-            getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+        final patientId = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
         return getIt<BookingHistoryCubit>()..loadHistory(patientId);
       },
       child: Scaffold(
@@ -106,30 +106,28 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
     return BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
       builder: (context, state) {
         return RefreshIndicator(
-          onRefresh: () =>
-              context.read<BookingHistoryCubit>().refresh(),
+          onRefresh: () => context.read<BookingHistoryCubit>().refresh(),
           child: switch (state) {
-            BookingHistoryInitial() ||
-            BookingHistoryLoading() =>
-              const Skeletonizer(
-                enabled: true,
-                child: _ListSkeleton(),
-              ),
-            BookingHistoryLoaded(:final appointments) when appointments.isEmpty =>
+            BookingHistoryInitial() || BookingHistoryLoading() =>
+              const Skeletonizer(enabled: true, child: _ListSkeleton()),
+            BookingHistoryLoaded(:final appointments)
+                when appointments.isEmpty =>
               const EmptyStateView(
-                icon: Icons.calendar_today,
+                icon: AppIcons.calendarToday,
                 message: 'Tidak ada appointment',
                 hint: 'Booking pertamamu akan muncul di sini',
               ),
-            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(appointments, hasMore),
+            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(
+              appointments,
+              hasMore,
+            ),
             BookingHistoryError(:final message) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 48),
-                child: ErrorSection(
-                  message: message,
-                  onRetry: () =>
-                      context.read<BookingHistoryCubit>().refresh(),
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 48),
+              child: ErrorSection(
+                message: message,
+                onRetry: () => context.read<BookingHistoryCubit>().refresh(),
               ),
+            ),
           },
         );
       },
@@ -137,7 +135,6 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
   }
 
   Widget _list(List appointments, bool hasMore) {
-    // TODO: change to iconsax — currently Material fallback
     return ListView.separated(
       controller: _scrollController,
       padding: const EdgeInsets.all(16),
@@ -161,7 +158,6 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
       },
     );
   }
-
 }
 
 class _ListSkeleton extends StatelessWidget {

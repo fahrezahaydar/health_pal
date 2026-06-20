@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/services/fcm_service.dart';
@@ -50,8 +51,7 @@ class _NotificationView extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          // TODO: change to iconsax — currently Material fallback
-          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
+          icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: BlocBuilder<NotificationCubit, NotificationListState>(
@@ -102,27 +102,26 @@ class _NotificationView extends StatelessWidget {
       body: BlocBuilder<NotificationCubit, NotificationListState>(
         builder: (context, state) {
           return switch (state) {
-            NotificationInitial() ||
-            NotificationLoading() =>
-              const Skeletonizer(
-                enabled: true,
-                child: _NotificationSkeleton(),
-              ),
+            NotificationInitial() || NotificationLoading() =>
+              const Skeletonizer(enabled: true, child: _NotificationSkeleton()),
             NotificationLoaded(:final notifications)
                 when notifications.isEmpty =>
               _emptyState(),
-            NotificationLoaded(:final notifications) => _list(context, notifications),
+            NotificationLoaded(:final notifications) => _list(
+              context,
+              notifications,
+            ),
             NotificationError(:final message) => Padding(
-                padding: EdgeInsets.symmetric(vertical: 48),
-                // ignore: prefer_const_constructors — onRetry closure
-                child: ErrorSection(
-                  message: message,
-                  onRetry: () {
-                    final uid = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
-                    context.read<NotificationCubit>().loadNotifications(uid);
-                  },
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 48),
+              child: ErrorSection(
+                message: message,
+                onRetry: () {
+                  final uid =
+                      getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+                  context.read<NotificationCubit>().loadNotifications(uid);
+                },
               ),
+            ),
           };
         },
       ),
@@ -132,8 +131,7 @@ class _NotificationView extends StatelessWidget {
   Widget _list(BuildContext context, List<NotificationEntity> notifications) {
     return RefreshIndicator(
       onRefresh: () async {
-        final userId =
-            getIt<SupabaseClient>().auth.currentUser?.id ?? '';
+        final userId = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
         await context.read<NotificationCubit>().loadNotifications(userId);
       },
       child: ListView.separated(
@@ -173,8 +171,11 @@ class _NotificationView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // TODO: change to iconsax — currently Material fallback
-            const Icon(Icons.notifications, size: 80, color: AppTheme.grey300),
+            const Icon(
+              AppIcons.notification,
+              size: 80,
+              color: AppTheme.grey300,
+            ),
             const SizedBox(height: 16),
             Text('Belum ada notifikasi', style: AppTextTheme.titleLarge),
             const SizedBox(height: 8),
@@ -188,7 +189,6 @@ class _NotificationView extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _NotificationSkeleton extends StatelessWidget {

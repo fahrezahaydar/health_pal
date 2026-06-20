@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/enums/gender.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
@@ -165,8 +166,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
             backgroundColor: AppTheme.white,
             elevation: 0,
             leading: IconButton(
-              // TODO: change to iconsax — currently Material fallback
-              icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
+              icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
               onPressed: () => context.pop(),
             ),
             title: Text('Edit Profile', style: AppTextTheme.titleLarge),
@@ -177,7 +177,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
               child: _EditSkeleton(),
             ),
             EditProfileError(:final message) => Padding(
-              padding: EdgeInsets.symmetric(vertical: 48),
+              padding: const EdgeInsets.symmetric(vertical: 48),
               child: ErrorSection(
                 message: message,
                 onRetry: () => context.read<EditProfileCubit>().loadEdit(),
@@ -279,7 +279,6 @@ class _EditProfileViewState extends State<_EditProfileView> {
       ],
     );
   }
-
 }
 
 class _EditSkeleton extends StatelessWidget {
@@ -293,14 +292,29 @@ class _EditSkeleton extends StatelessWidget {
         children: [
           const CircleAvatar(radius: 50),
           const SizedBox(height: 24),
-          Container(height: 50, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppTheme.grey100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           const SizedBox(height: 12),
-          Container(height: 50, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppTheme.grey100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           const SizedBox(height: 12),
-          Container(height: 50, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(8))),
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppTheme.grey100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
         ],
       ),
     );

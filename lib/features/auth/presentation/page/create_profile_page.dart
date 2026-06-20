@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/services/app_services.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
@@ -145,9 +146,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                               children: [
                                 GestureDetector(
                                   onTap: () => context.pop(),
-                                  // TODO: change to iconsax — currently Material fallback
                                   child: const Icon(
-                                    Icons.arrow_back,
+                                    AppIcons.arrowBack,
                                     size: 24,
                                   ),
                                 ),

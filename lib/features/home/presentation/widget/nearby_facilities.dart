@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/card/nearby_clinic_card.dart';
@@ -62,8 +63,7 @@ class NearbyFacilitiesLocationDenied extends StatelessWidget {
       children: [
         const HeaderTitle(title: 'Nearby Medical Centers'),
         _StatusBody(
-          // TODO: change to iconsax — currently Material fallback
-          icon: Icons.location_disabled,
+          icon: AppIcons.locationDisabled,
           message: reason,
           buttonLabel: 'Izinkan Lokasi',
         ),
@@ -79,7 +79,6 @@ class NearbyFacilitiesError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('NearbyFacilitiesError: $message'); // Debug log
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(

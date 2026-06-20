@@ -36,7 +36,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     Emitter<SignInState> emit,
   ) async {
     emit(const SignInLoading());
-    // TODO(google): implement Google sign in
     emit(const SignInFailure('Google sign in coming soon'));
   }
 }

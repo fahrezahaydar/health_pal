@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -52,8 +53,7 @@ class TermsAndConditionsPage extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          // TODO: change to iconsax — currently Material fallback
-          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
+          icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Terms & Conditions', style: AppTextTheme.titleLarge),
@@ -71,21 +71,26 @@ class TermsAndConditionsPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // TODO: change to iconsax — currently Material fallback
-                const Icon(Icons.description,
-                    size: 32, color: AppTheme.primary),
+                const Icon(
+                  AppIcons.description,
+                  size: 32,
+                  color: AppTheme.primary,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Syarat & Ketentuan', style: AppTextTheme.titleLarge),
+                      Text(
+                        'Syarat & Ketentuan',
+                        style: AppTextTheme.titleLarge,
+                      ),
                       const SizedBox(height: 2),
                       Text(
-                        // TODO: sync with konten aktual — hardcoded sementara
-                      'Terakhir diperbarui: Juni 2026',
-                        style: AppTextTheme.labelSmall
-                            .copyWith(color: AppTheme.grey500),
+                        'Terakhir diperbarui: Juni 2026',
+                        style: AppTextTheme.labelSmall.copyWith(
+                          color: AppTheme.grey500,
+                        ),
                       ),
                     ],
                   ),
@@ -129,7 +134,10 @@ class TermsAndConditionsPage extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           s.body,
-          style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700, height: 1.5),
+          style: AppTextTheme.bodySmall.copyWith(
+            color: AppTheme.grey700,
+            height: 1.5,
+          ),
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
@@ -82,8 +83,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               Text(
                                 'Create Account',
-                                style: AppTextTheme.headlineLarge
-                                    .copyWith(color: AppTheme.primary),
+                                style: AppTextTheme.headlineLarge.copyWith(
+                                  color: AppTheme.primary,
+                                ),
                               ),
                               Text(
                                 'We are here to help you!',
@@ -104,8 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   name: 'Name',
                                   isShowError: false,
                                   hintText: 'Your Name',
-                                  // TODO: change to iconsax — currently Material fallback
-prefix: const Icon(Icons.person),
+                                  prefix: const Icon(AppIcons.person),
                                   controller: _nameController,
                                   validator: (value) {
                                     if (value.isEmpty) {
@@ -118,8 +119,7 @@ prefix: const Icon(Icons.person),
                                   name: 'Email',
                                   isShowError: false,
                                   controller: _emailController,
-                                  // TODO: change to iconsax — currently Material fallback
-                                  prefix: const Icon(Icons.email),
+                                  prefix: const Icon(AppIcons.email),
                                   hintText: 'Your Email',
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
@@ -139,10 +139,7 @@ prefix: const Icon(Icons.person),
                                       name: 'Password',
                                       isShowError: false,
                                       controller: _passwordController,
-                                      // TODO: change to iconsax — currently Material fallback
-                                      prefix: const Icon(
-                                        Icons.lock,
-                                      ),
+                                      prefix: const Icon(AppIcons.lock),
                                       hintText: 'Password',
                                       isPassword: !value,
                                       validator: (value) {
@@ -156,11 +153,10 @@ prefix: const Icon(Icons.person),
                                           _isShowPassword.value =
                                               !_isShowPassword.value;
                                         },
-                                        // TODO: change to iconsax — currently Material fallback
                                         child: Icon(
                                           value
-                                              ? Icons.visibility_off
-                                              : Icons.visibility,
+                                              ? AppIcons.visibilityOff
+                                              : AppIcons.visibility,
                                           color: AppTheme.grey500,
                                           size: 20,
                                         ),
@@ -183,9 +179,7 @@ prefix: const Icon(Icons.person),
                           const Expanded(
                             child: SizedBox(
                               height: 1,
-                              child: ColoredBox(
-                                color: AppTheme.grey200,
-                              ),
+                              child: ColoredBox(color: AppTheme.grey200),
                             ),
                           ),
                           Text(
@@ -197,9 +191,7 @@ prefix: const Icon(Icons.person),
                           const Expanded(
                             child: SizedBox(
                               height: 1,
-                              child: ColoredBox(
-                                color: AppTheme.grey200,
-                              ),
+                              child: ColoredBox(color: AppTheme.grey200),
                             ),
                           ),
                         ],
@@ -243,8 +235,7 @@ prefix: const Icon(Icons.person),
                                 fontWeight: FontWeight.w500,
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () =>
-                                    context.go(RoutePaths.signIn),
+                                ..onTap = () => context.go(RoutePaths.signIn),
                             ),
                           ],
                         ),

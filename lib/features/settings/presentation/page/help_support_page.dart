@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/layouts/card_container.dart';
@@ -49,8 +50,7 @@ class HelpSupportPage extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         leading: IconButton(
-          // TODO: change to iconsax — currently Material fallback
-          icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
+          icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('Help & Support', style: AppTextTheme.titleLarge),
@@ -72,14 +72,14 @@ class HelpSupportPage extends StatelessWidget {
           // ── Contact Us Section ──
           const SectionLabel(text: 'Hubungi Kami'),
           ContactCard(
-            icon: Icons.email, // TODO: change to iconsax
+            icon: AppIcons.email,
             label: 'Email',
             value: 'support@healthpal.app',
             onTap: () => _launchUrl('mailto:support@healthpal.app'),
           ),
           const SizedBox(height: 8),
           ContactCard(
-            icon: Icons.phone, // TODO: change to iconsax
+            icon: AppIcons.phone,
             label: 'Telepon',
             value: '021-12345678',
             onTap: () => _launchUrl('tel:+622112345678'),

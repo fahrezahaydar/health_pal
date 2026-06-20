@@ -18,7 +18,6 @@ class NearbyCubit extends Cubit<NearbyState> {
 
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      print('Location service enabled: $serviceEnabled'); // Debug log
       if (!serviceEnabled) {
         emit(
           const NearbyLocationDenied(
@@ -29,7 +28,6 @@ class NearbyCubit extends Cubit<NearbyState> {
       }
 
       var permission = await Geolocator.checkPermission();
-      print('Location permission status: $permission'); // Debug log
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {

@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/network/json_converters.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/date_formatter.dart';
@@ -37,7 +38,6 @@ class BookingSuccessPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // ── Success Icon (animated) — Sprint 6 B5 ──
-              // TODO: change to iconsax — currently Material fallback
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.0, end: 1.0),
                 duration: const Duration(milliseconds: 500),
@@ -53,7 +53,7 @@ class BookingSuccessPage extends StatelessWidget {
                         color: AppTheme.paleGreen,
                       ),
                       child: const Icon(
-                        Icons.check_circle,
+                        AppIcons.checkCircle,
                         size: 80,
                         color: AppTheme.green,
                       ),
@@ -119,27 +119,40 @@ class BookingSuccessPage extends StatelessWidget {
         children: [
           Text('Detail Booking', style: AppTextTheme.titleLarge),
           const SizedBox(height: 12),
-          InfoRow(icon: Icons.person, text: appt.doctorName, iconSize: 16),
+          InfoRow(icon: AppIcons.person, text: appt.doctorName, iconSize: 16),
           const SizedBox(height: 8),
-          InfoRow(icon: Icons.local_hospital, text: appt.clinicName, iconSize: 16),
+          InfoRow(
+            icon: AppIcons.localHospital,
+            text: appt.clinicName,
+            iconSize: 16,
+          ),
           const SizedBox(height: 8),
           if (appt.slotDate != null)
-            InfoRow(icon: Icons.calendar_today, text: DateFormatter.toShortDate(appt.slotDate!), iconSize: 16),
+            InfoRow(
+              icon: AppIcons.calendarToday,
+              text: DateFormatter.toShortDate(appt.slotDate!),
+              iconSize: 16,
+            ),
           if (appt.timeRangeDisplay != null) ...[
             const SizedBox(height: 8),
-            InfoRow(icon: Icons.access_time, text: appt.timeRangeDisplay!, iconSize: 16),
+            InfoRow(
+              icon: AppIcons.accessTime,
+              text: appt.timeRangeDisplay!,
+              iconSize: 16,
+            ),
           ],
           const SizedBox(height: 8),
           InfoRow(
-            icon: Icons.payments,
+            icon: AppIcons.payments,
             text: '${formatRupiah(appt.consultationFeeSnapshot)} (Simulasi)',
             iconSize: 16,
             valueColor: AppTheme.primary,
           ),
           const SizedBox(height: 8),
           InfoRow(
-            icon: Icons.info_outline,
-            text: 'Status: ${appt.status[0].toUpperCase()}${appt.status.substring(1)}',
+            icon: AppIcons.infoCircle,
+            text:
+                'Status: ${appt.status[0].toUpperCase()}${appt.status.substring(1)}',
             iconSize: 16,
             valueColor: AppTheme.primary,
           ),
@@ -147,5 +160,4 @@ class BookingSuccessPage extends StatelessWidget {
       ),
     );
   }
-
 }

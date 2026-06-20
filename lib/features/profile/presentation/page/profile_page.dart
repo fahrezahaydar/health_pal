@@ -13,6 +13,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
@@ -74,8 +75,7 @@ class _ProfileView extends StatelessWidget {
                   children: [
                     ErrorSection(
                       message: message,
-                      onRetry: () =>
-                          context.read<ProfileCubit>().loadProfile(),
+                      onRetry: () => context.read<ProfileCubit>().loadProfile(),
                     ),
                     const SizedBox(height: 24),
                     _logoutButton(context),
@@ -176,12 +176,9 @@ class _ProfileView extends StatelessWidget {
       child: Column(
         children: [
           MenuItemTile(
-            icon: Icons.person, // TODO: change to iconsax
+            icon: AppIcons.person,
             label: 'Edit Profile',
             onTap: () async {
-              // EditProfilePage.pop(true) menandakan data telah berubah.
-              // Refresh ProfileCubit biar UI tampil data terbaru tanpa
-              // harus pull-to-refresh manual.
               final changed = await context.push<bool>(RoutePaths.editProfile);
               if (changed == true && context.mounted) {
                 context.read<ProfileCubit>().loadProfile();
@@ -190,31 +187,31 @@ class _ProfileView extends StatelessWidget {
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Icons.favorite , // TODO: change to iconsax
+            icon: AppIcons.favorite,
             label: 'Favorite',
             onTap: () => context.push(RoutePaths.favorite),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Icons.notifications , // TODO: change to iconsax
+            icon: AppIcons.notification,
             label: 'Notification',
             onTap: () => context.push(RoutePaths.notificationSettings),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Icons.settings , // TODO: change to iconsax
+            icon: AppIcons.settings,
             label: 'Settings',
             onTap: () => context.push(RoutePaths.settings),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Icons.help , // TODO: change to iconsax
+            icon: AppIcons.help,
             label: 'Help and Support',
             onTap: () => context.push(RoutePaths.helpSupport),
           ),
           const AppDivider(),
           MenuItemTile(
-            icon: Icons.description , // TODO: change to iconsax
+            icon: AppIcons.description,
             label: 'T & C',
             onTap: () => context.push(RoutePaths.termsAndConditions),
           ),
@@ -226,8 +223,7 @@ class _ProfileView extends StatelessWidget {
   Widget _logoutButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: () => _confirmLogout(context),
-      // TODO: change to iconsax — currently Material fallback
-      icon: const Icon(Icons.logout, color: AppTheme.darkRed),
+      icon: const Icon(AppIcons.logout, color: AppTheme.darkRed),
       label: const Text(
         'Logout',
         style: TextStyle(color: AppTheme.darkRed, fontWeight: FontWeight.w600),
@@ -239,7 +235,6 @@ class _ProfileView extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _ProfileSkeleton extends StatelessWidget {
@@ -278,5 +273,3 @@ class _ProfileSkeleton extends StatelessWidget {
     );
   }
 }
-
-

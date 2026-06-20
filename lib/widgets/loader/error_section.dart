@@ -4,11 +4,7 @@ import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 
 class ErrorSection extends StatelessWidget {
-  const ErrorSection({
-    super.key,
-    required this.message,
-    this.onRetry,
-  });
+  const ErrorSection({super.key, required this.message, this.onRetry});
 
   final String message;
   final VoidCallback? onRetry;
@@ -27,7 +23,6 @@ class ErrorSection extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // TODO: change to iconsax — currently Material fallback
             const Icon(Icons.error_outline, size: 40, color: AppTheme.grey300),
             const SizedBox(height: 12),
             Text(
@@ -40,16 +35,19 @@ class ErrorSection extends StatelessWidget {
               GestureDetector(
                 onTap: onRetry,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Coba Lagi',
-                    style:
-                        AppTextTheme.bodySmall.copyWith(color: AppTheme.white),
+                    style: AppTextTheme.bodySmall.copyWith(
+                      color: AppTheme.white,
+                    ),
                   ),
                 ),
               ),

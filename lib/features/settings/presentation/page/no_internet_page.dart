@@ -6,6 +6,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
@@ -24,8 +25,9 @@ class _NoInternetPageState extends State<NoInternetPage> {
     setState(() => _isChecking = true);
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      final hasConnection =
-          connectivityResult.any((r) => r != ConnectivityResult.none);
+      final hasConnection = connectivityResult.any(
+        (r) => r != ConnectivityResult.none,
+      );
       if (!mounted) return;
       if (hasConnection) {
         Navigator.of(context).pop();
@@ -38,7 +40,9 @@ class _NoInternetPageState extends State<NoInternetPage> {
     setState(() => _isChecking = false);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Masih tidak ada koneksi. Periksa WiFi atau data seluler.'),
+        content: Text(
+          'Masih tidak ada koneksi. Periksa WiFi atau data seluler.',
+        ),
       ),
     );
   }
@@ -62,7 +66,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
                   color: AppTheme.grey100,
                 ),
                 child: const Icon(
-                  Icons.wifi_off, // TODO: change to iconsax
+                  AppIcons.wifiOff,
                   size: 80,
                   color: AppTheme.grey400,
                 ),
@@ -84,10 +88,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
                 width: double.infinity,
                 child: _isChecking
                     ? const Center(child: CircularProgressIndicator())
-                    : LightFilledButton(
-                        label: 'Coba Lagi',
-                        onTap: _retry,
-                      ),
+                    : LightFilledButton(label: 'Coba Lagi', onTap: _retry),
               ),
             ],
           ),

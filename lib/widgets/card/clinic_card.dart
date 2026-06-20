@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/loc/domain/entity/clinic_entity.dart';
@@ -51,14 +52,14 @@ class ClinicCard extends StatelessWidget {
                           clinic.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, _, _) => const Icon(
-                            Icons.local_hospital, // TODO: change to iconsax
+                            AppIcons.localHospital,
                             color: AppTheme.grey400,
                             size: 32,
                           ),
                         ),
                       )
                     : const Icon(
-                        Icons.local_hospital, // TODO: change to iconsax
+                        AppIcons.localHospital,
                         color: AppTheme.grey400,
                         size: 32,
                       ),
@@ -77,9 +78,8 @@ class ClinicCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        // TODO: change to iconsax — currently Material fallback
                         const Icon(
-                          Icons.location_on,
+                          AppIcons.location,
                           size: 12,
                           color: AppTheme.grey500,
                         ),
@@ -152,8 +152,7 @@ class ClinicCard extends StatelessWidget {
             const SizedBox(height: 12),
           Row(
             children: [
-              // TODO: change to iconsax — currently Material fallback
-              const Icon(Icons.people, size: 14, color: AppTheme.grey500),
+              const Icon(AppIcons.people, size: 14, color: AppTheme.grey500),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -171,7 +170,7 @@ class ClinicCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   icon: const Icon(
-                    Icons.map,
+                    AppIcons.map,
                     size: 14,
                     color: AppTheme.primary,
                   ),

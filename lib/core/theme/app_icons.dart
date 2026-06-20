@@ -3,8 +3,6 @@ import 'package:iconsax_latest/iconsax_latest.dart';
 
 /// Centralized icon reference untuk seluruh aplikasi.
 ///
-/// SAAT INI: masih memakai Material Icons (Icons.xxx) sebagai placeholder.
-/// bisa dihapus dari file ini.
 class AppIcons {
   AppIcons._();
 

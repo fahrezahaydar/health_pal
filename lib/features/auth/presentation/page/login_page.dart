@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/services/app_services.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
@@ -140,8 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                                         AppTextFormField(
                                           name: 'Email',
                                           controller: _emailController,
-                                          // TODO: change to iconsax — currently Material fallback
-                                          prefix: const Icon(Icons.email),
+                                          prefix: const Icon(AppIcons.email),
                                           hintText: 'Your Email',
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -162,8 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                                             return AppTextFormField(
                                               name: 'Password',
                                               controller: _passwordController,
-                                              // TODO: change to iconsax — currently Material fallback
-                                              prefix: const Icon(Icons.lock),
+                                              prefix: const Icon(AppIcons.lock),
                                               hintText: 'Password',
                                               isPassword: !value,
                                               validator: (value) {
@@ -177,11 +175,10 @@ class _LoginPageState extends State<LoginPage> {
                                                   _isShowPassword.value =
                                                       !_isShowPassword.value;
                                                 },
-                                                // TODO: change to iconsax — currently Material fallback
                                                 child: Icon(
                                                   value
-                                                      ? Icons.visibility_off
-                                                      : Icons.visibility,
+                                                      ? AppIcons.visibilityOff
+                                                      : AppIcons.visibility,
                                                   color: AppTheme.grey500,
                                                   size: 20,
                                                 ),
@@ -320,21 +317,6 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        if (kDebugMode) ...[
-                          const Divider(),
-                          Text(
-                            'Debug: App Icons Preview',
-                            style: AppTextTheme.bodyMedium.copyWith(
-                              color: AppTheme.grey500,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () =>
-                                context.go(RoutePaths.appIconsPreview),
-                            child: const Text('Go to App Icons Preview'),
-                          ),
-                        ],
                       ],
                     ),
                   ),

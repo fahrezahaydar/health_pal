@@ -5,18 +5,16 @@ import '../../core/theme/app_theme.dart';
 import '../../features/home/domain/entity/specialization_entity.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({
-    super.key,
-    this.name,
-    this.iconUrl,
-    this.onTap,
-  });
+  const CategoryCard({super.key, this.name, this.iconUrl, this.onTap});
 
   final String? name;
   final String? iconUrl;
   final VoidCallback? onTap;
 
-  factory CategoryCard.fromEntity(SpecializationEntity entity, {VoidCallback? onTap}) {
+  factory CategoryCard.fromEntity(
+    SpecializationEntity entity, {
+    VoidCallback? onTap,
+  }) {
     return CategoryCard(
       name: entity.name,
       iconUrl: entity.iconUrl,
@@ -46,17 +44,10 @@ class CategoryCard extends StatelessWidget {
                     iconUrl!,
                     width: 28,
                     height: 28,
-                    errorBuilder: (_, _, _) => Icon(
-                      _iconData(name),
-                      size: 28,
-                      color: AppTheme.blue,
-                    ),
+                    errorBuilder: (_, _, _) =>
+                        Icon(_iconData(name), size: 28, color: AppTheme.blue),
                   )
-                : Icon(
-                    _iconData(name),
-                    size: 28,
-                    color: AppTheme.blue,
-                  ),
+                : Icon(_iconData(name), size: 28, color: AppTheme.blue),
           ),
           const SizedBox(height: 6),
           Text(
@@ -71,7 +62,6 @@ class CategoryCard extends StatelessWidget {
     );
   }
 
-  // TODO: change to iconsax — currently Material fallback (iconsax_latest suffix error-prone)
   IconData _iconData(String? name) {
     if (name == null) return Icons.local_hospital;
     final lower = name.toLowerCase();
