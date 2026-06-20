@@ -48,10 +48,7 @@ class GreetingSection extends StatelessWidget {
             icon: AppBadge(
               // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
               count: unreadCount > 0 ? unreadCount : null,
-              child: const Icon(
-                AppIcons.notificationBingStyle5,
-                color: AppTheme.grey900,
-              ),
+              child: const Icon(AppIcons.notification, color: AppTheme.grey900),
             ),
           ),
         ],
@@ -59,5 +56,3 @@ class GreetingSection extends StatelessWidget {
     );
   }
 }
-
-

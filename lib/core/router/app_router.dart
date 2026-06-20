@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../features/auth/presentation/page/icon_page.dart';
 import 'route_paths.dart';
 import '../enums/app_status.dart';
 import '../services/app_services.dart';
@@ -59,7 +60,8 @@ class AppRouter {
       // depth — primary fix ada di _setStatusFromProfile() Failure case.
       if (loc == RoutePaths.createProfile) return null;
 
-      final isOnAuthRoute = loc.startsWith(RoutePaths.signIn) ||
+      final isOnAuthRoute =
+          loc.startsWith(RoutePaths.signIn) ||
           loc.startsWith(RoutePaths.signUp);
 
       // ─── Kondisi 1: belum pernah onboarding → halaman onboarding
@@ -91,7 +93,8 @@ class AppRouter {
       //                  lempar ke /home. Route lain (booking, profile, dll)
       //                  dibiarkan.
       if (status == AppStatus.authenticated) {
-        final isOnAuthOrOnboarding = loc == RoutePaths.onboarding || isOnAuthRoute;
+        final isOnAuthOrOnboarding =
+            loc == RoutePaths.onboarding || isOnAuthRoute;
         if (isOnAuthOrOnboarding) return RoutePaths.home;
         return null;
       }
@@ -117,6 +120,11 @@ class AppRouter {
             path: 'forgot-password',
             name: 'forgotPassword',
             builder: (_, _) => const ForgotPasswordPage(),
+          ),
+          GoRoute(
+            path: 'icon-preview',
+            name: 'iconPreview',
+            builder: (_, _) => const AppIconsPreviewPage(),
           ),
         ],
       ),
@@ -307,7 +315,9 @@ void handleNotificationNavigation(
     case 'booking_cancelled':
     case 'booking_reminder':
       if (appointmentId != null) {
-        context.push(RoutePaths.bookingDetail.replaceAll(':appointmentId', appointmentId));
+        context.push(
+          RoutePaths.bookingDetail.replaceAll(':appointmentId', appointmentId),
+        );
       } else {
         context.push(RoutePaths.bookingHistory);
       }

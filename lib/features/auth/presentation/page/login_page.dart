@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                           name: 'Email',
                                           controller: _emailController,
                                           // TODO: change to iconsax — currently Material fallback
-prefix: const Icon(Icons.email),
+                                          prefix: const Icon(Icons.email),
                                           hintText: 'Your Email',
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -148,7 +149,8 @@ prefix: const Icon(Icons.email),
                                             if (value.isEmpty) {
                                               return 'Email wajib diisi';
                                             }
-                                            if (Validators.email(value) != null) {
+                                            if (Validators.email(value) !=
+                                                null) {
                                               return 'Format email tidak valid';
                                             }
                                             return null;
@@ -161,9 +163,7 @@ prefix: const Icon(Icons.email),
                                               name: 'Password',
                                               controller: _passwordController,
                                               // TODO: change to iconsax — currently Material fallback
-                                              prefix: const Icon(
-                                                Icons.lock,
-                                              ),
+                                              prefix: const Icon(Icons.lock),
                                               hintText: 'Password',
                                               isPassword: !value,
                                               validator: (value) {
@@ -204,7 +204,8 @@ prefix: const Icon(Icons.email),
                                           if (state is SignInFailure)
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  bottom: 8),
+                                                bottom: 8,
+                                              ),
                                               child: ErrorSection(
                                                 message: state.message,
                                                 onRetry: () =>
@@ -319,6 +320,21 @@ prefix: const Icon(Icons.email),
                             ),
                           ),
                         ),
+                        if (kDebugMode) ...[
+                          const Divider(),
+                          Text(
+                            'Debug: App Icons Preview',
+                            style: AppTextTheme.bodyMedium.copyWith(
+                              color: AppTheme.grey500,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                context.go(RoutePaths.appIconsPreview),
+                            child: const Text('Go to App Icons Preview'),
+                          ),
+                        ],
                       ],
                     ),
                   ),

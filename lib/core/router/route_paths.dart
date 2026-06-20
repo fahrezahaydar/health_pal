@@ -7,6 +7,7 @@ class RoutePaths {
   static const signUp = '/sign-up';
   static const createProfile = '/sign-up/create-profile';
   static const forgotPassword = '/sign-in/forgot-password';
+  static const appIconsPreview = '/sign-in/icon-preview';
 
   // Main Shell
   static const home = '/home';

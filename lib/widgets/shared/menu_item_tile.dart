@@ -36,7 +36,11 @@ class MenuItemTile extends StatelessWidget {
             if (trailing != null)
               trailing!
             else if (onTap != null)
-              const Icon(AppIcons.arrowRight03, size: 18, color: AppTheme.grey400),
+              const Icon(
+                AppIcons.arrowRight,
+                size: 18,
+                color: AppTheme.grey400,
+              ),
           ],
         ),
       ),

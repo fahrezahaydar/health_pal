@@ -254,7 +254,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
 
                   widget.suffix ??
                       Icon(
-                        _isOpen ? AppIcons.arrowUp02 : AppIcons.arrowDown02,
+                        _isOpen ? AppIcons.arrowUp : AppIcons.arrowDown02,
                         size: 18,
                         color: AppTheme.grey500,
                       ),

@@ -43,15 +43,16 @@ class ContactCard extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: AppTextTheme.labelSmall
-                        .copyWith(color: AppTheme.grey500),
+                    style: AppTextTheme.labelSmall.copyWith(
+                      color: AppTheme.grey500,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(value, style: AppTextTheme.bodyMedium),
                 ],
               ),
             ),
-            const Icon(AppIcons.arrowRight03, color: AppTheme.grey400, size: 18),
+            const Icon(AppIcons.arrowRight, color: AppTheme.grey400, size: 18),
           ],
         ),
       ),
