@@ -21,7 +21,7 @@ class AppIcons {
 
   // ── Auth & Profile ──
   static const IconData person = Iconsax.user;
-  static const IconData email = Iconsax.emailSnow;
+  static const IconData email = Iconsax.sms;
   static const IconData lock = Iconsax.lock;
   static const IconData visibilityOff = Iconsax.eyeSlashStyle2;
   static const IconData visibility = Iconsax.eye;
@@ -57,10 +57,6 @@ class AppIcons {
   // ── Settings ──
   static const IconData darkMode = Iconsax.moonStyle2;
   static const IconData storage = Iconsax.dataStyle1;
-
-  // ═══════════════════════════════════════════════════════════
-  //   SUDAH ICONSAX (tidak perlu diganti)
-  // ═══════════════════════════════════════════════════════════
 
   // ── Navigation (Iconsax) ──
   static const IconData home = Iconsax.home;
@@ -99,4 +95,83 @@ class AppIcons {
 
   // ── User (Iconsax) ──
   static const IconData user = Iconsax.user;
+
+  /// Semua icon untuk debugging/gallery.
+  static const Map<String, IconData> allIcons = {
+    'arrowBack': arrowBack,
+    'close': close,
+    'arrowDropDown': arrowDropDown,
+    'sort': sort,
+    'share': share,
+    'editCalendar': editCalendar,
+
+    'search': search,
+
+    'person': person,
+    'email': email,
+    'lock': lock,
+    'visibilityOff': visibilityOff,
+    'visibility': visibility,
+    'logout': logout,
+    'settings': settings,
+    'help': help,
+    'description': description,
+    'notifications': notifications,
+    'favorite': favorite,
+
+    'calendarToday': calendarToday,
+    'accessTime': accessTime,
+    'checkCircle': checkCircle,
+    'check': check,
+
+    'localHospital': localHospital,
+    'localHospitalOutlined': localHospitalOutlined,
+    'locationOn': locationOn,
+    'locationOff': locationOff,
+    'locationDisabled': locationDisabled,
+    'phone': phone,
+    'myLocation': myLocation,
+    'wifiOff': wifiOff,
+    'star': star,
+    'people': people,
+    'map': map,
+    'payments': payments,
+
+    'info': info,
+
+    'darkMode': darkMode,
+    'storage': storage,
+
+    'home': home,
+    'location': location,
+    'arrowRight03': arrowRight03,
+    'arrowDown01': arrowDown01,
+    'arrowUp02': arrowUp02,
+    'arrowDown02': arrowDown02,
+
+    'searchNormal': searchNormal,
+    'filter': filter,
+    'gallery': gallery,
+    'edit': edit,
+    'camera': camera,
+    'galleryPicker': galleryPicker,
+    'trash': trash,
+    'profileCircle': profileCircle,
+
+    'notificationBingStyle5': notificationBingStyle5,
+    'notification': notification,
+    'tickCircle': tickCircle,
+    'closeCircle': closeCircle,
+    'clock': clock,
+    'warning2': warning2,
+    'infoCircle': infoCircle,
+    'shieldTick': shieldTick,
+
+    'messageQuestion': messageQuestion,
+
+    'calendar': calendar,
+    'calendar2': calendar2,
+
+    'user': user,
+  };
 }
