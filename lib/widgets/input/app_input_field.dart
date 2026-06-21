@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_theme.dart';
 
@@ -162,7 +161,7 @@ class _AppInputFieldState extends State<AppInputField> {
                     if (!_hasText && widget.hintText != null)
                       Text(
                         widget.hintText!,
-                        style: GoogleFonts.inter(
+                        style: const TextStyle(fontFamily: 'Inter',
                           color: AppTheme.grey400,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -195,7 +194,7 @@ class _AppInputFieldState extends State<AppInputField> {
                       enableSuggestions: widget.enableSuggestions,
                       inputFormatters: _effectiveFormatters,
                       onSubmitted: widget.onSubmitted,
-                      style: GoogleFonts.inter(
+                      style: const TextStyle(fontFamily: 'Inter',
                         color: AppTheme.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,

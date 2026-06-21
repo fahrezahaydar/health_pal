@@ -1,6 +1,5 @@
 import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_theme.dart';
 
@@ -72,7 +71,7 @@ class AppDatePickerField extends StatelessWidget {
                 Expanded(
                   child: Text(
                     value != null ? _format(value) : hintText ?? '',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(fontFamily: 'Inter',
                       fontSize: 14,
                       color: value == null
                           ? AppTheme.grey400

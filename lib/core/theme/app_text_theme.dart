@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTextTheme {
   // Constructor konstan agar bisa dipanggil AppTextTheme()
@@ -21,9 +20,10 @@ class AppTextTheme {
   // 🔥 Static getter agar kode lama 'AppTextTheme.ts' tetap jalan
 
   // Base style untuk menghindari pengulangan (DRY)
-  static final TextStyle _baseInter = GoogleFonts.inter(height: 1.5);
+  static const TextStyle _baseInter = TextStyle(fontFamily: 'Inter', height: 1.5);
+  static const TextStyle inter = TextStyle(fontFamily: 'Inter', height: 1.5);
 
-  static final TextStyle _basePoppins = GoogleFonts.poppins(height: 1.5);
+  static const TextStyle _basePoppins = TextStyle(fontFamily: 'Poppins', height: 1.5);
 
   // ===== HEADINGS =====
   static TextStyle headlineLarge = _baseInter.copyWith(
@@ -64,7 +64,7 @@ class AppTextTheme {
 
   // ===== BUTTON =====
   static TextStyle labelLarge = _baseInter.copyWith(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
   );
 

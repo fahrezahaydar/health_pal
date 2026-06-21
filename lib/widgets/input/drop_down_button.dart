@@ -1,7 +1,6 @@
 import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_theme.dart';
 
@@ -125,7 +124,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
     return OverlayEntry(
       builder: (context) {
         return DefaultTextStyle(
-          style: GoogleFonts.inter(fontSize: 14, color: AppTheme.primary),
+          style: const TextStyle(fontFamily: 'Inter',fontSize: 14, color: AppTheme.primary),
           child: Stack(
             children: [
               Positioned.fill(
@@ -174,7 +173,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
                           ),
                           child: Text(
                             item.label,
-                            style: GoogleFonts.inter(
+                            style: TextStyle(fontFamily: 'Inter',
                               fontSize: 14,
                               fontWeight: isSelected
                                   ? FontWeight.w600
@@ -242,7 +241,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
                   Expanded(
                     child: Text(
                       _selectedItem?.label ?? widget.hintText ?? '',
-                      style: GoogleFonts.inter(
+                      style: TextStyle(fontFamily: 'Inter',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: _selectedItem == null

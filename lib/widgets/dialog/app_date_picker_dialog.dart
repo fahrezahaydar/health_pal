@@ -1,5 +1,4 @@
  import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_theme.dart';
 
@@ -52,7 +51,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle(
-      style: GoogleFonts.inter(fontSize: 14, color: AppTheme.primary),
+      style: const TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppTheme.primary),
       child: GestureDetector(
         onTap: widget.onCancel,
         child: Container(
@@ -70,9 +69,9 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  const Text(
                     'Select Date',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: AppTheme.primary,
@@ -88,7 +87,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
 
                       Text(
                         _format(_date),
-                        style: GoogleFonts.inter(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: AppTheme.primary,
@@ -109,9 +108,9 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                           child: Container(
                             height: 44,
                             alignment: Alignment.center,
-                            child: Text(
+                            child: const Text(
                               'Cancel',
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -134,12 +133,12 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
                               color: AppTheme.primary,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
+                            child: const Text(
                               'OK',
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFFFFFFF),
+                                color: Color(0xFFFFFFFF),
                               ),
                             ),
                           ),
@@ -169,7 +168,7 @@ class _AppDatePickerDialogState extends State<AppDatePickerDialog> {
         ),
         child: Text(
           text,
-          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ),
     );
