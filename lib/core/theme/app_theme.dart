@@ -54,46 +54,123 @@ abstract final class AppTheme {
   static const Color purple = Color(0xFF352261);
   static const Color orange = Color(0xFFF5AD7E);
   // The FlexColorScheme defined light mode ThemeData.
-  static ThemeData light = FlexThemeData.light(
-    // User defined custom colors made with FlexSchemeColor() API.
-    colors: const FlexSchemeColor(
-      primary: Color(0xFF1C2A3A),
-      primaryContainer: Color(0xFFD0E4FF),
-      secondary: Color(0xFFAC3306),
-      secondaryContainer: Color(0xFFFFDBCF),
-      tertiary: Color(0xFF006875),
-      tertiaryContainer: Color(0xFF95F0FF),
-      appBarColor: Color(0xFFFFDBCF),
-      error: Color(0xFFBA1A1A),
-      errorContainer: Color(0xFFFFDAD6),
-    ),
-    // Input color modifiers.
-    usedColors: 1,
-    useMaterial3ErrorColors: true,
-    // Component theme configurations for light mode.
-    subThemesData: const FlexSubThemesData(
-      interactionEffects: true,
-      tintedDisabledControls: true,
-      useM2StyleDividerInM3: true,
-      inputDecoratorIsFilled: true,
-      inputDecoratorBorderType: FlexInputBorderType.outline,
-      fabSchemeColor: SchemeColor.onPrimary,
-      alignedDropdown: true,
-      bottomNavigationBarShowSelectedLabels: false,
-      bottomNavigationBarShowUnselectedLabels: false,
-      searchBarRadius: 8.0,
-      searchViewRadius: 8.0,
-      navigationBarIndicatorSchemeColor: SchemeColor.surfaceContainerHighest,
-      navigationBarIndicatorRadius: 25.0,
-      navigationBarLabelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-      navigationRailUseIndicator: true,
-    ),
-    // Direct ThemeData properties.
-    visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-    textTheme: AppTextTheme.textTheme,
-    primaryTextTheme: AppTextTheme.textTheme,
-  );
+  static ThemeData light =
+      FlexThemeData.light(
+        // User defined custom colors made with FlexSchemeColor() API.
+        colors: const FlexSchemeColor(
+          primary: Color(0xFF1C2A3A),
+          primaryContainer: Color(0xFFD0E4FF),
+          secondary: Color(0xFFAC3306),
+          secondaryContainer: Color(0xFFFFDBCF),
+          tertiary: Color(0xFF006875),
+          tertiaryContainer: Color(0xFF95F0FF),
+          appBarColor: Color(0xFFFFDBCF),
+          error: Color(0xFFBA1A1A),
+          errorContainer: Color(0xFFFFDAD6),
+        ),
+        // Input color modifiers.
+        usedColors: 1,
+        useMaterial3ErrorColors: true,
+        // Component theme configurations for light mode.
+        subThemesData: const FlexSubThemesData(
+          interactionEffects: true,
+          tintedDisabledControls: true,
+          useM2StyleDividerInM3: true,
+          inputDecoratorIsFilled: true,
+          inputDecoratorFillColor: AppTheme.grey50,
+          inputDecoratorRadius: 8.0,
+          inputDecoratorBorderType: FlexInputBorderType.outline,
+
+          fabSchemeColor: SchemeColor.onPrimary,
+          alignedDropdown: true,
+          bottomNavigationBarShowSelectedLabels: false,
+          bottomNavigationBarShowUnselectedLabels: false,
+          searchBarRadius: 8.0,
+          searchViewRadius: 8.0,
+          navigationBarIndicatorSchemeColor:
+              SchemeColor.surfaceContainerHighest,
+          navigationBarIndicatorRadius: 25.0,
+          navigationBarLabelBehavior:
+              NavigationDestinationLabelBehavior.alwaysHide,
+          navigationRailUseIndicator: true,
+        ),
+        // Direct ThemeData properties.
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
+        cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
+        textTheme: AppTextTheme.textTheme,
+        primaryTextTheme: AppTextTheme.textTheme,
+      ).copyWith(
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: AppTheme.grey300, width: 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(8),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppTheme.grey50,
+          hintStyle: AppTextTheme.bodySmall.copyWith(
+            height: 1.5,
+            color: AppTheme.grey400,
+          ),
+          labelStyle: AppTextTheme.bodySmall.copyWith(
+            height: 1.5,
+            color: AppTheme.grey400,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+
+          errorStyle: AppTextTheme.bodySmall.copyWith(
+            color: const Color(0xFFD32F2F),
+            fontSize: 12,
+            height: 1.5,
+          ),
+
+          counterStyle: AppTextTheme.bodySmall.copyWith(
+            fontSize: 12,
+            height: 1.5,
+          ),
+
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+
+          prefixIconColor: AppTheme.grey500,
+          suffixIconColor: AppTheme.grey500,
+
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: AppTheme.grey300, width: 1),
+          ),
+
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: AppTheme.grey300, width: 1),
+          ),
+
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(width: 1, color: AppTheme.grey500),
+          ),
+
+          disabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: AppTheme.grey300, width: 1),
+          ),
+
+          errorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Color(0xFFD32F2F), width: 1),
+          ),
+
+          focusedErrorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Color(0xFFD32F2F), width: 1),
+          ),
+        ),
+      );
 
   // The FlexColorScheme defined dark mode ThemeData.
   static ThemeData dark = FlexThemeData.dark(
@@ -122,6 +199,8 @@ abstract final class AppTheme {
       blendOnColors: true,
       useM2StyleDividerInM3: true,
       inputDecoratorIsFilled: true,
+      inputDecoratorFillColor: AppTheme.grey900,
+      inputDecoratorRadius: 8.0,
       inputDecoratorBorderType: FlexInputBorderType.outline,
       fabSchemeColor: SchemeColor.onPrimary,
       alignedDropdown: true,
@@ -139,5 +218,5 @@ abstract final class AppTheme {
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
     textTheme: AppTextTheme.textTheme,
     primaryTextTheme: AppTextTheme.textTheme,
-  );
+  ).copyWith();
 }

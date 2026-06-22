@@ -5,7 +5,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/button/primary_button.dart';
 import '../bloc/onboarding_notifier.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -50,6 +49,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final ts = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       body: ChangeNotifierProvider(
         create: (_) => getIt<OnboardingNotifier>(),
@@ -87,9 +87,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: ts.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.grey700,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                                color: cs.primary,
                               ),
                             ),
                             AutoSizeText(
@@ -98,29 +100,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               style: ts.bodySmall?.copyWith(
-                                color: AppTheme.grey500,
+                                color: cs.inversePrimary,
                               ),
                             ),
                           ],
                         ),
 
                         /// BUTTON
-                        LightFilledButton(
-                          onTap: () => vm.nextPage(context, data.length),
-                          label: 'Next',
+                        FilledButton(
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                          ),
+                          onPressed: () => vm.nextPage(context, data.length),
+                          child: const Text('Next'),
                         ),
 
                         /// INDICATOR
                         SmoothPageIndicator(
                           controller: vm.controller,
                           count: data.length,
-                          effect: const ExpandingDotsEffect(
+                          effect: ExpandingDotsEffect(
                             expansionFactor: 4,
                             dotHeight: 8,
                             dotWidth: 8,
                             spacing: 6,
-                            activeDotColor: AppTheme.primary,
-                            dotColor: Color(0xff9B9B9B),
+                            activeDotColor: cs.primary,
+                            dotColor: cs.primaryContainer,
                           ),
                         ),
 

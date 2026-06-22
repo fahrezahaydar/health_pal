@@ -141,7 +141,7 @@ class MyApp extends StatelessWidget {
       routerConfig: router,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       localizationsDelegates: const [
         DefaultMaterialLocalizations.delegate,
         DefaultWidgetsLocalizations.delegate,

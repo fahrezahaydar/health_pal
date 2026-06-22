@@ -50,6 +50,7 @@ dev_dependencies:
   json_serializable: ^6.14.0
   mockito: ^5.4.4
   mocktail: ^1.0.4
+  rename_app: ^1.6.6
 
 flutter:
   uses-material-design: true
