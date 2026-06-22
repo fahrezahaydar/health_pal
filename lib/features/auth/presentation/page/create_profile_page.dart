@@ -38,6 +38,43 @@ class CreateProfilePage extends StatefulWidget {
 }
 
 class _CreateProfilePageState extends State<CreateProfilePage> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<CreateProfileCubit>(),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const Icon(AppIcons.arrowBack, size: 24),
+          ),
+        ),
+        body: CreateProfileView(
+          email: widget.email,
+          password: widget.password,
+          fullname: widget.fullname,
+        ),
+      ),
+    );
+  }
+}
+
+class CreateProfileView extends StatefulWidget {
+  const CreateProfileView({
+    super.key,
+    required this.email,
+    required this.fullname,
+    required this.password,
+  });
+  final String email;
+  final String fullname;
+  final String password;
+
+  @override
+  State<CreateProfileView> createState() => _CreateProfileViewState();
+}
+
+class _CreateProfileViewState extends State<CreateProfileView> {
   final _formKey = GlobalKey<AppFormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -96,175 +133,132 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<CreateProfileCubit>(),
-      child: Builder(
-        builder: (context) {
-          return BlocListener<CreateProfileCubit, CreateProfileState>(
-            listener: (context, state) {
-              switch (state) {
-                case CreateProfileLoading():
-                  AppLoadingDialog.show(context);
-                case CreateProfileSuccess():
-                  AppLoadingDialog.dismiss(context);
-                  GetIt.instance<AppServices>().markProfileComplete();
-                  context.go(RoutePaths.home);
-                case CreateProfileFailure():
-                  AppLoadingDialog.dismiss(context);
-                  final msg = state.message.toLowerCase();
-                  final isAlreadyRegistered =
-                      msg.contains('already registered') ||
-                      msg.contains('user already');
-                  AppCustomDialog.show(
-                    context,
-                    type: AppDialogType.error,
-                    title: isAlreadyRegistered
-                        ? 'Email Sudah Terdaftar'
-                        : 'Gagal Mendaftar',
-                    subtitle: isAlreadyRegistered
-                        ? 'Email ini sudah terdaftar. Silakan login atau gunakan email lain.'
-                        : state.message,
-                  );
-                default:
-                  break;
-              }
-            },
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: ColoredBox(
-                color: AppTheme.white,
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        spacing: 16,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 32),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => context.pop(),
-                                  child: const Icon(
-                                    AppIcons.arrowBack,
-                                    size: 24,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            spacing: 24,
-                            children: [
-                              Center(
-                                child: AppPhotoPicker(
-                                  size: 160,
-                                  localFile: _localPhoto,
-                                  remoteUrl: _remotePhotoUrl,
-                                  onPhotoSelected: (f) =>
-                                      setState(() => _localPhoto = f),
-                                  onPhotoRemoved: () =>
-                                      setState(() => _localPhoto = null),
-                                ),
-                              ),
-                              AppForm(
-                                key: _formKey,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                child: Column(
-                                  spacing: 16,
-                                  children: [
-                                    AppTextFormField(
-                                      name: 'Name',
-                                      hintText: 'Your Name',
-                                      isShowError: false,
-                                      controller: _nameController,
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return 'Nama wajib diisi';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    AppTextFormField(
-                                      name: 'Email',
-                                      controller: _emailController,
-                                      hintText: 'Your Email',
-                                      keyboardType: TextInputType.emailAddress,
-                                      isShowError: false,
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return 'Email wajib diisi';
-                                        }
-                                        if (!_isValidEmail(value)) {
-                                          return 'Format email tidak valid';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    AppTextFormField(
-                                      name: 'Nickname',
-                                      controller: _nicknameController,
-                                      hintText: 'Your Nickname',
-                                      isShowError: false,
-                                      validator: (value) {
-                                        if (value.isEmpty) {
-                                          return 'Nickname wajib diisi';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    AppDropdownFormField<String>(
-                                      name: 'gender',
-                                      hintText: 'Pilih Gender',
-                                      items: const [
-                                        AppDropdownItem(
-                                          label: 'Laki-Laki',
-                                          value: 'male',
-                                        ),
-                                        AppDropdownItem(
-                                          label: 'Perempuan',
-                                          value: 'female',
-                                        ),
-                                      ],
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return 'Gender wajib dipilih';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    AppDatePickerFormField(
-                                      name: 'date_of_birth',
-                                      hintText: 'Date of Birth',
-                                      firstDate: DateTime(1900),
-                                      lastDate: DateTime.now(),
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return 'Tanggal lahir wajib diisi';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    LightFilledButton(
-                                      onTap: () => _onSaveProfile(context),
-                                      label: 'Save Profile',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+    return BlocListener<CreateProfileCubit, CreateProfileState>(
+      listener: (context, state) {
+        switch (state) {
+          case CreateProfileLoading():
+            AppLoadingDialog.show(context);
+          case CreateProfileSuccess():
+            AppLoadingDialog.dismiss(context);
+            GetIt.instance<AppServices>().markProfileComplete();
+            context.go(RoutePaths.home);
+          case CreateProfileFailure():
+            AppLoadingDialog.dismiss(context);
+            final msg = state.message.toLowerCase();
+            final isAlreadyRegistered =
+                msg.contains('already registered') ||
+                msg.contains('user already');
+            AppCustomDialog.show(
+              context,
+              type: AppDialogType.error,
+              title: isAlreadyRegistered
+                  ? 'Email Sudah Terdaftar'
+                  : 'Gagal Mendaftar',
+              subtitle: isAlreadyRegistered
+                  ? 'Email ini sudah terdaftar. Silakan login atau gunakan email lain.'
+                  : state.message,
+            );
+          default:
+            break;
+        }
+      },
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            spacing: 24,
+            children: [
+              Center(
+                child: AppPhotoPicker(
+                  size: 160,
+                  localFile: _localPhoto,
+                  remoteUrl: _remotePhotoUrl,
+                  onPhotoSelected: (f) => setState(() => _localPhoto = f),
+                  onPhotoRemoved: () => setState(() => _localPhoto = null),
                 ),
               ),
-            ),
-          );
-        },
+              AppForm(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  spacing: 16,
+                  children: [
+                    AppTextFormField(
+                      name: 'Name',
+                      hintText: 'Your Name',
+                      isShowError: false,
+                      controller: _nameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Nama wajib diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                    AppTextFormField(
+                      name: 'Email',
+                      controller: _emailController,
+                      hintText: 'Your Email',
+                      keyboardType: TextInputType.emailAddress,
+                      isShowError: false,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Email wajib diisi';
+                        }
+                        if (!_isValidEmail(value)) {
+                          return 'Format email tidak valid';
+                        }
+                        return null;
+                      },
+                    ),
+                    AppTextFormField(
+                      name: 'Nickname',
+                      controller: _nicknameController,
+                      hintText: 'Your Nickname',
+                      isShowError: false,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Nickname wajib diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                    AppDropdownFormField<String>(
+                      name: 'gender',
+                      hintText: 'Pilih Gender',
+                      items: const [
+                        AppDropdownItem(label: 'Laki-Laki', value: 'male'),
+                        AppDropdownItem(label: 'Perempuan', value: 'female'),
+                      ],
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Gender wajib dipilih';
+                        }
+                        return null;
+                      },
+                    ),
+                    AppDatePickerFormField(
+                      name: 'date_of_birth',
+                      hintText: 'Date of Birth',
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Tanggal lahir wajib diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                    LightFilledButton(
+                      onTap: () => _onSaveProfile(context),
+                      label: 'Save Profile',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

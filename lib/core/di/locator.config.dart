@@ -34,8 +34,8 @@ import 'package:health_pal/features/auth/presentation/bloc/create_profile/create
     as _i730;
 import 'package:health_pal/features/auth/presentation/bloc/forget_password/forget_password_state.dart'
     as _i1000;
-import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_bloc.dart'
-    as _i685;
+import 'package:health_pal/features/auth/presentation/bloc/sign_in/sign_in_cubit.dart'
+    as _i544;
 import 'package:health_pal/features/booking/data/datasource/booking_remote_datasource.dart'
     as _i482;
 import 'package:health_pal/features/booking/data/repository/booking_repository_impl.dart'
@@ -319,8 +319,8 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i730.CreateProfileCubit(gh<_i630.RegisterAndCreateProfileUseCase>()),
     );
-    gh.factory<_i685.SignInBloc>(
-      () => _i685.SignInBloc(gh<_i930.LoginWithEmailUseCase>()),
+    gh.factory<_i544.SignInCubit>(
+      () => _i544.SignInCubit(gh<_i930.LoginWithEmailUseCase>()),
     );
     gh.factory<_i1053.SettingsCubit>(
       () => _i1053.SettingsCubit(

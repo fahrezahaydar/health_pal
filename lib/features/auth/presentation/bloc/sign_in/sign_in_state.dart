@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-import '../../../domain/entity/user_entity.dart';
+part of 'sign_in_cubit.dart';
 
 sealed class SignInState extends Equatable {
   const SignInState();
