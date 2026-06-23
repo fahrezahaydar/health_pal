@@ -6,7 +6,13 @@ import '../../core/theme/app_theme.dart';
 import '../../features/home/domain/entity/specialization_entity.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({super.key, this.name, this.iconUrl, this.colorHex, this.onTap});
+  const CategoryCard({
+    super.key,
+    this.name,
+    this.iconUrl,
+    this.colorHex,
+    this.onTap,
+  });
 
   final String? name;
   final String? iconUrl;
@@ -36,20 +42,55 @@ class CategoryCard extends StatelessWidget {
         children: [
           AspectRatio(
             aspectRatio: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _parseColor(colorHex) ?? AppTheme.paleBlue.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              alignment: Alignment.center,
-              child: iconUrl != null
-                  ? SvgPicture.network(
-                      iconUrl!,
-                      width: 28,
-                      height: 28,
-                      placeholderBuilder: (_) => const SizedBox.shrink(),
-                    )
-                  : Icon(_iconData(name), size: 28, color: AppTheme.blue),
+            child: LayoutBuilder(
+              builder: (context, c) {
+                final circleSize = c.maxWidth;
+
+                return Container(
+                  decoration: BoxDecoration(
+                    color:
+                        _parseColor(colorHex) ??
+                        AppTheme.paleBlue.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.hardEdge,
+
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: AlignmentGeometry.center,
+                    children: [
+                      Positioned(
+                        top: -circleSize / 2,
+                        left: -circleSize / 2,
+                        child: Container(
+                          width: circleSize,
+                          height: circleSize,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromRGBO(255, 255, 255, 0.2),
+                            // color: Colors.amber,
+                          ),
+                        ),
+                      ),
+                      SvgPicture.network(
+                        iconUrl ?? '',
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                        placeholderBuilder: (_) {
+                          return Icon(
+                            _iconData(name),
+                            size: 28,
+                            color: AppTheme.blue,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 6),

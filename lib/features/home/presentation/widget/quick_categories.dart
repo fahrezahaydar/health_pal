@@ -4,7 +4,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/card/category_card.dart';
 import '../../domain/entity/specialization_entity.dart';
 
