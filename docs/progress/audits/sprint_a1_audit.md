@@ -363,7 +363,7 @@ Sesuai wireframe 06 §6 + ERD §8 + API Contract §5.5 + TDD 12 Fase 9.5, endpoi
 | `user_profiles` | `UserProfileEntity` | `id`, `nickname`, `is_profile_complete` | 🟡 Partial (lihat 5.2) |
 | `banners` | `BannerEntity` | `id`, `title`, `image_url`, `action_url`, `display_order` (+ `is_active`, `starts_at`, `ends_at` di-filter query, tidak di entity) | ✅ |
 | `appointments` + `doctors` + `clinics` + `specializations` + `doctor_slots` | `UpcomingAppointmentEntity` | Flattened: `doctorName`, `doctorPhoto`, `clinicName`, `specializationName`, `slotDate`, `slotStart`, `slotEnd`, `status` | ✅ (lihat 5.3) |
-| `specializations` | `SpecializationEntity` | `id`, `name`, `icon_url` | ✅ |
+| `specializations` | `SpecializationEntity` | `id`, `name`, `icon_url`, `color_hex` | ✅ |
 
 ### 5.2 Detail — `user_profiles` Mapping
 

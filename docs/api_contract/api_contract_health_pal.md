@@ -727,25 +727,29 @@ Authorization: Bearer <access_token>
   {
     "id": "s1a2b3c4-d5e6-7890-spec-000000000001",
     "name": "Umum",
-    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/umum.png",
+    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/umum.svg",
+    "color_hex": "#4CAF50",
     "created_at": "2026-01-01T00:00:00.000Z"
   },
   {
     "id": "s1a2b3c4-d5e6-7890-spec-000000000002",
     "name": "Anak",
-    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/anak.png",
+    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/anak.svg",
+    "color_hex": "#FF9800",
     "created_at": "2026-01-01T00:00:00.000Z"
   },
   {
     "id": "s1a2b3c4-d5e6-7890-spec-000000000003",
     "name": "Kulit & Kelamin",
-    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/kulit.png",
+    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/kulit.svg",
+    "color_hex": "#E91E63",
     "created_at": "2026-01-01T00:00:00.000Z"
   },
   {
     "id": "s1a2b3c4-d5e6-7890-spec-000000000004",
     "name": "Gigi",
-    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/gigi.png",
+    "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/gigi.svg",
+    "color_hex": "#2196F3",
     "created_at": "2026-01-01T00:00:00.000Z"
   }
 ]
@@ -787,7 +791,7 @@ Authorization: Bearer <access_token>
 ```
 GET /rest/v1/doctors
   ?select=id,full_name,photo_url,experience_years,consultation_fee,rating_avg,rating_count,
-          clinics(id,name,city),specializations(id,name,icon_url)
+          clinics(id,name,city),specializations(id,name,icon_url,color_hex)
   &is_active=eq.true
   &full_name=ilike.*budi*
   &order=rating_avg.desc
@@ -814,11 +818,12 @@ GET /rest/v1/doctors
     "specializations": {
       "id": "s1a2b3c4-d5e6-7890-spec-000000000001",
       "name": "Penyakit Dalam",
-      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/pd.svg",
+      "color_hex": "#9C27B0"
     }
   },
   {
-    "id": "d1a2b3c4-e5f6-7890-doc1-000000000002",
+    "id": "d1a2b3c4-d5e6-7890-doc1-000000000002",
     "full_name": "dr. Budi Prasetyo, Sp.A",
     "photo_url": "https://<ref>.supabase.co/storage/v1/object/public/doctors/budi2.jpg",
     "experience_years": 8,
@@ -833,7 +838,8 @@ GET /rest/v1/doctors
     "specializations": {
       "id": "s1a2b3c4-d5e6-7890-spec-000000000002",
       "name": "Anak",
-      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/anak.png"
+      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/anak.svg",
+      "color_hex": "#FF9800"
     }
   }
 ]
@@ -902,7 +908,8 @@ Authorization: Bearer <access_token>
       "specializations": {
         "id": "s1a2b3c4-d5e6-7890-spec-000000000001",
         "name": "Penyakit Dalam",
-        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/pd.svg",
+        "color_hex": "#9C27B0"
       }
     }
   ],
@@ -984,7 +991,8 @@ Authorization: Bearer <access_token>
     "specializations": {
       "id": "s1a2b3c4-d5e6-7890-spec-000000000001",
       "name": "Penyakit Dalam",
-      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+      "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/pd.svg",
+      "color_hex": "#9C27B0"
     }
   }
 ]
@@ -1386,7 +1394,8 @@ Authorization: Bearer <access_token>
       "experience_years": 12,
       "specializations": {
         "name": "Penyakit Dalam",
-        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/pd.svg",
+        "color_hex": "#9C27B0"
       },
       "clinics": {
         "name": "Klinik Sehat Bersama",
@@ -1545,7 +1554,8 @@ Authorization: Bearer <access_token>
       "photo_url": "https://<ref>.supabase.co/storage/v1/object/public/doctors/budi.jpg",
       "specializations": {
         "name": "Penyakit Dalam",
-        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/icons/pd.png"
+        "icon_url": "https://<ref>.supabase.co/storage/v1/object/public/specialization-icons/pd.svg",
+        "color_hex": "#9C27B0"
       },
       "clinics": {
         "id": "c1a2b3c4-d5e6-7890-cln1-000000000001",

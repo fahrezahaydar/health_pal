@@ -63,6 +63,7 @@ erDiagram
         UUID id PK
         String name
         String icon_url
+        String color_hex
         DateTime created_at
     }
 
@@ -224,12 +225,14 @@ erDiagram
 
 ### `specializations`
 > Master data spesialisasi dokter. Dipakai untuk filter di Loc tab dan kategori.
+> Kolom `color_hex` ditambahkan via migration `006_specialization_icons_colors.sql`.
 
 | Kolom | Tipe | Keterangan |
 |---|---|---|
 | `id` | `UUID` PK | |
 | `name` | `TEXT` | Contoh: `Umum`, `Anak`, `Kulit`, `Gigi` |
-| `icon_url` | `TEXT` | URL ikon spesialisasi |
+| `icon_url` | `TEXT` | URL SVG icon dari Supabase Storage bucket `specialization-icons` |
+| `color_hex` | `TEXT` | Warna utama untuk render card/icon background. Format: `#RRGGBB` atau `#AARRGGBB`. Nullable — fallback ke theme color. |
 | `created_at` | `TIMESTAMPTZ` | Auto |
 
 ---

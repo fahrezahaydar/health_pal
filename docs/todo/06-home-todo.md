@@ -125,7 +125,7 @@
 | A.2 | `BannerModel` | `home/data/model/banner_model.dart` | fromJson/toJson + toEntity/fromEntity |
 | A.3 | `UpcomingAppointmentEntity` | `home/domain/entity/upcoming_appointment_entity.dart` | `id`, `doctorName`, `doctorPhoto`, `clinicName`, `specializationName`, `slotDate`, `slotStart`, `slotEnd`, `status` |
 | A.4 | `UpcomingAppointmentModel` | `home/data/model/upcoming_appointment_model.dart` | fromJson nested: `doctors{full_name,photo_url,clinics{name},specializations{name}}` + `doctor_slots{slot_date,slot_start,slot_end}` |
-| A.5 | `SpecializationEntity` | `home/domain/entity/specialization_entity.dart` | `id`, `name`, `iconUrl` |
+| A.5 | `SpecializationEntity` | `home/domain/entity/specialization_entity.dart` | `id`, `name`, `iconUrl`, `colorHex` |
 | A.6 | `SpecializationModel` | `home/data/model/specialization_model.dart` | fromJson/toJson + toEntity/fromEntity |
 
 ### Blok B: Domain Layer (Repository + Use Cases)

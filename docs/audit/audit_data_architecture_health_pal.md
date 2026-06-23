@@ -157,7 +157,7 @@ Dengan asumsi `@freezed` + `@JsonSerializable`:
 | `NotificationModel` | 9 + 1 nested | ~180 | Medium |
 | `BannerModel` | 7 | ~100 | Sederhana |
 | `ClinicModel` | 8 | ~120 | Sederhana |
-| `SpecializationModel` | 3 | ~80 | Sederhana |
+| `SpecializationModel` | 4 | ~100 | Sederhana |
 | `ProfileModel` | 11 | ~150 | Sederhana |
 | `FcmTokenModel` | 5 | ~80 | Sederhana |
 | **Total** | | **~1560 baris generated code** | Manageable |
@@ -244,12 +244,12 @@ class AppointmentModel extends AppointmentEntity {
 **Masalah:**
 - 20 doctors + nested clinics + specializations
 - Setiap `clinics` punya `id, name, address, city, latitude, longitude, phone, image_url` (8 fields)
-- Setiap `specializations` punya `id, name, icon_url` (3 fields)
+- Setiap `specializations` punya `id, name, icon_url, color_hex` (4 fields)
 - Plus `doctors` punya `id, full_name, photo_url, experience_years, consultation_fee, rating_avg, rating_count, clinics{...}, specializations{...}`
 
 **Solusi:**
 - Trim select untuk search vs detail
-- Search: `select=id,full_name,photo_url,rating_avg,rating_count,clinics(id,name,city),specializations(id,name,icon_url)`
+- Search: `select=id,full_name,photo_url,rating_avg,rating_count,clinics(id,name,city),specializations(id,name,icon_url,color_hex)`
 - Detail: full fields
 
 #### ⚠️ MEDIUM: Inconsistent Nested Key Naming
@@ -311,7 +311,7 @@ class DoctorRemoteDataSource {
   Future<List<DoctorEntity>> searchDoctors(String query) async {
     final response = await supabase
       .from('doctors')
-      .select('id, full_name, photo_url, rating_avg, rating_count, clinics(id, name, city), specializations(id, name, icon_url)')
+      .select('id, full_name, photo_url, rating_avg, rating_count, clinics(id, name, city), specializations(id, name, icon_url, color_hex)')
       .ilike('full_name', '%$query%')
       .limit(20);
     return compute(_parseDoctorsListIsolate, response as List<dynamic>);
