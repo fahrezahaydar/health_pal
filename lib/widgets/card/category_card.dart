@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -42,12 +43,11 @@ class CategoryCard extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: iconUrl != null
-                  ? Image.network(
+                  ? SvgPicture.network(
                       iconUrl!,
                       width: 28,
                       height: 28,
-                      errorBuilder: (_, _, _) =>
-                          Icon(_iconData(name), size: 28, color: AppTheme.blue),
+                      placeholderBuilder: (_) => const SizedBox.shrink(),
                     )
                   : Icon(_iconData(name), size: 28, color: AppTheme.blue),
             ),
