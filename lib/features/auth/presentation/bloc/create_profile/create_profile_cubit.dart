@@ -8,70 +8,80 @@ import '../../../../../core/network/result.dart';
 import '../../../../auth/domain/usecase/register_and_create_profile_usecase.dart';
 import '../../../domain/entity/user_entity.dart';
 
-sealed class CreateProfileState extends Equatable {
-  const CreateProfileState();
+part 'create_profile_state.dart';
 
-  @override
-  List<Object?> get props => [];
-}
+class CreateProfileArgs {
+  final String fullName;
+  final String email;
+  final String password;
 
-final class CreateProfileInitial extends CreateProfileState {
-  const CreateProfileInitial();
-}
-
-final class CreateProfileLoading extends CreateProfileState {
-  const CreateProfileLoading();
-}
-
-final class CreateProfileSuccess extends CreateProfileState {
-  final UserEntity user;
-
-  const CreateProfileSuccess(this.user);
-
-  @override
-  List<Object?> get props => [user];
-}
-
-final class CreateProfileFailure extends CreateProfileState {
-  final String message;
-
-  const CreateProfileFailure(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  const CreateProfileArgs({
+    required this.fullName,
+    required this.email,
+    required this.password,
+  });
 }
 
 @injectable
 class CreateProfileCubit extends Cubit<CreateProfileState> {
-  final RegisterAndCreateProfileUseCase _registerAndCreateProfileUseCase;
+  final RegisterAndCreateProfileUseCase _create;
+  final String _password;
 
-  CreateProfileCubit(this._registerAndCreateProfileUseCase)
-    : super(const CreateProfileInitial());
+  CreateProfileCubit(this._create, @factoryParam CreateProfileArgs args)
+    : _password = args.password,
+      super(
+        CreateProfileState(
+          fullName: args.fullName,
+          email: args.email,
+          dateOfBirth: DateTime.now().subtract(const Duration(days: 365 * 20)),
+        ),
+      );
 
-  Future<void> registerAndCreateProfile({
-    required String email,
-    required String password,
-    required String fullName,
-    required String nickname,
-    required String gender,
-    required DateTime dateOfBirth,
-    File? photo,
-  }) async {
-    emit(const CreateProfileLoading());
-    final result = await _registerAndCreateProfileUseCase(
-      email: email,
-      password: password,
-      fullName: fullName,
-      nickname: nickname,
-      gender: gender,
-      dateOfBirth: dateOfBirth,
-      photo: photo,
+  Future<void> register() async {
+    emit(state.copyWith(status: CubitStatus.loading));
+    final result = await _create(
+      email: state.email,
+      password: _password,
+      fullName: state.fullName,
+      nickname: state.nickname,
+      gender: state.gender,
+      dateOfBirth: state.dateOfBirth,
+      photo: state.photo,
     );
     switch (result) {
       case Success<UserEntity>():
-        emit(CreateProfileSuccess(result.data));
+        emit(state.copyWith(status: CubitStatus.success, user: result.data));
       case Failure<UserEntity>():
-        emit(CreateProfileFailure(result.message));
+        emit(
+          state.copyWith(
+            status: CubitStatus.failure,
+            errorMessage: result.message,
+          ),
+        );
     }
+  }
+
+  void updateFullName(String value) {
+    emit(state.copyWith(fullName: value));
+  }
+
+  void updateNickname(String value) {
+    emit(state.copyWith(nickname: value));
+  }
+
+  void updateGender(String value) {
+    emit(state.copyWith(gender: value));
+  }
+
+  void updateEmail(String value) {
+    emit(state.copyWith(email: value));
+  }
+
+  void updateDateOfBirth(DateTime value) {
+    emit(state.copyWith(dateOfBirth: value));
+  }
+
+  void updatePhoto(File? value) {
+    emit(state.copyWith(photo: value));
   }
 }
