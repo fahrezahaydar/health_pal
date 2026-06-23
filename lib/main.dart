@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:health_pal/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/di/locator.dart';
@@ -43,9 +44,7 @@ void main() async {
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-  // 3. Firebase (required before FirebaseMessaging)
-  await Firebase.initializeApp();
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // 4. DI
   await configureDependencies();
 

@@ -56,7 +56,6 @@ class DefaultFirebaseOptions {
     projectId: 'healthpal-ej',
     storageBucket: 'healthpal-ej.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAkHZegT3nbfIFYd8_p9eLTfmuIHO4Tl4M',
     appId: '1:298918535780:ios:23a70a133d67c838f47571',
@@ -65,7 +64,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'healthpal-ej.firebasestorage.app',
     iosBundleId: 'com.example.healthPal',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAkHZegT3nbfIFYd8_p9eLTfmuIHO4Tl4M',
     appId: '1:298918535780:ios:23a70a133d67c838f47571',
