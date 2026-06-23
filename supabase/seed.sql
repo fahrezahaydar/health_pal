@@ -239,16 +239,20 @@ end $$;
 --               Format: #RRGGBB atau #AARRGGBB (nullable).
 -- =============================================================================
 insert into public.specializations (id, name, icon_url, color_hex) values
-  (gen_random_uuid(), 'Umum',                        null, '#4CAF50'),
-  (gen_random_uuid(), 'Anak',                        null, '#FF9800'),
-  (gen_random_uuid(), 'Kulit & Kelamin',             null, '#E91E63'),
-  (gen_random_uuid(), 'Gigi',                        null, '#2196F3'),
-  (gen_random_uuid(), 'Mata',                        null, '#00BCD4'),
-  (gen_random_uuid(), 'THT',                         null, '#9C27B0'),
-  (gen_random_uuid(), 'Saraf',                       null, '#607D8B'),
-  (gen_random_uuid(), 'Jantung',                     null, '#F44336'),
-  (gen_random_uuid(), 'Kandungan & Ginekologi',      null, '#FF69B4'),
-  (gen_random_uuid(), 'Ortopedi',                    null, '#795548');
+  (gen_random_uuid(), 'Umum',                        'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/umum.svg',              '#4CAF50'),
+  (gen_random_uuid(), 'Anak',                        null,                                                                                          '#FF9800'),
+  (gen_random_uuid(), 'Kulit & Kelamin',             null,                                                                                          '#E91E63'),
+  (gen_random_uuid(), 'Gigi',                        'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/gigi.svg',              '#2196F3'),
+  (gen_random_uuid(), 'Mata',                        null,                                                                                          '#00BCD4'),
+  (gen_random_uuid(), 'THT',                         null,                                                                                          '#9C27B0'),
+  (gen_random_uuid(), 'Saraf',                       'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/saraf.svg',             '#607D8B'),
+  (gen_random_uuid(), 'Jantung',                     'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/jantung.svg',            '#F44336'),
+  (gen_random_uuid(), 'Kandungan & Ginekologi',      null,                                                                                          '#FF69B4'),
+  (gen_random_uuid(), 'Ortopedi',                    null,                                                                                          '#795548'),
+  (gen_random_uuid(), 'Gastroenterologi',             'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/gastroenterologi.svg', '#009688'),
+  (gen_random_uuid(), 'Laboratorium',                 'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/laboratorium.svg',     '#673AB7'),
+  (gen_random_uuid(), 'Pulmonologi',                  'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/pulmonologi.svg',      '#03A9F4'),
+  (gen_random_uuid(), 'Vaksinasi',                    'http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/vaksinasi.svg',         '#8BC34A');
   -- Contoh nambah spesialisasi baru:
   -- ,(gen_random_uuid(), 'Psikolog', null, '#3F51B5')
 
