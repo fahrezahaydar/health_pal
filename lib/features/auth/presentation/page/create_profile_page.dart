@@ -103,6 +103,8 @@ class _CreateProfileViewState extends State<CreateProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final ts = Theme.of(context).textTheme;
+
     final cubit = context.read<CreateProfileCubit>();
     return BlocListener<CreateProfileCubit, CreateProfileState>(
       listener: (context, state) {
@@ -120,7 +122,8 @@ class _CreateProfileViewState extends State<CreateProfileView> {
           AppLoadingDialog.dismiss(context);
           final msg = state.errorMessage?.toLowerCase() ?? '';
           final isAlreadyRegistered =
-              msg.contains('already registered') || msg.contains('user already');
+              msg.contains('already registered') ||
+              msg.contains('user already');
           AppCustomDialog.show(
             context,
             type: AppDialogType.error,
@@ -134,134 +137,156 @@ class _CreateProfileViewState extends State<CreateProfileView> {
         }
       },
       child: SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          spacing: 24,
-          children: [
-            // ================= PHOTO =================
-            BlocBuilder<CreateProfileCubit, CreateProfileState>(
-              buildWhen: (p, c) => p.photo != c.photo,
-              builder: (context, state) {
-                return AppPhotoPicker(
-                  size: 140,
-                  localFile: state.photo,
-                  onPhotoSelected: (File file) {
-                    context.read<CreateProfileCubit>().updatePhoto(file);
-                  },
-                  onPhotoRemoved: () {
-                    context.read<CreateProfileCubit>().updatePhoto(null);
-                  },
-                );
-              },
-            ),
-            Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                spacing: 16,
-                children: [
-                  // ================= FULL NAME =================
-                  BlocBuilder<CreateProfileCubit, CreateProfileState>(
-                    buildWhen: (p, c) => p.fullName != c.fullName,
-                    builder: (context, state) {
-                      return TextFormField(
-                        initialValue: state.fullName,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                        ),
-                        validator: (v) => Validators.required(v, 'Full Name'),
-                        onChanged: cubit.updateFullName,
-                      );
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            spacing: 24,
+            children: [
+              // ================= PHOTO =================
+              BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                buildWhen: (p, c) => p.photo != c.photo,
+                builder: (context, state) {
+                  return AppPhotoPicker(
+                    size: 140,
+                    localFile: state.photo,
+                    onPhotoSelected: (File file) {
+                      context.read<CreateProfileCubit>().updatePhoto(file);
                     },
-                  ),
-
-                  // ================= EMAIL =================
-                  BlocBuilder<CreateProfileCubit, CreateProfileState>(
-                    buildWhen: (p, c) => p.email != c.email,
-                    builder: (context, state) {
-                      return TextFormField(
-                        initialValue: state.email,
-                        decoration: const InputDecoration(labelText: 'Email'),
-                        validator: Validators.email,
-                        onChanged: cubit.updateEmail,
-                      );
+                    onPhotoRemoved: () {
+                      context.read<CreateProfileCubit>().updatePhoto(null);
                     },
-                  ),
-
-                  // ================= NICKNAME =================
-                  BlocBuilder<CreateProfileCubit, CreateProfileState>(
-                    buildWhen: (p, c) => p.nickname != c.nickname,
-                    builder: (context, state) {
-                      return TextFormField(
-                        initialValue: state.nickname,
-                        decoration: const InputDecoration(
-                          labelText: 'Nickname',
-                        ),
-                        validator: (v) => Validators.required(v, 'Nickname'),
-                        onChanged: cubit.updateNickname,
-                      );
-                    },
-                  ),
-                  // ================= GENDER =================
-                  BlocBuilder<CreateProfileCubit, CreateProfileState>(
-                    buildWhen: (p, c) => p.gender != c.gender,
-                    builder: (context, state) {
-                      return DropdownButtonFormField<String>(
-                        initialValue: state.gender.isEmpty
-                            ? null
-                            : state.gender,
-                        decoration: const InputDecoration(labelText: 'Gender'),
-                        validator: (v) => Validators.required(v, 'Gender'),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'male',
-                            child: Text('Laki-Laki'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'female',
-                            child: Text('Perempuan'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'other',
-                            child: Text('Lainnya'),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) {
-                            cubit.updateGender(value);
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  // ================= BIRTH DATE =================
-                  BlocBuilder<CreateProfileCubit, CreateProfileState>(
-                    buildWhen: (p, c) => p.dateOfBirth != c.dateOfBirth,
-                    builder: (context, state) {
-                      return TextFormField(
-                        controller: _dateController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Date of Birth',
-                        ),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Date of birth is required';
-                          }
-                          return null;
-                        },
-                        onTap: _pickDate,
-                      );
-                    },
-                  ),
-                  LightFilledButton(onTap: _submit, label: 'Save Profile'),
-                ],
+                  );
+                },
               ),
-            ),
-          ],
+              Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  spacing: 16,
+                  children: [
+                    // ================= FULL NAME =================
+                    BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                      buildWhen: (p, c) => p.fullName != c.fullName,
+                      builder: (context, state) {
+                        return TextFormField(
+                          initialValue: state.fullName,
+                          style: ts.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Full Name',
+                          ),
+                          validator: (v) => Validators.required(v, 'Full Name'),
+                          onChanged: cubit.updateFullName,
+                        );
+                      },
+                    ),
+
+                    // ================= EMAIL =================
+                    BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                      buildWhen: (p, c) => p.email != c.email,
+                      builder: (context, state) {
+                        return TextFormField(
+                          style: ts.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          initialValue: state.email,
+                          decoration: const InputDecoration(labelText: 'Email'),
+                          validator: Validators.email,
+                          onChanged: cubit.updateEmail,
+                        );
+                      },
+                    ),
+
+                    // ================= NICKNAME =================
+                    BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                      buildWhen: (p, c) => p.nickname != c.nickname,
+                      builder: (context, state) {
+                        return TextFormField(
+                          style: ts.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          initialValue: state.nickname,
+                          decoration: const InputDecoration(
+                            labelText: 'Nickname',
+                          ),
+                          validator: (v) => Validators.required(v, 'Nickname'),
+                          onChanged: cubit.updateNickname,
+                        );
+                      },
+                    ),
+                    // ================= GENDER =================
+                    BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                      buildWhen: (p, c) => p.gender != c.gender,
+                      builder: (context, state) {
+                        return DropdownButtonFormField<String>(
+                          style: ts.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          initialValue: state.gender.isEmpty
+                              ? null
+                              : state.gender,
+                          decoration: const InputDecoration(
+                            labelText: 'Gender',
+                          ),
+                          validator: (v) => Validators.required(v, 'Gender'),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'male',
+                              child: Text('Laki-Laki'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'female',
+                              child: Text('Perempuan'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'other',
+                              child: Text('Lainnya'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              cubit.updateGender(value);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    // ================= BIRTH DATE =================
+                    BlocBuilder<CreateProfileCubit, CreateProfileState>(
+                      buildWhen: (p, c) => p.dateOfBirth != c.dateOfBirth,
+                      builder: (context, state) {
+                        return TextFormField(
+                          controller: _dateController,
+                          style: ts.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Date of Birth',
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) {
+                              return 'Date of birth is required';
+                            }
+                            return null;
+                          },
+                          onTap: _pickDate,
+                        );
+                      },
+                    ),
+                    LightFilledButton(onTap: _submit, label: 'Save Profile'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

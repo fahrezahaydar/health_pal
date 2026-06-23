@@ -27,40 +27,35 @@ class SearchBarHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => context.push(RoutePaths.doctorSearch),
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: AppTheme.grey100,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.grey200),
-          ),
-          child: Row(
-            spacing: 12,
-            children: [
-              const Icon(
-                AppIcons.searchNormal,
-                size: 20,
-                color: AppTheme.grey500,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(RoutePaths.doctorSearch),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppTheme.grey100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.grey200),
+        ),
+        child: Row(
+          spacing: 12,
+          children: [
+            const Icon(
+              AppIcons.searchNormal,
+              size: 20,
+              color: AppTheme.grey500,
+            ),
+            Expanded(
+              child: Text(
+                'Cari dokter, klinik, atau spesialisasi...',
+                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              Expanded(
-                child: Text(
-                  'Cari dokter, klinik, atau spesialisasi...',
-                  style: AppTextTheme.bodySmall.copyWith(
-                    color: AppTheme.grey500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const Icon(AppIcons.filter, size: 18, color: AppTheme.grey400),
-            ],
-          ),
+            ),
+            const Icon(AppIcons.filter, size: 18, color: AppTheme.grey400),
+          ],
         ),
       ),
     );

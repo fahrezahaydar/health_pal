@@ -315,10 +315,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i630.RegisterAndCreateProfileUseCase>(
       () => _i630.RegisterAndCreateProfileUseCase(gh<_i613.AuthRepository>()),
     );
-    gh.factory<_i730.CreateProfileCubit>(
-      () =>
-          _i730.CreateProfileCubit(gh<_i630.RegisterAndCreateProfileUseCase>()),
-    );
     gh.factory<_i544.SignInCubit>(
       () => _i544.SignInCubit(gh<_i930.LoginWithEmailUseCase>()),
     );
@@ -326,6 +322,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1053.SettingsCubit(
         gh<_i768.SettingsRepository>(),
         gh<_i605.AppServices>(),
+      ),
+    );
+    gh.factoryParam<_i730.CreateProfileCubit, _i730.CreateProfileArgs, dynamic>(
+      (args, _) => _i730.CreateProfileCubit(
+        gh<_i630.RegisterAndCreateProfileUseCase>(),
+        args,
       ),
     );
     gh.factory<_i516.ProfileCubit>(

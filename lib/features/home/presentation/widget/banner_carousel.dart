@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -68,7 +69,8 @@ class _BannerCarouselState extends State<BannerCarousel> {
     final banners = widget.banners;
     if (banners.isEmpty) return const SizedBox.shrink();
 
-    return Column(
+    return Stack(
+      alignment: AlignmentGeometry.bottomCenter,
       children: [
         SizedBox(
           height: 160,
@@ -82,10 +84,13 @@ class _BannerCarouselState extends State<BannerCarousel> {
             },
           ),
         ),
-        const SizedBox(height: 8),
-        DotsIndicator(
-          count: banners.length,
-          currentIndex: _currentPage,
+        Positioned(
+          bottom: 8,
+          child: DotsIndicator(
+            count: banners.length,
+            currentIndex: _currentPage,
+            currentColor: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ],
     );
@@ -103,6 +108,3 @@ class BannerCarouselLoading extends StatelessWidget {
     );
   }
 }
-
-
-

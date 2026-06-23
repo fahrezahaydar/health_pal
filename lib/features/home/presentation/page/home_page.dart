@@ -155,140 +155,144 @@ class _HomePageBodyState extends State<_HomePageBody> {
             // _onRefresh. Anti-spam via _isRefreshing guard.
             child: RefreshIndicator(
               onRefresh: _onRefresh,
-              child: ListView(
+              child: SingleChildScrollView(
                 // AlwaysScrollable agar pull-to-refresh tetap work walau
                 // konten muat di satu screen (ListView default physics
                 // BouncingScrollPhysics sudah support pull-down gesture).
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  BlocBuilder<GreetingCubit, GreetingState>(
-                    builder: (context, greetingState) {
-                      return switch (greetingState) {
-                        GreetingLoaded(:final nickname, :final avatarUrl) =>
-                          GreetingSection(
-                            nickname: nickname,
-                            avatarUrl: avatarUrl,
-                            action: [
-                              BlocSelector<
-                                NotificationCubit,
-                                NotificationListState,
-                                int
-                              >(
-                                selector: (state) {
-                                  return state is NotificationLoaded
-                                      ? state.unreadCount
-                                      : 0;
-                                },
-                                builder: (context, state) {
-                                  return LightIconButton(
-                                    onTap: () => context.push(
-                                      RoutePaths.notificationSettings,
+                child: Column(
+                  spacing: 16,
+                  children: [
+                    Column(
+                      spacing: 12,
+                      children: [
+                        BlocBuilder<GreetingCubit, GreetingState>(
+                          builder: (context, greetingState) {
+                            return switch (greetingState) {
+                              GreetingLoaded(
+                                :final nickname,
+                                :final avatarUrl,
+                              ) =>
+                                GreetingSection(
+                                  nickname: nickname,
+                                  avatarUrl: avatarUrl,
+                                  action: [
+                                    BlocSelector<
+                                      NotificationCubit,
+                                      NotificationListState,
+                                      int
+                                    >(
+                                      selector: (state) {
+                                        return state is NotificationLoaded
+                                            ? state.unreadCount
+                                            : 0;
+                                      },
+                                      builder: (context, state) {
+                                        return LightIconButton(
+                                          onTap: () => context.push(
+                                            RoutePaths.notificationSettings,
+                                          ),
+                                          icon: AppBadge(
+                                            // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
+                                            count: state > 0 ? state : null,
+                                            child: const Icon(
+                                              AppIcons.notification,
+                                              color: AppTheme.grey900,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    icon: AppBadge(
-                                      // sprint 2 — A8: count dari parameter, null jika 0 agar badge hidden
-                                      count: state > 0 ? state : null,
-                                      child: const Icon(
-                                        AppIcons.notification,
-                                        color: AppTheme.grey900,
-                                      ),
-                                    ),
-                                  );
+                                  ],
+                                ),
+                              GreetingError(:final message) => ErrorSection(
+                                message: message,
+                                onRetry: () {
+                                  final authId =
+                                      GetIt.instance<AppServices>()
+                                          .currentAuthId ??
+                                      '';
+                                  if (authId.isNotEmpty) {
+                                    context.read<GreetingCubit>().loadProfile(
+                                      authId,
+                                    );
+                                  }
                                 },
                               ),
-                            ],
+                              _ => const Skeletonizer(
+                                enabled: true,
+                                child: GreetingSection(nickname: 'Halo'),
+                              ),
+                            };
+                          },
+                        ),
+
+                        const SearchBarHome(),
+                        BlocBuilder<BannerCubit, BannerState>(
+                          builder: (context, state) {
+                            return switch (state) {
+                              BannerLoading() => const BannerCarouselLoading(),
+                              BannerLoaded(:final banners) => BannerCarousel(
+                                banners: banners,
+                              ),
+                              BannerError(:final message) => ErrorSection(
+                                message: message,
+                                onRetry: () =>
+                                    context.read<BannerCubit>().loadBanners(),
+                              ),
+                              _ => const SizedBox.shrink(),
+                            };
+                          },
+                        ),
+                      ],
+                    ),
+                    BlocBuilder<UpcomingCubit, UpcomingState>(
+                      builder: (context, state) {
+                        return switch (state) {
+                          UpcomingLoading() => const UpcomingCardLoading(),
+                          UpcomingLoaded(:final upcoming) => UpcomingCard(
+                            upcoming: upcoming,
                           ),
-                        GreetingError(:final message) => ErrorSection(
-                          message: message,
-                          onRetry: () {
-                            final authId =
-                                GetIt.instance<AppServices>().currentAuthId ??
-                                '';
-                            if (authId.isNotEmpty) {
-                              context.read<GreetingCubit>().loadProfile(authId);
-                            }
-                          },
-                        ),
-                        _ => const Skeletonizer(
-                          enabled: true,
-                          child: GreetingSection(nickname: 'Halo'),
-                        ),
-                      };
-                    },
-                  ),
-                  // Sprint 2 — A1: Search Bar widget (stateless, tap → doctor search)
-                  // Per Wireframe 06 §2 + PRD §6.2 + home_page_audit.md §13.1 K1
-                  // C1 note: SearchBarHome tidak dibungkus Skeletonizer karena
-                  // tidak ada loading state (stateless tap target, content
-                  // static). Per AD-6 — skeletonizer HANYA untuk data-driven
-                  // sections.
-                  const SearchBarHome(),
-                  BlocBuilder<BannerCubit, BannerState>(
-                    builder: (context, state) {
-                      return switch (state) {
-                        BannerLoading() => const BannerCarouselLoading(),
-                        BannerLoaded(:final banners) => BannerCarousel(
-                          banners: banners,
-                        ),
-                        BannerError(:final message) => ErrorSection(
-                          message: message,
-                          onRetry: () =>
-                              context.read<BannerCubit>().loadBanners(),
-                        ),
-                        _ => const SizedBox.shrink(),
-                      };
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  BlocBuilder<UpcomingCubit, UpcomingState>(
-                    builder: (context, state) {
-                      return switch (state) {
-                        UpcomingLoading() => const UpcomingCardLoading(),
-                        UpcomingLoaded(:final upcoming) => UpcomingCard(
-                          upcoming: upcoming,
-                        ),
-                        UpcomingError(:final message) => ErrorSection(
-                          message: message,
-                          onRetry: () {
-                            final gs = context.read<GreetingCubit>().state;
-                            if (gs is GreetingLoaded) {
-                              context.read<UpcomingCubit>().loadUpcoming(
-                                gs.profileId,
-                              );
-                            }
-                          },
-                        ),
-                        _ => const UpcomingCard(upcoming: null),
-                      };
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  BlocBuilder<SpecializationCubit, SpecializationState>(
-                    builder: (context, state) {
-                      return switch (state) {
-                        SpecializationLoading() =>
-                          const QuickCategoriesLoading(),
-                        SpecializationLoaded(:final specializations) =>
-                          QuickCategories(specializations: specializations),
-                        SpecializationError(:final message) => ErrorSection(
-                          message: message,
-                          onRetry: () => context
-                              .read<SpecializationCubit>()
-                              .loadSpecializations(),
-                        ),
-                        _ => const SizedBox.shrink(),
-                      };
-                    },
-                  ),
-                  // Sprint 2 — C3: Nearby Medical Centers section.
-                  // Horizontal list of clinic cards. Handles all states:
-                  // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
-                  // klinik", LocationDenied → "Izinkan Lokasi" button,
-                  // Error → retry button.
-                  BlocBuilder<NearbyCubit, NearbyState>(
-                    builder: (context, state) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: switch (state) {
+                          UpcomingError(:final message) => ErrorSection(
+                            message: message,
+                            onRetry: () {
+                              final gs = context.read<GreetingCubit>().state;
+                              if (gs is GreetingLoaded) {
+                                context.read<UpcomingCubit>().loadUpcoming(
+                                  gs.profileId,
+                                );
+                              }
+                            },
+                          ),
+                          _ => const UpcomingCard(upcoming: null),
+                        };
+                      },
+                    ),
+                    BlocBuilder<SpecializationCubit, SpecializationState>(
+                      builder: (context, state) {
+                        return switch (state) {
+                          SpecializationLoading() =>
+                            const QuickCategoriesLoading(),
+                          SpecializationLoaded(:final specializations) =>
+                            QuickCategories(specializations: specializations),
+                          SpecializationError(:final message) => ErrorSection(
+                            message: message,
+                            onRetry: () => context
+                                .read<SpecializationCubit>()
+                                .loadSpecializations(),
+                          ),
+                          _ => const SizedBox.shrink(),
+                        };
+                      },
+                    ),
+                    // Sprint 2 — C3: Nearby Medical Centers section.
+                    // Horizontal list of clinic cards. Handles all states:
+                    // Loading → skeleton, Loaded → cards, Empty → "Tidak ada
+                    // klinik", LocationDenied → "Izinkan Lokasi" button,
+                    // Error → retry button.
+                    BlocBuilder<NearbyCubit, NearbyState>(
+                      builder: (context, state) {
+                        return switch (state) {
                           NearbyInitial() => const NearbyFacilitiesLoading(),
                           NearbyLoading() => const NearbyFacilitiesLoading(),
                           NearbyLoaded(:final clinics) =>
@@ -298,11 +302,12 @@ class _HomePageBodyState extends State<_HomePageBody> {
                           NearbyError(:final message) => NearbyFacilitiesError(
                             message: message,
                           ),
-                        },
-                      );
-                    },
-                  ),
-                ],
+                        };
+                      },
+                    ),
+                    const SizedBox.shrink(),
+                  ],
+                ),
               ),
             ),
           ),

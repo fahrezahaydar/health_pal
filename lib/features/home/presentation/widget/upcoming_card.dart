@@ -16,19 +16,16 @@ class UpcomingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Upcoming Treatment', style: AppTextTheme.headlineSmall),
-          const SizedBox(height: 12),
-          if (upcoming != null)
-            UpcomingAppointmentCard.fromEntity(upcoming!)
-          else
-            const _EmptyState(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Upcoming Treatment', style: AppTextTheme.headlineSmall),
+        const SizedBox(height: 12),
+        if (upcoming != null)
+          UpcomingAppointmentCard.fromEntity(upcoming!)
+        else
+          const _EmptyState(),
+      ],
     );
   }
 }

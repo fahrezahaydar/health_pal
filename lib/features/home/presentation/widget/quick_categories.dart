@@ -17,47 +17,41 @@ class QuickCategories extends StatelessWidget {
   Widget build(BuildContext context) {
     if (specializations.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Categories', style: AppTextTheme.headlineSmall),
-              GestureDetector(
-                onTap: () => context.push(RoutePaths.doctorSearch),
-                child: Text(
-                  'See All',
-                  style: AppTextTheme.bodySmall.copyWith(color: AppTheme.blue),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.75,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Categories', style: AppTextTheme.headlineSmall),
+            GestureDetector(
+              onTap: () => context.push(RoutePaths.doctorSearch),
+              child: Text('See All', style: AppTextTheme.bodySmall),
             ),
-            itemCount: specializations.length,
-            itemBuilder: (context, index) {
-              final s = specializations[index];
-              return CategoryCard.fromEntity(
-                s,
-                onTap: () => context.push(
-                  '${RoutePaths.doctorSearch}?specialization=${s.id}',
-                ),
-              );
-            },
+          ],
+        ),
+        const SizedBox(height: 12),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.75,
           ),
-        ],
-      ),
+          itemCount: 8,
+          itemBuilder: (context, index) {
+            final s = specializations[index];
+            return CategoryCard.fromEntity(
+              s,
+              onTap: () => context.push(
+                '${RoutePaths.doctorSearch}?specialization=${s.id}',
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -73,4 +67,3 @@ class QuickCategoriesLoading extends StatelessWidget {
     );
   }
 }
-

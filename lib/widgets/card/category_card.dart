@@ -31,30 +31,31 @@ class CategoryCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppTheme.paleBlue.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
+          AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.paleBlue.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: iconUrl != null
+                  ? Image.network(
+                      iconUrl!,
+                      width: 28,
+                      height: 28,
+                      errorBuilder: (_, _, _) =>
+                          Icon(_iconData(name), size: 28, color: AppTheme.blue),
+                    )
+                  : Icon(_iconData(name), size: 28, color: AppTheme.blue),
             ),
-            alignment: Alignment.center,
-            child: iconUrl != null
-                ? Image.network(
-                    iconUrl!,
-                    width: 28,
-                    height: 28,
-                    errorBuilder: (_, _, _) =>
-                        Icon(_iconData(name), size: 28, color: AppTheme.blue),
-                  )
-                : Icon(_iconData(name), size: 28, color: AppTheme.blue),
           ),
           const SizedBox(height: 6),
           Text(
             name ?? '',
             style: AppTextTheme.labelSmall.copyWith(color: AppTheme.grey700),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ],

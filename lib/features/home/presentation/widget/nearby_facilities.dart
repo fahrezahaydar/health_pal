@@ -17,24 +17,21 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const HeaderTitle(title: 'Nearby Medical Centers'),
-          SizedBox(
-            height: 180,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: clinics.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
-              itemBuilder: (context, index) =>
-                  NearbyClinicCard.fromEntity(clinics[index]),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const HeaderTitle(title: 'Nearby Medical Centers'),
+        SizedBox(
+          height: 180,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: clinics.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, index) =>
+                NearbyClinicCard.fromEntity(clinics[index]),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -79,20 +76,17 @@ class NearbyFacilitiesError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 12,
-        children: [
-          const HeaderTitle(title: 'Nearby Medical Centers'),
-          _StatusBody(
-            icon: Icons.error_outline,
-            message: message,
-            buttonLabel: 'Coba Lagi',
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        const HeaderTitle(title: 'Nearby Medical Centers'),
+        _StatusBody(
+          icon: Icons.error_outline,
+          message: message,
+          buttonLabel: 'Coba Lagi',
+        ),
+      ],
     );
   }
 }

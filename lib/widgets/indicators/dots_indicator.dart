@@ -11,10 +11,12 @@ class DotsIndicator extends StatelessWidget {
     super.key,
     required this.count,
     required this.currentIndex,
+    this.currentColor,
   });
 
   final int count;
   final int currentIndex;
+  final Color? currentColor;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +25,12 @@ class DotsIndicator extends StatelessWidget {
       children: List.generate(count, (i) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: i == currentIndex ? 24 : 8,
-          height: 8,
+          width: i == currentIndex ? 30 : 6,
+          height: 6,
           decoration: BoxDecoration(
-            color: i == currentIndex ? AppTheme.primary : AppTheme.grey300,
+            color: i == currentIndex
+                ? currentColor ?? AppTheme.primary
+                : AppTheme.grey200,
             borderRadius: BorderRadius.circular(4),
           ),
         );

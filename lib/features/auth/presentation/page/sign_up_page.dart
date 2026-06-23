@@ -96,10 +96,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           spacing: 20,
                           children: [
                             TextFormField(
+                              style: ts.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
                               decoration: const InputDecoration(
                                 hintText: 'Your Name',
                                 labelText: 'Full Name',
-                                prefix: Icon(AppIcons.person),
+                                prefixIcon: Icon(AppIcons.person),
                               ),
                               controller: _nameController,
                               validator: (value) {
@@ -110,11 +114,15 @@ class _SignUpPageState extends State<SignUpPage> {
                               },
                             ),
                             TextFormField(
+                              style: ts.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 labelText: 'Email',
                                 hintText: 'Your Email',
-                                prefix: Icon(AppIcons.email),
+                                prefixIcon: Icon(AppIcons.email),
                               ),
                               controller: _emailController,
                               validator: (value) {

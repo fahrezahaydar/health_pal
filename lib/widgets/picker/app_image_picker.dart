@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:health_pal/core/theme/app_icons.dart';
 
 import 'package:flutter/widgets.dart';
@@ -233,11 +234,7 @@ class _EditBadge extends StatelessWidget {
       child: SizedBox.square(
         dimension: size,
         child: Center(
-          child: Icon(
-            AppIcons.edit,
-            size: size * 0.50,
-            color: AppTheme.white,
-          ),
+          child: Icon(AppIcons.edit, size: size * 0.50, color: AppTheme.white),
         ),
       ),
     );
@@ -316,68 +313,70 @@ class _PhotoOptionsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // drag handle
-                Center(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppTheme.grey300,
-                      borderRadius: BorderRadius.circular(99),
+    return Material(
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // drag handle
+                  Center(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppTheme.grey300,
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                      child: const SizedBox(width: 40, height: 4),
                     ),
-                    child: const SizedBox(width: 40, height: 4),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // title
-                Text(
-                  'Foto Profil',
-                  style: AppTextTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
+                  // title
+                  Text(
+                    'Foto Profil',
+                    style: AppTextTheme.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // options
-                _SheetTile(
-                  icon: AppIcons.camera,
-                  label: 'Kamera',
-                  onTap: onCamera,
-                ),
-                _SheetDivider(),
-                _SheetTile(
-                  icon: AppIcons.galleryPicker,
-                  label: 'Pilih dari Galeri',
-                  onTap: onGallery,
-                ),
-                if (hasPhoto && onRemove != null) ...[
+                  // options
+                  _SheetTile(
+                    icon: AppIcons.camera,
+                    label: 'Kamera',
+                    onTap: onCamera,
+                  ),
                   _SheetDivider(),
                   _SheetTile(
-                    icon: AppIcons.trash,
-                    label: 'Hapus Foto',
-                    iconColor: AppTheme.darkRed,
-                    labelColor: AppTheme.darkRed,
-                    onTap: onRemove!,
+                    icon: AppIcons.galleryPicker,
+                    label: 'Pilih dari Galeri',
+                    onTap: onGallery,
                   ),
-                ],
-                const SizedBox(height: 16),
+                  if (hasPhoto && onRemove != null) ...[
+                    _SheetDivider(),
+                    _SheetTile(
+                      icon: AppIcons.trash,
+                      label: 'Hapus Foto',
+                      iconColor: AppTheme.darkRed,
+                      labelColor: AppTheme.darkRed,
+                      onTap: onRemove!,
+                    ),
+                  ],
+                  const SizedBox(height: 16),
 
-                // cancel
-                LightOutlineButton(onTap: onCancel, label: 'Cancel'),
-              ],
+                  // cancel
+                  LightOutlineButton(onTap: onCancel, label: 'Cancel'),
+                ],
+              ),
             ),
           ),
         ),

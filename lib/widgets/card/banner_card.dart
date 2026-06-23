@@ -40,7 +40,6 @@ class BannerCard extends StatelessWidget {
         }
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: AppTheme.grey200,
           borderRadius: BorderRadius.circular(12),
