@@ -25,15 +25,19 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<UserEntity>> signInWithEmail(
-      String email, String password) async {
+    String email,
+    String password,
+  ) async {
     try {
       final response = await _remote.signInWithEmail(email, password);
       final userId = response.session?.user.id ?? '';
       if (userId.isEmpty) {
-        return Result.failure(const ApiException(
-          code: FailureCode.unauthorized,
-          message: 'User not found in session',
-        ));
+        return Result.failure(
+          const ApiException(
+            code: FailureCode.unauthorized,
+            message: 'User not found in session',
+          ),
+        );
       }
       final user = await _remote.fetchUserProfile(userId);
       await _local.cacheUser(user);
@@ -49,10 +53,12 @@ class AuthRepositoryImpl implements AuthRepository {
       final response = await _remote.signInWithGoogle();
       final userId = response.session?.user.id ?? '';
       if (userId.isEmpty) {
-        return Result.failure(const ApiException(
-          code: FailureCode.unauthorized,
-          message: 'User not found in session',
-        ));
+        return Result.failure(
+          const ApiException(
+            code: FailureCode.unauthorized,
+            message: 'User not found in session',
+          ),
+        );
       }
       final user = await _remote.fetchUserProfile(userId);
       await _local.cacheUser(user);
@@ -96,17 +102,16 @@ class AuthRepositoryImpl implements AuthRepository {
       final response = await _remote.signUpWithEmail(
         email,
         password,
-        data: {
-          'display_name': fullName,
-          'is_profile_complete': false,
-        },
+        data: {'display_name': fullName, 'is_profile_complete': false},
       );
       createdAuthId = response.user?.id;
       if (createdAuthId == null) {
-        return Result.failure(const ApiException(
-          code: FailureCode.unknown,
-          message: 'Sign up gagal — tidak ada user ID',
-        ));
+        return Result.failure(
+          const ApiException(
+            code: FailureCode.unknown,
+            message: 'Sign up gagal — tidak ada user ID',
+          ),
+        );
       }
 
       String? avatarUrl;
@@ -129,34 +134,32 @@ class AuthRepositoryImpl implements AuthRepository {
       await _local.cacheUser(profile);
       return Result.success(profile.toEntity());
     } catch (e) {
-      // BUG-004-D: Proper rollback. Hanya cleanup jika step A (signUp)
-      // SUDAH sukses (createdAuthId != null). Step A gagal = tidak ada
-      // auth user, cleanup tidak perlu. Step B/C/D gagal = ada auth
-      // user tapi profile tidak ada — harus cleanup supaya retry
-      // tidak kena "user already registered".
+      // BUG-004-D: Proper rollback. Urutan PENTING:
+      //   1) delete_user() dulu — butuh session (auth.uid()) untuk tahu
+      //      user mana yang dihapus. Harus SEBELUM signOut.
+      //   2) signOut() — bersihkan session client-side.
+      //   3) clearUser() — bersihkan cache lokal.
+      // Jika signOut duluan, session hilang → auth.uid() = null →
+      // DELETE kena 0 rows → ghost account.
       await _safeCleanup(createdAuthId);
+      await _remote.signOut();
+      await _local.clearUser();
       return Result.failure(const ErrorHandler().map(e));
     }
   }
 
-  // BUG-004-D: Cleanup fallback chain. Primary: deleteCurrentUser() via
-  // RPC `delete_user()`. Fallback: signOut() kalau RPC gagal (mis.
-  // function belum di-deploy ke DB). signOut() tidak menghapus row
-  // auth.users — user akan orphan sampai admin cleanup / expired by
-  // Supabase. Tapi minimal client-side state bersih supaya retry
-  // attempt tidak stuck di session lama.
+  // BUG-004-D: Cleanup — hapus auth user via RPC delete_user().
+  // Hanya efektif jika session masih aktif (auth.uid() != null).
+  // Caller WAJIB panggil signOut() + clearUser() setelah method ini.
   Future<void> _safeCleanup(String? createdAuthId) async {
     if (createdAuthId == null) return;
     try {
       await _remote.deleteCurrentUser();
     } catch (e) {
       // ignore: avoid_print
-      print('[BUG-004-D] deleteCurrentUser failed: $e — fallback signOut');
-      try {
-        await _remote.signOut();
-      } catch (_) {
-        // Best effort
-      }
+      print(
+        '[BUG-004-D] deleteCurrentUser failed: $e — ghost account tetap ada',
+      );
     }
   }
 
@@ -168,10 +171,12 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final session = _supabaseClient.auth.currentSession;
       if (session == null) {
-        return Result.failure(const ApiException(
-          code: FailureCode.unauthorized,
-          message: 'No active session',
-        ));
+        return Result.failure(
+          const ApiException(
+            code: FailureCode.unauthorized,
+            message: 'No active session',
+          ),
+        );
       }
 
       String? avatarUrl;
@@ -227,10 +232,12 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final session = _supabaseClient.auth.currentSession;
       if (session == null) {
-        return Result.failure(const ApiException(
-          code: FailureCode.unauthorized,
-          message: 'No active session',
-        ));
+        return Result.failure(
+          const ApiException(
+            code: FailureCode.unauthorized,
+            message: 'No active session',
+          ),
+        );
       }
       final user = await _remote.fetchUserProfile(session.user.id);
       return Result.success(user.toEntity());

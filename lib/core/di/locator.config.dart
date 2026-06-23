@@ -24,6 +24,8 @@ import 'package:health_pal/features/auth/data/repository/auth_repository_impl.da
     as _i733;
 import 'package:health_pal/features/auth/domain/repository/auth_repository.dart'
     as _i613;
+import 'package:health_pal/features/auth/domain/usecase/create_profile_usecase.dart'
+    as _i961;
 import 'package:health_pal/features/auth/domain/usecase/forgot_password_usecase.dart'
     as _i957;
 import 'package:health_pal/features/auth/domain/usecase/login_with_email_usecase.dart'
@@ -306,6 +308,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i269.CancelAppointmentUseCase>(),
       ),
     );
+    gh.factory<_i961.CreateProfileUseCase>(
+      () => _i961.CreateProfileUseCase(gh<_i613.AuthRepository>()),
+    );
     gh.factory<_i957.ForgotPasswordUseCase>(
       () => _i957.ForgotPasswordUseCase(gh<_i613.AuthRepository>()),
     );
@@ -324,16 +329,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i605.AppServices>(),
       ),
     );
-    gh.factoryParam<_i730.CreateProfileCubit, _i730.CreateProfileArgs, dynamic>(
-      (args, _) => _i730.CreateProfileCubit(
-        gh<_i630.RegisterAndCreateProfileUseCase>(),
-        args,
-      ),
-    );
     gh.factory<_i516.ProfileCubit>(
       () => _i516.ProfileCubit(
         gh<_i399.GetProfileUseCase>(),
         gh<_i605.AppServices>(),
+      ),
+    );
+    gh.factoryParam<_i730.CreateProfileCubit, _i730.CreateProfileArgs, dynamic>(
+      (args, _) => _i730.CreateProfileCubit(
+        gh<_i630.RegisterAndCreateProfileUseCase>(),
+        gh<_i961.CreateProfileUseCase>(),
+        args,
       ),
     );
     gh.factory<_i1000.ForgotPasswordCubit>(

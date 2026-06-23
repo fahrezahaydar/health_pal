@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../../core/network/result.dart';
 import '../../../../auth/domain/usecase/register_and_create_profile_usecase.dart';
 import '../../../domain/entity/user_entity.dart';
+import '../../../domain/usecase/create_profile_usecase.dart';
 
 part 'create_profile_state.dart';
 
@@ -25,10 +26,15 @@ class CreateProfileArgs {
 @injectable
 class CreateProfileCubit extends Cubit<CreateProfileState> {
   final RegisterAndCreateProfileUseCase _create;
+  final CreateProfileUseCase _createProfile;
+
   final String _password;
 
-  CreateProfileCubit(this._create, @factoryParam CreateProfileArgs args)
-    : _password = args.password,
+  CreateProfileCubit(
+    this._create,
+    this._createProfile,
+    @factoryParam CreateProfileArgs args,
+  ) : _password = args.password,
       super(
         CreateProfileState(
           fullName: args.fullName,
@@ -46,6 +52,30 @@ class CreateProfileCubit extends Cubit<CreateProfileState> {
       nickname: state.nickname,
       gender: state.gender,
       dateOfBirth: state.dateOfBirth,
+      photo: state.photo,
+    );
+    switch (result) {
+      case Success<UserEntity>():
+        emit(state.copyWith(status: CubitStatus.success, user: result.data));
+      case Failure<UserEntity>():
+        emit(
+          state.copyWith(
+            status: CubitStatus.failure,
+            errorMessage: result.message,
+          ),
+        );
+    }
+  }
+
+  Future<void> createProfile(String createdAuthId) async {
+    emit(state.copyWith(status: CubitStatus.loading));
+    final result = await _createProfile(
+      email: state.email,
+      fullName: state.fullName,
+      nickname: state.nickname,
+      gender: state.gender,
+      dateOfBirth: state.dateOfBirth,
+      createdAuthId: createdAuthId,
       photo: state.photo,
     );
     switch (result) {

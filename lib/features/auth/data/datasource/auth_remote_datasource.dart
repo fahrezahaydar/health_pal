@@ -120,4 +120,9 @@ class AuthRemoteDataSource {
         );
     return _client.storage.from('avatars').getPublicUrl(path);
   }
+
+  Future<void> deleteAvatar(String userId) async {
+    final path = '$userId/profile.jpg';
+    await _client.storage.from('avatars').remove([path]);
+  }
 }

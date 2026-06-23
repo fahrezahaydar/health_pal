@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
@@ -48,6 +49,14 @@ class CreateProfilePage extends StatelessWidget {
           ),
         ),
         body: const CreateProfileView(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            final email = getIt<SupabaseClient>().auth.currentUser?.email;
+            print('Current user email: $email');
+            // Do something with the email, e.g., display it in a dialog or use it for further processing
+          },
+          child: const Icon(Icons.close),
+        ),
       ),
     );
   }
