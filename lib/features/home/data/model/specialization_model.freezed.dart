@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SpecializationModel {
 
- String get id; String get name;@JsonKey(name: 'icon_url') String? get iconUrl;
+ String get id; String get name;@JsonKey(name: 'icon_url') String? get iconUrl;@JsonKey(name: 'color_hex') String? get colorHex;
 /// Create a copy of SpecializationModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SpecializationModelCopyWith<SpecializationModel> get copyWith => _$Specializati
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpecializationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpecializationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&(identical(other.colorHex, colorHex) || other.colorHex == colorHex));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,iconUrl);
+int get hashCode => Object.hash(runtimeType,id,name,iconUrl,colorHex);
 
 @override
 String toString() {
-  return 'SpecializationModel(id: $id, name: $name, iconUrl: $iconUrl)';
+  return 'SpecializationModel(id: $id, name: $name, iconUrl: $iconUrl, colorHex: $colorHex)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SpecializationModelCopyWith<$Res>  {
   factory $SpecializationModelCopyWith(SpecializationModel value, $Res Function(SpecializationModel) _then) = _$SpecializationModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String name,@JsonKey(name: 'icon_url') String? iconUrl
+ String id, String name,@JsonKey(name: 'icon_url') String? iconUrl,@JsonKey(name: 'color_hex') String? colorHex
 });
 
 
@@ -65,11 +65,12 @@ class _$SpecializationModelCopyWithImpl<$Res>
 
 /// Create a copy of SpecializationModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? iconUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? iconUrl = freezed,Object? colorHex = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
+as String?,colorHex: freezed == colorHex ? _self.colorHex : colorHex // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl, @JsonKey(name: 'color_hex')  String? colorHex)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpecializationModel() when $default != null:
-return $default(_that.id,_that.name,_that.iconUrl);case _:
+return $default(_that.id,_that.name,_that.iconUrl,_that.colorHex);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.name,_that.iconUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl, @JsonKey(name: 'color_hex')  String? colorHex)  $default,) {final _that = this;
 switch (_that) {
 case _SpecializationModel():
-return $default(_that.id,_that.name,_that.iconUrl);case _:
+return $default(_that.id,_that.name,_that.iconUrl,_that.colorHex);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.name,_that.iconUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name, @JsonKey(name: 'icon_url')  String? iconUrl, @JsonKey(name: 'color_hex')  String? colorHex)?  $default,) {final _that = this;
 switch (_that) {
 case _SpecializationModel() when $default != null:
-return $default(_that.id,_that.name,_that.iconUrl);case _:
+return $default(_that.id,_that.name,_that.iconUrl,_that.colorHex);case _:
   return null;
 
 }
@@ -211,12 +212,13 @@ return $default(_that.id,_that.name,_that.iconUrl);case _:
 @JsonSerializable()
 
 class _SpecializationModel extends SpecializationModel {
-  const _SpecializationModel({required this.id, required this.name, @JsonKey(name: 'icon_url') this.iconUrl}): super._();
+  const _SpecializationModel({required this.id, required this.name, @JsonKey(name: 'icon_url') this.iconUrl, @JsonKey(name: 'color_hex') this.colorHex}): super._();
   factory _SpecializationModel.fromJson(Map<String, dynamic> json) => _$SpecializationModelFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override@JsonKey(name: 'icon_url') final  String? iconUrl;
+@override@JsonKey(name: 'color_hex') final  String? colorHex;
 
 /// Create a copy of SpecializationModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpecializationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpecializationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl)&&(identical(other.colorHex, colorHex) || other.colorHex == colorHex));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,iconUrl);
+int get hashCode => Object.hash(runtimeType,id,name,iconUrl,colorHex);
 
 @override
 String toString() {
-  return 'SpecializationModel(id: $id, name: $name, iconUrl: $iconUrl)';
+  return 'SpecializationModel(id: $id, name: $name, iconUrl: $iconUrl, colorHex: $colorHex)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$SpecializationModelCopyWith<$Res> implements $Specializat
   factory _$SpecializationModelCopyWith(_SpecializationModel value, $Res Function(_SpecializationModel) _then) = __$SpecializationModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name,@JsonKey(name: 'icon_url') String? iconUrl
+ String id, String name,@JsonKey(name: 'icon_url') String? iconUrl,@JsonKey(name: 'color_hex') String? colorHex
 });
 
 
@@ -268,11 +270,12 @@ class __$SpecializationModelCopyWithImpl<$Res>
 
 /// Create a copy of SpecializationModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? iconUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? iconUrl = freezed,Object? colorHex = freezed,}) {
   return _then(_SpecializationModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,iconUrl: freezed == iconUrl ? _self.iconUrl : iconUrl // ignore: cast_nullable_to_non_nullable
+as String?,colorHex: freezed == colorHex ? _self.colorHex : colorHex // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

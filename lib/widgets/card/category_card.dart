@@ -5,10 +5,11 @@ import '../../core/theme/app_theme.dart';
 import '../../features/home/domain/entity/specialization_entity.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({super.key, this.name, this.iconUrl, this.onTap});
+  const CategoryCard({super.key, this.name, this.iconUrl, this.colorHex, this.onTap});
 
   final String? name;
   final String? iconUrl;
+  final String? colorHex;
   final VoidCallback? onTap;
 
   factory CategoryCard.fromEntity(
@@ -18,6 +19,7 @@ class CategoryCard extends StatelessWidget {
     return CategoryCard(
       name: entity.name,
       iconUrl: entity.iconUrl,
+      colorHex: entity.colorHex,
       onTap: onTap,
     );
   }
@@ -35,7 +37,7 @@ class CategoryCard extends StatelessWidget {
             aspectRatio: 1,
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.paleBlue.withValues(alpha: 0.3),
+                color: _parseColor(colorHex) ?? AppTheme.paleBlue.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(16),
               ),
               alignment: Alignment.center,
@@ -61,6 +63,16 @@ class CategoryCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color? _parseColor(String? hex) {
+    if (hex == null) return null;
+    final h = hex.replaceFirst('#', '');
+    if (h.length != 6 && h.length != 8) return null;
+    final v = int.tryParse(h, radix: 16);
+    if (v == null) return null;
+    if (h.length == 6) return Color(0xFF000000 | v);
+    return Color(v);
   }
 
   IconData _iconData(String? name) {

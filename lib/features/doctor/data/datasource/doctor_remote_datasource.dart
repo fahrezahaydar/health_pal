@@ -26,7 +26,7 @@ class DoctorRemoteDataSource {
     var builder = _client
         .from('doctors')
         .select(
-            '*, clinics(id, name, address, city), specializations(id, name, icon_url)')
+            '*, clinics(id, name, address, city), specializations(id, name, icon_url, color_hex)')
         .eq('is_active', true);
 
     if (specializationId != null) {
@@ -53,7 +53,7 @@ class DoctorRemoteDataSource {
     final result = await _client
         .from('doctors')
         .select(
-            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url)')
+            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url, color_hex)')
         .eq('id', doctorId)
         .eq('is_active', true)
         .single();

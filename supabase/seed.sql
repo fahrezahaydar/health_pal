@@ -232,23 +232,25 @@ end $$;
 -- Kolom:
 --   id        UUID auto — ganti gen_random_uuid() dengan UUID tetap jika perlu
 --   name      Nama spesialisasi
---   icon_url  URL ikon dari storage
---               upload → bucket 'avatars/icon-umum.png'
---               URL    → http://127.0.0.1:54321/storage/v1/object/public/avatars/icon-umum.png
+--   icon_url  URL SVG icon dari bucket specialization-icons
+--               upload → bucket 'specialization-icons/icon-umum.svg'
+--               URL    → http://127.0.0.1:54321/storage/v1/object/public/specialization-icons/umum.svg
+--   color_hex Warna utama untuk render card/icon background.
+--               Format: #RRGGBB atau #AARRGGBB (nullable).
 -- =============================================================================
-insert into public.specializations (id, name, icon_url) values
-  (gen_random_uuid(), 'Umum',                        null),
-  (gen_random_uuid(), 'Anak',                        null),
-  (gen_random_uuid(), 'Kulit & Kelamin',             null),
-  (gen_random_uuid(), 'Gigi',                        null),
-  (gen_random_uuid(), 'Mata',                        null),
-  (gen_random_uuid(), 'THT',                         null),
-  (gen_random_uuid(), 'Saraf',                       null),
-  (gen_random_uuid(), 'Jantung',                     null),
-  (gen_random_uuid(), 'Kandungan & Ginekologi',      null),
-  (gen_random_uuid(), 'Ortopedi',                    null);
+insert into public.specializations (id, name, icon_url, color_hex) values
+  (gen_random_uuid(), 'Umum',                        null, '#4CAF50'),
+  (gen_random_uuid(), 'Anak',                        null, '#FF9800'),
+  (gen_random_uuid(), 'Kulit & Kelamin',             null, '#E91E63'),
+  (gen_random_uuid(), 'Gigi',                        null, '#2196F3'),
+  (gen_random_uuid(), 'Mata',                        null, '#00BCD4'),
+  (gen_random_uuid(), 'THT',                         null, '#9C27B0'),
+  (gen_random_uuid(), 'Saraf',                       null, '#607D8B'),
+  (gen_random_uuid(), 'Jantung',                     null, '#F44336'),
+  (gen_random_uuid(), 'Kandungan & Ginekologi',      null, '#FF69B4'),
+  (gen_random_uuid(), 'Ortopedi',                    null, '#795548');
   -- Contoh nambah spesialisasi baru:
-  -- ,(gen_random_uuid(), 'Psikolog', null)
+  -- ,(gen_random_uuid(), 'Psikolog', null, '#3F51B5')
 
 -- =============================================================================
 -- 4. CLINICS (klinik / rumah sakit)

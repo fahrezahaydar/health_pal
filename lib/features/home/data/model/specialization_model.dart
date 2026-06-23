@@ -13,6 +13,7 @@ abstract class SpecializationModel with _$SpecializationModel {
     required String id,
     required String name,
     @JsonKey(name: 'icon_url') String? iconUrl,
+    @JsonKey(name: 'color_hex') String? colorHex,
   }) = _SpecializationModel;
 
   factory SpecializationModel.fromJson(Map<String, dynamic> json) =>
@@ -23,11 +24,13 @@ abstract class SpecializationModel with _$SpecializationModel {
         id: entity.id,
         name: entity.name,
         iconUrl: entity.iconUrl,
+        colorHex: entity.colorHex,
       );
 
   SpecializationEntity toEntity() => SpecializationEntity(
         id: id,
         name: name,
         iconUrl: iconUrl,
+        colorHex: colorHex,
       );
 }

@@ -4,11 +4,13 @@ class SpecializationEntity extends Equatable {
   final String id;
   final String name;
   final String? iconUrl;
+  final String? colorHex;
 
   const SpecializationEntity({
     required this.id,
     required this.name,
     this.iconUrl,
+    this.colorHex,
   });
 
   static List<SpecializationEntity> mock() => const [
@@ -23,5 +25,5 @@ class SpecializationEntity extends Equatable {
       ];
 
   @override
-  List<Object?> get props => [id, name, iconUrl];
+  List<Object?> get props => [id, name, iconUrl, colorHex];
 }

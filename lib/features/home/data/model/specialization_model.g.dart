@@ -11,6 +11,7 @@ _SpecializationModel _$SpecializationModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       iconUrl: json['icon_url'] as String?,
+      colorHex: json['color_hex'] as String?,
     );
 
 Map<String, dynamic> _$SpecializationModelToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$SpecializationModelToJson(
   'id': instance.id,
   'name': instance.name,
   'icon_url': instance.iconUrl,
+  'color_hex': instance.colorHex,
 };
