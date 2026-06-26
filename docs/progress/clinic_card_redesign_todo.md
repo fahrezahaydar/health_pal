@@ -112,7 +112,7 @@ $$;
 | 4.8 | `ClinicCard` — remove "Lihat Peta" | `clinic_card.dart` | Hapus button (diganti tap card) | ✅ |
 | 4.9 | `ClinicCard` — tap → detail | `clinic_card.dart` | `GestureDetector` with `onTap` callback (passthrough dari parent) | ✅ |
 | 4.10 | `NearbyClinicCard` — update v2.0 | `nearby_clinic_card.dart` | Compact horizontal version with rating, category, distance+duration | ✅ |
-| 4.11 | `LocCubit` — manage favorite state | `loc_cubit.dart` | `toggleFavorite(clinicId)`, persist ke SharedPref | ⬜ |
+| 4.11 | `LocCubit` — manage favorite state | `loc_cubit.dart` | `toggleFavorite(clinicId)`, persist di memory (Set<String>) | ✅ |
 
 ---
 
@@ -145,10 +145,10 @@ $$;
 | 1. Database Migration | 5 | 5 | 0 |
 | 2. API Contract | 3 | 3 | 0 |
 | 3. Data Layer | 12 | 12 | 0 |
-| 4. Presentation Layer | 11 | 10 | 1 |
-| 5. Home Nearby | 2 | 0 | 2 |
+| 4. Presentation Layer | 11 | 11 | 0 |
+| 5. Home Nearby | 2 | 2 | 0 |
 | 6. Verifikasi | 6 | 0 | 6 |
-| **Total** | **39** | **30** | **9** |
+| **Total** | **39** | **33** | **6** |
 
 ---
 

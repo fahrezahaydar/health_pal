@@ -22,6 +22,7 @@ class LocCubit extends Cubit<LocState> {
 
   double _radiusKm = 10.0;
   Position? _lastPosition;
+  final Set<String> _favoriteIds = {};
 
   /// Request lokasi + load clinics.
   /// Dipanggil dari initState page atau tombol "Izinkan Lokasi".
@@ -107,6 +108,44 @@ class LocCubit extends Cubit<LocState> {
     emit(current.copyWith(sortBy: sortBy));
   }
 
+  void toggleFavorite(String clinicId) {
+    if (_favoriteIds.contains(clinicId)) {
+      _favoriteIds.remove(clinicId);
+    } else {
+      _favoriteIds.add(clinicId);
+    }
+    _reemitWithFavorites();
+  }
+
+  void _reemitWithFavorites() {
+    final current = state;
+    if (current is! LocLoaded) return;
+    final updated = current.clinics.map((c) {
+      if (_favoriteIds.contains(c.id)) {
+        return ClinicEntity(
+          id: c.id,
+          name: c.name,
+          address: c.address,
+          city: c.city,
+          latitude: c.latitude,
+          longitude: c.longitude,
+          phone: c.phone,
+          imageUrl: c.imageUrl,
+          distanceMeters: c.distanceMeters,
+          doctorCount: c.doctorCount,
+          ratingAvg: c.ratingAvg,
+          reviewCount: c.reviewCount,
+          category: c.category,
+          durationMinutes: c.durationMinutes,
+          isFavorite: true,
+          specializations: c.specializations,
+        );
+      }
+      return c;
+    }).toList();
+    emit(current.copyWith(clinics: updated));
+  }
+
   Future<void> _load(Position position, double radiusKm) async {
     final result = await _getClinics(
       lat: position.latitude,
@@ -115,8 +154,31 @@ class LocCubit extends Cubit<LocState> {
     );
     switch (result) {
       case Success<List<ClinicEntity>>(:final data):
+        final marked = data.map((c) {
+          if (_favoriteIds.contains(c.id)) {
+            return ClinicEntity(
+              id: c.id,
+              name: c.name,
+              address: c.address,
+              city: c.city,
+              latitude: c.latitude,
+              longitude: c.longitude,
+              phone: c.phone,
+              imageUrl: c.imageUrl,
+              distanceMeters: c.distanceMeters,
+              doctorCount: c.doctorCount,
+              ratingAvg: c.ratingAvg,
+              reviewCount: c.reviewCount,
+              category: c.category,
+              durationMinutes: c.durationMinutes,
+              isFavorite: true,
+              specializations: c.specializations,
+            );
+          }
+          return c;
+        }).toList();
         emit(LocLoaded(
-          clinics: data,
+          clinics: marked,
           currentPosition: position,
           radiusKm: radiusKm,
         ));

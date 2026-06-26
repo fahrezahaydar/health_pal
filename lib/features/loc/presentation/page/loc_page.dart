@@ -325,7 +325,11 @@ class _LocViewState extends State<_LocView> {
               final c = sorted[i];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClinicCard(clinic: c),
+                child: ClinicCard(
+                  clinic: c,
+                  onFavoriteTap: () =>
+                      context.read<LocCubit>().toggleFavorite(c.id),
+                ),
               );
             },
           ),
