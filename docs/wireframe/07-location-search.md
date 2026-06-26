@@ -5,6 +5,7 @@
 | **Route** | `/loc` (Shell Tab 1) |
 | **Component** | `LocPage` |
 | **Status** | 🟡 Implemented (list-only — Map View deferred ke Sprint 5 via flutter_map) |
+| **Clinic Card** | v2.0 — redesign with cover image, rating, review count, category, duration, favorite |
 
 ---
 
@@ -29,18 +30,18 @@
 │  │   [+ More]  [Jarak ▼]       │   │
 │  └──────────────────────────────┘   │
 │                                     │
-│  ┌─ Clinic Card ────────────────┐   │
-│  │ 🏥 Klinik Sehat Bersama      │   │
-│  │ 📍 1.2 km                    │   │
-│  │ 👨‍⚕️ 5 dokter tersedia        │   │
-│  │ [🗺️ Lihat Peta]              │   │
-│  └──────────────────────────────┘   │
-│  ┌─ Clinic Card ────────────────┐   │
-│  │ 🏥 RS Mitra Husada           │   │
-│  │ 📍 2.5 km                    │   │
-│  │ 👨‍⚕️ 3 dokter tersedia        │   │
-│  │ [🗺️ Lihat Peta]              │   │
-│  └──────────────────────────────┘   │
+ │  ┌─ Clinic Card ──────────────────────────┐   │
+ │  │                                            │   │
+ │  │   ┌──────────────────────────────────┐ ♡  │   │
+ │  │   │         Cover Image              │    │   │
+ │  │   └──────────────────────────────────┘    │   │
+ │  │                                            │   │
+ │  │ Sunrise Health Clinic                      │   │
+ │  │ 📍 123 Oak Street, CA 98765                │   │
+ │  │ ★ 5.0  ★★★★★  (58 Reviews)                │   │
+ │  │────────────────────────────────────────────│   │
+ │  │ %  2.5 km / 40 min      🏥 Hospital        │   │
+ │  └────────────────────────────────────────────┘   │
 │                                     │
 │──────── Bottom Nav Bar ─────────────│
 │  🏠 Home  📍 Loc  📋 Hist  👤 Prof │
@@ -82,16 +83,38 @@
 | Clinic Card | `Container` with `InkWell` | `POST /rest/v1/rpc/get_nearby_clinics` (API §5.5) |
 | Scroll View | `ListView.builder` | Pagination (20 items) |
 
-**Clinic Card Components (reusable widget):**
+**Clinic Card Components (v2.0 — reusable widget):**
+
+### Layout Structure
+```text
+Card
+├── Stack
+│   ├── Cover Image
+│   └── Favorite Button (Top Right)
+└── Content
+    ├── Clinic Name
+    ├── Address
+    ├── Rating Row
+    │   ├── Rating Value
+    │   ├── Stars
+    │   └── Review Count
+    ├── Divider
+    └── Bottom Info Row
+        ├── Distance & Duration
+        └── Category Badge
 ```
-┌─────────────────────────────────────┐
-│ ┌────────┐                          │
-│ │        │ Klinik Sehat Bersama     │
-│ │ Foto   │ 📍 1.2 km                │
-│ │ Klinik │ 👨‍⚕️ 5 dokter            │
-│ └────────┘ [🗺️ Lihat Peta]          │
-└─────────────────────────────────────┘
-```
+
+### Components
+| Component | Description | Data Source |
+|-----------|-------------|-------------|
+| Cover Image | Foto klinik/rumah sakit | `clinics.image_url` |
+| Favorite Button | Ikon hati di pojok kanan atas | `clinic_favorites` table (toggle) |
+| Clinic Name | Nama fasilitas kesehatan | `clinics.name` |
+| Address | Alamat singkat | `clinics.address` |
+| Rating | ★ value + stars + review count | `clinics.rating_avg` + `clinics.review_count` |
+| Divider | Garis pemisah | — |
+| Distance & Duration | Jarak (km) + estimasi waktu tempuh | Haversine from RPC |
+| Category Badge | Jenis fasilitas (Hospital, Clinic, dll.) | `clinics.category` |
 
 ---
 
@@ -114,3 +137,12 @@
 - GPS mati → fallback input kota
 - Tidak ada klinik dalam radius → empty state: "Tidak ada klinik di radius ini, coba perbesar radius"
 - Semua filter aktif → 0 hasil → "Tidak ada klinik dengan filter ini"
+
+---
+
+## Versi
+
+| Versi | Tanggal | Perubahan |
+|-------|---------|-----------|
+| v1.0 | Juni 2026 | Initial — nama, alamat, distance, doctor count |
+| v2.0 | 24 Juni 2026 | **Redesign:** cover image, favorite button, rating + stars + review count, category badge, distance + duration. Hapus doctor count + "Lihat Peta" button (deferred ke tap card). |
