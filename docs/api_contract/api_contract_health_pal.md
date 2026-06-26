@@ -1116,7 +1116,11 @@ Authorization: Bearer <access_token>
     "phone": "021-1234567",
     "image_url": "https://<ref>.supabase.co/storage/v1/object/public/clinics/klinik1.jpg",
     "distance_meters": 1200,
-    "doctor_count": 5
+    "doctor_count": 5,
+    "rating_avg": 4.8,
+    "review_count": 120,
+    "category": "Clinic",
+    "duration_minutes": 3
   }
 ]
 ```
@@ -1133,6 +1137,10 @@ Authorization: Bearer <access_token>
 | `image_url` | `string?` | URL foto klinik |
 | `distance_meters` | `float` | Jarak dari lokasi user (meter) |
 | `doctor_count` | `int` | Jumlah dokter aktif di klinik |
+| `rating_avg` | `float` | Rating rata-rata (0.0 – 5.0) |
+| `review_count` | `int` | Jumlah review |
+| `category` | `string?` | Jenis fasilitas: `Hospital`, `Clinic`, dll. |
+| `duration_minutes` | `int` | Estimasi waktu tempuh (asumsi 30 km/jam) |
 
 **Error Responses:**
 
@@ -1789,6 +1797,7 @@ class ApiException implements Exception {
 |---|---|---|
 | v1.0 | Juni 2026 | Initial release — 19 endpoint |
 | v1.0.1 | 13 Jun 2026 | **Showstopper fixes:** Hapus duplikat Section 7; tambah §3.5 `GET /me`; tambah §5.5 `get_nearby_clinics`; tambah §6.5 Get Upcoming Appointment; standarkan enum Gender ke `other`; standarkan nested key ke plural (PostgREST convention) |
+| v1.0.2 | 24 Jun 2026 | **Clinic Card v2:** §5.5 `get_nearby_clinics` — tambah `rating_avg`, `review_count`, `category`, `duration_minutes` di response |
 
 ---
 

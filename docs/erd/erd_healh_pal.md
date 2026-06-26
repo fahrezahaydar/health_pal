@@ -76,6 +76,9 @@ erDiagram
         Float longitude
         String phone
         String image_url
+        Float rating_avg
+        Integer review_count
+        String category
         DateTime created_at
     }
 
@@ -239,6 +242,7 @@ erDiagram
 
 ### `clinics`
 > Data klinik atau rumah sakit tempat dokter berpraktik.
+> Kolom `rating_avg`, `review_count`, `category` ditambahkan via migration `007_clinic_card_v2.sql` (ADR-005).
 
 | Kolom | Tipe | Keterangan |
 |---|---|---|
@@ -250,6 +254,9 @@ erDiagram
 | `longitude` | `FLOAT8` | Koordinat untuk query radius di Loc tab |
 | `phone` | `TEXT` | Nomor telepon klinik |
 | `image_url` | `TEXT` | Foto klinik |
+| `rating_avg` | `NUMERIC(2,1)` | Rating rata-rata (default 0). Denormalized untuk Clinic Card v2.0 |
+| `review_count` | `INT` | Jumlah review (default 0). Denormalized |
+| `category` | `TEXT` | Jenis: `Hospital`, `Clinic`, `Laboratory`, dll. Nullable |
 | `created_at` | `TIMESTAMPTZ` | Auto |
 
 ---
@@ -605,6 +612,7 @@ CREATE UNIQUE INDEX idx_fcm_user_platform ON user_fcm_tokens(user_id, platform);
 ### `get_nearby_clinics`
 
 Mengembalikan klinik terdekat dari lokasi user menggunakan Haversine formula.
+> **v2.0 (ADR-005):** Tambah `rating_avg`, `review_count`, `category`, `duration_minutes`.
 
 ```sql
 CREATE OR REPLACE FUNCTION get_nearby_clinics(
@@ -622,7 +630,11 @@ RETURNS TABLE (
   phone TEXT,
   image_url TEXT,
   distance_meters FLOAT8,
-  doctor_count BIGINT
+  doctor_count BIGINT,
+  rating_avg NUMERIC(2,1),
+  review_count INT,
+  category TEXT,
+  duration_minutes INT
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -636,7 +648,17 @@ BEGIN
         SIN(RADIANS(user_lat)) * SIN(RADIANS(c.latitude))
       )
     )::FLOAT8 AS distance_meters,
-    (SELECT COUNT(*) FROM doctors d WHERE d.clinic_id = c.id AND d.is_active = true)::BIGINT AS doctor_count
+    (SELECT COUNT(*) FROM doctors d WHERE d.clinic_id = c.id AND d.is_active = true)::BIGINT AS doctor_count,
+    c.rating_avg,
+    c.review_count,
+    c.category,
+    ROUND(
+      (6371000 * ACOS(
+        COS(RADIANS(user_lat)) * COS(RADIANS(c.latitude)) *
+        COS(RADIANS(c.longitude) - RADIANS(user_lng)) +
+        SIN(RADIANS(user_lat)) * SIN(RADIANS(c.latitude))
+      )) / 1000.0 / 30.0 * 60
+    )::INT AS duration_minutes
   FROM clinics c
   WHERE (
     6371000 * ACOS(
