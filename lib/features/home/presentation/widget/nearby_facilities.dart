@@ -21,34 +21,28 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
+      spacing: 16,
       children: [
-        Skeleton.ignore(
-          child: Row(
-            mainAxisAlignment: .spaceBetween,
-            children: [
-              const HeaderTitle(title: 'Nearby Medical Centers'),
-
-              GestureDetector(
-                onTap: () => context.push(RoutePaths.loc),
-                child: Text('See All', style: AppTextTheme.bodySmall),
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: .spaceBetween,
+          children: [
+            const HeaderTitle(title: 'Nearby Medical Centers'),
+            GestureDetector(
+              onTap: () => context.push(RoutePaths.loc),
+              child: Text('See All', style: AppTextTheme.bodySmall),
+            ),
+          ],
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              for (final clinic in clinics)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: SizedBox(
-                    width: 260,
-                    child: ClinicCard(clinic: clinic),
-                  ),
-                ),
-            ],
+            spacing: 16,
+            children: clinics.map((clinic) {
+              return SizedBox(
+                width: 260,
+                child: ClinicCard(clinic: clinic),
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -61,9 +55,30 @@ class NearbyFacilitiesLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: false,
-      child: NearbyFacilitiesLoaded(clinics: ClinicEntity.mock()),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16,
+      children: [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            HeaderTitle(title: 'Nearby Medical Centers'),
+            Text('See All'),
+          ],
+        ),
+        Skeletonizer(
+          enabled: true,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              spacing: 16,
+              children: ClinicEntity.mock().map((clinic) {
+                return ClinicCard(clinic: clinic);
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
