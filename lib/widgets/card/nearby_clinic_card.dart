@@ -12,7 +12,10 @@ class NearbyClinicCard extends StatelessWidget {
     this.name,
     this.imageUrl,
     this.distanceDisplay,
-    this.doctorCountDisplay,
+    this.durationDisplay,
+    this.ratingAvg,
+    this.reviewCountDisplay,
+    this.category,
     this.onTap,
     this.width = 240,
   });
@@ -20,7 +23,10 @@ class NearbyClinicCard extends StatelessWidget {
   final String? name;
   final String? imageUrl;
   final String? distanceDisplay;
-  final String? doctorCountDisplay;
+  final String? durationDisplay;
+  final double? ratingAvg;
+  final String? reviewCountDisplay;
+  final String? category;
   final VoidCallback? onTap;
   final double width;
 
@@ -32,7 +38,10 @@ class NearbyClinicCard extends StatelessWidget {
       name: entity.name,
       imageUrl: entity.imageUrl,
       distanceDisplay: entity.distanceDisplay,
-      doctorCountDisplay: entity.doctorCountDisplay,
+      durationDisplay: entity.durationDisplay,
+      ratingAvg: entity.ratingAvg,
+      reviewCountDisplay: entity.reviewCountDisplay,
+      category: entity.category,
       onTap: onTap,
     );
   }
@@ -40,7 +49,9 @@ class NearbyClinicCard extends StatelessWidget {
   factory NearbyClinicCard.skeleton() => const NearbyClinicCard(
     name: 'Loading...',
     distanceDisplay: '-- km',
-    doctorCountDisplay: '--',
+    durationDisplay: '-- min',
+    ratingAvg: 0,
+    reviewCountDisplay: '--',
   );
 
   @override
@@ -93,20 +104,53 @@ class NearbyClinicCard extends StatelessWidget {
                           color: AppTheme.grey400,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          distanceDisplay ?? '',
-                          style: AppTextTheme.bodySmall.copyWith(
-                            color: AppTheme.grey500,
+                        Expanded(
+                          child: Text(
+                            '$distanceDisplay / $durationDisplay',
+                            style: AppTextTheme.bodySmall.copyWith(
+                              color: AppTheme.grey500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                     const Spacer(),
-                    Text(
-                      doctorCountDisplay ?? '',
-                      style: AppTextTheme.labelSmall.copyWith(
-                        color: AppTheme.grey500,
-                      ),
+                    Row(
+                      children: [
+                        if (ratingAvg != null && ratingAvg! > 0) ...[
+                          // TODO: change to iconsax — currently Material fallback
+                          const Icon(Icons.star, size: 12, color: Colors.amber),
+                          const SizedBox(width: 2),
+                          Text(
+                            ratingAvg!.toStringAsFixed(1),
+                            style: AppTextTheme.labelSmall.copyWith(
+                              color: AppTheme.grey700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        if (category != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 1,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTheme.paleBlue,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              category!,
+                              style: AppTextTheme.labelSmall.copyWith(
+                                color: AppTheme.blue,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),

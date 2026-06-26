@@ -1,186 +1,214 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/loc/domain/entity/clinic_entity.dart';
-import '../button/outline_button.dart';
+import '../shared/placeholder_image.dart';
 
 class ClinicCard extends StatelessWidget {
-  const ClinicCard({super.key, required this.clinic});
+  const ClinicCard({
+    super.key,
+    required this.clinic,
+    this.onTap,
+    this.onFavoriteTap,
+  });
 
   final ClinicEntity clinic;
-
-  Future<void> _openMaps() async {
-    try {
-      final uri = Uri.parse(
-        'https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}',
-      );
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
-    } catch (_) {}
-  }
+  final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: AppTheme.grey100,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: clinic.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.grey200),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(11),
+                  ),
+                  child: clinic.imageUrl != null
+                      ? Image.network(
                           clinic.imageUrl!,
+                          width: double.infinity,
+                          height: 160,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const Icon(
-                            AppIcons.localHospital,
-                            color: AppTheme.grey400,
-                            size: 32,
-                          ),
-                        ),
-                      )
-                    : const Icon(
-                        AppIcons.localHospital,
-                        color: AppTheme.grey400,
-                        size: 32,
-                      ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      clinic.name,
-                      style: AppTextTheme.bodyLarge,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          AppIcons.location,
-                          size: 12,
-                          color: AppTheme.grey500,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            clinic.address,
-                            style: AppTextTheme.bodySmall.copyWith(
-                              color: AppTheme.grey500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.paleBlue,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        clinic.distanceDisplay,
-                        style: AppTextTheme.labelSmall.copyWith(
-                          color: AppTheme.blue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                          errorBuilder: (_, _, _) =>
+                              const PlaceholderImage(height: 160),
+                        )
+                      : const PlaceholderImage(height: 160),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (clinic.specializations != null &&
-              clinic.specializations!.isNotEmpty)
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: clinic.specializations!
-                  .take(3)
-                  .map(
-                    (s) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.grey100,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        s,
-                        style: AppTextTheme.labelSmall.copyWith(
-                          color: AppTheme.grey700,
-                        ),
-                      ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton(
+                    icon: Icon(
+                      clinic.isFavorite
+                          // TODO: change to iconsax — currently Material fallback
+                    ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: clinic.isFavorite
+                          ? AppTheme.darkRed
+                          : AppTheme.white,
+                      size: 24,
                     ),
-                  )
-                  .toList(),
+                    onPressed: onFavoriteTap,
+                  ),
+                ),
+              ],
             ),
-          if (clinic.specializations != null &&
-              clinic.specializations!.isNotEmpty)
-            const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(AppIcons.people, size: 14, color: AppTheme.grey500),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  clinic.doctorCountDisplay,
-                  style: AppTextTheme.bodySmall.copyWith(
-                    color: AppTheme.grey700,
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    clinic.name,
+                    style: AppTextTheme.titleLarge,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(AppIcons.location,
+                          size: 14, color: AppTheme.grey400),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          clinic.address,
+                          style: AppTextTheme.bodySmall.copyWith(
+                            color: AppTheme.grey500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _RatingRow(
+                    ratingAvg: clinic.ratingAvg,
+                    reviewCount: clinic.reviewCount,
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(height: 1, color: AppTheme.grey200),
+                  const SizedBox(height: 8),
+                  _BottomInfoRow(
+                    distanceDisplay: clinic.distanceDisplay,
+                    durationDisplay: clinic.durationDisplay,
+                    category: clinic.category,
+                  ),
+                ],
               ),
-              Flexible(
-                child: LightOutlineButton(
-                  label: 'Lihat Peta',
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 0,
-                    vertical: 6,
-                  ),
-                  icon: const Icon(
-                    AppIcons.map,
-                    size: 14,
-                    color: AppTheme.primary,
-                  ),
-                  onTap: _openMaps,
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _RatingRow extends StatelessWidget {
+  const _RatingRow({required this.ratingAvg, required this.reviewCount});
+
+  final double ratingAvg;
+  final int reviewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final ratingDisplay = ratingAvg.toStringAsFixed(1);
+    final reviewText = reviewCount == 1
+        ? '$reviewCount Review'
+        : '$reviewCount Reviews';
+    return Row(
+      children: [
+        Text(
+          ratingDisplay,
+          style: AppTextTheme.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+            color: AppTheme.grey900,
+          ),
+        ),
+        const SizedBox(width: 4),
+        ...List.generate(5, (i) {
+          // TODO: change to iconsax — currently Material fallback
+          return Icon(
+            i < ratingAvg.round() ? Icons.star : Icons.star_border,
+            size: 14,
+            color: Colors.amber,
+          );
+        }),
+        const SizedBox(width: 4),
+        Text(
+          reviewText,
+          style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+        ),
+      ],
+    );
+  }
+}
+
+class _BottomInfoRow extends StatelessWidget {
+  const _BottomInfoRow({
+    required this.distanceDisplay,
+    required this.durationDisplay,
+    required this.category,
+  });
+
+  final String distanceDisplay;
+  final String durationDisplay;
+  final String? category;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(AppIcons.myLocation, size: 14, color: AppTheme.grey500),
+        const SizedBox(width: 4),
+        Text(
+          '$distanceDisplay / $durationDisplay',
+          style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
+        ),
+        const Spacer(),
+        if (category != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: AppTheme.paleBlue,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // TODO: change to iconsax — currently Material fallback
+                const Icon(
+                  Icons.local_hospital,
+                  size: 12,
+                  color: AppTheme.blue,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  category!,
+                  style: AppTextTheme.labelSmall.copyWith(
+                    color: AppTheme.blue,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

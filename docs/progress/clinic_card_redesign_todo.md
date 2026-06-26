@@ -102,17 +102,17 @@ $$;
 
 | # | Item | File Target | Detail | Status |
 |---|------|-------------|--------|--------|
-| 4.1 | `ClinicCard` — full redesign v2.0 | `clinic_card.dart` | Stack: cover image + favorite btn. Content: name, address, rating+stars+reviews, divider, distance+duration+category | ⬜ |
-| 4.2 | `ClinicCard` — cover image | `clinic_card.dart` | Full-width `Image.network(clinic.imageUrl)`, fallback placeholder, `ClipRRect` + border radius top | ⬜ |
-| 4.3 | `ClinicCard` — favorite button | `clinic_card.dart` | `IconButton` with heart icon (filled/outlined). Toggle `isFavorite` → callback ke parent | ⬜ |
-| 4.4 | `ClinicCard` — rating stars row | `clinic_card.dart` | Reusable `RatingStars` widget atau inline. Star icon + numeric value + review count | ⬜ |
-| 4.5 | `ClinicCard` — category badge | `clinic_card.dart` | `Container` with icon + text, colored by category type | ⬜ |
-| 4.6 | `ClinicCard` — distance + duration | `clinic_card.dart` | `clinic.distanceDisplay` + `clinic.durationMinutes` display | ⬜ |
-| 4.7 | `ClinicCard` — remove doctor count | `clinic_card.dart` | Hapus doctor count row | ⬜ |
-| 4.8 | `ClinicCard` — remove "Lihat Peta" | `clinic_card.dart` | Hapus button | ⬜ |
-| 4.9 | `ClinicCard` — tap → detail | `clinic_card.dart` | `GestureDetector` → push to `/clinic/:id` or `/doctor/search?clinic=:id` | ⬜ |
-| 4.10 | `LocCubit` — manage favorite state | `loc_cubit.dart` | `toggleFavorite(clinicId)`, persist ke SharedPref | ⬜ |
-| 4.11 | `ClinicEntity` — derived getters | `clinic_entity.dart` | `ratingDisplay` (`"5.0"`), `reviewCountDisplay` (`"58 Reviews"`), `durationDisplay` (`"40 min"`) | ⬜ |
+| 4.1 | `ClinicCard` — full redesign v2.0 | `clinic_card.dart` | Stack: cover image + favorite btn. Content: name, address, rating+stars+reviews, divider, distance+duration+category | ✅ |
+| 4.2 | `ClinicCard` — cover image | `clinic_card.dart` | Full-width `Image.network`, fallback placeholder, `ClipRRect` + border radius top | ✅ |
+| 4.3 | `ClinicCard` — favorite button | `clinic_card.dart` | `IconButton` with heart icon, toggle via `isFavorite` + `onFavoriteTap` callback | ✅ |
+| 4.4 | `ClinicCard` — rating stars row | `clinic_card.dart` | Inline `_RatingRow`: numeric value + star icons + review count | ✅ |
+| 4.5 | `ClinicCard` — category badge | `clinic_card.dart` | `_BottomInfoRow`: icon + text badge, styled by category | ✅ |
+| 4.6 | `ClinicCard` — distance + duration | `clinic_card.dart` | `"2.5 km / 40 min"` display | ✅ |
+| 4.7 | `ClinicCard` — remove doctor count | `clinic_card.dart` | Hapus doctor count row | ✅ |
+| 4.8 | `ClinicCard` — remove "Lihat Peta" | `clinic_card.dart` | Hapus button (diganti tap card) | ✅ |
+| 4.9 | `ClinicCard` — tap → detail | `clinic_card.dart` | `GestureDetector` with `onTap` callback (passthrough dari parent) | ✅ |
+| 4.10 | `NearbyClinicCard` — update v2.0 | `nearby_clinic_card.dart` | Compact horizontal version with rating, category, distance+duration | ✅ |
+| 4.11 | `LocCubit` — manage favorite state | `loc_cubit.dart` | `toggleFavorite(clinicId)`, persist ke SharedPref | ⬜ |
 
 ---
 
@@ -145,10 +145,10 @@ $$;
 | 1. Database Migration | 5 | 5 | 0 |
 | 2. API Contract | 3 | 3 | 0 |
 | 3. Data Layer | 12 | 12 | 0 |
-| 4. Presentation Layer | 11 | 0 | 11 |
+| 4. Presentation Layer | 11 | 10 | 1 |
 | 5. Home Nearby | 2 | 0 | 2 |
 | 6. Verifikasi | 6 | 0 | 6 |
-| **Total** | **39** | **20** | **19** |
+| **Total** | **39** | **30** | **9** |
 
 ---
 
