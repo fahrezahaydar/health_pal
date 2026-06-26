@@ -13,6 +13,11 @@ class ClinicEntity extends Equatable {
   final String? imageUrl;
   final double distanceMeters;
   final int doctorCount;
+  final double ratingAvg;
+  final int reviewCount;
+  final String? category;
+  final int durationMinutes;
+  final bool isFavorite;
   final List<String>? specializations;
 
   const ClinicEntity({
@@ -25,7 +30,12 @@ class ClinicEntity extends Equatable {
     this.phone,
     this.imageUrl,
     required this.distanceMeters,
-    required this.doctorCount,
+    this.doctorCount = 0,
+    this.ratingAvg = 0.0,
+    this.reviewCount = 0,
+    this.category,
+    this.durationMinutes = 0,
+    this.isFavorite = false,
     this.specializations,
   });
 
@@ -44,6 +54,16 @@ class ClinicEntity extends Equatable {
   String get doctorCountDisplay =>
       doctorCount == 1 ? '1 dokter tersedia' : '$doctorCount dokter tersedia';
 
+  /// Derived: rating diformat "5.0".
+  String get ratingDisplay => ratingAvg.toStringAsFixed(1);
+
+  /// Derived: jumlah review diformat "120 Reviews" / "1 Review".
+  String get reviewCountDisplay =>
+      reviewCount == 1 ? '$reviewCount Review' : '$reviewCount Reviews';
+
+  /// Derived: durasi diformat "40 min".
+  String get durationDisplay => '$durationMinutes min';
+
   @override
   List<Object?> get props => [
     id,
@@ -56,6 +76,11 @@ class ClinicEntity extends Equatable {
     imageUrl,
     distanceMeters,
     doctorCount,
+    ratingAvg,
+    reviewCount,
+    category,
+    durationMinutes,
+    isFavorite,
     specializations,
   ];
 
@@ -69,6 +94,10 @@ class ClinicEntity extends Equatable {
         longitude: 0,
         distanceMeters: 1500,
         doctorCount: 5,
+        ratingAvg: 4.5,
+        reviewCount: 100,
+        category: 'Clinic',
+        durationMinutes: 10,
       ),
       ClinicEntity(
         id: 'sk-2',
@@ -78,6 +107,10 @@ class ClinicEntity extends Equatable {
         longitude: 0,
         distanceMeters: 2500,
         doctorCount: 3,
+        ratingAvg: 4.8,
+        reviewCount: 80,
+        category: 'Hospital',
+        durationMinutes: 15,
       ),
       ClinicEntity(
         id: 'sk-3',
@@ -87,6 +120,10 @@ class ClinicEntity extends Equatable {
         longitude: 0,
         distanceMeters: 3500,
         doctorCount: 8,
+        ratingAvg: 4.2,
+        reviewCount: 50,
+        category: 'Clinic',
+        durationMinutes: 20,
       ),
     ];
   }

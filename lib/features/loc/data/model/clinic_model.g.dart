@@ -17,6 +17,10 @@ _ClinicModel _$ClinicModelFromJson(Map<String, dynamic> json) => _ClinicModel(
   imageUrl: json['image_url'] as String?,
   distanceMeters: (json['distance_meters'] as num?)?.toDouble() ?? 0.0,
   doctorCount: (json['doctor_count'] as num?)?.toInt() ?? 0,
+  ratingAvg: (json['rating_avg'] as num?)?.toDouble() ?? 0.0,
+  reviewCount: (json['review_count'] as num?)?.toInt() ?? 0,
+  category: json['category'] as String?,
+  durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 0,
   specializations: (json['specializations'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
@@ -34,5 +38,9 @@ Map<String, dynamic> _$ClinicModelToJson(_ClinicModel instance) =>
       'image_url': instance.imageUrl,
       'distance_meters': instance.distanceMeters,
       'doctor_count': instance.doctorCount,
+      'rating_avg': instance.ratingAvg,
+      'review_count': instance.reviewCount,
+      'category': instance.category,
+      'duration_minutes': instance.durationMinutes,
       'specializations': instance.specializations,
     };

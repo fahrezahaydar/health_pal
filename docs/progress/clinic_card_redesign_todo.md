@@ -12,18 +12,18 @@ Berdasarkan audit awal, berikut gap antara wireframe v2.0 dengan implementasi sa
 | Komponen | Wireframe v2.0 | ERD/API/Kode Saat Ini | Status |
 |---|---|---|---|
 | Cover Image | ✅ Full-width | ✅ `clinics.image_url` sudah ada | ✅ |
-| Favorite Button | ✅ Heart icon toggle | ❌ Tidak ada tabel/kolom | ❌ Belum ada |
+| Favorite Button | ✅ Heart icon toggle | ❌ Tidak ada tabel/kolom | ❌ Belum ada (local state) |
 | Clinic Name | ✅ | ✅ `clinics.name` | ✅ |
 | Address | ✅ | ✅ `clinics.address` | ✅ |
-| Rating Value | ✅ | ❌ Tidak ada di `clinics` | ❌ Butuh kolom baru |
-| Stars | ✅ | ❌ Tidak ada di `clinics` | ❌ Butuh kolom baru |
-| Review Count | ✅ | ❌ Tidak ada di `clinics` | ❌ Butuh kolom baru |
+| Rating Value | ✅ | ✅ Migration 007 + entity | ✅ |
+| Stars | ✅ | ✅ Migration 007 + entity | ✅ |
+| Review Count | ✅ | ✅ Migration 007 + entity | ✅ |
 | Divider | ✅ | — | ✅ |
 | Distance | ✅ | ✅ `distance_meters` dari RPC | ✅ |
-| Duration | ✅ | ❌ Tidak ada di RPC | ❌ Butuh update RPC |
-| Category Badge | ✅ | ❌ Tidak ada di `clinics` | ❌ Butuh kolom baru |
-| Doctor Count | ❌ Dihapus | ✅ Ada di entity | ⚠️ Hapus |
-| "Lihat Peta" | ❌ Dihapus | ✅ Ada di widget | ⚠️ Hapus |
+| Duration | ✅ | ✅ Migration 007 + RPC | ✅ |
+| Category Badge | ✅ | ✅ Migration 007 + entity | ✅ |
+| Doctor Count | ❌ Dihapus dari card | ✅ Tetap di entity (untuk sort) | ✅ |
+| "Lihat Peta" | ❌ Dihapus | ✅ Ada di widget | ❌ Hapus di Presentation |
 
 ---
 
@@ -31,11 +31,11 @@ Berdasarkan audit awal, berikut gap antara wireframe v2.0 dengan implementasi sa
 
 | # | Item | Detail | Status |
 |---|------|--------|--------|
-| 1.1 | Tambah `rating_avg` (`NUMERIC(2,1)`, default `0`) | Kolom rating rata-rata klinik | ⬜ |
-| 1.2 | Tambah `review_count` (`INT`, default `0`) | Jumlah review klinik | ⬜ |
-| 1.3 | Tambah `category` (`TEXT`, nullable) | Jenis: `'Hospital'`, `'Clinic'`, `'Laboratory'`, dll. | ⬜ |
-| 1.4 | Update RPC `get_nearby_clinics` | Return tambahan: `rating_avg`, `review_count`, `category`, `duration_minutes` | ⬜ |
-| 1.5 | Update seed.sql | Isi `rating_avg`, `review_count`, `category` untuk data existing | ⬜ |
+| 1.1 | Tambah `rating_avg` (`NUMERIC(2,1)`, default `0`) | Kolom rating rata-rata klinik | ✅ |
+| 1.2 | Tambah `review_count` (`INT`, default `0`) | Jumlah review klinik | ✅ |
+| 1.3 | Tambah `category` (`TEXT`, nullable) | Jenis: `'Hospital'`, `'Clinic'`, `'Laboratory'`, dll. | ✅ |
+| 1.4 | Update RPC `get_nearby_clinics` | Return tambahan: `rating_avg`, `review_count`, `category`, `duration_minutes` | ✅ |
+| 1.5 | Update seed.sql | Isi `rating_avg`, `review_count`, `category` untuk data existing | ✅ |
 
 **Migration SQL template (`007_clinic_card_v2.sql`):**
 ```sql
@@ -83,18 +83,18 @@ $$;
 
 | # | Item | File Target | Detail | Status |
 |---|------|-------------|--------|--------|
-| 3.1 | `ClinicEntity` — tambah `ratingAvg` | `clinic_entity.dart` | `final double ratingAvg;` (default 0) | ⬜ |
-| 3.2 | `ClinicEntity` — tambah `reviewCount` | `clinic_entity.dart` | `final int reviewCount;` (default 0) | ⬜ |
-| 3.3 | `ClinicEntity` — tambah `category` | `clinic_entity.dart` | `final String? category;` | ⬜ |
-| 3.4 | `ClinicEntity` — tambah `durationMinutes` | `clinic_entity.dart` | `final int durationMinutes;` (default 0) | ⬜ |
-| 3.5 | `ClinicEntity` — tambah `isFavorite` | `clinic_entity.dart` | `final bool isFavorite;` (default false, local state) | ⬜ |
-| 3.6 | `ClinicEntity` — hapus `doctorCount` | `clinic_entity.dart` | Hapus field + derived getter `doctorCountDisplay` | ⬜ |
-| 3.7 | `ClinicEntity` — update `props` | `clinic_entity.dart` | Tambah field baru ke Equatable props | ⬜ |
-| 3.8 | `ClinicEntity` — update `mock()` | `clinic_entity.dart` | Tambah field baru di mock data | ⬜ |
-| 3.9 | `ClinicModel` — tambah field baru | `clinic_model.dart` | `@JsonKey(name: 'rating_avg')`, `review_count`, `category`, `duration_minutes` | ⬜ |
-| 3.10 | `ClinicModel` — hapus `doctorCount` | `clinic_model.dart` | Hapus field + `@Default` | ⬜ |
-| 3.11 | `ClinicModel` — update `toEntity()` | `clinic_model.dart` | Mapping field baru | ⬜ |
-| 3.12 | `build_runner` regenerate | `clinic_model.g.dart` | `dart run build_runner build --force-jit` | ⬜ |
+| 3.1 | `ClinicEntity` — tambah `ratingAvg` | `clinic_entity.dart` | `final double ratingAvg;` (default 0) | ✅ |
+| 3.2 | `ClinicEntity` — tambah `reviewCount` | `clinic_entity.dart` | `final int reviewCount;` (default 0) | ✅ |
+| 3.3 | `ClinicEntity` — tambah `category` | `clinic_entity.dart` | `final String? category;` | ✅ |
+| 3.4 | `ClinicEntity` — tambah `durationMinutes` | `clinic_entity.dart` | `final int durationMinutes;` (default 0) | ✅ |
+| 3.5 | `ClinicEntity` — tambah `isFavorite` | `clinic_entity.dart` | `final bool isFavorite;` (default false, local state) | ✅ |
+| 3.6 | `ClinicEntity` — update `props` | `clinic_entity.dart` | Tambah field baru ke Equatable props | ✅ |
+| 3.7 | `ClinicEntity` — update `mock()` | `clinic_entity.dart` | Tambah field baru di mock data | ✅ |
+| 3.8 | `ClinicEntity` — derived getters | `clinic_entity.dart` | `ratingDisplay`, `reviewCountDisplay`, `durationDisplay` | ✅ |
+| 3.9 | `ClinicModel` — tambah field baru | `clinic_model.dart` | `@JsonKey(name: 'rating_avg')`, `review_count`, `category`, `duration_minutes` | ✅ |
+| 3.10 | `ClinicModel` — update `toEntity()` | `clinic_model.dart` | Mapping field baru | ✅ |
+| 3.11 | `build_runner` regenerate | `clinic_model.g.dart` | `dart run build_runner build --force-jit` | ✅ |
+| 3.12 | `ClinicModel` — keep `doctorCount` | `clinic_model.dart` | Dipertahankan — masih dipakai untuk sort di LocPage | ✅ |
 
 ---
 
@@ -140,15 +140,15 @@ $$;
 
 ## Ringkasan Todo
 
-| Kategori | Total | ⬜ Belum |
-|----------|-------|----------|
-| 1. Database Migration | 5 | 5 |
-| 2. API Contract | 3 | 3 |
-| 3. Data Layer | 12 | 12 |
-| 4. Presentation Layer | 11 | 11 |
-| 5. Home Nearby | 2 | 2 |
-| 6. Verifikasi | 6 | 6 |
-| **Total** | **39** | **39** |
+| Kategori | Total | ✅ Selesai | ⬜ Belum |
+|----------|-------|------------|----------|
+| 1. Database Migration | 5 | 5 | 0 |
+| 2. API Contract | 3 | 3 | 0 |
+| 3. Data Layer | 12 | 12 | 0 |
+| 4. Presentation Layer | 11 | 0 | 11 |
+| 5. Home Nearby | 2 | 0 | 2 |
+| 6. Verifikasi | 6 | 0 | 6 |
+| **Total** | **39** | **20** | **19** |
 
 ---
 
