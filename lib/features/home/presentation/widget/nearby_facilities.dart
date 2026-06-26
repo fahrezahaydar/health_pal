@@ -7,7 +7,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/card/nearby_clinic_card.dart';
+import '../../../../widgets/card/clinic_card.dart';
 import '../../../../widgets/layouts/header_title.dart';
 import '../../../loc/domain/entity/clinic_entity.dart';
 import '../bloc/nearby/nearby_cubit.dart';
@@ -37,13 +37,15 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 180,
+          height: 280,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: clinics.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) =>
-                NearbyClinicCard.fromEntity(clinics[index]),
+            itemBuilder: (context, index) => SizedBox(
+              width: 280,
+              child: ClinicCard(clinic: clinics[index]),
+            ),
           ),
         ),
       ],
