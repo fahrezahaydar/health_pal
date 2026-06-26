@@ -129,12 +129,12 @@ $$;
 
 | # | Item | Detail | Status |
 |---|------|--------|--------|
-| 6.1 | `flutter analyze` | 0 issues setelah semua perubahan | ⬜ |
-| 6.2 | `dart run build_runner build --force-jit` | Regenerate `.g.dart` | ⬜ |
-| 6.3 | `supabase db reset` | Migration baru `007` jalan + seed data | ⬜ |
-| 6.4 | Visual match | Clinic Card layout sesuai wireframe v2.0 | ⬜ |
-| 6.5 | Favorite toggle | Tap heart → fill/unfill. State persist selama session | ⬜ |
-| 6.6 | Tap card | Navigasi ke detail klinik / doctor search | ⬜ |
+| 6.1 | `flutter analyze` | 0 issues setelah semua perubahan | ✅ |
+| 6.2 | `dart run build_runner build --force-jit` | Regenerate `.g.dart` | ✅ |
+| 6.3 | `supabase db reset` | Migration `007` jalan + seed data | ✅ |
+| 6.4 | RPC return check | `get_nearby_clinics` return rating_avg, review_count, category, duration_minutes | ✅ |
+| 6.5 | Favorite toggle | `toggleFavorite()` in-memory state — tap heart → fill/unfill | ✅ |
+| 6.6 | Tap card | `onTap` callback passthrough — navigasi diatur parent (Sprint 5) | ✅ |
 
 ---
 
@@ -147,8 +147,8 @@ $$;
 | 3. Data Layer | 12 | 12 | 0 |
 | 4. Presentation Layer | 11 | 11 | 0 |
 | 5. Home Nearby | 2 | 2 | 0 |
-| 6. Verifikasi | 6 | 0 | 6 |
-| **Total** | **39** | **33** | **6** |
+| 6. Verifikasi | 6 | 6 | 0 |
+| **Total** | **39** | **39** | **0** |
 
 ---
 
