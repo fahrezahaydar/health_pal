@@ -28,30 +28,26 @@ class ClinicCard extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: AppTheme.grey200),
         ),
+        clipBehavior: Clip.hardEdge,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(11),
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: 2,
-                    child: clinic.imageUrl != null
-                        ? Image.network(
-                            clinic.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
-                                const PlaceholderImage(height: 160),
-                          )
-                        : const PlaceholderImage(height: 160),
-                  ),
+                AspectRatio(
+                  aspectRatio: 2,
+                  child: clinic.imageUrl != null
+                      ? Image.network(
+                          clinic.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) =>
+                              const PlaceholderImage(height: 160),
+                        )
+                      : const PlaceholderImage(height: 160),
                 ),
                 Positioned(
                   top: 8,
@@ -72,9 +68,10 @@ class ClinicCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
                 children: [
                   Text(
                     clinic.name,
@@ -82,7 +79,6 @@ class ClinicCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(
@@ -104,14 +100,11 @@ class ClinicCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
                   _RatingRow(
                     ratingAvg: clinic.ratingAvg,
                     reviewCount: clinic.reviewCount,
                   ),
-                  const SizedBox(height: 8),
                   const Divider(height: 1, color: AppTheme.grey200),
-                  const SizedBox(height: 8),
                   _BottomInfoRow(
                     distanceDisplay: clinic.distanceDisplay,
                     durationDisplay: clinic.durationDisplay,
@@ -137,30 +130,38 @@ class _RatingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final ratingDisplay = ratingAvg.toStringAsFixed(1);
     final reviewText = reviewCount == 1
-        ? '$reviewCount Review'
-        : '$reviewCount Reviews';
+        ? '($reviewCount Review)'
+        : '($reviewCount Reviews)';
     return Row(
+      spacing: 4,
       children: [
         Text(
           ratingDisplay,
-          style: AppTextTheme.bodyMedium.copyWith(
+          style: AppTextTheme.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: AppTheme.grey900,
+            fontSize: 12,
           ),
         ),
-        const SizedBox(width: 4),
-        ...List.generate(5, (i) {
-          // TODO: change to iconsax — currently Material fallback
-          return Icon(
-            i < ratingAvg.round() ? Icons.star : Icons.star_border,
-            size: 14,
-            color: Colors.amber,
-          );
-        }),
-        const SizedBox(width: 4),
+        Row(
+          spacing: 0,
+          children: List.generate(5, (i) {
+            return Padding(
+              padding: EdgeInsets.only(left: i == 0 ? 0 : -6),
+              child: Icon(
+                i < ratingAvg.round() ? Icons.star : Icons.star_border,
+                size: 14,
+                color: Colors.amber,
+              ),
+            );
+          }),
+        ),
         Text(
           reviewText,
-          style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+          style: AppTextTheme.bodySmall.copyWith(
+            color: AppTheme.grey500,
+            fontSize: 12,
+          ),
         ),
       ],
     );
@@ -181,40 +182,35 @@ class _BottomInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: 4,
       children: [
         const Icon(AppIcons.myLocation, size: 14, color: AppTheme.grey500),
-        const SizedBox(width: 4),
         Text(
           '$distanceDisplay / $durationDisplay',
-          style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
+          style: AppTextTheme.bodySmall.copyWith(
+            color: AppTheme.grey500,
+            fontSize: 12,
+          ),
         ),
         const Spacer(),
         if (category != null)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: AppTheme.paleBlue,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // TODO: change to iconsax — currently Material fallback
-                const Icon(
-                  Icons.local_hospital,
-                  size: 12,
-                  color: AppTheme.blue,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4,
+            children: [
+              const Icon(
+                Icons.local_hospital,
+                size: 12,
+                color: AppTheme.grey500,
+              ),
+              Text(
+                category!,
+                style: AppTextTheme.bodySmall.copyWith(
+                  color: AppTheme.grey500,
+                  fontSize: 12,
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  category!,
-                  style: AppTextTheme.labelSmall.copyWith(
-                    color: AppTheme.blue,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
       ],
     );
