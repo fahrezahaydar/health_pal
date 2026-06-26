@@ -73,7 +73,14 @@ foreach ($sub in $SUBFOLDERS) {
 
   Write-Host "Uploading $($FILES.Count) file(s) to bucket '$targetBucket'..."
   foreach ($file in $FILES) {
-    $fileName = $file.Name
+    $relativePath = $file.FullName.Substring($ASSETS_DIR.Length + 1) -replace '\\', '/'
+    # banner/: preserve subfolder → bucket avatars path "banner/file.png"
+    # specialization_icon/: flat → bucket specialization-icons path "file.svg"
+    if ($sub -eq "specialization_icon") {
+      $fileName = $file.Name
+    } else {
+      $fileName = $relativePath
+    }
     $filePath = $file.FullName
     $mimeType = switch ($file.Extension) {
       ".jpg" { "image/jpeg" }
