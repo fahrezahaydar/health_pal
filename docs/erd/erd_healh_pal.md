@@ -162,6 +162,18 @@ erDiagram
         DateTime created_at
     }
 
+    %% ─── FUTURE TABLES ───
+    reviews {
+        UUID id PK
+        UUID user_id FK
+        UUID clinic_id FK
+        UUID doctor_id FK
+        UUID appointment_id FK
+        Integer rating
+        String comment
+        DateTime created_at
+    }
+
     %% ─── RELASI ───
     auth_users         ||--|| user_profiles       : "has one"
     user_profiles      ||--o{ user_fcm_tokens     : "has many"
@@ -174,6 +186,12 @@ erDiagram
     doctor_slots       ||--o| appointments        : "reserved by"
     appointments       ||--o{ notifications       : "triggers"
     user_profiles      ||--o{ notifications       : "receives"
+
+    %% ─── FUTURE RELATIONS ───
+    user_profiles      ||--o{ reviews             : "writes"
+    clinics            ||--o{ reviews             : "reviewed on"
+    doctors            ||--o{ reviews             : "reviewed on"
+    appointments       ||--o| reviews             : "reviewed in"
 ```
 
 ---
@@ -243,6 +261,7 @@ erDiagram
 ### `clinics`
 > Data klinik atau rumah sakit tempat dokter berpraktik.
 > Kolom `rating_avg`, `review_count`, `category` ditambahkan via migration `007_clinic_card_v2.sql` (ADR-005).
+> Kolom `rating_avg` dan `review_count` adalah **denormalized field** — di-update via trigger saat tabel `reviews` ditambahkan di sprint mendatang (pattern sama dengan `doctors.rating_avg`).
 
 | Kolom | Tipe | Keterangan |
 |---|---|---|
@@ -254,8 +273,8 @@ erDiagram
 | `longitude` | `FLOAT8` | Koordinat untuk query radius di Loc tab |
 | `phone` | `TEXT` | Nomor telepon klinik |
 | `image_url` | `TEXT` | Foto klinik |
-| `rating_avg` | `NUMERIC(2,1)` | Rating rata-rata (default 0). Denormalized untuk Clinic Card v2.0 |
-| `review_count` | `INT` | Jumlah review (default 0). Denormalized |
+| `rating_avg` | `NUMERIC(2,1)` | Rating rata-rata (default 0). **Denormalized** — di-update via trigger saat tabel `reviews` ditambahkan nanti (pattern sama dengan `doctors.rating_avg`) |
+| `review_count` | `INT` | Jumlah review (default 0). **Denormalized** — di-update oleh trigger yang sama |
 | `category` | `TEXT` | Jenis: `Hospital`, `Clinic`, `Laboratory`, dll. Nullable |
 | `created_at` | `TIMESTAMPTZ` | Auto |
 
@@ -388,6 +407,10 @@ erDiagram
 | `doctor_slots` → `appointments` | One-to-One | Satu slot hanya bisa dipesan oleh satu appointment aktif |
 | `appointments` → `notifications` | One-to-Many | Satu booking bisa trigger beberapa notifikasi (booking, reminder H-1, H-0) |
 | `user_profiles` → `notifications` | One-to-Many | Satu user menerima banyak notifikasi |
+| `user_profiles` → `reviews` | One-to-Many | *(Future)* Satu user bisa tulis banyak review |
+| `clinics` → `reviews` | One-to-Many | *(Future)* Satu klinik bisa punya banyak review |
+| `doctors` → `reviews` | One-to-Many | *(Future)* Satu dokter bisa punya banyak review |
+| `appointments` → `reviews` | One-to-One | *(Future)* Satu appointment bisa punya satu review |
 
 ---
 
@@ -427,7 +450,21 @@ WHERE doctor_id = $1 AND slot_date = $2
 `is_booked` di-update via Supabase Trigger setiap kali `appointments.status` berubah ke `cancelled` (set kembali ke `false`) atau `pending`/`upcoming` (set `true`).
 
 ### 4.5 Tidak Ada Tabel `reviews` di MVP
-Sesuai PRD, fitur ulasan masuk roadmap v1.1. Kolom `rating_avg` dan `rating_count` di `doctors` sudah disiapkan sebagai **placeholder denormalized** — saat tabel `reviews` ditambahkan nanti, cukup tambahkan trigger yang menghitung ulang kolom ini.
+Sesuai PRD, fitur ulasan masuk roadmap v1.1. Kolom `rating_avg` dan `rating_count` di `doctors`, serta `rating_avg` dan `review_count` di `clinics` sudah disiapkan sebagai **placeholder denormalized** — saat tabel `reviews` ditambahkan nanti, cukup tambahkan trigger yang menghitung ulang kolom ini.
+
+**ERD placeholder (`reviews`):**
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | `UUID` PK | |
+| `user_id` | `UUID` FK | Referensi ke `user_profiles.id` |
+| `clinic_id` | `UUID` FK | Referensi ke `clinics.id` (nullable — bisa review klinik) |
+| `doctor_id` | `UUID` FK | Referensi ke `doctors.id` (nullable — bisa review dokter) |
+| `appointment_id` | `UUID` FK | Referensi ke `appointments.id` (opsional, untuk verifikasi) |
+| `rating` | `INT` | Nilai 1–5 |
+| `comment` | `TEXT` | Ulasan teks |
+| `created_at` | `TIMESTAMPTZ` | Auto |
+
+> **Catatan:** Tabel `reviews` ditambahkan di ERD sebagai **referensi arsitektur masa depan** — belum ada migration SQL untuk tabel ini. Migration akan dibuat saat sprint implementasi fitur ulasan.
 
 ---
 
