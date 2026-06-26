@@ -12,17 +12,20 @@ class ClinicCard extends StatelessWidget {
     required this.clinic,
     this.onTap,
     this.onFavoriteTap,
+    this.width = 240,
   });
 
   final ClinicEntity clinic;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteTap;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: width,
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(12),
@@ -30,6 +33,7 @@ class ClinicCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
               children: [
@@ -37,16 +41,17 @@ class ClinicCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(11),
                   ),
-                  child: clinic.imageUrl != null
-                      ? Image.network(
-                          clinic.imageUrl!,
-                          width: double.infinity,
-                          height: 160,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const PlaceholderImage(height: 160),
-                        )
-                      : const PlaceholderImage(height: 160),
+                  child: AspectRatio(
+                    aspectRatio: 2,
+                    child: clinic.imageUrl != null
+                        ? Image.network(
+                            clinic.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) =>
+                                const PlaceholderImage(height: 160),
+                          )
+                        : const PlaceholderImage(height: 160),
+                  ),
                 ),
                 Positioned(
                   top: 8,
@@ -54,8 +59,7 @@ class ClinicCard extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(
                       clinic.isFavorite
-                          // TODO: change to iconsax — currently Material fallback
-                    ? Icons.favorite
+                          ? Icons.favorite
                           : Icons.favorite_border,
                       color: clinic.isFavorite
                           ? AppTheme.darkRed
@@ -81,13 +85,17 @@ class ClinicCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(AppIcons.location,
-                          size: 14, color: AppTheme.grey400),
+                      const Icon(
+                        AppIcons.location,
+                        size: 14,
+                        color: AppTheme.grey400,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           clinic.address,
                           style: AppTextTheme.bodySmall.copyWith(
+                            fontSize: 12,
                             color: AppTheme.grey500,
                           ),
                           maxLines: 1,

@@ -36,16 +36,19 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(
-          height: 280,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: clinics.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) => SizedBox(
-              width: 280,
-              child: ClinicCard(clinic: clinics[index]),
-            ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final clinic in clinics)
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: SizedBox(
+                    width: 260,
+                    child: ClinicCard(clinic: clinic),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
