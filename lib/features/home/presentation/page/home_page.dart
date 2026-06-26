@@ -293,15 +293,14 @@ class _HomePageBodyState extends State<_HomePageBody> {
                     BlocBuilder<NearbyCubit, NearbyState>(
                       builder: (context, state) {
                         return switch (state) {
-                          NearbyInitial() => const NearbyFacilitiesLoading(),
-                          NearbyLoading() => const NearbyFacilitiesLoading(),
                           NearbyLoaded(:final clinics) =>
                             NearbyFacilitiesLoaded(clinics: clinics),
                           NearbyLocationDenied(:final reason) =>
                             NearbyFacilitiesLocationDenied(reason: reason),
-                          NearbyError(:final message) => NearbyFacilitiesError(
-                            message: message,
-                          ),
+                          // NearbyError(:final message) => NearbyFacilitiesError(
+                          //   message: message,
+                          // ),
+                          _ => const NearbyFacilitiesLoading(),
                         };
                       },
                     ),

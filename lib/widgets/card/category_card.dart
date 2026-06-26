@@ -50,7 +50,7 @@ class CategoryCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color:
                         _parseColor(colorHex) ??
-                        AppTheme.paleBlue.withValues(alpha: 0.3),
+                        AppTheme.grey500.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.center,
@@ -73,20 +73,23 @@ class CategoryCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SvgPicture.network(
-                        iconUrl ?? '',
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                        placeholderBuilder: (_) {
-                          return Icon(
-                            _iconData(name),
-                            size: 28,
-                            color: AppTheme.blue,
-                          );
-                        },
-                      ),
+                      if (iconUrl != null && iconUrl!.isNotEmpty)
+                        SvgPicture.network(
+                          iconUrl ?? '',
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                          placeholderBuilder: (_) {
+                            return Icon(
+                              _iconData(name),
+                              size: 28,
+                              color: Colors.white,
+                            );
+                          },
+                        )
+                      else
+                        Icon(_iconData(name), size: 28, color: Colors.white),
                     ],
                   ),
                 );

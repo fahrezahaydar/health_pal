@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -19,8 +21,21 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
-        const HeaderTitle(title: 'Nearby Medical Centers'),
+        Skeleton.ignore(
+          child: Row(
+            mainAxisAlignment: .spaceBetween,
+            children: [
+              const HeaderTitle(title: 'Nearby Medical Centers'),
+
+              GestureDetector(
+                onTap: () => context.push(RoutePaths.loc),
+                child: Text('See All', style: AppTextTheme.bodySmall),
+              ),
+            ],
+          ),
+        ),
         SizedBox(
           height: 180,
           child: ListView.separated(
@@ -42,7 +57,7 @@ class NearbyFacilitiesLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Skeletonizer(
-      enabled: true,
+      enabled: false,
       child: NearbyFacilitiesLoaded(clinics: ClinicEntity.mock()),
     );
   }

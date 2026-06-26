@@ -14,7 +14,7 @@ class NearbyClinicCard extends StatelessWidget {
     this.distanceDisplay,
     this.doctorCountDisplay,
     this.onTap,
-    this.width = 200,
+    this.width = 240,
   });
 
   final String? name;
