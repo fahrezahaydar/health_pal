@@ -166,8 +166,6 @@ erDiagram
     reviews {
         UUID id PK
         UUID user_id FK
-        UUID clinic_id FK
-        UUID doctor_id FK
         UUID appointment_id FK
         Integer rating
         String comment
@@ -188,10 +186,8 @@ erDiagram
     user_profiles      ||--o{ notifications       : "receives"
 
     %% ─── FUTURE RELATIONS ───
+    appointments       ||--o| reviews             : "has one review"
     user_profiles      ||--o{ reviews             : "writes"
-    clinics            ||--o{ reviews             : "reviewed on"
-    doctors            ||--o{ reviews             : "reviewed on"
-    appointments       ||--o| reviews             : "reviewed in"
 ```
 
 ---
@@ -407,10 +403,8 @@ erDiagram
 | `doctor_slots` → `appointments` | One-to-One | Satu slot hanya bisa dipesan oleh satu appointment aktif |
 | `appointments` → `notifications` | One-to-Many | Satu booking bisa trigger beberapa notifikasi (booking, reminder H-1, H-0) |
 | `user_profiles` → `notifications` | One-to-Many | Satu user menerima banyak notifikasi |
+| `appointments` → `reviews` | One-to-One | *(Future)* Satu appointment bisa punya satu review (anchor table) |
 | `user_profiles` → `reviews` | One-to-Many | *(Future)* Satu user bisa tulis banyak review |
-| `clinics` → `reviews` | One-to-Many | *(Future)* Satu klinik bisa punya banyak review |
-| `doctors` → `reviews` | One-to-Many | *(Future)* Satu dokter bisa punya banyak review |
-| `appointments` → `reviews` | One-to-One | *(Future)* Satu appointment bisa punya satu review |
 
 ---
 
@@ -456,15 +450,28 @@ Sesuai PRD, fitur ulasan masuk roadmap v1.1. Kolom `rating_avg` dan `rating_coun
 | Kolom | Tipe | Keterangan |
 |---|---|---|
 | `id` | `UUID` PK | |
-| `user_id` | `UUID` FK | Referensi ke `user_profiles.id` |
-| `clinic_id` | `UUID` FK | Referensi ke `clinics.id` (nullable — bisa review klinik) |
-| `doctor_id` | `UUID` FK | Referensi ke `doctors.id` (nullable — bisa review dokter) |
-| `appointment_id` | `UUID` FK | Referensi ke `appointments.id` (opsional, untuk verifikasi) |
-| `rating` | `INT` | Nilai 1–5 |
-| `comment` | `TEXT` | Ulasan teks |
-| `created_at` | `TIMESTAMPTZ` | Auto |
+| `user_id` | `UUID` FK NOT NULL | Referensi ke `user_profiles.id` |
+| `appointment_id` | `UUID` FK UNIQUE NOT NULL | Referensi ke `appointments.id` — anchor: satu review = satu appointment |
+| `rating` | `INT` NOT NULL | Nilai 1–5, CHECK constraint |
+| `comment` | `TEXT` | Ulasan teks (opsional) |
+| `created_at` | `TIMESTAMPTZ` NOT NULL | Auto |
 
-> **Catatan:** Tabel `reviews` ditambahkan di ERD sebagai **referensi arsitektur masa depan** — belum ada migration SQL untuk tabel ini. Migration akan dibuat saat sprint implementasi fitur ulasan.
+**Rationale:** Anchor ke `appointments` — user cuma bisa review setelah booking. Karena `appointments` sudah punya FK ke `doctors` dan `doctors` ke `clinics`, rating dokter/klinik bisa dihitung via JOIN tanpa polymorphic atau nullable.
+
+```sql
+-- Rating dokter
+SELECT AVG(r.rating) FROM reviews r
+JOIN appointments a ON r.appointment_id = a.id
+WHERE a.doctor_id = 'xxx';
+
+-- Rating klinik
+SELECT AVG(r.rating) FROM reviews r
+JOIN appointments a ON r.appointment_id = a.id
+JOIN doctors d ON a.doctor_id = d.id
+WHERE d.clinic_id = 'xxx';
+```
+
+> **Catatan:** Tabel `reviews` ditambahkan di ERD sebagai **referensi arsitektur masa depan** — belum ada migration SQL. Migration akan dibuat saat sprint implementasi fitur ulasan.
 
 ---
 
