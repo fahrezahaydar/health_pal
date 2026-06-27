@@ -3,13 +3,12 @@
 // Halaman pencarian dokter. Pattern search bar + debouncer (300ms) +
 // filter chips + list of doctor cards. TIDAK ADA date picker (per SS#10).
 //
-// Per docs/wireframe/08-doctor-search.md.
+// Semua widget di-render inline di build() — tidak ada private methods.
+// State management via flat SearchState di SearchCubit.
 //
-// Struktur (sama dengan features/home/presentation/page/home_page.dart):
-// - DoctorSearchPage: StatelessWidget yang hanya menyediakan BlocProvider
-// - DoctorSearchView: StatefulWidget yang berisi semua state, controller,
-//   debouncer, dan UI. Dipisah agar BlocProvider tidak re-create saat
-//   parent rebuild.
+// Struktur:
+// - DoctorSearchPage: StatelessWidget (BlocProvider)
+// - DoctorSearchView: StatefulWidget (controllers, debouncer, scroll listener)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +26,6 @@ import '../../../../widgets/loader/dot_loader.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../../../home/domain/entity/specialization_entity.dart';
-import '../../domain/entity/doctor_entity.dart';
 import '../bloc/search/search_cubit.dart';
 import '../bloc/search/search_state.dart';
 import '../widget/doctor_filter_chip.dart';
@@ -55,7 +53,6 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
   late final TextEditingController _controller;
   late final ScrollController _scrollController;
   late final Debouncer _debouncer;
-  String? _selectedSpecializationId;
 
   static const _allChip = SpecializationEntity(id: 'all', name: 'Semua');
 
@@ -65,20 +62,20 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     _controller = TextEditingController();
     _scrollController = ScrollController();
     _debouncer = Debouncer(const Duration(milliseconds: 300));
-    _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
-      await context.read<SearchCubit>().loadSpecializations();
-      if (!mounted) return;
-      context.read<SearchCubit>().searchDoctors(null);
+    _scrollController.addListener(() {
+      final cubit = context.read<SearchCubit>();
+      final state = cubit.state;
+      if (!state.hasMore ||
+          state.isLoadingMore ||
+          state.isLoadingDoctors ||
+          state.doctors.isEmpty) {
+        return;
+      }
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        cubit.loadMore();
+      }
     });
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<SearchCubit>().loadMore();
-    }
   }
 
   @override
@@ -87,18 +84,6 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     _scrollController.dispose();
     _debouncer.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged(String value) {
-    _debouncer(() {
-      if (!mounted) return;
-      context.read<SearchCubit>().searchDoctors(value);
-    });
-  }
-
-  void _onFilterTap(String? id) {
-    setState(() => _selectedSpecializationId = id);
-    context.read<SearchCubit>().filterBySpecialization(id);
   }
 
   @override
@@ -122,7 +107,12 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: TextField(
               controller: _controller,
-              onChanged: _onSearchChanged,
+              onChanged: (value) {
+                _debouncer(() {
+                  if (!mounted) return;
+                  context.read<SearchCubit>().searchDoctors(value);
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Nama / Spesialisasi',
                 prefixIcon: const Icon(AppIcons.searchNormal, color: AppTheme.grey400),
@@ -135,7 +125,6 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                         onPressed: () {
                           _controller.clear();
                           context.read<SearchCubit>().clearSearch();
-                          setState(() {});
                         },
                       )
                     : null,
@@ -148,36 +137,47 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
               ),
             ),
           ),
+
           // ── Filter Chips ──
-          Container(
-            color: AppTheme.white,
-            padding: const EdgeInsets.only(bottom: 12),
-            child: SizedBox(
-              height: 40,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount:
-                    context.read<SearchCubit>().specializations.length + 1,
-                itemBuilder: (context, index) {
-                  final specs = context.read<SearchCubit>().specializations;
-                  final spec = index == 0 ? _allChip : specs[index - 1];
-                  final isAll = spec.id == 'all';
-                  final isSelected = isAll
-                      ? _selectedSpecializationId == null
-                      : _selectedSpecializationId == spec.id;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: DoctorFilterChip(
-                      label: spec.name,
-                      isSelected: isSelected,
-                      onTap: () => _onFilterTap(isAll ? null : spec.id),
-                    ),
-                  );
-                },
-              ),
-            ),
+          BlocSelector<SearchCubit, SearchState, ({List<SpecializationEntity> specs, String? activeId})>(
+            selector: (s) => (specs: s.specializations, activeId: s.activeSpecializationId),
+            builder: (context, selected) {
+              final specs = selected.specs;
+              final activeId = selected.activeId;
+              return Container(
+                color: AppTheme.white,
+                padding: const EdgeInsets.only(bottom: 12),
+                child: SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: specs.length + 1,
+                    itemBuilder: (context, index) {
+                      final spec = index == 0 ? _allChip : specs[index - 1];
+                      final isAll = spec.id == 'all';
+                      final isSelected = isAll
+                          ? activeId == null
+                          : activeId == spec.id;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: DoctorFilterChip(
+                          label: spec.name,
+                          isSelected: isSelected,
+                          onTap: () {
+                            context
+                                .read<SearchCubit>()
+                                .filterBySpecialization(isAll ? null : spec.id);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
           ),
+
           // ── Results ──
           Expanded(
             child: RefreshIndicator(
@@ -185,73 +185,88 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                   context.read<SearchCubit>().searchDoctors(_controller.text),
               child: BlocBuilder<SearchCubit, SearchState>(
                 builder: (context, state) {
-                  return switch (state) {
-                    SearchInitial() => const EmptyStateView(
+                  if (state.isInitial && !state.isLoadingDoctors) {
+                    return const EmptyStateView(
                       icon: Icons.search,
                       message: 'Cari dokter berdasarkan nama atau spesialisasi',
                       hint: 'Mulai mengetik untuk mencari',
-                    ),
-                    SearchLoading() => Skeletonizer(
+                    );
+                  }
+
+                  if (state.isLoadingDoctors) {
+                    return Skeletonizer(
                       enabled: true,
-                      child: _buildList(DoctorEntity.mockList(), true),
-                    ),
-                    SearchEmpty() => const EmptyStateView(
-                      icon: Icons.search_off,
-                      message: 'Dokter tidak ditemukan',
-                      hint: 'Coba gunakan kata kunci lain',
-                    ),
-                    SearchError(:final message) => Padding(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: 3,
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        itemBuilder: (_, _) => const DoctorCard(
+                          name: 'Memuat...',
+                          specialization: 'Memuat...',
+                          clinic: 'Memuat...',
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (state.errorMessage != null && state.doctors.isEmpty) {
+                    return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 48),
                       child: ErrorSection(
-                        message: message,
+                        message: state.errorMessage!,
                         onRetry: () =>
                             context.read<SearchCubit>().searchDoctors(null),
                       ),
-                    ),
-                    SearchLoaded(:final doctors, :final hasMore) => _buildList(
-                      doctors,
-                      hasMore,
-                    ),
-                  };
+                    );
+                  }
+
+                  if (state.isResultEmpty) {
+                    return const EmptyStateView(
+                      icon: Icons.search_off,
+                      message: 'Dokter tidak ditemukan',
+                      hint: 'Coba gunakan kata kunci lain',
+                    );
+                  }
+
+                  final doctors = state.doctors;
+                  final hasMore = state.hasMore;
+                  final cubit = context.read<SearchCubit>();
+                  final favIds = state.favoriteDoctorIds;
+
+                  return ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: doctors.length + (hasMore ? 1 : 0),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      if (index >= doctors.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: DotLoader()),
+                        );
+                      }
+                      final d = doctors[index];
+                      return DoctorCard(
+                        name: d.fullName,
+                        specialization: d.specializationName,
+                        rating: d.ratingAvg,
+                        reviewCount: d.ratingCount,
+                        clinic: d.clinicName,
+                        photoUrl: d.photoUrl,
+                        isFavorite: favIds.contains(d.id),
+                        onTap: () => context.push(
+                          RoutePaths.doctorDetail.replaceAll(':doctorId', d.id),
+                        ),
+                        onFavoriteTap: () => cubit.toggleFavorite(d.id),
+                      );
+                    },
+                  );
                 },
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildList(List<DoctorEntity> doctors, bool hasMore) {
-    return ListView.separated(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      itemCount: doctors.length + (hasMore ? 1 : 0),
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        if (index >= doctors.length) {
-          return const Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(child: DotLoader()),
-          );
-        }
-        final d = doctors[index];
-        final cubit = context.read<SearchCubit>();
-        final isFav = cubit.favoriteDoctorIds.contains(d.id);
-        return DoctorCard(
-          name: d.fullName,
-          specialization: d.specializationName,
-          rating: d.ratingAvg,
-          reviewCount: d.ratingCount,
-          clinic: d.clinicName,
-          photoUrl: d.photoUrl,
-          isFavorite: isFav,
-          onTap: () => context.push(
-            RoutePaths.doctorDetail.replaceAll(':doctorId', d.id),
-          ),
-          onFavoriteTap: () => cubit.toggleFavorite(d.id),
-        );
-      },
     );
   }
 }

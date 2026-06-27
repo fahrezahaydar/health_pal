@@ -15,84 +15,39 @@ class SearchCubit extends Cubit<SearchState> {
   final GetDoctorsUseCase _getDoctors;
   final GetSpecializationsUseCase _getSpecializations;
 
-  List<SpecializationEntity> specializations = [];
-
-  /// Internal state for pagination.
   int _offset = 0;
   String? _lastQuery;
   String? _lastSpecializationId;
   static const int _pageSize = 20;
 
-  /// Favorite doctor IDs — local state (MVP), tidak persist ke server.
-  final Set<String> _favoriteDoctorIds = {};
-
-  /// Getter untuk favorite IDs (dibaca oleh view layer).
-  Set<String> get favoriteDoctorIds => _favoriteDoctorIds;
-
-  /// Toggle favorite status for a doctor.
-  void toggleFavorite(String doctorId) {
-    if (_favoriteDoctorIds.contains(doctorId)) {
-      _favoriteDoctorIds.remove(doctorId);
-    } else {
-      _favoriteDoctorIds.add(doctorId);
-    }
-    // Re-emit current state to trigger UI rebuild with updated favorite icons.
-    final current = state;
-    if (current is SearchLoaded) {
-      emit(SearchLoaded(
-        doctors: current.doctors,
-        activeQuery: current.activeQuery,
-        activeSpecializationId: current.activeSpecializationId,
-        hasMore: current.hasMore,
-      ));
-    }
+  SearchCubit(this._getDoctors, this._getSpecializations)
+      : super(const SearchState()) {
+    _init();
   }
 
-  SearchCubit(this._getDoctors, this._getSpecializations)
-    : super(const SearchInitial());
+  Future<void> _init() async {
+    emit(state.copyWith(isLoadingSpecializations: true));
+    final specResult = await _getSpecializations();
+    final specs = switch (specResult) {
+      Success<List<SpecializationEntity>>() => specResult.data,
+      _ => <SpecializationEntity>[],
+    };
+    emit(state.copyWith(
+      specializations: specs,
+      isLoadingSpecializations: false,
+    ));
+    searchDoctors(null);
+  }
 
-  /// Search dokter berdasarkan query (nama / spesialisasi).
-  /// Reset offset, replace result list.
+  /// Search dokter — reset offset, replace result list.
   Future<void> searchDoctors(String? query) async {
     _lastQuery = (query?.trim().isEmpty ?? true) ? null : query!.trim();
     _offset = 0;
-    emit(const SearchLoading());
-    final result = await _getDoctors(
-      query: _lastQuery,
-      specializationId: _lastSpecializationId,
-      limit: _pageSize,
-      offset: _offset,
-    );
-    switch (result) {
-      case Success<List<DoctorEntity>>():
-        if (result.data.isEmpty) {
-          emit(SearchEmpty(lastQuery: _lastQuery));
-        } else {
-          _offset += result.data.length;
-          emit(
-            SearchLoaded(
-              doctors: result.data,
-              activeQuery: _lastQuery,
-              activeSpecializationId: _lastSpecializationId,
-              hasMore: result.data.length >= _pageSize,
-            ),
-          );
-        }
-      case Failure<List<DoctorEntity>>():
-        emit(SearchError(message: result.message));
-    }
-  }
-
-  /// Filter by specialization (replace result, keep query).
-  Future<void> filterBySpecialization(String? specializationId) async {
-    _lastSpecializationId = specializationId;
-    await searchDoctors(_lastQuery);
-  }
-
-  /// Append next page of results (infinite scroll).
-  Future<void> loadMore() async {
-    final current = state;
-    if (current is! SearchLoaded || !current.hasMore) return;
+    emit(state.copyWith(
+      isLoadingDoctors: true,
+      clearError: true,
+      activeQuery: _lastQuery,
+    ));
     final result = await _getDoctors(
       query: _lastQuery,
       specializationId: _lastSpecializationId,
@@ -102,33 +57,75 @@ class SearchCubit extends Cubit<SearchState> {
     switch (result) {
       case Success<List<DoctorEntity>>():
         _offset += result.data.length;
-        emit(
-          current.copyWith(
-            doctors: [...current.doctors, ...result.data],
-            hasMore: result.data.length >= _pageSize,
-          ),
-        );
+        emit(state.copyWith(
+          doctors: result.data,
+          isLoadingDoctors: false,
+          hasMore: result.data.length >= _pageSize,
+        ));
       case Failure<List<DoctorEntity>>():
-        emit(SearchError(message: result.message));
+        emit(state.copyWith(
+          isLoadingDoctors: false,
+          errorMessage: result.message,
+        ));
     }
   }
 
-  /// Load specializations from repository (for filter chips).
-  Future<void> loadSpecializations() async {
-    final result = await _getSpecializations();
+  /// Filter by specialization — re-trigger search.
+  Future<void> filterBySpecialization(String? specializationId) async {
+    _lastSpecializationId = specializationId;
+    emit(state.copyWith(activeSpecializationId: specializationId));
+    await searchDoctors(_lastQuery);
+  }
+
+  /// Append next page (infinite scroll).
+  Future<void> loadMore() async {
+    final s = state;
+    if (!s.hasMore ||
+        s.isLoadingMore ||
+        s.isLoadingDoctors ||
+        s.doctors.isEmpty) {
+      return;
+    }
+    emit(state.copyWith(isLoadingMore: true));
+    final result = await _getDoctors(
+      query: _lastQuery,
+      specializationId: _lastSpecializationId,
+      limit: _pageSize,
+      offset: _offset,
+    );
     switch (result) {
-      case Success<List<SpecializationEntity>>():
-        specializations = result.data;
-      case _:
-        specializations = [];
+      case Success<List<DoctorEntity>>():
+        _offset += result.data.length;
+        emit(state.copyWith(
+          doctors: [...s.doctors, ...result.data],
+          isLoadingMore: false,
+          hasMore: result.data.length >= _pageSize,
+        ));
+      case Failure<List<DoctorEntity>>():
+        // Preserve existing list on failure
+        emit(state.copyWith(isLoadingMore: false));
     }
   }
 
-  /// Reset to initial (clear all results).
+  /// Toggle favorite status (local state, tidak persist ke server).
+  void toggleFavorite(String doctorId) {
+    final ids = Set<String>.from(state.favoriteDoctorIds);
+    if (ids.contains(doctorId)) {
+      ids.remove(doctorId);
+    } else {
+      ids.add(doctorId);
+    }
+    emit(state.copyWith(favoriteDoctorIds: ids));
+  }
+
+  /// Reset semua state ke initial.
   void clearSearch() {
     _lastQuery = null;
     _lastSpecializationId = null;
     _offset = 0;
-    emit(const SearchInitial());
+    emit(const SearchState(
+      specializations: [],
+      isLoadingSpecializations: false,
+    ));
   }
 }
