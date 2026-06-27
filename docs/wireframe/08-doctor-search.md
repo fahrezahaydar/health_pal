@@ -102,3 +102,90 @@ User mengetik "budi" dalam 300ms → cancel previous → wait 300ms baru → API
 ```
 
 **BLoC:** `SearchCubit` — states: `SearchInitial`, `SearchLoading`, `SearchLoaded(doctors, hasMore)`, `SearchError`, `SearchEmpty`.
+
+---
+
+## Doctor Card — v2.0 (Redesigned)
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│ ┌────────────┐  Dr. David Patel                    ♡          │
+│ │            │─────────────────────────────────────────────── │
+│ │   Photo    │  Cardiologist                               │
+│ │  (1:1)     │                                              │
+│ │            │  📍 Cardiology Center, USA                  │
+│ └────────────┘                                              │
+│                ⭐ 5.0   |   1,872 Reviews                   │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Layout Structure
+```text
+Card
+└── Row
+    ├── Left
+    │   └── Doctor Image
+    │       ├── Aspect Ratio: 1:1
+    │       └── Rounded Corners
+    │
+    └── Right (Expanded)
+        ├── Top Row
+        │   ├── Doctor Name
+        │   └── Favorite Button
+        ├── Divider
+        ├── Specialization
+        ├── Location Row
+        │   ├── Location Icon
+        │   └── Hospital/Clinic Name
+        └── Rating Row
+            ├── Star Icon
+            ├── Rating Value
+            ├── Separator
+            └── Review Count
+```
+
+### Components
+
+| Component       | Description                                         |
+| --------------- | --------------------------------------------------- |
+| Doctor Image    | Doctor profile photo with rounded corners           |
+| Favorite Button | Heart icon (outline/filled) positioned at top-right |
+| Doctor Name     | Doctor's full name                                  |
+| Divider         | Horizontal divider below the name                   |
+| Specialization  | Doctor's medical specialty                          |
+| Location        | Hospital or clinic name with location icon          |
+| Rating          | Star icon with average rating                       |
+| Reviews         | Total number of patient reviews                     |
+
+### Suggested Flutter Widget Tree
+```text
+Card
+└── InkWell
+    └── Padding
+        └── Row
+            ├── ClipRRect
+            │   └── AspectRatio(1/1)
+            │       └── Image
+            ├── SizedBox(width: 16)
+            └── Expanded
+                └── Column
+                    ├── Row
+                    │   ├── Expanded(Text: Name)
+                    │   └── FavoriteButton
+                    ├── Divider
+                    ├── Text(Specialization)
+                    ├── Row(Location)
+                    └── Row(Rating)
+```
+
+> **Versi:** v2.0 — 27 Juni 2026
+> **Perubahan dari v1.0 (ASCII di atas):**
+> - Layout berubah dari vertikal (full-width list) ke horizontal (foto kiri, info kanan)
+> - **Tambah:** Foto dokter dengan aspect ratio 1:1 (persegi, rounded corners)
+> - **Tambah:** Favorite button (❤️) di pojok kanan atas card
+> - **Tambah:** Rating row dengan separator (⭐ 5.0 | 1,872 Reviews)
+> - **Tambah:** Location icon sebelum nama klinik/rumah sakit
+> - **Tambah:** Divider horizontal di bawah nama dokter
+> - **Hapus:** Icon 👤 (diganti foto profil)
+> - **Hapus:** Icon 💰 biaya konsultasi (dipindah ke halaman detail)
+> - **Hapus:** Kota (📍) — lokasi sekarang pakai nama klinik + icon, kota ditampilkan di halaman detail
