@@ -1,12 +1,6 @@
-import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:health_pal/widgets/badge/app_badge.dart';
 
-import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/button/light_icon_button.dart';
 import '../../../../widgets/shared/profile_avatar.dart';
 
 class GreetingSection extends StatelessWidget {
