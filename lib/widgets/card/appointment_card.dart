@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/enums/booking_status.dart';
@@ -61,10 +62,20 @@ class AppointmentCard extends StatelessWidget {
               child: appointment.doctorPhotoUrl != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(24),
-                      child: Image.network(
-                        appointment.doctorPhotoUrl!,
+                      child: CachedNetworkImage(
+                        imageUrl: appointment.doctorPhotoUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const Icon(
+                        placeholder: (_, _) => const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppTheme.grey400,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, _, _) => const Icon(
                           Icons.person,
                           color: AppTheme.grey400,
                           size: 28,

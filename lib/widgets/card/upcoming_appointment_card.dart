@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:health_pal/core/theme/app_icons.dart';
-import 'package:flutter/material.dart' show TimeOfDay;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/booking_status.dart';
@@ -136,12 +136,22 @@ class _DoctorAvatar extends StatelessWidget {
         color: AppTheme.grey100,
         alignment: Alignment.center,
         child: photoUrl != null
-            ? Image.network(
-                photoUrl!,
+            ? CachedNetworkImage(
+                imageUrl: photoUrl!,
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const Icon(
+                placeholder: (_, _) => const Center(
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppTheme.grey400,
+                    ),
+                  ),
+                ),
+                errorWidget: (_, _, _) => const Icon(
                   AppIcons.user,
                   color: AppTheme.grey400,
                   size: 28,

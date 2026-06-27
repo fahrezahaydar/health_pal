@@ -8,6 +8,7 @@
 //
 // Pola: Stateless wrapper (BlocProvider) + view (UI).
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -149,10 +150,20 @@ class _BookingDetailView extends StatelessWidget {
                   child: appt.doctorPhotoUrl != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(32),
-                          child: Image.network(
-                            appt.doctorPhotoUrl!,
+                          child: CachedNetworkImage(
+                            imageUrl: appt.doctorPhotoUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => const Icon(
+                            placeholder: (_, _) => const Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppTheme.grey400,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (_, _, _) => const Icon(
                               Icons.person,
                               color: AppTheme.grey400,
                               size: 32,

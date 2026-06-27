@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:health_pal/core/theme/app_icons.dart';
 
@@ -138,14 +139,13 @@ class _AvatarCircle extends StatelessWidget {
       );
     }
     if (remoteUrl != null && remoteUrl!.isNotEmpty) {
-      return Image.network(
-        remoteUrl!,
+      return CachedNetworkImage(
+        imageUrl: remoteUrl!,
         fit: BoxFit.cover,
         width: size,
         height: size,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : _Shimmer(size: size),
-        errorBuilder: (_, _, _) => _Placeholder(size: size),
+        placeholder: (_, _) => _Shimmer(size: size),
+        errorWidget: (_, _, _) => _Placeholder(size: size),
       );
     }
     return _Placeholder(size: size);

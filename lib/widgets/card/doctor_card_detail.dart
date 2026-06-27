@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_text_theme.dart';
@@ -42,11 +43,20 @@ class DoctorCardDetail extends StatelessWidget {
             child: doctor.photoUrl != null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(40),
-                    child: Image.network(
-                      doctor.photoUrl!,
+                    child: CachedNetworkImage(
+                      imageUrl: doctor.photoUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(
+                      placeholder: (_, _) => const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppTheme.grey400,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (_, _, _) => const Icon(
                         Icons.person,
                         color: AppTheme.grey400,
                         size: 40,

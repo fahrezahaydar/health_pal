@@ -6,6 +6,7 @@
 //
 // Pola: Stateless wrapper (BlocProvider) + StatefulWidget view (logic + UI).
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -127,10 +128,11 @@ class _ProfileView extends StatelessWidget {
             ),
             child: user.avatarUrl != null
                 ? ClipOval(
-                    child: Image.network(
-                      user.avatarUrl!,
+                    child: CachedNetworkImage(
+                      imageUrl: user.avatarUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _avatarPlaceholder(user),
+                      placeholder: (_, _) => _avatarPlaceholder(user),
+                      errorWidget: (_, _, _) => _avatarPlaceholder(user),
                     ),
                   )
                 : _avatarPlaceholder(user),

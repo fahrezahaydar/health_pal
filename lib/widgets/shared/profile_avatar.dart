@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../core/theme/app_text_theme.dart';
@@ -17,26 +18,37 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: Image.network(
-        avatarUrl ?? '',
+      child: Container(
         width: 42,
         height: 42,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) {
-          return Container(
-            width: 42,
-            height: 42,
-            color: AppTheme.primary.withValues(alpha: 0.15),
-            alignment: Alignment.center,
-            child: Text(
-              nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
-              style: AppTextTheme.titleLarge.copyWith(
-                color: AppTheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        },
+        color: AppTheme.grey100,
+        alignment: Alignment.center,
+        child: avatarUrl != null
+            ? CachedNetworkImage(
+                imageUrl: avatarUrl!,
+                width: 42,
+                height: 42,
+                fit: BoxFit.cover,
+                placeholder: (_, _) => const SizedBox.shrink(),
+                errorWidget: (_, _, _) => _buildFallback(context),
+              )
+            : _buildFallback(context),
+      ),
+    );
+  }
+
+  Widget _buildFallback(BuildContext context) {
+    return Container(
+      width: 42,
+      height: 42,
+      color: AppTheme.primary.withValues(alpha: 0.15),
+      alignment: Alignment.center,
+      child: Text(
+        nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
+        style: AppTextTheme.titleLarge.copyWith(
+          color: AppTheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

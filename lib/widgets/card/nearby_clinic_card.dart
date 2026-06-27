@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_icons.dart';
@@ -73,12 +74,14 @@ class NearbyClinicCard extends StatelessWidget {
                 top: Radius.circular(12),
               ),
               child: imageUrl != null
-                  ? Image.network(
-                      imageUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl!,
                       width: width,
                       height: 100,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) =>
+                      placeholder: (_, _) =>
+                          const PlaceholderImage(height: 100),
+                      errorWidget: (_, _, _) =>
                           const PlaceholderImage(height: 100),
                     )
                   : const PlaceholderImage(height: 100),

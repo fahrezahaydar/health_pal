@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -43,10 +44,12 @@ class ClinicCard extends StatelessWidget {
                   AspectRatio(
                     aspectRatio: 2,
                     child: clinic.imageUrl != null
-                        ? Image.network(
-                            clinic.imageUrl!,
+                        ? CachedNetworkImage(
+                            imageUrl: clinic.imageUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
+                            placeholder: (_, _) =>
+                                const PlaceholderImage(height: 160),
+                            errorWidget: (_, _, _) =>
                                 const PlaceholderImage(height: 160),
                           )
                         : const PlaceholderImage(height: 160),

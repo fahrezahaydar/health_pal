@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -43,16 +44,21 @@ class BannerCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.grey200,
           borderRadius: BorderRadius.circular(12),
-          image: imageUrl != null
-              ? DecorationImage(
-                  image: NetworkImage(imageUrl!),
-                  fit: BoxFit.cover,
-                )
-              : null,
         ),
+        clipBehavior: Clip.hardEdge,
         alignment: Alignment.center,
-        child: imageUrl == null
-            ? Padding(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (imageUrl != null)
+              CachedNetworkImage(
+                imageUrl: imageUrl!,
+                fit: BoxFit.cover,
+                placeholder: (_, _) => const SizedBox.shrink(),
+                errorWidget: (_, _, _) => const SizedBox.shrink(),
+              ),
+            if (imageUrl == null)
+              Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -72,8 +78,9 @@ class BannerCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
-            : null,
+              ),
+          ],
+        ),
       ),
     );
   }
