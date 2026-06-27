@@ -369,10 +369,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i311.FavoriteCubit>(
       () => _i311.FavoriteCubit(gh<_i204.GetFavoritesUseCase>()),
     );
-    gh.factory<_i401.SearchCubit>(
-      () => _i401.SearchCubit(
+    gh.factoryParam<_i401.SearchCubit, String?, dynamic>(
+      (specializationId, _) => _i401.SearchCubit(
         gh<_i146.GetDoctorsUseCase>(),
         gh<_i262.GetSpecializationsUseCase>(),
+        specializationId,
       ),
     );
     gh.factory<_i244.SpecializationCubit>(

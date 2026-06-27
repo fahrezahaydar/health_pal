@@ -31,12 +31,14 @@ import '../bloc/search/search_state.dart';
 import '../widget/doctor_filter_chip.dart';
 
 class DoctorSearchPage extends StatelessWidget {
-  const DoctorSearchPage({super.key});
+  const DoctorSearchPage({super.key, this.specializationId});
+
+  final String? specializationId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<SearchCubit>(
-      create: (_) => getIt<SearchCubit>(),
+      create: (_) => getIt<SearchCubit>(param1: specializationId),
       child: const DoctorSearchView(),
     );
   }

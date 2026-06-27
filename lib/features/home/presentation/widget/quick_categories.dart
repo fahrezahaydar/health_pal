@@ -7,14 +7,26 @@ import '../../../../core/theme/app_text_theme.dart';
 import '../../../../widgets/card/category_card.dart';
 import '../../domain/entity/specialization_entity.dart';
 
-class QuickCategories extends StatelessWidget {
+class QuickCategories extends StatefulWidget {
   const QuickCategories({super.key, required this.specializations});
 
   final List<SpecializationEntity> specializations;
 
   @override
+  State<QuickCategories> createState() => _QuickCategoriesState();
+}
+
+class _QuickCategoriesState extends State<QuickCategories> {
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
-    if (specializations.isEmpty) return const SizedBox.shrink();
+    final specs = widget.specializations;
+    if (specs.isEmpty) return const SizedBox.shrink();
+
+    const int initialCount = 8;
+    final displayCount = _isExpanded ? specs.length : initialCount.clamp(0, specs.length);
+    final hasMore = specs.length > initialCount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,10 +35,14 @@ class QuickCategories extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Categories', style: AppTextTheme.headlineSmall),
-            GestureDetector(
-              onTap: () => context.push(RoutePaths.doctorSearch),
-              child: Text('See All', style: AppTextTheme.bodySmall),
-            ),
+            if (hasMore)
+              GestureDetector(
+                onTap: () => setState(() => _isExpanded = !_isExpanded),
+                child: Text(
+                  _isExpanded ? 'See Less' : 'See All',
+                  style: AppTextTheme.bodySmall,
+                ),
+              ),
           ],
         ),
         const SizedBox(height: 12),
@@ -39,13 +55,13 @@ class QuickCategories extends StatelessWidget {
             crossAxisSpacing: 12,
             childAspectRatio: 0.75,
           ),
-          itemCount: 8,
+          itemCount: displayCount,
           itemBuilder: (context, index) {
-            final s = specializations[index];
+            final s = specs[index];
             return CategoryCard.fromEntity(
               s,
               onTap: () => context.push(
-                '${RoutePaths.doctorSearch}?specialization=${s.id}',
+                '${RoutePaths.doctorSearch}?id=${s.id}',
               ),
             );
           },

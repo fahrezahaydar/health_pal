@@ -200,7 +200,10 @@ class AppRouter {
       GoRoute(
         path: '/doctor/search',
         name: 'doctorSearch',
-        builder: (_, _) => const DoctorSearchPage(),
+        builder: (_, state) {
+          final id = state.uri.queryParameters['id'];
+          return DoctorSearchPage(specializationId: id);
+        },
       ),
       GoRoute(
         path: '/doctor/:doctorId',

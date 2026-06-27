@@ -17,12 +17,17 @@ class SearchCubit extends Cubit<SearchState> {
 
   static const int _pageSize = 10;
 
-  SearchCubit(this._getDoctors, this._getSpecializations)
-    : super(const SearchState()) {
-    _init();
+  SearchCubit(
+    this._getDoctors,
+    this._getSpecializations,
+    @factoryParam String? specializationId,
+  ) : super(specializationId != null
+          ? SearchState(activeSpecializationId: specializationId)
+          : const SearchState()) {
+    _init(specializationId);
   }
 
-  Future<void> _init() async {
+  Future<void> _init(String? specializationId) async {
     emit(state.copyWith(isLoading: true));
     final specResult = await _getSpecializations();
     final loaded = switch (specResult) {
@@ -32,10 +37,14 @@ class SearchCubit extends Cubit<SearchState> {
     emit(
       state.copyWith(specializations: [...state.specializations, ...loaded]),
     );
-    _fetch();
+    if (specializationId != null) {
+      await _fetch();
+    } else {
+      _fetch();
+    }
   }
 
-  /// Search dokter — reset offset, replace result list.
+  /// Fetch dokter — append atau replace.
   Future<void> _fetch({bool isAppend = false}) async {
     if (!state.isLoadingMore) {
       emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -71,27 +80,26 @@ class SearchCubit extends Cubit<SearchState> {
     }
   }
 
-  /// Filter by specialization — re-trigger search.
+  Future<void> searchDoctors(String? query) async {
+    final sanitized = (query?.trim().isEmpty ?? true) ? null : query!.trim();
+    emit(state.copyWith(activeQuery: sanitized, currentPage: 1));
+    _fetch();
+  }
+
   Future<void> filterBySpecialization(String? specializationId) async {
-    emit(
-      state.copyWith(activeSpecializationId: specializationId, currentPage: 1),
-    );
+    emit(state.copyWith(activeSpecializationId: specializationId, currentPage: 1));
     await _fetch();
   }
 
-  /// Append next page (infinite scroll).
   Future<void> loadMore() async {
     final s = state;
     if (!s.hasMore || s.isLoadingMore || s.isLoading || s.doctors.isEmpty) {
       return;
     }
-    emit(
-      state.copyWith(isLoadingMore: true, currentPage: state.currentPage + 1),
-    );
+    emit(state.copyWith(isLoadingMore: true, currentPage: state.currentPage + 1));
     _fetch(isAppend: true);
   }
 
-  /// Toggle favorite status (local state, tidak persist ke server).
   void toggleFavorite(String doctorId) {
     final ids = Set<String>.from(state.favoriteDoctorIds);
     if (ids.contains(doctorId)) {
@@ -100,12 +108,6 @@ class SearchCubit extends Cubit<SearchState> {
       ids.add(doctorId);
     }
     emit(state.copyWith(favoriteDoctorIds: ids));
-  }
-
-  Future<void> searchDoctors(String? query) async {
-    final sanitized = (query?.trim().isEmpty ?? true) ? null : query!.trim();
-    emit(state.copyWith(activeQuery: sanitized, currentPage: 1));
-    _fetch();
   }
 
   Future<void> reset(String? query) async {
