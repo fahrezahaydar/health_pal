@@ -15,6 +15,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../home/data/model/specialization_model.dart';
 import '../../domain/entity/doctor_entity.dart';
 import 'clinic_model.dart';
+import 'doctor_schedule_model.dart';
 
 part 'doctor_model.freezed.dart';
 part 'doctor_model.g.dart';
@@ -51,6 +52,10 @@ abstract class DoctorModel with _$DoctorModel {
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
 
+    // ── v2.0 (ADR-009): New fields untuk Doctor Detail Page ──
+    @JsonKey(name: 'total_patients') @Default(0) int totalPatients,
+    @JsonKey(name: 'doctor_schedules') @Default([]) List<DoctorScheduleModel> schedules,
+
     // ── Nested Objects (dari PostgREST select=*,clinics(*),specializations(*)) ──
     // @JsonKey name WAJIB match nama tabel (plural) karena PostgREST
     // selalu pakai nama tabel sebagai JSON key untuk nested object.
@@ -75,6 +80,10 @@ abstract class DoctorModel with _$DoctorModel {
         ratingAvg: entity.ratingAvg,
         ratingCount: entity.ratingCount,
         isActive: entity.isActive,
+        totalPatients: entity.totalPatients,
+        schedules: entity.schedules
+                .map((e) => DoctorScheduleModel.fromEntity(e))
+                .toList(),
         clinic: entity.clinic != null ? ClinicModel.fromEntity(entity.clinic!) : null,
         specialization: entity.specialization != null
             ? SpecializationModel.fromEntity(entity.specialization!)
@@ -96,6 +105,8 @@ extension DoctorModelX on DoctorModel {
         ratingAvg: ratingAvg,
         ratingCount: ratingCount,
         isActive: isActive,
+        totalPatients: totalPatients,
+        schedules: schedules.map((e) => e.toEntity()).toList(),
         clinic: clinic?.toEntity(),
         specialization: specialization?.toEntity(),
       );

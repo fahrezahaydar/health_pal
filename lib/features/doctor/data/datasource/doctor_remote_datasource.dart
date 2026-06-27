@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/doctor_model.dart';
+import '../model/doctor_schedule_model.dart';
 import '../model/doctor_slot_model.dart';
 
 @injectable
@@ -56,12 +57,26 @@ class DoctorRemoteDataSource {
     final result = await _client
         .from('doctors')
         .select(
-            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url, color_hex)')
+            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url, color_hex), doctor_schedules(day_of_week, start_time, end_time, is_active)')
         .eq('id', doctorId)
         .eq('is_active', true)
         .single();
 
     return DoctorModel.fromJson(result);
+  }
+
+  // ── Get Doctor Schedules (parallel fallback jika nested select gagal) ──
+  Future<List<DoctorScheduleModel>> getDoctorSchedules(String doctorId) async {
+    final result = await _client
+        .from('doctor_schedules')
+        .select()
+        .eq('doctor_id', doctorId)
+        .eq('is_active', true)
+        .order('day_of_week', ascending: true);
+
+    return (result as List)
+        .map((e) => DoctorScheduleModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   // ── API §5.4 Get Slot Tersedia ──────────────────────────

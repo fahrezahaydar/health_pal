@@ -8,10 +8,12 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/network/error_handler.dart';
 import '../../../../core/network/result.dart';
 import '../../domain/entity/doctor_entity.dart';
+import '../../domain/entity/doctor_schedule_entity.dart';
 import '../../domain/entity/doctor_slot_entity.dart';
 import '../../domain/repository/doctor_repository.dart';
 import '../datasource/doctor_remote_datasource.dart';
 import '../model/doctor_model.dart';
+import '../model/doctor_schedule_model.dart';
 import '../model/doctor_slot_model.dart';
 
 @Injectable(as: DoctorRepository)
@@ -45,6 +47,17 @@ class DoctorRepositoryImpl implements DoctorRepository {
     try {
       final remote = await _remote.getDoctorDetail(doctorId);
       return Result.success(remote.toEntity());
+    } catch (e) {
+      return Result.failure(const ErrorHandler().map(e));
+    }
+  }
+
+  @override
+  Future<Result<List<DoctorScheduleEntity>>> getDoctorSchedules(
+      String doctorId) async {
+    try {
+      final remote = await _remote.getDoctorSchedules(doctorId);
+      return Result.success(remote.map((m) => m.toEntity()).toList());
     } catch (e) {
       return Result.failure(const ErrorHandler().map(e));
     }

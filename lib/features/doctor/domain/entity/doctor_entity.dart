@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../home/domain/entity/specialization_entity.dart';
 import 'clinic_entity.dart';
+import 'doctor_schedule_entity.dart';
 
 class DoctorEntity extends Equatable {
   final String id;
@@ -18,6 +19,8 @@ class DoctorEntity extends Equatable {
   final double ratingAvg;
   final int ratingCount;
   final bool isActive;
+  final int totalPatients;
+  final List<DoctorScheduleEntity> schedules;
 
   // ── Nested (dari PostgREST JOIN) ──
   final ClinicEntity? clinic;
@@ -36,6 +39,8 @@ class DoctorEntity extends Equatable {
     this.ratingAvg = 0.0,
     this.ratingCount = 0,
     this.isActive = true,
+    this.totalPatients = 0,
+    this.schedules = const [],
     this.clinic,
     this.specialization,
   });
@@ -51,6 +56,49 @@ class DoctorEntity extends Equatable {
 
   /// Derived: rating text (formatted untuk display).
   String get ratingDisplay => ratingAvg.toStringAsFixed(1);
+
+  /// Derived: working time display string.
+  /// Menggabungkan jadwal aktif ke format: "Senin–Jumat, 08:00 AM – 06:00 PM".
+  /// Jika ada multiple day ranges, gunakan format terkompak.
+  String get workingTimeDisplay {
+    if (schedules.isEmpty) return 'No schedule available';
+    final active = schedules.where((s) => s.isActive).toList();
+    if (active.isEmpty) return 'No schedule available';
+
+    // Sort by dayOfWeek
+    final sorted = List<DoctorScheduleEntity>.from(active)
+      ..sort((a, b) => a.dayOfWeek.compareTo(b.dayOfWeek));
+
+    // If only one entry, display it directly
+    if (sorted.length == 1) {
+      return '${sorted.first.dayName}, ${sorted.first.timeDisplay}';
+    }
+
+    // Try to group consecutive days with same time
+    final buffer = StringBuffer();
+    int i = 0;
+    while (i < sorted.length) {
+      final start = sorted[i];
+      int j = i;
+      while (
+          j + 1 < sorted.length &&
+          sorted[j + 1].dayOfWeek == sorted[j].dayOfWeek + 1 &&
+          sorted[j + 1].startTime == sorted[j].startTime &&
+          sorted[j + 1].endTime == sorted[j].endTime) {
+        j++;
+      }
+      if (buffer.isNotEmpty) buffer.write(', ');
+      if (j == i) {
+        buffer.write('${start.dayName}, ${start.timeDisplay}');
+      } else {
+        buffer.write(
+          '${start.dayName}–${sorted[j].dayName}, ${start.timeDisplay}',
+        );
+      }
+      i = j + 1;
+    }
+    return buffer.toString();
+  }
 
   static DoctorEntity mock() => const DoctorEntity(
         id: 'sk-1',
@@ -103,6 +151,8 @@ class DoctorEntity extends Equatable {
         ratingAvg,
         ratingCount,
         isActive,
+        totalPatients,
+        schedules,
         clinic,
         specialization,
       ];

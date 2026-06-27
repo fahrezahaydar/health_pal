@@ -2,6 +2,7 @@
 
 import '../../../../core/network/result.dart';
 import '../entity/doctor_entity.dart';
+import '../entity/doctor_schedule_entity.dart';
 import '../entity/doctor_slot_entity.dart';
 
 abstract class DoctorRepository {
@@ -17,6 +18,11 @@ abstract class DoctorRepository {
   /// Get detail satu dokter.
   /// API Contract §5.3
   Future<Result<DoctorEntity>> getDoctorDetail(String doctorId);
+
+  /// Get active schedules untuk seorang dokter.
+  /// ADR-009: Working Time section di Doctor Detail Page v2.0.
+  Future<Result<List<DoctorScheduleEntity>>> getDoctorSchedules(
+      String doctorId);
 
   /// Get available slots untuk dokter di tanggal tertentu.
   /// API Contract §5.4
