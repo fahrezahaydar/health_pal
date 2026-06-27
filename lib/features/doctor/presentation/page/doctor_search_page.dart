@@ -61,16 +61,21 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     _scrollController = ScrollController();
     _debouncer = Debouncer(const Duration(milliseconds: 300));
     _scrollController.addListener(() {
+      if (!_scrollController.hasClients) return;
+
       final cubit = context.read<SearchCubit>();
       final state = cubit.state;
+
       if (!state.hasMore ||
+          state.isLoading ||
           state.isLoadingMore ||
-          state.isLoadingDoctors ||
           state.doctors.isEmpty) {
         return;
       }
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 200) {
+
+      final position = _scrollController.position;
+
+      if (position.pixels >= position.maxScrollExtent - 200) {
         cubit.loadMore();
       }
     });
@@ -98,39 +103,44 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
         title: Text('Cari Dokter', style: AppTextTheme.titleLarge),
       ),
       body: Column(
+        spacing: 16,
         children: [
           // ── Search Bar ──
-          TextField(
-            controller: _controller,
-            onChanged: (value) {
-              _debouncer(() {
-                if (!mounted) return;
-                context.read<SearchCubit>().searchDoctors(value);
-              });
-            },
-            decoration: InputDecoration(
-              hintText: 'Nama / Spesialisasi',
-              prefixIcon: const Icon(
-                AppIcons.searchNormal,
-                color: AppTheme.grey400,
-              ),
-              suffixIcon: _controller.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(
-                        AppIcons.closeCircle,
-                        color: AppTheme.grey400,
-                      ),
-                      onPressed: () {
-                        _controller.clear();
-                        context.read<SearchCubit>().clearSearch();
-                      },
-                    )
-                  : null,
-              filled: true,
-              fillColor: AppTheme.grey100,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextField(
+              controller: _controller,
+              onChanged: (value) {
+                _debouncer(() {
+                  if (!mounted) return;
+                  context.read<SearchCubit>().searchDoctors(value);
+                });
+              },
+              style: AppTextTheme.bodySmall,
+              decoration: InputDecoration(
+                hintText: 'Nama / Spesialisasi',
+                prefixIcon: const Icon(
+                  AppIcons.searchNormal,
+                  color: AppTheme.grey400,
+                ),
+                suffixIcon: _controller.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(
+                          AppIcons.closeCircle,
+                          color: AppTheme.grey400,
+                        ),
+                        onPressed: () {
+                          _controller.clear();
+                          context.read<SearchCubit>().searchDoctors(null);
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: AppTheme.grey100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
@@ -146,35 +156,26 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
             builder: (context, selected) {
               final specs = selected.specs;
               final activeId = selected.activeId;
-              return Container(
-                color: AppTheme.white,
-                padding: const EdgeInsets.only(bottom: 12),
-                child: SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: specs.length,
-                    itemBuilder: (context, index) {
-                      final spec = specs[index];
-                      final isAll = spec.id == 'all';
-                      final isSelected = isAll
-                          ? activeId == null
-                          : activeId == spec.id;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: DoctorFilterChip(
-                          label: spec.name,
-                          isSelected: isSelected,
-                          onTap: () {
-                            context.read<SearchCubit>().filterBySpecialization(
-                              isAll ? null : spec.id,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  spacing: 8,
+                  children: specs.map((spec) {
+                    final isAll = spec.id == 'all';
+                    final isSelected = isAll
+                        ? activeId == null
+                        : activeId == spec.id;
+                    return DoctorFilterChip(
+                      label: spec.name,
+                      isSelected: isSelected,
+                      onTap: () {
+                        context.read<SearchCubit>().filterBySpecialization(
+                          isAll ? null : spec.id,
+                        );
+                      },
+                    );
+                  }).toList(),
                 ),
               );
             },
@@ -187,20 +188,12 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                   context.read<SearchCubit>().searchDoctors(_controller.text),
               child: BlocBuilder<SearchCubit, SearchState>(
                 builder: (context, state) {
-                  if (state.isInitial && !state.isLoadingDoctors) {
-                    return const EmptyStateView(
-                      icon: Icons.search,
-                      message: 'Cari dokter berdasarkan nama atau spesialisasi',
-                      hint: 'Mulai mengetik untuk mencari',
-                    );
-                  }
-
-                  if (state.isLoadingDoctors) {
+                  if (state.isLoading) {
                     return Skeletonizer(
                       enabled: true,
                       child: ListView.separated(
-                        padding: const EdgeInsets.all(16),
                         itemCount: 3,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (_, _) => const DoctorCard(
                           name: 'Memuat...',
@@ -237,8 +230,8 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
 
                   return ListView.separated(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
                     itemCount: doctors.length + (hasMore ? 1 : 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       if (index >= doctors.length) {

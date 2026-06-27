@@ -49,10 +49,10 @@ class DoctorCard extends StatelessWidget {
   }
 
   factory DoctorCard.skeleton() => const DoctorCard(
-        name: 'Loading...',
-        specialization: 'Loading...',
-        clinic: 'Loading...',
-      );
+    name: 'Loading...',
+    specialization: 'Loading...',
+    clinic: 'Loading...',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -67,19 +67,20 @@ class DoctorCard extends StatelessWidget {
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
           children: [
             AppNetworkImage(
               imageUrl: photoUrl,
-              width: 72,
-              height: 72,
+              width: 108,
+              height: 108,
               borderRadius: 12,
               iconData: Icons.person,
               iconSize: 28,
             ),
-            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,54 +88,47 @@ class DoctorCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: AppTextTheme.titleLarge,
+                          style: AppTextTheme.headlineSmall,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (onFavoriteTap != null)
-                        SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact,
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              size: 18,
-                              color: isFavorite
-                                  ? Colors.red
-                                  : AppTheme.grey400,
-                            ),
-                            onPressed: onFavoriteTap,
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: isFavorite ? Colors.red : AppTheme.grey400,
                           ),
+                          onPressed: onFavoriteTap,
                         ),
                     ],
                   ),
-                  const Divider(height: 8, thickness: 1),
+                  const Divider(thickness: 1, height: 1),
                   Text(
                     specialization,
                     style: AppTextTheme.bodySmall.copyWith(
-                      color: AppTheme.grey500,
+                      color: AppTheme.grey600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   if (clinic != null) ...[
-                    const SizedBox(height: 4),
                     Row(
+                      spacing: 4,
+
                       children: [
                         const Icon(
                           Icons.location_on,
                           size: 14,
                           color: AppTheme.grey400,
                         ),
-                        const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             clinic!,
-                            style: AppTextTheme.labelSmall.copyWith(
-                              color: AppTheme.grey400,
+                            style: AppTextTheme.bodySmall.copyWith(
+                              color: AppTheme.grey600,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -144,19 +138,19 @@ class DoctorCard extends StatelessWidget {
                     ),
                   ],
                   if (rating != null) ...[
-                    const SizedBox(height: 4),
                     Row(
+                      spacing: 4,
+
                       children: [
                         const Icon(
                           Icons.star,
                           size: 14,
-                          color: AppTheme.green,
+                          color: AppTheme.orange,
                         ),
-                        const SizedBox(width: 4),
                         Text(
                           rating!.toStringAsFixed(1),
                           style: AppTextTheme.labelSmall.copyWith(
-                            color: AppTheme.deepTeal,
+                            color: AppTheme.grey500,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -172,7 +166,8 @@ class DoctorCard extends StatelessWidget {
                           ),
                           Text(
                             '$reviewCount ${_reviewLabel(reviewCount!)}',
-                            style: AppTextTheme.labelSmall.copyWith(
+                            style: AppTextTheme.bodySmall.copyWith(
+                              fontSize: 12,
                               color: AppTheme.grey500,
                             ),
                           ),

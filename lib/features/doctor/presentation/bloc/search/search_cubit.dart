@@ -73,10 +73,9 @@ class SearchCubit extends Cubit<SearchState> {
 
   /// Filter by specialization — re-trigger search.
   Future<void> filterBySpecialization(String? specializationId) async {
-    emit(state.copyWith(
-      activeSpecializationId: specializationId,
-      currentPage: 1,
-    ));
+    emit(
+      state.copyWith(activeSpecializationId: specializationId, currentPage: 1),
+    );
     await _fetch();
   }
 

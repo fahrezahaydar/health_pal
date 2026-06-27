@@ -10,11 +10,13 @@ import 'package:equatable/equatable.dart';
 import '../../../../home/domain/entity/specialization_entity.dart';
 import '../../../domain/entity/doctor_entity.dart';
 
+const _unset = Object();
+
 class SearchState extends Equatable {
   final List<DoctorEntity> doctors;
   final List<SpecializationEntity> specializations;
-  final bool isLoadingDoctors;
-  final bool isLoadingSpecializations;
+  final int currentPage;
+  final bool isLoading;
   final bool isLoadingMore;
   final String? errorMessage;
   final String? activeQuery;
@@ -24,9 +26,11 @@ class SearchState extends Equatable {
 
   const SearchState({
     this.doctors = const [],
-    this.specializations = const [],
-    this.isLoadingDoctors = false,
-    this.isLoadingSpecializations = false,
+    this.specializations = const [
+      SpecializationEntity(id: 'all', name: 'Semua'),
+    ],
+    this.currentPage = 1,
+    this.isLoading = false,
     this.isLoadingMore = false,
     this.errorMessage,
     this.activeQuery,
@@ -37,61 +41,56 @@ class SearchState extends Equatable {
 
   bool get isInitial =>
       doctors.isEmpty &&
-      !isLoadingDoctors &&
+      !isLoading &&
       !isLoadingMore &&
       errorMessage == null &&
       activeQuery == null &&
       activeSpecializationId == null;
 
   bool get isResultEmpty =>
-      !isLoadingDoctors && !isLoadingMore && doctors.isEmpty && !isInitial;
+      !isLoading && !isLoadingMore && doctors.isEmpty && !isInitial;
 
   SearchState copyWith({
     List<DoctorEntity>? doctors,
     List<SpecializationEntity>? specializations,
-    bool? isLoadingDoctors,
-    bool? isLoadingSpecializations,
+    bool? isLoading,
     bool? isLoadingMore,
-    // clearX flags: pass any non-null value to reset the corresponding
-    // nullable field back to null.
-    Object? clearError,
-    String? errorMessage,
-    Object? clearQuery,
-    String? activeQuery,
-    Object? clearSpecialization,
-    String? activeSpecializationId,
+    int? currentPage,
+    Object? errorMessage = _unset,
+    Object? activeQuery = _unset,
+    Object? activeSpecializationId = _unset,
     bool? hasMore,
     Set<String>? favoriteDoctorIds,
-  }) =>
-      SearchState(
-        doctors: doctors ?? this.doctors,
-        specializations: specializations ?? this.specializations,
-        isLoadingDoctors: isLoadingDoctors ?? this.isLoadingDoctors,
-        isLoadingSpecializations:
-            isLoadingSpecializations ?? this.isLoadingSpecializations,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        errorMessage:
-            clearError != null ? null : errorMessage ?? this.errorMessage,
-        activeQuery:
-            clearQuery != null ? null : activeQuery ?? this.activeQuery,
-        activeSpecializationId: clearSpecialization != null
-            ? null
-            : activeSpecializationId ?? this.activeSpecializationId,
-        hasMore: hasMore ?? this.hasMore,
-        favoriteDoctorIds: favoriteDoctorIds ?? this.favoriteDoctorIds,
-      );
+  }) => SearchState(
+    doctors: doctors ?? this.doctors,
+    specializations: specializations ?? this.specializations,
+    isLoading: isLoading ?? this.isLoading,
+    currentPage: currentPage ?? this.currentPage,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    errorMessage: errorMessage == _unset
+        ? this.errorMessage
+        : errorMessage as String?,
+    activeQuery: activeQuery == _unset
+        ? this.activeQuery
+        : activeQuery as String?,
+    activeSpecializationId: activeSpecializationId == _unset
+        ? this.activeSpecializationId
+        : activeSpecializationId as String?,
+    hasMore: hasMore ?? this.hasMore,
+    favoriteDoctorIds: favoriteDoctorIds ?? this.favoriteDoctorIds,
+  );
 
   @override
   List<Object?> get props => [
-        doctors,
-        specializations,
-        isLoadingDoctors,
-        isLoadingSpecializations,
-        isLoadingMore,
-        errorMessage,
-        activeQuery,
-        activeSpecializationId,
-        hasMore,
-        favoriteDoctorIds,
-      ];
+    doctors,
+    specializations,
+    isLoading,
+    currentPage,
+    isLoadingMore,
+    errorMessage,
+    activeQuery,
+    activeSpecializationId,
+    hasMore,
+    favoriteDoctorIds,
+  ];
 }
