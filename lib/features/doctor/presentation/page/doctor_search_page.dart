@@ -100,45 +100,49 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
       body: Column(
         children: [
           // ── Search Bar ──
-          Container(
-            color: AppTheme.white,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: TextField(
-              controller: _controller,
-              onChanged: (value) {
-                _debouncer(() {
-                  if (!mounted) return;
-                  context.read<SearchCubit>().searchDoctors(value);
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Nama / Spesialisasi',
-                prefixIcon: const Icon(AppIcons.searchNormal, color: AppTheme.grey400),
-                suffixIcon: _controller.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(
-                          AppIcons.closeCircle,
-                          color: AppTheme.grey400,
-                        ),
-                        onPressed: () {
-                          _controller.clear();
-                          context.read<SearchCubit>().clearSearch();
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppTheme.grey100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
+          TextField(
+            controller: _controller,
+            onChanged: (value) {
+              _debouncer(() {
+                if (!mounted) return;
+                context.read<SearchCubit>().searchDoctors(value);
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Nama / Spesialisasi',
+              prefixIcon: const Icon(
+                AppIcons.searchNormal,
+                color: AppTheme.grey400,
+              ),
+              suffixIcon: _controller.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        AppIcons.closeCircle,
+                        color: AppTheme.grey400,
+                      ),
+                      onPressed: () {
+                        _controller.clear();
+                        context.read<SearchCubit>().clearSearch();
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: AppTheme.grey100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
 
           // ── Filter Chips ──
-          BlocSelector<SearchCubit, SearchState, ({List<SpecializationEntity> specs, String? activeId})>(
-            selector: (s) => (specs: s.specializations, activeId: s.activeSpecializationId),
+          BlocSelector<
+            SearchCubit,
+            SearchState,
+            ({List<SpecializationEntity> specs, String? activeId})
+          >(
+            selector: (s) =>
+                (specs: s.specializations, activeId: s.activeSpecializationId),
             builder: (context, selected) {
               final specs = selected.specs;
               final activeId = selected.activeId;
@@ -150,9 +154,9 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: specs.length + 1,
+                    itemCount: specs.length,
                     itemBuilder: (context, index) {
-                      final spec = index == 0 ? SearchCubit.allChip : specs[index - 1];
+                      final spec = specs[index];
                       final isAll = spec.id == 'all';
                       final isSelected = isAll
                           ? activeId == null
@@ -163,9 +167,9 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                           label: spec.name,
                           isSelected: isSelected,
                           onTap: () {
-                            context
-                                .read<SearchCubit>()
-                                .filterBySpecialization(isAll ? null : spec.id);
+                            context.read<SearchCubit>().filterBySpecialization(
+                              isAll ? null : spec.id,
+                            );
                           },
                         ),
                       );

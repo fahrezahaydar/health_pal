@@ -20,25 +20,24 @@ class SearchCubit extends Cubit<SearchState> {
   String? _lastSpecializationId;
   static const int _pageSize = 20;
 
-  /// "Semua" chip — selalu prepended ke daftar spesialisasi.
-  static const allChip = SpecializationEntity(id: 'all', name: 'Semua');
+  static const _allChip = SpecializationEntity(id: 'all', name: 'Semua');
 
   SearchCubit(this._getDoctors, this._getSpecializations)
-      : super(const SearchState()) {
+    : super(const SearchState()) {
     _init();
   }
 
   Future<void> _init() async {
     emit(state.copyWith(isLoadingSpecializations: true));
     final specResult = await _getSpecializations();
-    final specs = switch (specResult) {
+    final loaded = switch (specResult) {
       Success<List<SpecializationEntity>>() => specResult.data,
       _ => <SpecializationEntity>[],
     };
-    emit(state.copyWith(
-      specializations: specs,
-      isLoadingSpecializations: false,
-    ));
+    final specs = [_allChip, ...loaded];
+    emit(
+      state.copyWith(specializations: specs, isLoadingSpecializations: false),
+    );
     searchDoctors(null);
   }
 
@@ -46,11 +45,13 @@ class SearchCubit extends Cubit<SearchState> {
   Future<void> searchDoctors(String? query) async {
     _lastQuery = (query?.trim().isEmpty ?? true) ? null : query!.trim();
     _offset = 0;
-    emit(state.copyWith(
-      isLoadingDoctors: true,
-      clearError: true,
-      activeQuery: _lastQuery,
-    ));
+    emit(
+      state.copyWith(
+        isLoadingDoctors: true,
+        clearError: true,
+        activeQuery: _lastQuery,
+      ),
+    );
     final result = await _getDoctors(
       query: _lastQuery,
       specializationId: _lastSpecializationId,
@@ -60,16 +61,17 @@ class SearchCubit extends Cubit<SearchState> {
     switch (result) {
       case Success<List<DoctorEntity>>():
         _offset += result.data.length;
-        emit(state.copyWith(
-          doctors: result.data,
-          isLoadingDoctors: false,
-          hasMore: result.data.length >= _pageSize,
-        ));
+        emit(
+          state.copyWith(
+            doctors: result.data,
+            isLoadingDoctors: false,
+            hasMore: result.data.length >= _pageSize,
+          ),
+        );
       case Failure<List<DoctorEntity>>():
-        emit(state.copyWith(
-          isLoadingDoctors: false,
-          errorMessage: result.message,
-        ));
+        emit(
+          state.copyWith(isLoadingDoctors: false, errorMessage: result.message),
+        );
     }
   }
 
@@ -99,11 +101,13 @@ class SearchCubit extends Cubit<SearchState> {
     switch (result) {
       case Success<List<DoctorEntity>>():
         _offset += result.data.length;
-        emit(state.copyWith(
-          doctors: [...s.doctors, ...result.data],
-          isLoadingMore: false,
-          hasMore: result.data.length >= _pageSize,
-        ));
+        emit(
+          state.copyWith(
+            doctors: [...s.doctors, ...result.data],
+            isLoadingMore: false,
+            hasMore: result.data.length >= _pageSize,
+          ),
+        );
       case Failure<List<DoctorEntity>>():
         // Preserve existing list on failure
         emit(state.copyWith(isLoadingMore: false));
@@ -126,9 +130,11 @@ class SearchCubit extends Cubit<SearchState> {
     _lastQuery = null;
     _lastSpecializationId = null;
     _offset = 0;
-    emit(const SearchState(
-      specializations: [],
-      isLoadingSpecializations: false,
-    ));
+    emit(
+      const SearchState(
+        specializations: [SpecializationEntity(id: 'all', name: 'Semua')],
+        isLoadingSpecializations: false,
+      ),
+    );
   }
 }
