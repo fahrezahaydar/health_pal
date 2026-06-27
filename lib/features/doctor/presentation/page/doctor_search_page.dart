@@ -96,6 +96,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<SearchCubit>().loadSpecializations();
+      context.read<SearchCubit>().searchDoctors(null);
     });
   }
 
