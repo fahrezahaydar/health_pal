@@ -67,7 +67,7 @@ class _ProfileView extends StatelessWidget {
           return switch (state) {
             ProfileInitial() || ProfileLoading() => const Skeletonizer(
               enabled: true,
-              child: _ProfileSkeleton(),
+              child: _ProfileSkeletonContent(),
             ),
             ProfileError(:final message) => Center(
               child: Padding(
@@ -231,8 +231,8 @@ class _ProfileView extends StatelessWidget {
   }
 }
 
-class _ProfileSkeleton extends StatelessWidget {
-  const _ProfileSkeleton();
+class _ProfileSkeletonContent extends StatelessWidget {
+  const _ProfileSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
@@ -244,13 +244,12 @@ class _ProfileSkeleton extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.grey200),
           ),
           child: const Column(
             children: [
               CircleAvatar(radius: 40),
               SizedBox(height: 12),
-              Text('Full Name', style: TextStyle(fontSize: 16)),
+              Text('Full Name'),
             ],
           ),
         ),
@@ -260,7 +259,6 @@ class _ProfileSkeleton extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.grey200),
           ),
         ),
       ],

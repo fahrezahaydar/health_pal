@@ -109,7 +109,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
           onRefresh: () => context.read<BookingHistoryCubit>().refresh(),
           child: switch (state) {
             BookingHistoryInitial() || BookingHistoryLoading() =>
-              const Skeletonizer(enabled: true, child: _ListSkeleton()),
+              const Skeletonizer(enabled: true, child: _ListSkeletonContent()),
             BookingHistoryLoaded(:final appointments)
                 when appointments.isEmpty =>
               const EmptyStateView(
@@ -160,21 +160,18 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
   }
 }
 
-class _ListSkeleton extends StatelessWidget {
-  const _ListSkeleton();
+class _ListSkeletonContent extends StatelessWidget {
+  const _ListSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: 5,
+      itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, i) => Container(
+      itemBuilder: (_, _) => const SizedBox(
         height: 80,
-        decoration: BoxDecoration(
-          color: AppTheme.grey100,
-          borderRadius: BorderRadius.circular(12),
-        ),
+        child: Card(child: ListTile(title: Text('Loading'))),
       ),
     );
   }

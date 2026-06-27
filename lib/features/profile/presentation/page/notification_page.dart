@@ -103,7 +103,7 @@ class _NotificationView extends StatelessWidget {
         builder: (context, state) {
           return switch (state) {
             NotificationInitial() || NotificationLoading() =>
-              const Skeletonizer(enabled: true, child: _NotificationSkeleton()),
+              const Skeletonizer(enabled: true, child: _NotificationSkeletonContent()),
             NotificationLoaded(:final notifications)
                 when notifications.isEmpty =>
               _emptyState(),
@@ -191,21 +191,18 @@ class _NotificationView extends StatelessWidget {
   }
 }
 
-class _NotificationSkeleton extends StatelessWidget {
-  const _NotificationSkeleton();
+class _NotificationSkeletonContent extends StatelessWidget {
+  const _NotificationSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: 5,
+      itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, i) => Container(
+      itemBuilder: (_, _) => const SizedBox(
         height: 80,
-        decoration: BoxDecoration(
-          color: AppTheme.grey100,
-          borderRadius: BorderRadius.circular(12),
-        ),
+        child: Card(child: ListTile(title: Text('Loading'), subtitle: Text('Loading'))),
       ),
     );
   }

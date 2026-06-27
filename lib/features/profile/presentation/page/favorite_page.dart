@@ -41,7 +41,7 @@ class FavoritePage extends StatelessWidget {
             return switch (state) {
               FavoriteInitial() || FavoriteLoading() => const Skeletonizer(
                 enabled: true,
-                child: _FavSkeleton(),
+                child: _FavSkeletonContent(),
               ),
               FavoriteLoaded(:final doctors) when doctors.isEmpty =>
                 _emptyState(),
@@ -106,8 +106,8 @@ class FavoritePage extends StatelessWidget {
   }
 }
 
-class _FavSkeleton extends StatelessWidget {
-  const _FavSkeleton();
+class _FavSkeletonContent extends StatelessWidget {
+  const _FavSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
@@ -115,12 +115,10 @@ class _FavSkeleton extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, i) => Container(
-        height: 96,
-        decoration: BoxDecoration(
-          color: AppTheme.grey100,
-          borderRadius: BorderRadius.circular(12),
-        ),
+      itemBuilder: (_, _) => const DoctorCard(
+        name: 'Loading Doctor',
+        specialization: 'Loading Spec',
+        clinic: 'Loading Clinic',
       ),
     );
   }

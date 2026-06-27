@@ -174,7 +174,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
           body: switch (state) {
             EditProfileInitial() || EditProfileLoading() => const Skeletonizer(
               enabled: true,
-              child: _EditSkeleton(),
+              child: _EditSkeletonContent(),
             ),
             EditProfileError(:final message) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
@@ -281,8 +281,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
   }
 }
 
-class _EditSkeleton extends StatelessWidget {
-  const _EditSkeleton();
+class _EditSkeletonContent extends StatelessWidget {
+  const _EditSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
@@ -295,7 +295,7 @@ class _EditSkeleton extends StatelessWidget {
           Container(
             height: 50,
             decoration: BoxDecoration(
-              color: AppTheme.grey100,
+              color: AppTheme.white,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -303,7 +303,7 @@ class _EditSkeleton extends StatelessWidget {
           Container(
             height: 50,
             decoration: BoxDecoration(
-              color: AppTheme.grey100,
+              color: AppTheme.white,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -311,7 +311,7 @@ class _EditSkeleton extends StatelessWidget {
           Container(
             height: 50,
             decoration: BoxDecoration(
-              color: AppTheme.grey100,
+              color: AppTheme.white,
               borderRadius: BorderRadius.circular(8),
             ),
           ),

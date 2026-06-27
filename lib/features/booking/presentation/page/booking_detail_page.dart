@@ -94,7 +94,7 @@ class _BookingDetailView extends StatelessWidget {
               BookingDetailLoading() =>
                 const Skeletonizer(
                   enabled: true,
-                  child: _DetailSkeleton(),
+                  child: _DetailSkeletonContent(),
                 ),
               BookingDetailError(:final message) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 48),
@@ -315,8 +315,8 @@ class _BookingDetailView extends StatelessWidget {
 
 }
 
-class _DetailSkeleton extends StatelessWidget {
-  const _DetailSkeleton();
+class _DetailSkeletonContent extends StatelessWidget {
+  const _DetailSkeletonContent();
 
   @override
   Widget build(BuildContext context) {
@@ -324,14 +324,29 @@ class _DetailSkeleton extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Container(height: 80, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+          Container(
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppTheme.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           const SizedBox(height: 16),
-          Container(height: 200, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: AppTheme.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           const SizedBox(height: 16),
-          Container(height: 100, decoration: BoxDecoration(
-            color: AppTheme.grey100, borderRadius: BorderRadius.circular(12))),
+          Container(
+            height: 100,
+            decoration: BoxDecoration(
+              color: AppTheme.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         ],
       ),
     );
