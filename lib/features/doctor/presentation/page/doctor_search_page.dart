@@ -261,16 +261,20 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
           );
         }
         final d = doctors[index];
+        final cubit = context.read<SearchCubit>();
+        final isFav = cubit.favoriteDoctorIds.contains(d.id);
         return DoctorCard(
           name: d.fullName,
           specialization: d.specializationName,
           rating: d.ratingAvg,
-          fee: d.consultationFee,
+          reviewCount: d.ratingCount,
           clinic: d.clinicName,
           photoUrl: d.photoUrl,
+          isFavorite: isFav,
           onTap: () => context.push(
             RoutePaths.doctorDetail.replaceAll(':doctorId', d.id),
           ),
+          onFavoriteTap: () => cubit.toggleFavorite(d.id),
         );
       },
     );

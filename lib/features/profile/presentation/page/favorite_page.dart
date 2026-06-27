@@ -71,9 +71,10 @@ class FavoritePage extends StatelessWidget {
           name: d.fullName,
           specialization: d.specializationName,
           rating: d.ratingAvg,
-          fee: d.consultationFee,
+          reviewCount: d.ratingCount,
           clinic: d.clinicName,
           photoUrl: d.photoUrl,
+          isFavorite: true,
           onTap: () => context.push(
             RoutePaths.doctorDetail.replaceAll(':doctorId', d.id),
           ),
@@ -115,7 +116,7 @@ class _FavSkeleton extends StatelessWidget {
       itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (_, i) => Container(
-        height: 80,
+        height: 96,
         decoration: BoxDecoration(
           color: AppTheme.grey100,
           borderRadius: BorderRadius.circular(12),

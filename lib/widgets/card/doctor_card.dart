@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_text_theme.dart';
@@ -10,29 +11,40 @@ class DoctorCard extends StatelessWidget {
     required this.name,
     required this.specialization,
     this.rating,
-    this.fee,
+    this.reviewCount,
     this.clinic,
     this.photoUrl,
+    this.isFavorite = false,
     this.onTap,
+    this.onFavoriteTap,
   });
 
   final String name;
   final String specialization;
   final double? rating;
-  final double? fee;
+  final int? reviewCount;
   final String? clinic;
   final String? photoUrl;
+  final bool isFavorite;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
-  factory DoctorCard.fromEntity(DoctorEntity entity, {VoidCallback? onTap}) {
+  factory DoctorCard.fromEntity(
+    DoctorEntity entity, {
+    bool isFavorite = false,
+    VoidCallback? onTap,
+    VoidCallback? onFavoriteTap,
+  }) {
     return DoctorCard(
       name: entity.fullName,
       specialization: entity.specializationName,
       rating: entity.ratingAvg,
-      fee: entity.consultationFee,
+      reviewCount: entity.ratingCount,
       clinic: entity.clinicName,
       photoUrl: entity.photoUrl,
+      isFavorite: isFavorite,
       onTap: onTap,
+      onFavoriteTap: onFavoriteTap,
     );
   }
 
@@ -47,78 +59,172 @@ class DoctorCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppTheme.grey200),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppTheme.grey100,
-                borderRadius: BorderRadius.circular(28),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                width: 72,
+                height: 72,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: photoUrl != null
+                      ? CachedNetworkImage(
+                          imageUrl: photoUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (_, _) => Container(
+                            color: AppTheme.grey100,
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.person,
+                              color: AppTheme.grey400,
+                              size: 28,
+                            ),
+                          ),
+                          errorWidget: (_, _, _) => Container(
+                            color: AppTheme.grey100,
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.person,
+                              color: AppTheme.grey400,
+                              size: 28,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: AppTheme.grey100,
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.person,
+                            color: AppTheme.grey400,
+                            size: 28,
+                          ),
+                        ),
+                ),
               ),
-              child: photoUrl != null
-                  ? null
-                  : const Icon(Icons.person, color: AppTheme.grey400, size: 28),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: AppTextTheme.titleLarge),
-                  const SizedBox(height: 2),
-                  Text(specialization, style: AppTextTheme.bodySmall.copyWith(
-                    color: AppTheme.grey500,
-                  )),
-                  if (clinic != null) ...[
-                    const SizedBox(height: 2),
-                    Text(clinic!, style: AppTextTheme.labelSmall.copyWith(
-                      color: AppTheme.grey400,
-                    )),
-                  ],
-                  if (fee != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      'Rp ${fee!.toStringAsFixed(0)}',
-                      style: AppTextTheme.labelMedium.copyWith(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: AppTextTheme.titleLarge,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
+                      if (onFavoriteTap != null)
+                        SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                            icon: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 18,
+                              color: isFavorite
+                                  ? Colors.red
+                                  : AppTheme.grey400,
+                            ),
+                            onPressed: onFavoriteTap,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const Divider(height: 8, thickness: 1),
+                  Text(
+                    specialization,
+                    style: AppTextTheme.bodySmall.copyWith(
+                      color: AppTheme.grey500,
+                    ),
+                  ),
+                  if (clinic != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 14,
+                          color: AppTheme.grey400,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            clinic!,
+                            style: AppTextTheme.labelSmall.copyWith(
+                              color: AppTheme.grey400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (rating != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          size: 14,
+                          color: AppTheme.green,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          rating!.toStringAsFixed(1),
+                          style: AppTextTheme.labelSmall.copyWith(
+                            color: AppTheme.deepTeal,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (reviewCount != null && reviewCount! > 0) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              '|',
+                              style: AppTextTheme.labelSmall.copyWith(
+                                color: AppTheme.grey300,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '$reviewCount ${_reviewLabel(reviewCount!)}',
+                            style: AppTextTheme.labelSmall.copyWith(
+                              color: AppTheme.grey500,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ],
               ),
             ),
-            if (rating != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppTheme.paleGreen,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.star, size: 12, color: AppTheme.green),
-                    const SizedBox(width: 2),
-                    Text(
-                      rating!.toStringAsFixed(1),
-                      style: AppTextTheme.labelSmall.copyWith(
-                        color: AppTheme.deepTeal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           ],
         ),
       ),
     );
+  }
+
+  String _reviewLabel(int count) {
+    if (count == 1) return 'Ulasan';
+    return 'Ulasan';
   }
 }

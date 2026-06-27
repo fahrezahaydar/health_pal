@@ -23,6 +23,31 @@ class SearchCubit extends Cubit<SearchState> {
   String? _lastSpecializationId;
   static const int _pageSize = 20;
 
+  /// Favorite doctor IDs — local state (MVP), tidak persist ke server.
+  final Set<String> _favoriteDoctorIds = {};
+
+  /// Getter untuk favorite IDs (dibaca oleh view layer).
+  Set<String> get favoriteDoctorIds => _favoriteDoctorIds;
+
+  /// Toggle favorite status for a doctor.
+  void toggleFavorite(String doctorId) {
+    if (_favoriteDoctorIds.contains(doctorId)) {
+      _favoriteDoctorIds.remove(doctorId);
+    } else {
+      _favoriteDoctorIds.add(doctorId);
+    }
+    // Re-emit current state to trigger UI rebuild with updated favorite icons.
+    final current = state;
+    if (current is SearchLoaded) {
+      emit(SearchLoaded(
+        doctors: current.doctors,
+        activeQuery: current.activeQuery,
+        activeSpecializationId: current.activeSpecializationId,
+        hasMore: current.hasMore,
+      ));
+    }
+  }
+
   SearchCubit(this._getDoctors, this._getSpecializations)
     : super(const SearchInitial());
 
