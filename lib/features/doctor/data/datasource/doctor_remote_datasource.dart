@@ -57,7 +57,7 @@ class DoctorRemoteDataSource {
     final result = await _client
         .from('doctors')
         .select(
-            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url, color_hex), doctor_schedules(day_of_week, start_time, end_time, is_active)')
+            '*, clinics(id, name, address, city, latitude, longitude, phone), specializations(id, name, icon_url, color_hex), doctor_schedules(id, doctor_id, day_of_week, start_time, end_time, slot_duration_minutes, is_active)')
         .eq('id', doctorId)
         .eq('is_active', true)
         .single();
