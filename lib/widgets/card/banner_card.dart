@@ -1,11 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/home/domain/entity/banner_entity.dart';
+import '../shared/app_network_image.dart';
 
 class BannerCard extends StatelessWidget {
   const BannerCard({super.key, this.url, this.imageUrl, required this.title});
@@ -51,11 +51,11 @@ class BannerCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (imageUrl != null)
-              CachedNetworkImage(
-                imageUrl: imageUrl!,
+              AppNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                placeholder: (_, _) => const SizedBox.shrink(),
-                errorWidget: (_, _, _) => const SizedBox.shrink(),
+                iconData: AppIcons.gallery,
+                iconSize: 32,
               ),
             if (imageUrl == null)
               Padding(

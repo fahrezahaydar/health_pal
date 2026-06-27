@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/doctor/domain/entity/doctor_entity.dart';
+import '../shared/app_network_image.dart';
 
 class DoctorCard extends StatelessWidget {
   const DoctorCard({
@@ -68,47 +68,13 @@ class DoctorCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                width: 72,
-                height: 72,
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: photoUrl != null
-                      ? CachedNetworkImage(
-                          imageUrl: photoUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(
-                            color: AppTheme.grey100,
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              Icons.person,
-                              color: AppTheme.grey400,
-                              size: 28,
-                            ),
-                          ),
-                          errorWidget: (_, _, _) => Container(
-                            color: AppTheme.grey100,
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              Icons.person,
-                              color: AppTheme.grey400,
-                              size: 28,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: AppTheme.grey100,
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.person,
-                            color: AppTheme.grey400,
-                            size: 28,
-                          ),
-                        ),
-                ),
-              ),
+            AppNetworkImage(
+              imageUrl: photoUrl,
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              iconData: Icons.person,
+              iconSize: 28,
             ),
             const SizedBox(width: 12),
             Expanded(

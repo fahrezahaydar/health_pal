@@ -1,15 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:health_pal/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/booking_status.dart';
 import '../../core/router/route_paths.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../features/home/domain/entity/upcoming_appointment_entity.dart';
 import '../shared/info_row.dart';
+import '../shared/app_network_image.dart';
 import 'status_badge.dart';
 
 class UpcomingAppointmentCard extends StatelessWidget {
@@ -130,34 +130,12 @@ class _DoctorAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: Container(
+      child: AppNetworkImage(
+        imageUrl: photoUrl,
         width: 56,
         height: 56,
-        color: AppTheme.grey100,
-        alignment: Alignment.center,
-        child: photoUrl != null
-            ? CachedNetworkImage(
-                imageUrl: photoUrl!,
-                width: 56,
-                height: 56,
-                fit: BoxFit.cover,
-                placeholder: (_, _) => const Center(
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppTheme.grey400,
-                    ),
-                  ),
-                ),
-                errorWidget: (_, _, _) => const Icon(
-                  AppIcons.user,
-                  color: AppTheme.grey400,
-                  size: 28,
-                ),
-              )
-            : const Icon(AppIcons.user, color: AppTheme.grey400, size: 28),
+        iconData: AppIcons.user,
+        iconSize: 28,
       ),
     );
   }

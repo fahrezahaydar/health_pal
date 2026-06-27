@@ -8,7 +8,6 @@
 //
 // Pola: Stateless wrapper (BlocProvider) + view (UI).
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,9 +19,10 @@ import '../../../../core/enums/booking_status.dart';
 import '../../../../core/network/json_converters.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/loader/error_section.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
+import '../../../../widgets/loader/error_section.dart';
+import '../../../../widgets/shared/app_network_image.dart';
 import '../../../../widgets/shared/label_value_row.dart';
 import '../../../../widgets/card/status_badge.dart';
 import '../../../../widgets/dialog/app_loading_dialog.dart';
@@ -147,34 +147,14 @@ class _BookingDetailView extends StatelessWidget {
                     color: AppTheme.grey100,
                     borderRadius: BorderRadius.circular(32),
                   ),
-                  child: appt.doctorPhotoUrl != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(32),
-                          child: CachedNetworkImage(
-                            imageUrl: appt.doctorPhotoUrl!,
-                            fit: BoxFit.cover,
-                            placeholder: (_, _) => const Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppTheme.grey400,
-                                ),
-                              ),
-                            ),
-                            errorWidget: (_, _, _) => const Icon(
-                              Icons.person,
-                              color: AppTheme.grey400,
-                              size: 32,
-                            ),
-                          ),
-                        )
-                      : const Icon(
-                          Icons.person,
-                          color: AppTheme.grey400,
-                          size: 32,
-                        ),
+                  child: AppNetworkImage(
+                    imageUrl: appt.doctorPhotoUrl,
+                    width: 64,
+                    height: 64,
+                    borderRadius: 32,
+                    iconData: Icons.person,
+                    iconSize: 32,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

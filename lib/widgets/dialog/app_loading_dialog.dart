@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart'; // Menggunakan widgets.dart saja
 
+import '../../core/theme/app_theme.dart';
 import '../loader/dot_loader.dart';
 
 class AppLoadingDialog extends StatelessWidget {
@@ -51,7 +52,7 @@ class AppLoadingDialog extends StatelessWidget {
             ),
           ],
         ),
-        child: const DotLoader(size: 56, color: Color(0xFF1F2A37)),
+        child: const DotLoader(size: 56, color: AppTheme.grey800),
       ),
     );
   }

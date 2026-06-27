@@ -6,7 +6,6 @@
 //
 // Pola: Stateless wrapper (BlocProvider) + StatefulWidget view (logic + UI).
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +19,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/app_divider.dart';
+import '../../../../widgets/shared/app_network_image.dart';
+import '../../../../widgets/shared/avatar_initials.dart';
 import '../../../../widgets/shared/menu_item_tile.dart';
 import '../../../auth/domain/entity/user_entity.dart';
 import '../bloc/profile/profile_cubit.dart';
@@ -122,20 +123,23 @@ class _ProfileView extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppTheme.grey100,
               shape: BoxShape.circle,
               border: Border.all(color: AppTheme.grey200, width: 2),
             ),
-            child: user.avatarUrl != null
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: user.avatarUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) => _avatarPlaceholder(user),
-                      errorWidget: (_, _, _) => _avatarPlaceholder(user),
+            child: ClipOval(
+              child: user.avatarUrl != null
+                  ? AppNetworkImage(
+                      imageUrl: user.avatarUrl,
+                      width: 80,
+                      height: 80,
+                      iconData: Icons.person,
+                      iconSize: 32,
+                    )
+                  : AvatarInitials(
+                      name: user.fullName,
+                      size: 80,
                     ),
-                  )
-                : _avatarPlaceholder(user),
+            ),
           ),
           const SizedBox(height: 12),
           Text(user.fullName, style: AppTextTheme.titleLarge),
@@ -152,18 +156,6 @@ class _ProfileView extends StatelessWidget {
             style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _avatarPlaceholder(UserEntity user) {
-    final initial = user.fullName.isNotEmpty
-        ? user.fullName[0].toUpperCase()
-        : '?';
-    return Center(
-      child: Text(
-        initial,
-        style: AppTextTheme.headlineLarge.copyWith(color: AppTheme.primary),
       ),
     );
   }

@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/doctor/domain/entity/doctor_entity.dart';
+import '../shared/app_network_image.dart';
 
 class DoctorCardDetail extends StatelessWidget {
   const DoctorCardDetail({
@@ -33,37 +33,13 @@ class DoctorCardDetail extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          AppNetworkImage(
+            imageUrl: doctor.photoUrl,
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
-              color: AppTheme.grey100,
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: doctor.photoUrl != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(40),
-                    child: CachedNetworkImage(
-                      imageUrl: doctor.photoUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) => const Center(
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppTheme.grey400,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (_, _, _) => const Icon(
-                        Icons.person,
-                        color: AppTheme.grey400,
-                        size: 40,
-                      ),
-                    ),
-                  )
-                : const Icon(Icons.person, color: AppTheme.grey400, size: 40),
+            borderRadius: 40,
+            iconData: Icons.person,
+            iconSize: 40,
           ),
           const SizedBox(width: 12),
           Expanded(

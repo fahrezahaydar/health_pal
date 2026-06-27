@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
+import '../../core/theme/app_theme.dart';
+
 /// Contoh penggunaan:
 /// DotLoader()
 /// DotLoader(color: Colors.blue, size: 60, dotCount: 12)
@@ -14,7 +16,7 @@ class DotLoader extends StatefulWidget {
 
   const DotLoader({
     super.key,
-    this.color = const Color(0xFF2D2D2D),
+    this.color = AppTheme.grey800,
     this.size = 80,
     this.dotCount = 12,
     this.duration = const Duration(milliseconds: 1200),

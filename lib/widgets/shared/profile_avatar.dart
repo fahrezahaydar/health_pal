@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
-import '../../core/theme/app_text_theme.dart';
-import '../../core/theme/app_theme.dart';
+import 'app_network_image.dart';
+import 'avatar_initials.dart';
 
 /// A circular profile avatar displaying a network photo or fallback initials.
 ///
@@ -18,38 +17,18 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: Container(
-        width: 42,
-        height: 42,
-        color: AppTheme.grey100,
-        alignment: Alignment.center,
-        child: avatarUrl != null
-            ? CachedNetworkImage(
-                imageUrl: avatarUrl!,
-                width: 42,
-                height: 42,
-                fit: BoxFit.cover,
-                placeholder: (_, _) => const SizedBox.shrink(),
-                errorWidget: (_, _, _) => _buildFallback(context),
-              )
-            : _buildFallback(context),
-      ),
-    );
-  }
-
-  Widget _buildFallback(BuildContext context) {
-    return Container(
-      width: 42,
-      height: 42,
-      color: AppTheme.primary.withValues(alpha: 0.15),
-      alignment: Alignment.center,
-      child: Text(
-        nickname.isNotEmpty ? nickname[0].toUpperCase() : '?',
-        style: AppTextTheme.titleLarge.copyWith(
-          color: AppTheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: avatarUrl != null
+          ? AppNetworkImage(
+              imageUrl: avatarUrl,
+              width: 42,
+              height: 42,
+              iconData: Icons.person,
+              iconSize: 18,
+            )
+          : AvatarInitials(
+              name: nickname,
+              size: 42,
+            ),
     );
   }
 }
