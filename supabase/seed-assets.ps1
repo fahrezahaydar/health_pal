@@ -7,7 +7,8 @@
 #       Contoh: banner-promo.jpg, icon-umum.png, dokter-andi.jpg
 #   2. Jalankan script ini SEBELUM supabase db reset / seed
 #   3. Di seed.sql, referensi URL:
-#       http://127.0.0.1:54321/storage/v1/object/public/avatars/banner-promo.jpg
+#       banner  → http://127.0.0.1:54321/storage/v1/object/public/avatars/banner/nama-file.jpg
+#       doctor  → http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/nama-file.jpg
 #
 # Catatan:
 #   - Storage files PERSIST walau db di-reset (Docker volume)
@@ -25,6 +26,7 @@ $SUPABASE_URL = "http://127.0.0.1:54321"
 $BUCKET_MAP = @{
   "banner"               = "avatars"
   "specialization_icon"  = "specialization-icons"
+  "doctor_avatar"        = "avatars"
 }
 
 # Ambil anon key dari supabase status

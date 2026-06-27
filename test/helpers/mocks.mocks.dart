@@ -505,6 +505,15 @@ class MockAuthRemoteDataSource extends _i1.Mock
             ),
           )
           as _i6.Future<String>);
+
+  @override
+  _i6.Future<void> deleteAvatar(String? userId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteAvatar, [userId]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
 }
 
 /// A class which mocks [AuthLocalDataSource].

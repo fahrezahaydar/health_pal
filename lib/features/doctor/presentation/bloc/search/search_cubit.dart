@@ -24,7 +24,7 @@ class SearchCubit extends Cubit<SearchState> {
   static const int _pageSize = 20;
 
   SearchCubit(this._getDoctors, this._getSpecializations)
-      : super(const SearchInitial());
+    : super(const SearchInitial());
 
   /// Search dokter berdasarkan query (nama / spesialisasi).
   /// Reset offset, replace result list.
@@ -44,12 +44,14 @@ class SearchCubit extends Cubit<SearchState> {
           emit(SearchEmpty(lastQuery: _lastQuery));
         } else {
           _offset += result.data.length;
-          emit(SearchLoaded(
-            doctors: result.data,
-            activeQuery: _lastQuery,
-            activeSpecializationId: _lastSpecializationId,
-            hasMore: result.data.length >= _pageSize,
-          ));
+          emit(
+            SearchLoaded(
+              doctors: result.data,
+              activeQuery: _lastQuery,
+              activeSpecializationId: _lastSpecializationId,
+              hasMore: result.data.length >= _pageSize,
+            ),
+          );
         }
       case Failure<List<DoctorEntity>>():
         emit(SearchError(message: result.message));
@@ -75,10 +77,12 @@ class SearchCubit extends Cubit<SearchState> {
     switch (result) {
       case Success<List<DoctorEntity>>():
         _offset += result.data.length;
-        emit(current.copyWith(
-          doctors: [...current.doctors, ...result.data],
-          hasMore: result.data.length >= _pageSize,
-        ));
+        emit(
+          current.copyWith(
+            doctors: [...current.doctors, ...result.data],
+            hasMore: result.data.length >= _pageSize,
+          ),
+        );
       case Failure<List<DoctorEntity>>():
         emit(SearchError(message: result.message));
     }

@@ -16,7 +16,8 @@
 --           -H "Content-Type: image/jpeg"
 --           --data-binary @path/file.jpg
 --    2. Catat public URL:
---       http://127.0.0.1:54321/storage/v1/object/public/avatars/nama-file.jpg
+--       banner  → http://127.0.0.1:54321/storage/v1/object/public/avatars/banner/nama-file.jpg
+--       doctor  → http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/nama-file.jpg
 --    3. Isi kolom xxx_url dengan URL tersebut.
 -- =============================================================================
 
@@ -294,8 +295,8 @@ from clinic_data;
 --   specialization_id  FK ke specializations(id)
 --   full_name          Nama dokter
 --   photo_url          Foto dokter dari storage
---                       upload → bucket 'avatars/dokter-xxx.jpg'
---                       URL    → http://127.0.0.1:54321/storage/v1/object/public/avatars/dokter-xxx.jpg
+--                       upload → bucket 'avatars/doctor_avatar/xxx.jpg' (via seed-assets.ps1)
+--                       URL    → http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/xxx.jpg
 --   description        Deskripsi / pengalaman singkat
 --   experience_years   Tahun pengalaman
 --   education          Riwayat pendidikan
@@ -333,65 +334,67 @@ begin
   select id into klinik4_id from public.clinics where name = 'Poliklinik Dokter Keluarga' limit 1;
   select id into klinik5_id from public.clinics where name = 'Klinik Prima Husada' limit 1;
 
-  -- Dokter Umum
+  -- Dokter Umum (3)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik1_id, sp_umum_id, 'dr. Andi Pratama, Sp.PD', null, 'Dokter umum dengan pengalaman di RS Pusat Angkatan Darat.', 10, 'FK Universitas Indonesia', 150000, 4.8, 120),
-    (gen_random_uuid(), klinik3_id, sp_umum_id, 'dr. Sari Dewi, M.Kes', null, 'Melayani konsultasi umum dan pemeriksaan kesehatan rutin.', 8, 'FK Universitas Gadjah Mada', 120000, 4.6, 85);
+    (gen_random_uuid(), klinik1_id, sp_umum_id, 'dr. Andi Pratama, Sp.PD', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/andi-pratama.jpg', 'Dokter umum dengan pengalaman di RS Pusat Angkatan Darat.', 10, 'FK Universitas Indonesia', 150000, 4.8, 120),
+    (gen_random_uuid(), klinik3_id, sp_umum_id, 'dr. Sari Dewi, M.Kes', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/sari-dewi.jpg', 'Melayani konsultasi umum dan pemeriksaan kesehatan rutin.', 8, 'FK Universitas Gadjah Mada', 120000, 4.6, 85),
+    (gen_random_uuid(), klinik4_id, sp_umum_id, 'dr. Putri Ayu, M.Kes', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/putri-ayu.jpg', 'Dokter umum yang ramah, melayani konsultasi kesehatan harian.', 5, 'FK Universitas Brawijaya', 125000, 4.5, 55);
 
-  -- Dokter Anak
+  -- Dokter Anak (3)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik2_id, sp_anak_id, 'dr. Rina Amelia, Sp.A', null, 'Spesialis anak, lulusan FK UI.', 12, 'FK Universitas Indonesia', 200000, 4.9, 200),
-    (gen_random_uuid(), klinik4_id, sp_anak_id, 'dr. Budi Santoso, Sp.A', null, 'Dokter spesialis anak yang ramah dan berpengalaman.', 9, 'FK Universitas Airlangga', 180000, 4.7, 150);
+    (gen_random_uuid(), klinik2_id, sp_anak_id, 'dr. Rina Amelia, Sp.A', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/rina-amelia.jpg', 'Spesialis anak, lulusan FK UI.', 12, 'FK Universitas Indonesia', 200000, 4.9, 200),
+    (gen_random_uuid(), klinik4_id, sp_anak_id, 'dr. Budi Santoso, Sp.A', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/budi-santoso.jpg', 'Dokter spesialis anak yang ramah dan berpengalaman.', 9, 'FK Universitas Airlangga', 180000, 4.7, 150),
+    (gen_random_uuid(), klinik4_id, sp_anak_id, 'dr. Kartika Sari, Sp.A', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/kartika-sari.jpg', 'Spesialis anak dengan pendekatan hangat dan komunikatif.', 8, 'FK Universitas Padjadjaran', 185000, 4.7, 125);
 
-  -- Dokter Kulit
+  -- Dokter Kulit (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik5_id, sp_kulit_id, 'dr. Maya Anggraini, Sp.KK', null, 'Spesialis kulit dan kelamin, ahli dalam perawatan kulit wajah.', 7, 'FK Universitas Padjadjaran', 250000, 4.5, 95),
-    (gen_random_uuid(), klinik1_id, sp_kulit_id, 'dr. Hendra Wijaya, Sp.KK', null, 'Melayani konsultasi kulit, alergi, dan prosedur laser ringan.', 11, 'FK Universitas Diponegoro', 220000, 4.3, 70);
+    (gen_random_uuid(), klinik5_id, sp_kulit_id, 'dr. Maya Anggraini, Sp.KK', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/maya-anggraini.jpg', 'Spesialis kulit dan kelamin, ahli dalam perawatan kulit wajah.', 7, 'FK Universitas Padjadjaran', 250000, 4.5, 95),
+    (gen_random_uuid(), klinik1_id, sp_kulit_id, 'dr. Hendra Wijaya, Sp.KK', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/hendra-wijaya.jpg', 'Melayani konsultasi kulit, alergi, dan prosedur laser ringan.', 11, 'FK Universitas Diponegoro', 220000, 4.3, 70);
 
-  -- Dokter Gigi
+  -- Dokter Gigi (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik4_id, sp_gigi_id, 'drg. Fitri Handayani', null, 'Dokter gigi umum, berpengalaman dalam perawatan saluran akar.', 6, 'FK Universitas Trisakti', 150000, 4.7, 110),
-    (gen_random_uuid(), klinik1_id, sp_gigi_id, 'drg. Arya Kusuma, Sp.BM', null, 'Spesialis bedah mulut, menangani pencabutan gigi bungsu.', 14, 'FK Universitas Indonesia', 300000, 4.8, 180);
+    (gen_random_uuid(), klinik4_id, sp_gigi_id, 'drg. Fitri Handayani', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/fitri-handayani.jpg', 'Dokter gigi umum, berpengalaman dalam perawatan saluran akar.', 6, 'FK Universitas Trisakti', 150000, 4.7, 110),
+    (gen_random_uuid(), klinik1_id, sp_gigi_id, 'drg. Arya Kusuma, Sp.BM', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/arya-kusuma.jpg', 'Spesialis bedah mulut, menangani pencabutan gigi bungsu.', 14, 'FK Universitas Indonesia', 300000, 4.8, 180);
 
-  -- Dokter Mata
+  -- Dokter Mata (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik3_id, sp_mata_id, 'dr. Dian Permata, Sp.M', null, 'Spesialis mata, melayani LASIK dan pemeriksaan katarak.', 10, 'FK Universitas Indonesia', 250000, 4.9, 230),
-    (gen_random_uuid(), klinik5_id, sp_mata_id, 'dr. Reza Pahlevi, Sp.M', null, 'Dokter spesialis mata ramah dengan pelayanan terbaik.', 8, 'FK Universitas Gadjah Mada', 230000, 4.6, 90);
+    (gen_random_uuid(), klinik3_id, sp_mata_id, 'dr. Dian Permata, Sp.M', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/dian-permata.jpg', 'Spesialis mata, melayani LASIK dan pemeriksaan katarak.', 10, 'FK Universitas Indonesia', 250000, 4.9, 230),
+    (gen_random_uuid(), klinik5_id, sp_mata_id, 'dr. Reza Pahlevi, Sp.M', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/reza-pahlevi.jpg', 'Dokter spesialis mata ramah dengan pelayanan terbaik.', 8, 'FK Universitas Gadjah Mada', 230000, 4.6, 90);
 
-  -- Dokter THT
+  -- Dokter THT (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik2_id, sp_tht_id, 'dr. Nina Safitri, Sp.THT-KL', null, 'Spesialis THT, menangani sinusitis dan gangguan pendengaran.', 9, 'FK Universitas Airlangga', 200000, 4.4, 65),
-    (gen_random_uuid(), klinik4_id, sp_tht_id, 'dr. Tommy Gunawan, Sp.THT', null, 'Berpengalaman dalam operasi amandel dan sinus.', 13, 'FK Universitas Indonesia', 220000, 4.5, 78);
+    (gen_random_uuid(), klinik2_id, sp_tht_id, 'dr. Nina Safitri, Sp.THT-KL', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/nina-safitri.jpg', 'Spesialis THT, menangani sinusitis dan gangguan pendengaran.', 9, 'FK Universitas Airlangga', 200000, 4.4, 65),
+    (gen_random_uuid(), klinik4_id, sp_tht_id, 'dr. Tommy Gunawan, Sp.THT', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/tommy-gunawan.jpg', 'Berpengalaman dalam operasi amandel dan sinus.', 13, 'FK Universitas Indonesia', 220000, 4.5, 78);
 
-  -- Dokter Saraf
+  -- Dokter Saraf (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik5_id, sp_saraf_id, 'dr. Amelia Putri, Sp.S', null, 'Spesialis saraf, ahli dalam penanganan migrain dan stroke.', 11, 'FK Universitas Indonesia', 350000, 4.8, 140),
-    (gen_random_uuid(), klinik1_id, sp_saraf_id, 'dr. Dimas Aryanto, Sp.S', null, 'Konsultan saraf dengan pendekatan diagnostik modern.', 9, 'FK Universitas Gadjah Mada', 320000, 4.6, 55);
+    (gen_random_uuid(), klinik5_id, sp_saraf_id, 'dr. Amelia Putri, Sp.S', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/amelia-putri.jpg', 'Spesialis saraf, ahli dalam penanganan migrain dan stroke.', 11, 'FK Universitas Indonesia', 350000, 4.8, 140),
+    (gen_random_uuid(), klinik1_id, sp_saraf_id, 'dr. Dimas Aryanto, Sp.S', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/dimas-aryanto.jpg', 'Konsultan saraf dengan pendekatan diagnostik modern.', 9, 'FK Universitas Gadjah Mada', 320000, 4.6, 55);
 
-  -- Dokter Jantung
+  -- Dokter Jantung (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik3_id, sp_jantung_id, 'dr. Fajar Ramadhan, Sp.JP', null, 'Spesialis jantung dan pembuluh darah, lulusan FK UI.', 15, 'FK Universitas Indonesia', 400000, 4.9, 310),
-    (gen_random_uuid(), klinik2_id, sp_jantung_id, 'dr. Indah Lestari, Sp.JP', null, 'Ahli kardiologi intervensi, menangani kateterisasi jantung.', 12, 'FK Universitas Diponegoro', 380000, 4.7, 160);
+    (gen_random_uuid(), klinik3_id, sp_jantung_id, 'dr. Fajar Ramadhan, Sp.JP', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/fajar-ramadhan.jpg', 'Spesialis jantung dan pembuluh darah, lulusan FK UI.', 15, 'FK Universitas Indonesia', 400000, 4.9, 310),
+    (gen_random_uuid(), klinik2_id, sp_jantung_id, 'dr. Indah Lestari, Sp.JP', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/indah-lestari.jpg', 'Ahli kardiologi intervensi, menangani kateterisasi jantung.', 12, 'FK Universitas Diponegoro', 380000, 4.7, 160);
 
-  -- Dokter Kandungan
+  -- Dokter Kandungan (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik2_id, sp_kandungan_id, 'dr. Ratna Dewi, Sp.OG', null, 'Spesialis kebidanan dan kandungan, melayani persalinan normal dan SC.', 16, 'FK Universitas Indonesia', 350000, 4.9, 420),
-    (gen_random_uuid(), klinik5_id, sp_kandungan_id, 'dr. Surya Dharma, Sp.OG', null, 'Dokter spesialis kandungan dengan pelayanan ramah dan profesional.', 10, 'FK Universitas Gadjah Mada', 300000, 4.6, 95);
+    (gen_random_uuid(), klinik2_id, sp_kandungan_id, 'dr. Ratna Dewi, Sp.OG', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/ratna-dewi.jpg', 'Spesialis kebidanan dan kandungan, melayani persalinan normal dan SC.', 16, 'FK Universitas Indonesia', 350000, 4.9, 420),
+    (gen_random_uuid(), klinik5_id, sp_kandungan_id, 'dr. Citra Maharani, Sp.OG', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/citra-maharani.jpg', 'Spesialis kebidanan dan kandungan, ahli dalam USG dan pemeriksaan kehamilan.', 11, 'FK Universitas Airlangga', 330000, 4.8, 105);
 
-  -- Dokter Ortopedi
+  -- Dokter Ortopedi (2)
   insert into public.doctors (id, clinic_id, specialization_id, full_name, photo_url, description, experience_years, education, consultation_fee, rating_avg, rating_count)
   values
-    (gen_random_uuid(), klinik3_id, sp_ortopedi_id, 'dr. Agus Wijaya, Sp.OT', null, 'Spesialis ortopedi, menangani cedera olahraga dan patah tulang.', 13, 'FK Universitas Airlangga', 300000, 4.7, 175),
-    (gen_random_uuid(), klinik1_id, sp_ortopedi_id, 'dr. Lisa Kartika, Sp.OT', null, 'Ahli ortopedi dengan fokus pada rehabilitasi cedera sendi.', 8, 'FK Universitas Padjadjaran', 280000, 4.5, 60);
+    (gen_random_uuid(), klinik3_id, sp_ortopedi_id, 'dr. Agus Wijaya, Sp.OT', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/agus-wijaya.jpg', 'Spesialis ortopedi, menangani cedera olahraga dan patah tulang.', 13, 'FK Universitas Airlangga', 300000, 4.7, 175),
+    (gen_random_uuid(), klinik1_id, sp_ortopedi_id, 'dr. Lisa Kartika, Sp.OT', 'http://127.0.0.1:54321/storage/v1/object/public/avatars/doctor_avatar/lisa-kartika.jpg', 'Ahli ortopedi dengan fokus pada rehabilitasi cedera sendi.', 8, 'FK Universitas Padjadjaran', 280000, 4.5, 60);
 end $$;
 
 -- =============================================================================

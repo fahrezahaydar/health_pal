@@ -33,9 +33,7 @@ class DoctorRemoteDataSource {
       builder = builder.eq('specialization_id', specializationId);
     }
     if (query != null && query.isNotEmpty) {
-      builder = builder.or(
-        'full_name.ilike.*$query*,specializations.name.ilike.*$query*',
-      );
+      builder = builder.ilike('full_name', '%$query%');
     }
 
     // Order + range di chain TERAKHIR (PostgrestTransformBuilder).

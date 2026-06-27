@@ -38,10 +38,7 @@ class NearbyFacilitiesLoaded extends StatelessWidget {
           child: Row(
             spacing: 16,
             children: clinics.map((clinic) {
-              return SizedBox(
-                width: 260,
-                child: ClinicCard(clinic: clinic),
-              );
+              return ClinicCard(clinic: clinic);
             }).toList(),
           ),
         ),
@@ -59,11 +56,11 @@ class NearbyFacilitiesLoading extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 16,
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            HeaderTitle(title: 'Nearby Medical Centers'),
-            Text('See All'),
+            const HeaderTitle(title: 'Nearby Medical Centers'),
+            Text('See All', style: AppTextTheme.bodySmall),
           ],
         ),
         Skeletonizer(

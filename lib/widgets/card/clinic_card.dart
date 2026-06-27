@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_text_theme.dart';
@@ -24,96 +25,98 @@ class ClinicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: width,
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.grey200),
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 2,
-                  child: clinic.imageUrl != null
-                      ? Image.network(
-                          clinic.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const PlaceholderImage(height: 160),
-                        )
-                      : const PlaceholderImage(height: 160),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: IconButton(
-                    icon: Icon(
-                      clinic.isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: clinic.isFavorite
-                          ? AppTheme.darkRed
-                          : AppTheme.white,
-                      size: 24,
-                    ),
-                    onPressed: onFavoriteTap,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
+      child: Skeleton.unite(
+        child: Container(
+          width: width,
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppTheme.grey200),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
                 children: [
-                  Text(
-                    clinic.name,
-                    style: AppTextTheme.titleLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  AspectRatio(
+                    aspectRatio: 2,
+                    child: clinic.imageUrl != null
+                        ? Image.network(
+                            clinic.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) =>
+                                const PlaceholderImage(height: 160),
+                          )
+                        : const PlaceholderImage(height: 160),
                   ),
-                  Row(
-                    children: [
-                      const Icon(
-                        AppIcons.location,
-                        size: 14,
-                        color: AppTheme.grey400,
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: IconButton(
+                      icon: Icon(
+                        clinic.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: clinic.isFavorite
+                            ? AppTheme.darkRed
+                            : AppTheme.white,
+                        size: 24,
                       ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          clinic.address,
-                          style: AppTextTheme.bodySmall.copyWith(
-                            fontSize: 12,
-                            color: AppTheme.grey500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  _RatingRow(
-                    ratingAvg: clinic.ratingAvg,
-                    reviewCount: clinic.reviewCount,
-                  ),
-                  const Divider(height: 1, color: AppTheme.grey200),
-                  _BottomInfoRow(
-                    distanceDisplay: clinic.distanceDisplay,
-                    durationDisplay: clinic.durationDisplay,
-                    category: clinic.category,
+                      onPressed: onFavoriteTap,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 8,
+                  children: [
+                    Text(
+                      clinic.name,
+                      style: AppTextTheme.titleLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          AppIcons.location,
+                          size: 14,
+                          color: AppTheme.grey400,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            clinic.address,
+                            style: AppTextTheme.bodySmall.copyWith(
+                              fontSize: 12,
+                              color: AppTheme.grey500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    _RatingRow(
+                      ratingAvg: clinic.ratingAvg,
+                      reviewCount: clinic.reviewCount,
+                    ),
+                    const Divider(height: 1, color: AppTheme.grey200),
+                    _BottomInfoRow(
+                      distanceDisplay: clinic.distanceDisplay,
+                      durationDisplay: clinic.durationDisplay,
+                      category: clinic.category,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -143,16 +146,13 @@ class _RatingRow extends StatelessWidget {
             fontSize: 12,
           ),
         ),
-        Row(
-          spacing: 0,
+        Wrap(
+          spacing: -2,
           children: List.generate(5, (i) {
-            return Padding(
-              padding: EdgeInsets.only(left: i == 0 ? 0 : -6),
-              child: Icon(
-                i < ratingAvg.round() ? Icons.star : Icons.star_border,
-                size: 14,
-                color: Colors.amber,
-              ),
+            return Icon(
+              i < ratingAvg.round() ? Icons.star : Icons.star_border,
+              size: 14,
+              color: Colors.amber,
             );
           }),
         ),

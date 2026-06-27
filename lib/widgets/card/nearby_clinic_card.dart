@@ -17,7 +17,7 @@ class NearbyClinicCard extends StatelessWidget {
     this.reviewCountDisplay,
     this.category,
     this.onTap,
-    this.width = 240,
+    this.width = 256,
   });
 
   final String? name;

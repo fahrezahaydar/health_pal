@@ -297,9 +297,9 @@ class _HomePageBodyState extends State<_HomePageBody> {
                             NearbyFacilitiesLoaded(clinics: clinics),
                           NearbyLocationDenied(:final reason) =>
                             NearbyFacilitiesLocationDenied(reason: reason),
-                          // NearbyError(:final message) => NearbyFacilitiesError(
-                          //   message: message,
-                          // ),
+                          NearbyError(:final message) => NearbyFacilitiesError(
+                            message: message,
+                          ),
                           _ => const NearbyFacilitiesLoading(),
                         };
                       },
