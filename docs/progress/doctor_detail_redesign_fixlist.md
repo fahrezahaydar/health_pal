@@ -21,6 +21,8 @@ COMMENT ON COLUMN doctors.total_patients IS 'Total pasien yang pernah ditangani 
 
 **Verifikasi:** `supabase db reset` tidak error (atau jalankan migration manual).
 
+**Status:** ✅
+
 ---
 
 ## FIX-2: Buat DoctorScheduleModel + DoctorScheduleEntity
