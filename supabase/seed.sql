@@ -275,11 +275,11 @@ insert into public.specializations (id, name, icon_url, color_hex) values
 -- =============================================================================
 with clinic_data as (
   select * from (values
-    ('Klinik Sehat Keluarga',      'Jl. Sudirman No. 123, Jakarta Pusat',      'Jakarta Pusat',  -6.2088, 106.8456, '021-12345678', 4.8, 120, 'Clinic'),
-    ('RSIA Bunda Sejahtera',       'Jl. Gatot Subroto No. 45, Jakarta Selatan', 'Jakarta Selatan', -6.2387, 106.8244, '021-87654321', 4.9, 200, 'Hospital'),
-    ('Klinik Medika Utama',        'Jl. Kemang Raya No. 78, Jakarta Selatan',   'Jakarta Selatan', -6.2612, 106.8081, '021-23456789', 4.5, 85,  'Clinic'),
-    ('Poliklinik Dokter Keluarga', 'Jl. Kelapa Gading Raya No. 15, Jakarta Utara','Jakarta Utara', -6.1578, 106.9050, '021-34567890', 4.7, 95,  'Clinic'),
-    ('Klinik Prima Husada',        'Jl. Fatmawati No. 200, Jakarta Selatan',    'Jakarta Selatan', -6.2893, 106.7922, '021-45678901', 4.6, 150, 'Hospital')
+    ('RSIA Bunda Sejahtera',       'Jl. Gajah Raya No. 45, Semarang',            'Semarang',  -7.0150, 110.3900, '(024)87654321', 4.9, 200, 'Hospital'),
+    ('Klinik Sehat Keluarga',      'Jl. Pandanaran No. 123, Semarang',           'Semarang',  -7.0050, 110.4150, '(024)12345678', 4.8, 120, 'Clinic'),
+    ('Klinik Medika Utama',        'Jl. Pemuda No. 78, Semarang',                'Semarang',  -6.9850, 110.4150, '(024)23456789', 4.5, 85,  'Clinic'),
+    ('Poliklinik Dokter Keluarga', 'Jl. Majapahit No. 15, Semarang',             'Semarang',  -7.0400, 110.3500, '(024)34567890', 4.7, 95,  'Clinic'),
+    ('Klinik Prima Husada',        'Jl. Setiabudi No. 200, Ungaran, Semarang',   'Semarang',  -7.1300, 110.4050, '(024)45678901', 4.6, 150, 'Hospital')
   ) as t(name, address, city, lat, lng, phone, rating, reviews, cat)
 )
 insert into public.clinics (id, name, address, city, latitude, longitude, phone, rating_avg, review_count, category)
