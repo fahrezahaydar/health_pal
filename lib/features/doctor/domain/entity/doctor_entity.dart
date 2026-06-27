@@ -61,6 +61,34 @@ class DoctorEntity extends Equatable {
         consultationFee: 0,
       );
 
+  /// List of mock doctors for skeleton loading (3 items).
+  static List<DoctorEntity> mockList() => const [
+        DoctorEntity(
+          id: 'sk-1',
+          clinicId: 'sk-c',
+          specializationId: 'sk-s',
+          fullName: 'Loading Doctor 1',
+          experienceYears: 0,
+          consultationFee: 0,
+        ),
+        DoctorEntity(
+          id: 'sk-2',
+          clinicId: 'sk-c',
+          specializationId: 'sk-s',
+          fullName: 'Loading Doctor 2',
+          experienceYears: 0,
+          consultationFee: 0,
+        ),
+        DoctorEntity(
+          id: 'sk-3',
+          clinicId: 'sk-c',
+          specializationId: 'sk-s',
+          fullName: 'Loading Doctor 3',
+          experienceYears: 0,
+          consultationFee: 0,
+        ),
+      ];
+
   @override
   List<Object?> get props => [
         id,

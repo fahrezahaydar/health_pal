@@ -44,33 +44,6 @@ class DoctorSearchPage extends StatelessWidget {
   }
 }
 
-const _mockDoctors = [
-  DoctorEntity(
-    id: 'sk-1',
-    clinicId: 'sk-c',
-    specializationId: 'sk-s',
-    fullName: 'Loading Doctor 1',
-    experienceYears: 0,
-    consultationFee: 0,
-  ),
-  DoctorEntity(
-    id: 'sk-2',
-    clinicId: 'sk-c',
-    specializationId: 'sk-s',
-    fullName: 'Loading Doctor 2',
-    experienceYears: 0,
-    consultationFee: 0,
-  ),
-  DoctorEntity(
-    id: 'sk-3',
-    clinicId: 'sk-c',
-    specializationId: 'sk-s',
-    fullName: 'Loading Doctor 3',
-    experienceYears: 0,
-    consultationFee: 0,
-  ),
-];
-
 class DoctorSearchView extends StatefulWidget {
   const DoctorSearchView({super.key});
 
@@ -220,7 +193,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                     ),
                     SearchLoading() => Skeletonizer(
                       enabled: true,
-                      child: _buildList(_mockDoctors, true),
+                      child: _buildList(DoctorEntity.mockList(), true),
                     ),
                     SearchEmpty() => const EmptyStateView(
                       icon: Icons.search_off,
