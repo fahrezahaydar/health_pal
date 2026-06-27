@@ -25,13 +25,13 @@ _DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) => _DoctorModel(
   updatedAt: json['updated_at'] == null
       ? null
       : DateTime.parse(json['updated_at'] as String),
-  clinic: json['clinic'] == null
+  clinic: json['clinics'] == null
       ? null
-      : ClinicModel.fromJson(json['clinic'] as Map<String, dynamic>),
-  specialization: json['specialization'] == null
+      : ClinicModel.fromJson(json['clinics'] as Map<String, dynamic>),
+  specialization: json['specializations'] == null
       ? null
       : SpecializationModel.fromJson(
-          json['specialization'] as Map<String, dynamic>,
+          json['specializations'] as Map<String, dynamic>,
         ),
 );
 
@@ -51,6 +51,6 @@ Map<String, dynamic> _$DoctorModelToJson(_DoctorModel instance) =>
       'is_active': instance.isActive,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
-      'clinic': instance.clinic,
-      'specialization': instance.specialization,
+      'clinics': instance.clinic,
+      'specializations': instance.specialization,
     };

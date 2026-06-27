@@ -52,8 +52,10 @@ abstract class DoctorModel with _$DoctorModel {
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
 
     // ── Nested Objects (dari PostgREST select=*,clinics(*),specializations(*)) ──
-    ClinicModel? clinic,
-    SpecializationModel? specialization,
+    // @JsonKey name WAJIB match nama tabel (plural) karena PostgREST
+    // selalu pakai nama tabel sebagai JSON key untuk nested object.
+    @JsonKey(name: 'clinics') ClinicModel? clinic,
+    @JsonKey(name: 'specializations') SpecializationModel? specialization,
   }) = _DoctorModel;
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
