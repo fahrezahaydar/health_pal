@@ -37,8 +37,13 @@ class DoctorRemoteDataSource {
     }
 
     // Order + range di chain TERAKHIR (PostgrestTransformBuilder).
+    // Secondary sort by full_name untuk stable pagination —
+    // tanpa ini, dokter dengan rating sama bisa muncul di dua
+    // page atau terlewat karena PostgreSQL ordering tidak
+    // deterministic untuk nilai duplikat.
     final result = await builder
         .order('rating_avg', ascending: false)
+        .order('full_name', ascending: true)
         .range(offset, offset + limit - 1);
 
     return (result as List)
