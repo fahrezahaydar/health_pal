@@ -2,22 +2,22 @@
 
 **Tanggal:** 27 Juni 2026
 **Referensi:** ADR-008
-**Progress:** ✅ 14/21 item selesai
+**Progress:** ✅ 20/21 item selesai
 
 ---
 
-## 1. Widget Baru yang Harus Dibuat ✅
+## 1. Widget Baru yang Harus Dibuat
 
 | # | Widget | Status |
 |---|--------|--------|
-| 1 | `AppNetworkImage` — wrapper `CachedNetworkImage` dengan placeholder + error + null fallback | ✅ |
+| 1 | `AppNetworkImage` — wrapper `CachedNetworkImage` + placeholder + error + null fallback | ✅ |
 | 2 | `AvatarInitials` — avatar fallback dengan inisial user | ✅ |
 
 ---
 
 ## 2. File yang Perlu Dimigrasi
 
-### Kategori A: CachedNetworkImage → `AppNetworkImage` ✅
+### Kategori A: CachedNetworkImage → `AppNetworkImage`
 
 | # | File | Status |
 |---|------|--------|
@@ -30,26 +30,26 @@
 | 7 | `lib/widgets/card/banner_card.dart` | ✅ |
 | 8 | `lib/features/profile/presentation/page/profile_page.dart` | ✅ |
 
-### Kategori B: Avatar Fallback → `AvatarInitials` ✅
+### Kategori B: Avatar Fallback → `AvatarInitials`
 
 | # | File | Status |
 |---|------|--------|
 | 9 | `lib/widgets/shared/profile_avatar.dart` | ✅ |
 | 10 | `lib/features/profile/presentation/page/profile_page.dart` | ✅ |
-| 11 | `lib/widgets/picker/app_image_picker.dart` | ⏸️ Skip — `_Placeholder` punya custom offset animation, tidak cocok diganti |
+| 11 | `lib/widgets/picker/app_image_picker.dart` | ⏸️ Skip — custom offset animation |
 
-### Kategori C: Private Skeleton Classes → Skeletonizer + Production Widget ⏸️
+### Kategori C: Private Skeleton Classes → Skeletonizer + Inline Content
 
-| # | File | Widget | Status |
-|---|------|--------|--------|
-| 12 | `lib/features/profile/presentation/page/profile_page.dart:242` | `_ProfileSkeleton` | ⏸️ |
-| 13 | `lib/features/profile/presentation/page/favorite_page.dart:109` | `_FavSkeleton` | ⏸️ |
-| 14 | `lib/features/profile/presentation/page/notification_page.dart:194` | `_NotificationSkeleton` | ⏸️ |
-| 15 | `lib/features/profile/presentation/page/edit_profile_page.dart:284` | `_EditSkeleton` | ⏸️ |
-| 16 | `lib/features/booking/presentation/page/booking_history_page.dart:163` | `_ListSkeleton` | ⏸️ |
-| 17 | `lib/features/booking/presentation/page/booking_detail_page.dart:338` | `_DetailSkeleton` | ⏸️ |
+| # | File | Old Widget | New Widget | Status |
+|---|------|------------|------------|--------|
+| 12 | `lib/features/profile/presentation/page/profile_page.dart` | `_ProfileSkeleton` | `_ProfileSkeletonContent` | ✅ |
+| 13 | `lib/features/profile/presentation/page/favorite_page.dart` | `_FavSkeleton` | `_FavSkeletonContent` (uses DoctorCard) | ✅ |
+| 14 | `lib/features/profile/presentation/page/notification_page.dart` | `_NotificationSkeleton` | `_NotificationSkeletonContent` | ✅ |
+| 15 | `lib/features/profile/presentation/page/edit_profile_page.dart` | `_EditSkeleton` | `_EditSkeletonContent` | ✅ |
+| 16 | `lib/features/booking/presentation/page/booking_history_page.dart` | `_ListSkeleton` | `_ListSkeletonContent` | ✅ |
+| 17 | `lib/features/booking/presentation/page/booking_detail_page.dart` | `_DetailSkeleton` | `_DetailSkeletonContent` | ✅ |
 
-### Kategori D: Hardcoded Colors → AppTheme ✅
+### Kategori D: Hardcoded Colors → AppTheme
 
 | # | File | Status |
 |---|------|--------|
@@ -63,12 +63,10 @@
 | # | Item | Status |
 |---|------|--------|
 | 1 | `flutter analyze` — 0 issues | ✅ |
-| 2 | AppNetworkImage — placeholder menampilkan spinner saat loading | ✅ |
-| 3 | AppNetworkImage — error menampilkan icon fallback | ✅ |
-| 4 | AppNetworkImage — null URL menampilkan icon fallback (tidak crash) | ✅ |
-| 5 | AvatarInitials — menampilkan inisial yang benar | ✅ |
-| 6 | DotLoader default color dari AppTheme | ✅ |
-| 7 | Semua skeleton classes dihapus — tidak ada widget `_XxxSkeleton` tersisa | ⏸️ (6 remaining) |
+| 2 | Semua `_XxxSkeleton` class dihapus | ✅ |
+| 3 | Semua skeleton pakai `Skeletonizer` + inline content (no dedicated skeleton files) | ✅ |
+| 4 | Hardcoded hex colors `#XXXXXXXX` di placeholder widgets = 0 | ✅ |
+| 5 | `grep "CircleAvatar\|_XxxSkeleton\b" lib/` — hanya CircleAvatar di skeleton content | ✅ |
 
 ---
 
