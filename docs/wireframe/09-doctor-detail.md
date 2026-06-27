@@ -1,4 +1,4 @@
-# Doctor Details / Doctor Appointments Page
+# Doctor Details Page Wireframe
 
 | Field | Detail |
 |---|---|
@@ -8,129 +8,204 @@
 
 ---
 
-## ASCII Layout
+## Page Wireframe (ASCII)
 
-```
-┌─────────────────────────────────────┐
-│ ← (back)         ⭐ Bagikan │❤️│   │
-│                                     │
-│  ┌─ Doctor Header ──────────────┐   │
-│  │ ┌──────────┐                 │   │
-│  │ │  Foto    │ dr. Budi        │   │
-│  │ │ Dokter   │ Santoso, Sp.PD  │   │
-│  │ │ (80px)   │ Penyakit Dalam  │   │
-│  │ └──────────┘ ⭐ 4.85 (234)   │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Info Card ──────────────────┐   │
-│  │  🎓 Pendidikan              │   │
-│  │    FK Unpad (2008), Sp.PD   │   │
-│  │    RSUP Dr. Hasan Sadikin   │   │
-│  │                             │   │
-│  │  💼 Pengalaman: 12 tahun    │   │
-│  │                             │   │
-│  │  🏥 Klinik Sehat Bersama    │   │
-│  │    Jl. Merdeka No. 10       │   │
-│  │    📍 Bandung [Lihat Peta]  │   │
-│  │                             │   │
-│  │  💰 Biaya: Rp150,000        │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Ketersediaan Jadwal ────────┐   │
-│  │  📅 Tersedia 8 slot untuk    │   │
-│  │     7 hari ke depan           │   │
-│  │  ─────────────────────────   │   │
-│  │  🕐 [09:00] [09:30] [10:00] │   │
-│  │     [10:30] [11:00]         │   │
-│  │     (hijau=tersedia,         │   │
-│  │      abu=terbooking)        │   │
-│  │                              │   │
-│  │  ℹ️  Pilih tanggal & slot    │   │
-│  │     di halaman Booking       │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─ Ulasan Pasien ──────────────┐   │
-│  │  ⭐⭐⭐⭐⭐ "Dokter ramah..."  │   │
-│  │     — Andi, 2 hari lalu      │   │
-│  │                             │   │
-│  │  ⭐⭐⭐⭐⭐ "Penjelasan..."   │   │
-│  │     — Sari, 1 minggu lalu   │   │
-│  │                             │   │
-│  │  [Lihat semua ulasan →]     │   │
-│  └──────────────────────────────┘   │
-│                                     │
-│  ┌─────────────────────────────┐    │
-│  │     Book Appointment        │    │
-│  └─────────────────────────────┘    │
-└─────────────────────────────────────┘
-```
-
-### No Slot Available
-```
-│  ┌─ Ketersediaan Jadwal ────────┐   │
-│  │  📅 Belum ada slot untuk     │   │
-│  │     7 hari ke depan           │   │
-│  │  ─────────────────────────   │   │
-│  │     "Tidak ada jadwal        │   │
-│  │      tersedia saat ini.       │   │
-│  │      Coba lagi besok."       │   │
-│  │                              │   │
-│  │  ℹ️  Dokter mungkin belum    │   │
-│  │     membuka jadwal praktik.  │   │
-│  └──────────────────────────────┘   │
+```text
+┌──────────────────────────────────────────────┐
+│ ←            Doctor Details             ♡    │
+├──────────────────────────────────────────────┤
+│ ┌────────┐  Dr. David Patel                 │
+│ │        │───────────────────────────────── │
+│ │ Photo  │  Cardiologist                    │
+│ │ 2 : 3  │                                  │
+│ │        │  📍 Golden Cardiology Center     │
+│ └────────┘                                  │
+├──────────────────────────────────────────────┤
+│   👥            🎖            ⭐           💬 │
+│ 2,000+         10+           5          1,872│
+│ Patients   Experience     Rating      Reviews│
+├──────────────────────────────────────────────┤
+│ About Me                                     │
+│ -------------------------------------------- │
+│ Dr. David Patel, a dedicated cardiologist... │
+│ View More                                    │
+├──────────────────────────────────────────────┤
+│ Working Time                                 │
+│ -------------------------------------------- │
+│ Monday–Friday, 08:00 AM – 06:00 PM           │
+├──────────────────────────────────────────────┤
+│ Reviews                              See All │
+│ -------------------------------------------- │
+│ ○ Emily Anderson                            │
+│ ⭐ 5.0 ★★★★★                                │
+│ Dr. Patel is a true professional...         │
+│                                              │
+│ ○ Another Review                            │
+│ ⭐ 5.0 ★★★★★                                │
+│ Lorem ipsum dolor sit amet...               │
+├──────────────────────────────────────────────┤
+│                                              │
+│      [   Book Appointment Button   ]         │
+│                                              │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## Component Breakdown
+## Layout Structure
 
-| Component | Widget | Data Source |
-|---|---|---|
-| Back Button | `GestureDetector` → `Icon` | `context.pop()` |
-| Share Button | `IconButton` | Share sheet (opsional) |
-| Favorite | `IconButton` (toggle ❤️) | `POST /profile/favorite` |
-| Doctor Photo | `Image.network` (circle) | `doctors.photo_url` |
-| Doctor Name | `Text` | `doctors.full_name` |
-| Specialization | `Text` (badge) | `specializations.name` |
-| Rating | `Row(Star, Text)` | `doctors.rating_avg` + `rating_count` |
-| Info Card | `Container` with sections | — |
-| Education | `Column(Icon + Text)` | `doctors.education` |
-| Experience | `Row(Icon + Text)` | `doctors.experience_years` |
-| Clinic Info | `Column` with mini map | `clinics` (JOIN) |
-| Map Link | `GestureDetector` → "Lihat Peta" | Buka Google Maps external |
-| Fee | `Text` | `doctors.consultation_fee` |
-| Availability Text | `Container` with icon | `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&limit=1&is_booked=eq.false` → count 7 hari ke depan |
-| Slot List | `Wrap` of chips (sample 5 slot pertama) | `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&limit=5&order=slot_date.asc,slot_start.asc` |
-| Available Slot | `Container` hijau | `is_booked = false` |
-| Booked Slot | `Container` abu | `is_booked = true` |
-| Reviews | `Column` of review cards | `GET /rest/v1/reviews` (v1.1) |
-| CTA Button | `LightFilledButton` | Navigasi `/booking/:doctorId` |
-| Empty Slot | `Text` | "Tidak ada jadwal tersedia" |
+```text
+Scaffold
+└── SafeArea
+    ├── AppBar
+    │   ├── Back Button
+    │   ├── Title
+    │   └── Favorite Button
+    │
+    └── Column
+        ├── Expanded
+        │   └── SingleChildScrollView
+        │       ├── DoctorInfoCard
+        │       ├── SizedBox(24)
+        │       ├── DoctorStatsRow
+        │       ├── SizedBox(24)
+        │       ├── AboutSection
+        │       ├── SizedBox(24)
+        │       ├── WorkingTimeSection
+        │       ├── SizedBox(24)
+        │       ├── ReviewsHeader
+        │       ├── ReviewList
+        │       └── Bottom Padding
+        │
+        └── SafeArea
+            └── BookAppointmentButton
+```
 
 ---
 
-## State & Interaction Specs
+## Component Hierarchy
 
-| Elemen | Interaksi | Efek |
-|---|---|---|
-| **Tap back** | Tap | `context.pop()` |
-| **Tap ❤️ favorite** | Tap | Toggle filled/outline → API favorite |
-| **Tap slot (sample 5 pertama)** | Tap green chip | Highlight slot (lokal, hanya untuk visual reference) |
-| **Tap "Book Appointment"** | Tap | Navigasi ke `/booking/:doctorId` dengan extra: `{doctor, suggestedSlotId?}` |
-| **Tap "Lihat Peta"** | Tap | Buka Google Maps URL `https://maps.google.com/?q=lat,lng` |
-| **Tap "Lihat semua ulasan"** | Tap | Expand / halaman ulasan (v1.1) |
-| **Slot loading** | API call | Tampilkan skeletonizer pada slot area (reuse slot widget via `Skeletonizer(enabled: true, child: slotWidget)`) |
-| **Slot error** | API error | Snackbar: "Gagal memuat jadwal" |
+```text
+DoctorDetailsPage
+├── AppBar
+│   ├── BackButton
+│   ├── Title
+│   └── FavoriteButton
+│
+├── DoctorInfoCard
+│   ├── DoctorImage
+│   ├── DoctorName
+│   ├── Divider
+│   ├── Specialization
+│   └── HospitalRow
+│
+├── DoctorStatsRow
+│   ├── StatItem (Patients)
+│   ├── StatItem (Experience)
+│   ├── StatItem (Rating)
+│   └── StatItem (Reviews)
+│
+├── AboutSection
+│   ├── SectionTitle
+│   ├── Description
+│   └── ViewMoreButton
+│
+├── WorkingTimeSection
+│   ├── SectionTitle
+│   └── ScheduleText
+│
+├── ReviewsSection
+│   ├── Header
+│   │   ├── Title
+│   │   └── SeeAllButton
+│   └── ReviewList
+│       └── ReviewCard × N
+│
+└── BottomActionBar
+    └── PrimaryButton
+```
 
-**BLoC:** `DoctorDetailCubit` — states: `loading`, `loaded(doctor, slotCount7Days, sampleSlots, reviews)`, `error`.
+---
 
-**Catatan Perubahan v1.0.1 (SS#10):**
-- **Hapus:** Komponen pemilihan hari horizontal (day chips). Alasan: duplikasi dengan halaman Book Appointment, dan untuk user info cepat cukup text "Tersedia X slot untuk 7 hari ke depan"
-- **Slot List:** Hanya tampilkan 5 sample slot pertama sebagai preview. Pemilihan tanggal & slot penuh dilakukan di halaman Book Appointment
-- **Navigasi:** Tombol "Book Appointment" kirim `extra: {doctor, suggestedSlotId?}` ke `/booking/:doctorId` (tanpa `selectedDate` lagi)
-- **API:** `GET /rest/v1/doctor_slots?doctor_id&slot_date=gte.today&is_booked=eq.false&limit=5&order=slot_date.asc,slot_start.asc`
+## Review Card
 
-**Availability Text Logic:**
-- Hitung total slot `is_booked=false` dalam 7 hari ke depan dari `doctor_slots`
-- Tampilkan: "📅 Tersedia X slot untuk 7 hari ke depan" (X = count, 0 = "Belum ada slot")
-- Update real-time saat user pull-to-refresh
+```text
+ReviewCard
+├── Row
+│   ├── ReviewerAvatar
+│   └── Expanded
+│       ├── ReviewerName
+│       ├── RatingRow
+│       └── ReviewText
+└── Divider
+```
+
+---
+
+## Doctor Stats Item
+
+```text
+StatItem
+├── CircleAvatar
+│   └── Icon
+├── Value
+└── Label
+```
+
+---
+
+## Components
+
+| Component        | Description                                  |
+| ---------------- | -------------------------------------------- |
+| App Bar          | Back button, page title, favorite button     |
+| Doctor Info Card | Doctor photo, name, specialization, hospital |
+| Stats Row        | Patients, experience, rating, reviews        |
+| About Section    | Doctor biography with expandable text        |
+| Working Time     | Doctor availability schedule                 |
+| Reviews Header   | Section title with "See All" action          |
+| Review Card      | Reviewer avatar, name, rating, review text   |
+| Bottom CTA       | Full-width "Book Appointment" button         |
+
+---
+
+## Suggested Flutter Widget Tree
+
+```text
+Scaffold
+├── AppBar
+├── SafeArea
+│   └── Column
+│       ├── Expanded
+│       │   └── SingleChildScrollView
+│       │       └── Padding(16)
+│       │           └── Column
+│       │               ├── DoctorInfoCard
+│       │               ├── DoctorStatsRow
+│       │               ├── AboutSection
+│       │               ├── WorkingTimeSection
+│       │               ├── ReviewsHeader
+│       │               └── ListView.separated(
+│       │                      shrinkWrap: true,
+│       │                      physics: NeverScrollableScrollPhysics(),
+│       │                  )
+│       └── SafeArea
+│           └── Padding(16)
+│               └── FilledButton(
+│                      child: Text("Book Appointment"),
+│                  )
+```
+
+---
+
+## Changelog
+
+| Versi | Tanggal | Perubahan |
+|-------|---------|-----------|
+| v1.0 | Juni 2026 | Initial draft — layout with Info Card (Education, Experience, Clinic, Fee), Availability slots preview, Reviews placeholder |
+| v1.0.1 | 13 Jun 2026 | **SS#10:** Hapus date picker; slot hanya preview 5 sample; navigasi booking tanpa selectedDate |
+| v2.0 | 28 Juni 2026 | **Redesign:** Ganti layout header doctor (2:3 photo, divider, hospital row); tambah Stats Row (Patients, Experience, Rating, Reviews); tambah About Me section (expandable); tambah Working Time section; pindah Reviews ke section header + deferred list; hapus Education/Fee/Slot preview dari scroll; ubah AppBar title ke "Doctor Details"; hapus Share button |
+
+> **Versi:** v2.0 — 28 Juni 2026
+> **Perubahan dari versi sebelumnya:** Layout dirombak total — Info Card (Pendidikan, Pengalaman, Klinik, Biaya, Preview Slot) diganti dengan struktur baru: DoctorInfoCard (foto 2:3, nama, divider, spesialisasi, lokasi klinik), DoctorStatsRow (4 stat dengan icon), AboutSection (expandable), WorkingTimeSection, dan ReviewsSection header. Hapus elemen Education, Fee, dan Slot preview dari scroll. AppBar title berubah menjadi "Doctor Details". Share button dihapus.
+> **Catatan:** Section Reviews di wireframe ini DIDOKUMENTASIKAN untuk referensi visual lengkap, tapi implementasinya DI-DEFER ke sprint mendatang (lihat ADR terkait).
