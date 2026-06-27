@@ -93,9 +93,10 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
     _scrollController = ScrollController();
     _debouncer = Debouncer(const Duration(milliseconds: 300));
     _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      context.read<SearchCubit>().loadSpecializations();
+      await context.read<SearchCubit>().loadSpecializations();
+      if (!mounted) return;
       context.read<SearchCubit>().searchDoctors(null);
     });
   }
