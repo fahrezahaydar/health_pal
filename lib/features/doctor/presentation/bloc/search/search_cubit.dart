@@ -20,6 +20,9 @@ class SearchCubit extends Cubit<SearchState> {
   String? _lastSpecializationId;
   static const int _pageSize = 20;
 
+  /// "Semua" chip — selalu prepended ke daftar spesialisasi.
+  static const allChip = SpecializationEntity(id: 'all', name: 'Semua');
+
   SearchCubit(this._getDoctors, this._getSpecializations)
       : super(const SearchState()) {
     _init();

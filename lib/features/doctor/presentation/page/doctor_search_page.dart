@@ -54,8 +54,6 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
   late final ScrollController _scrollController;
   late final Debouncer _debouncer;
 
-  static const _allChip = SpecializationEntity(id: 'all', name: 'Semua');
-
   @override
   void initState() {
     super.initState();
@@ -154,7 +152,7 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: specs.length + 1,
                     itemBuilder: (context, index) {
-                      final spec = index == 0 ? _allChip : specs[index - 1];
+                      final spec = index == 0 ? SearchCubit.allChip : specs[index - 1];
                       final isAll = spec.id == 'all';
                       final isSelected = isAll
                           ? activeId == null
