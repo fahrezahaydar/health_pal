@@ -210,6 +210,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
   Widget _datePickerRow() {
     final now = DateTime.now();
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(12),
@@ -230,6 +231,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
 
           disableModePicker: true,
           dynamicCalendarRows: true,
+          
           modePickerTextHandler:
               ({required DateTime monthDate, bool? isMonthPicker}) {
                 if (isMonthPicker == true) return null;
