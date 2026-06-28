@@ -51,34 +51,6 @@ class LocPermissionDeniedWidget extends StatelessWidget {
               onTap: onRetry,
             ),
           ),
-          const SizedBox(height: 32),
-          const Row(
-            children: [
-              Expanded(child: Divider()),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text('atau', style: TextStyle(color: AppTheme.grey400)),
-              ),
-              Expanded(child: Divider()),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text('Cari Klinik Berdasarkan Kota', style: AppTextTheme.titleLarge),
-          const SizedBox(height: 12),
-          TextField(
-            decoration: const InputDecoration(
-              hintText: 'Masukkan nama kota',
-              prefixIcon: Icon(AppIcons.search),
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (city) {
-              if (city.trim().isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Mencari klinik di $city...')),
-                );
-              }
-            },
-          ),
         ],
       ),
     );
