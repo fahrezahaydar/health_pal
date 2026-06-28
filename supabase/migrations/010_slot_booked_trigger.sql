@@ -49,18 +49,13 @@ as $$
 declare
   v_fee numeric(12,2);
   v_appointment_id uuid;
+  v_patient_id uuid;
   v_slot_booked boolean;
-  v_doctor_name text;
-  v_clinic_name text;
-  v_slot_date date;
-  v_slot_start time;
-  v_slot_end time;
 begin
-  -- Lock slot row to prevent race condition
+  -- Check slot availability (FOR UPDATE tidak bisa di PostgREST — trigger sebagai safety net)
   select is_booked into v_slot_booked
   from public.doctor_slots
-  where id = p_slot_id
-  for update;
+  where id = p_slot_id;
 
   if not found then
     raise exception 'SLOT_NOT_FOUND';
@@ -79,32 +74,23 @@ begin
     raise exception 'DOCTOR_NOT_FOUND';
   end if;
 
-  -- Insert appointment (patient_id dari auth.uid())
+  -- Lookup patient_id from auth.uid() -> user_profiles
+  select id into v_patient_id
+  from public.user_profiles
+  where auth_id = auth.uid();
+
+  if not found then
+    raise exception 'USER_PROFILE_NOT_FOUND';
+  end if;
+
+  -- Insert appointment
   insert into public.appointments (patient_id, doctor_id, slot_id, consultation_fee_snapshot, complaint_note)
-  values (auth.uid(), p_doctor_id, p_slot_id, v_fee, p_complaint_note)
+  values (v_patient_id, p_doctor_id, p_slot_id, v_fee, p_complaint_note)
   returning id into v_appointment_id;
 
-  -- Get doctor + clinic name for notification
-  select d.full_name, c.name into v_doctor_name, v_clinic_name
-  from public.doctors d
-  join public.clinics c on c.id = d.clinic_id
-  where d.id = p_doctor_id;
-
-  -- Get slot info
-  select slot_date, slot_start, slot_end into v_slot_date, v_slot_start, v_slot_end
-  from public.doctor_slots
-  where id = p_slot_id;
-
-  -- Insert notification (user_id dari auth.uid())
-  insert into public.notifications (user_id, appointment_id, type, title, body)
-  values (
-    auth.uid(),
-    v_appointment_id,
-    'booking_success',
-    'Booking Berhasil',
-    format('Booking kamu dengan %s di %s sudah berhasil dibuat. Jadwal: %s %s.',
-      v_doctor_name, v_clinic_name, v_slot_date::text, v_slot_start::text)
-  );
+  -- Mark slot as booked (defense in depth)
+  -- Partial unique index mencegah double booking: hanya 1 appointment active per slot
+  update public.doctor_slots set is_booked = true where id = p_slot_id;
 
   -- Return appointment data with nested relations
   return (
@@ -137,3 +123,8 @@ begin
   );
 end;
 $$;
+
+-- 5. Partial unique index: cegah double booking — hanya 1 appointment active per slot
+create unique index if not exists idx_appointments_active_slot
+  on public.appointments (slot_id)
+  where status in ('pending', 'upcoming');
