@@ -266,32 +266,23 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                         color: AppTheme.grey500,
                         fontWeight: FontWeight.bold,
                       );
-                final isLastDay = date.day ==
-                    DateTime(date.year, date.month + 1, 0).day;
-                final margin = isLastDay
-                    ? const EdgeInsets.fromLTRB(4, 4, 4, 8)
-                    : const EdgeInsets.all(4);
-                if (isSelected == true) {
-                  return Container(
-                    margin: margin,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${date.day}',
-                      style: AppTextTheme.bodyMedium.copyWith(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }
                 return Container(
-                  margin: margin,
                   alignment: Alignment.center,
-                  child: Text('${date.day}', style: dayStyle),
+                  decoration: isSelected == true
+                      ? BoxDecoration(
+                          color: AppTheme.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        )
+                      : null,
+                  child: Text(
+                    '${date.day}',
+                    style: isSelected == true
+                        ? AppTextTheme.bodyMedium.copyWith(
+                            color: AppTheme.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                        : dayStyle,
+                  ),
                 );
               },
         ),
