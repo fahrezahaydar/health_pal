@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/di/locator.dart';
 import '../../../../core/enums/booking_status.dart';
 import '../../../../core/network/json_converters.dart';
+import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/date_formatter.dart';
@@ -39,14 +40,15 @@ class BookingDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BookingDetailCubit>(
-      create: (_) {
-        final patientId =
-            getIt<SupabaseClient>().auth.currentUser?.id ?? '';
-        return getIt<BookingDetailCubit>()
-          ..loadDetail(
-            patientId: patientId,
+      create: (ctx) {
+        final cubit = getIt<BookingDetailCubit>();
+        getIt<AppServices>().getCurrentProfileId().then((pid) {
+          cubit.loadDetail(
+            patientId: pid ?? '',
             appointmentId: appointmentId,
           );
+        });
+        return cubit;
       },
       child: _BookingDetailView(appointmentId: appointmentId),
     );

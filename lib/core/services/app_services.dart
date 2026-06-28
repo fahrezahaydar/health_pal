@@ -52,6 +52,21 @@ class AppServices extends ChangeNotifier {
   /// - Token refresh in progress
   String? get currentAuthId => _supabaseClient.auth.currentUser?.id;
 
+  /// Profile ID saat ini (`user_profiles.id`).
+  /// Berbeda dari [currentAuthId] — profile ID adalah UUID di tabel
+  /// `user_profiles`, sedangkan auth ID adalah UUID di `auth.users`.
+  /// Dapatkan dengan query ke `user_profiles`.
+  Future<String?> getCurrentProfileId() async {
+    final authId = currentAuthId;
+    if (authId == null) return null;
+    final result = await _supabaseClient
+        .from('user_profiles')
+        .select('id')
+        .eq('auth_id', authId)
+        .maybeSingle();
+    return result?['id'] as String?;
+  }
+
   /// Inisialisasi awal — dipanggil SEBELUM runApp().
   ///
   /// Keputusan routing:

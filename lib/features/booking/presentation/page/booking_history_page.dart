@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -74,10 +74,12 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BookingHistoryCubit>(
-      create: (_) {
-        // patientId di-derive dari auth user (sama dengan home greeting).
-        final patientId = getIt<SupabaseClient>().auth.currentUser?.id ?? '';
-        return getIt<BookingHistoryCubit>()..loadHistory(patientId);
+      create: (ctx) {
+        final cubit = getIt<BookingHistoryCubit>();
+        getIt<AppServices>().getCurrentProfileId().then((pid) {
+          cubit.loadHistory(pid ?? '');
+        });
+        return cubit;
       },
       child: Scaffold(
         backgroundColor: AppTheme.grey50,
