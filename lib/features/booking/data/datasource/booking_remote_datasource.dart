@@ -28,39 +28,31 @@ class BookingRemoteDataSource {
 
   BookingRemoteDataSource(this._client);
 
-  // ── API §6.1 Create Appointment (Edge Function) ────────────────────────
-  /// `patientId` TIDAK dikirim — Edge Function derive dari auth.uid().
+  // ── API §6.1 Create Appointment (RPC) ───────────────────────────────────
+  /// Memanggil PostgreSQL function `create_appointment` via RPC.
+  /// `patient_id` diambil dari auth.uid() di dalam function.
   Future<AppointmentModel> createAppointment({
     required String doctorId,
     required String slotId,
     String? complaintNote,
   }) async {
-    final response = await _client.functions.invoke(
-      'create-appointment',
-      body: {
-        'doctor_id': doctorId,
-        'slot_id': slotId,
-        'complaint_note': complaintNote,
+    final response = await _client.rpc<Map<String, dynamic>>(
+      'create_appointment',
+      params: {
+        'p_doctor_id': doctorId,
+        'p_slot_id': slotId,
+        if (complaintNote != null && complaintNote.isNotEmpty)
+          'p_complaint_note': complaintNote,
       },
     );
 
-    final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const ApiException(
-        code: FailureCode.unknown,
-        message: 'Invalid response from create-appointment',
-      );
+    // RPC return key 'slots', model expects 'doctor_slots'
+    final data = Map<String, dynamic>.from(response);
+    if (data.containsKey('slots') && !data.containsKey('doctor_slots')) {
+      data['doctor_slots'] = data.remove('slots');
     }
 
-    if (data['success'] != true) {
-      final err = data['error'] as Map<String, dynamic>?;
-      throw ApiException(
-        code: _mapEdgeErrorCode(err?['code'] as String?),
-        message: err?['message'] as String? ?? 'Booking failed',
-      );
-    }
-
-    return AppointmentModel.fromJson(data['data'] as Map<String, dynamic>);
+    return AppointmentModel.fromJson(data);
   }
 
   // ── API §6.2 Get Booking History (PostgREST) ────────────────────────────
