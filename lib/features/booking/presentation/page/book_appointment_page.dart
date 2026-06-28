@@ -15,6 +15,7 @@
 // - BookAppointmentPage: StatelessWidget (BlocProvider only)
 // - BookAppointmentView: StatefulWidget (logic + UI)
 
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +26,6 @@ import '../../../../core/network/json_converters.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/date_formatter.dart';
 import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/loader/dot_loader.dart';
@@ -44,12 +44,13 @@ class BookAppointmentPage extends StatelessWidget {
     // Extract extra params (passed via GoRouter).
     final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
     final doctorName = extra?['doctorName'] as String? ?? 'Dokter';
-    final consultationFee = (extra?['consultationFee'] as num?)?.toDouble() ?? 0;
+    final consultationFee =
+        (extra?['consultationFee'] as num?)?.toDouble() ?? 0;
     final suggestedSlotId = extra?['suggestedSlotId'] as String?;
 
     return BlocProvider<BookingBloc>(
-      create: (_) => getIt<BookingBloc>()
-        ..add(BookingInitialized(doctorId: doctorId)),
+      create: (_) =>
+          getIt<BookingBloc>()..add(BookingInitialized(doctorId: doctorId)),
       child: BookAppointmentView(
         doctorId: doctorId,
         doctorName: doctorName,
@@ -95,18 +96,9 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
     super.dispose();
   }
 
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 30)),
-    );
-    if (picked != null && mounted) {
-      setState(() => _selectedDate = picked);
-      context.read<BookingBloc>().add(BookingDateSelected(picked));
-    }
+  void _onDateSelected(DateTime date) {
+    setState(() => _selectedDate = date);
+    context.read<BookingBloc>().add(BookingDateSelected(date));
   }
 
   void _showConfirmationSheet({
@@ -141,13 +133,12 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                   onTap: () {
                     Navigator.pop(sheetContext);
                     context.read<BookingBloc>().add(
-                          BookingSubmitted(
-                            complaintNote:
-                                _notesController.text.trim().isEmpty
-                                    ? null
-                                    : _notesController.text.trim(),
-                          ),
-                        );
+                      BookingSubmitted(
+                        complaintNote: _notesController.text.trim().isEmpty
+                            ? null
+                            : _notesController.text.trim(),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -174,10 +165,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
       listener: (context, state) {
         final created = state.createdAppointment;
         if (created == null) return;
-        context.push(
-          RoutePaths.bookingSuccess,
-          extra: created,
-        );
+        context.push(RoutePaths.bookingSuccess, extra: created);
       },
       builder: (context, state) {
         return Scaffold(
@@ -185,19 +173,18 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
           appBar: AppBar(
             backgroundColor: AppTheme.white,
             elevation: 0,
+            centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
               onPressed: () => context.pop(),
             ),
-            title: Text('Book Appointment', style: AppTextTheme.titleLarge),
+            title: Text('Book Appointment', style: AppTextTheme.headlineLarge),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _doctorSummaryCard(),
-                const SizedBox(height: 16),
                 _datePickerRow(),
                 const SizedBox(height: 16),
                 _slotSection(state),
@@ -220,68 +207,43 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
     );
   }
 
-  Widget _doctorSummaryCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppTheme.grey100,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: const Icon(Icons.person, color: AppTheme.grey400, size: 32),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.doctorName, style: AppTextTheme.titleLarge),
-                const SizedBox(height: 2),
-                Text(
-                  'Konsultasi',
-                  style:
-                      AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _datePickerRow() {
+    final now = DateTime.now();
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppTheme.grey200),
       ),
-      child: Row(
-        children: [
-          const Icon(Icons.calendar_today, color: AppTheme.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              DateFormatter.toShortDateOrDash(_selectedDate),
-              style: AppTextTheme.bodyLarge,
-            ),
+      child: CalendarDatePicker2(
+        config: CalendarDatePicker2Config(
+          calendarType: CalendarDatePicker2Type.single,
+          firstDate: now,
+          lastDate: now.add(const Duration(days: 30)),
+          currentDate: _selectedDate,
+          firstDayOfWeek: 1,
+          controlsHeight: 48,
+          dayTextStyle: AppTextTheme.bodyMedium,
+          selectedDayTextStyle: AppTextTheme.bodyMedium.copyWith(
+            color: AppTheme.white,
+            fontWeight: FontWeight.bold,
           ),
-          IconButton(
-            icon: const Icon(Icons.edit_calendar, color: AppTheme.primary),
-            onPressed: _pickDate,
+          selectedDayHighlightColor: AppTheme.primary,
+          todayTextStyle: AppTextTheme.bodyMedium.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primary,
           ),
-        ],
+          weekdayLabelTextStyle: AppTextTheme.bodySmall.copyWith(
+            color: AppTheme.grey500,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        value: [_selectedDate],
+        onValueChanged: (dates) {
+          if (dates.isNotEmpty) {
+            _onDateSelected(dates.first);
+          }
+        },
       ),
     );
   }
@@ -335,12 +297,12 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                 selected: isSelected,
                 onSelected: (_) {
                   context.read<BookingBloc>().add(
-                        BookingSlotSelected(
-                          slotId: slotId,
-                          startTime: start,
-                          endTime: end,
-                        ),
-                      );
+                    BookingSlotSelected(
+                      slotId: slotId,
+                      startTime: start,
+                      endTime: end,
+                    ),
+                  );
                 },
               );
             }).toList(),
@@ -394,14 +356,16 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                 const SizedBox(height: 4),
                 Text(
                   formatRupiah(widget.consultationFee),
-                  style: AppTextTheme.titleLarge
-                      .copyWith(color: AppTheme.primary),
+                  style: AppTextTheme.titleLarge.copyWith(
+                    color: AppTheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '⚠️ Pembayaran dilakukan langsung di klinik',
-                  style:
-                      AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
+                  style: AppTextTheme.bodySmall.copyWith(
+                    color: AppTheme.grey500,
+                  ),
                 ),
               ],
             ),
@@ -419,11 +383,10 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
       label: 'Konfirmasi Booking',
       onTap: state.canSubmit
           ? () => _showConfirmationSheet(
-                startTime: state.slotStartTime ?? '',
-                endTime: state.slotEndTime ?? '',
-              )
+              startTime: state.slotStartTime ?? '',
+              endTime: state.slotEndTime ?? '',
+            )
           : null,
     );
   }
-
 }
