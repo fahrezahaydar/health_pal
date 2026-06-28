@@ -1,4 +1,4 @@
-﻿# ADR 011: Create Appointment Edge Function
+﻿# ADR 011: Create Appointment via RPC
 
 | Field | Detail |
 |---|---|
@@ -6,7 +6,7 @@
 | **Tanggal** | 28 Juni 2026 |
 | **Penulis** | Tech Lead |
 | **Pemutus** | CTO + Tech Lead |
-| **Dampak** | Edge Function baru (supabase/functions/create-appointment), migration SQL (trigger is_booked), API Contract (live), config.toml (edge_runtime enabled) |
+| **Dampak** | Migration SQL baru (010 — function create_appointment + trigger is_booked), API Contract 6.1 (endpoint berubah ke RPC), supabase/functions/create-appointment (dihapus) |
 
 ---
 
@@ -18,129 +18,115 @@ Proses booking appointment membutuhkan atomic transaction yang mencakup:
 3. Update doctor_slots.is_booked = true
 4. Insert notifikasi ke tabel 
 otifications
-5. Kirim FCM push notification ke pasien
 
-Proses ini **tidak bisa** dilakukan via PostgREST langsung karena:
-- Atomic transaction tidak bisa dijamin oleh multiple REST calls
+Proses ini **tidak bisa** dilakukan via PostgREST langsung secara atomic karena:
+- PostgREST adalah REST per-tabel — tidak bisa menjamin atomic transaction multi-tabel
 - Race condition double booking mungkin terjadi jika Flutter melakukan 2 request terpisah (insert appointment + update slot)
-- FCM push notification tidak bisa di-trigger dari PostgREST
 
-Solusi: **Edge Function** (Deno + TypeScript) di Supabase — satu HTTP call, satu transaksi database, notifikasi FCM terkirim sebagai side effect.
+Dua solusi yang dipertimbangkan:
+
+| Solusi | Cara Kerja | Complexity |
+|--------|-----------|------------|
+| **Edge Function** (Deno) | HTTP call → Deno → SQL transaksi | Wrapper di Deno, maintenance 2 layer |
+| **RPC langsung** (PostgreSQL function) | HTTP call → PostgREST → SQL function → atomic transaksi | Zero wrapper, langsung ke DB |
 
 ### Kondisi Saat Ini
 
 | Aspek | Kondisi |
 |---|---|
-| **Tabel appointments** | ✅ Ada di migration 001_initial_schema (semua kolom sesuai ERD) |
-| **Tabel doctor_slots** | ✅ Ada (termasuk kolom is_booked) |
-| **Tabel notifications** | ✅ Ada (termasuk FK ke appointments) |
-| **RLS appointments** | ✅ Ada untuk SELECT, INSERT, UPDATE (cancel) |
-| **Trigger is_booked** | ❌ **Belum ada** — ERD §4.4 menyebut trigger perlu diimplementasi |
-| **Edge Function create-appointment** | ❌ **Belum ada** |
-| **FCM integration** | ❌ **Belum ada** — FCM token tersimpan di user_fcm_tokens tapi Edge Function belum kirim notifikasi |
-| **Edge Runtime** | ✅ **Baru di-enable** (config.toml sebelumnya disabled) |
+| **Tabel appointments** | ✅ Ada di migration 001 |
+| **Tabel doctor_slots** | ✅ Ada (kolom is_booked) |
+| **Tabel notifications** | ✅ Ada |
+| **RLS** | ✅ SELECT/INSERT/UPDATE untuk appointments |
+| **Edge Runtime config** | ✅ enabled = true (masih diperlukan untuk fitur future) |
 
 ---
 
 ## 2. Opsi yang Dipertimbangkan
 
-### Opsi A: Edge Function + Trigger (DIUSULKAN)
+### Opsi A: PostgreSQL Function via RPC (DIUSULKAN)
 
-Edge Function create-appointment di Deno + SQL trigger update_slot_is_booked untuk defense in depth.
-
-**Pro:**
-- Atomic transaction dari satu HTTP call.
-- Trigger is_booked sebagai safety net — jika ada direct insert ke appointments tanpa Edge Function, is_booked tetap ter-update.
-- FCM notification bisa dikirim dari Edge Function via Supabase Management API atau Firebase Admin SDK.
-
-**Kontra:**
-- Perlu maintenance 2 layer logika (Edge Function + DB trigger).
-- FCM integration perlu service account key.
-
-### Opsi B: Trigger-only
-
-Cukup SQL trigger create_appointment di PostgreSQL yang handle insert ke appointments, update slot, dan insert notification. Flutter call PostgREST langsung.
+Satu PostgreSQL function create_appointment() yang melakukan semua operasi dalam satu transaksi. Flutter cukup call POST /rest/v1/rpc/create_appointment.
 
 **Pro:**
-- Tidak perlu Edge Function — latency lebih rendah (no HTTP gateway).
-- Tidak perlu Deno/TypeScript maintenance.
+- Zero additional service — langsung call dari Flutter ke PostgREST
+- Atomic transaction built-in — FOR UPDATE lock mencegah race condition
+- Patient ID dari uth.uid() — tidak perlu dikirim dari client (lebih aman)
+- Tidak perlu maintenance Deno/TypeScript
+- Lebih cepat — tidak ada hop ke Edge Function (PostgREST langsung)
+- RLS tetap berlaku — function berjalan sebagai definer dengan auth context
 
 **Kontra:**
-- FCM push notification tidak bisa dikirim dari PostgreSQL trigger.
-- Sulit handle error response kustom untuk Flutter.
-- Tidak sesuai API Contract yang sudah mendefinisikan POST /functions/v1/create-appointment.
+- Error response format PostgREST (bukan envelope {success, error}) — Flutter harus handle di ApiException mapper
+- Function sulit dipanggil dari non-authenticated context (tergantung RLS)
 
-### Opsi C: Edge Function only — without trigger
+### Opsi B: Edge Function + RPC (sebelumnya dipilih)
 
-Semua logika di Edge Function. Tidak ada trigger di database.
+Edge Function Deno yang validasi input, parsing JWT, lalu call RPC yang sama.
 
 **Pro:**
-- Single source of truth — logika booking hanya di Edge Function.
-- Lebih mudah di-debug (test via curl/Postman).
+- Response format bisa dikustom (envelope {success, error})
+- Validasi bisa lebih expressif di TypeScript
 
 **Kontra:**
-- Jika ada direct insert ke appointments (misal dari Supabase dashboard), is_booked tidak ter-update.
-- Double booking mungkin terjadi jika admin insert langsung ke database.
+- Maintenance 2 layer (Deno + SQL)
+- Latency tambahan (Kong → Edge Runtime → DB vs Kong → PostgREST → DB)
+- Perlu manage service_role key di Edge Function
+- Deno dependency update
+
+### Opsi C: Multiple PostgREST calls dari Flutter
+
+Flutter melakukan 3 call terpisah: insert appointment, update slot, insert notification.
+
+**Pro:**
+- Simplest code — tidak perlu function atau edge function
+
+**Kontra:**
+- ❌ **Tidak atomic** — bisa partial failure (appointment terinsert tapi slot tidak terupdate)
+- ❌ **Race condition** — 2 user bisa booking slot yang sama sebelum is_booked terupdate
 
 ---
 
 ## 3. Keputusan
 
-**Pilih Opsi A: Edge Function + Trigger (defense in depth).**
+**Pilih Opsi A: PostgreSQL Function via RPC langsung — tanpa Edge Function wrapper.**
 
 ### Detail Keputusan
 
-1. **Edge Function: supabase/functions/create-appointment/index.ts**
-   - Bahasa: TypeScript (Deno)
-   - Method: POST
-   - Auth: Wajib Authorization: Bearer <access_token> (Supabase Auth)
-   - Validasi:
-     - doctor_id dan slot_id wajib UUID valid
-     - complaint_note maksimal 300 karakter
-   - Transaksi:
-     `sql
-     -- Dalam satu transaksi:
-     SELECT is_booked FROM doctor_slots WHERE id =  FOR UPDATE;  -- lock row
-     IF is_booked THEN raise 'SLOT_ALREADY_BOOKED';
-     INSERT INTO appointments (patient_id, doctor_id, slot_id, 
-       consultation_fee_snapshot, complaint_note) VALUES (...);
-     UPDATE doctor_slots SET is_booked = true WHERE id = ;
-     INSERT INTO notifications (user_id, appointment_id, type, title, body) 
-       VALUES (...);
-     COMMIT;
-     `
-   - Response: Mengikuti format API Contract §6.1 (Success 201, Error sesuai kode)
-   - FCM: Deferred — tidak diimplementasi di MVP (lihat Out of Scope)
+1. **PostgreSQL function**: create_appointment(p_doctor_id, p_slot_id, p_complaint_note):
+   - patient_id diambil dari uth.uid() — tidak perlu parameter dari client
+   - consultation_fee_snapshot diambil dari doctors.consultation_fee saat eksekusi
+   - FOR UPDATE lock pada doctor_slots untuk mencegah race condition
+   - Insert appointment → trigger update is_booked → insert notification — semua dalam satu transaksi
+   - Return format: jsonb — PostgREST akan serialize ke JSON response
 
-2. **SQL Trigger: update_slot_is_booked** (migration 010)
-   - Trigger function: set_slot_booked_on_appointment()
-   - Event: AFTER INSERT ON appointments
-   - Action: UPDATE doctor_slots SET is_booked = true WHERE id = NEW.slot_id
-   - Event: AFTER UPDATE OF status ON appointments
-   - Action: Jika status = 'cancelled' → UPDATE doctor_slots SET is_booked = false WHERE id = OLD.slot_id
-   - Rationale: Defense in depth — jika ada insert langsung ke tabel appointments (dashboard admin), slot tetap terblokir.
+2. **Trigger 	rg_slot_booked_on_appointment**: Defense in depth — jika ada INSERT langsung ke ppointments, is_booked tetap terupdate.
 
-3. **Snapshoot consultation_fee**: Edge Function me-LOOKUP doctors.consultation_fee saat booking dibuat
-   `sql
-   SELECT consultation_fee FROM doctors WHERE id = ;
-   `
-   Hasilnya disimpan di ppointments.consultation_fee_snapshot — pattern immutable snapshot (ERD §4.3).
+3. **Endpoint**: POST /rest/v1/rpc/create_appointment
+   - Headers: pikey, Authorization (sama seperti endpoint PostgREST lain)
+   - Body: { "p_doctor_id": "...", "p_slot_id": "...", "p_complaint_note": "..." }
+   - No envelope — response langsung dari function return value
 
-4. **Edge Runtime config**: supabase/config.toml → [edge_runtime] enabled = true (sudah di-commit)
+4. **Error handling di Flutter**: ApiException mapper handle error dari PostgREST:
+   - SLOT_ALREADY_BOOKED → 409
+   - SLOT_NOT_FOUND / DOCTOR_NOT_FOUND → 404
+   - complaint_note validasi → 400
+
+5. **Edge Function dihapus**: supabase/functions/create-appointment/ tidak dipakai.
 
 ---
 
 ## 4. Alasan
 
-1. **Atomic transaction** — Satu Edge Function menjamin bahwa insert appointment, update slot, dan insert notification terjadi dalam satu transaksi. Tidak ada partial failure.
+1. **Eliminasi complexity layer** — Edge Function hanya wrapper tipis yang call SQL yang sama. Langsung call RPC dari Flutter lebih efisien — tidak ada tambahan hop, tidak ada Deno maintenance.
 
-2. **Defense in depth** — Trigger is_booked memastikan integritas data bahkan jika ada direct insert ke appointments tanpa Edge Function (misal dari Supabase dashboard atau migration).
+2. **auth.uid() built-in** — PostgreSQL function bisa akses uth.uid() langsung. Tidak perlu parsing JWT di Edge Function. Ini lebih aman karena client tidak bisa memanipulasi patient_id.
 
-3. **API Contract compliance** — Endpoint POST /functions/v1/create-appointment sudah didefinisikan di API Contract §6.1. Implementasi Edge Function membuat API Contract jadi live.
+3. **Zero infrastructure** — PostgREST sudah running, migration SQL sudah di-apply. Tidak perlu serve Edge Function terpisah.
 
-4. **FCM readiness** — Edge Function bisa ditambahkan FCM push notification tanpa perubahan arsitektur. Cukup tambah Firebase Admin SDK call di dalam function yang sama setelah transaksi sukses.
+4. **Atomic transaction native** — PostgreSQL function menjamin atomicity. FOR UPDATE lock mencegah race condition.
 
-5. **Snapshoot consultation_fee** — Memastikan histori transaksi immutable (ERD §4.3). Perubahan tarif dokter di masa depan tidak mengubah data booking lama.
+5. **Flutter sudah siap** — SupabaseClient.rpc() sudah ada di codebase. Pattern yang sama dengan get_nearby_clinics (lihat LocRemoteDataSource).
 
 ---
 
@@ -148,29 +134,27 @@ Semua logika di Edge Function. Tidak ada trigger di database.
 
 ### Positif
 
-- ✅ Satu HTTP call untuk booking — Flutter tidak perlu multiple request.
-- ✅ Atomic transaction — tidak ada race condition double booking.
-- ✅ Defense in depth — trigger sebagai safety net.
-- ✅ Immutable fee snapshot — histori transaksi akurat.
-- ✅ API Contract jadi live — Flutter bisa integrasi.
+- ✅ Zero new service — cukup migration SQL
+- ✅ Atomic transaction — FOR UPDATE lock
+- ✅ auth.uid() — client tidak bisa spoof patient_id
+- ✅ Reuse pattern pc() — sama seperti get_nearby_clinics
+- ✅ Tidak perlu maintain Deno/TypeScript
+- ✅ Latency lebih rendah (no Edge Runtime hop)
 
 ### Negatif
 
-- ⚠️ **Edge Function baru** — perlu maintenance Deno/TypeScript.
-- ⚠️ **Migration SQL baru** — trigger update_slot_is_booked.
-- ⚠️ **FCM deferred** — push notification belum terkirim otomatis (MVP).
-- ⚠️ **Edge Runtime dependency** — booking tidak bisa dibuat jika Edge Runtime down.
+- ⚠️ Error response PostgREST — Flutter harus parse {code, message, details} bukan envelope {success, error}
+- ⚠️ API Contract response example perlu diupdate — format PostgREST bukan envelope
+- ⚠️ FCM push notification tidak bisa dikirim dari function (deferred — tetap insert ke tabel notifications)
 
 ### Risiko & Mitigasi
 
 | Risiko | Mitigasi |
 |--------|----------|
-| Double booking race condition | SELECT ... FOR UPDATE lock + trigger defense in depth |
-| Edge Function timeout (10s default) | Optimasi query — semua dalam satu transaksi, < 1s |
-| Invalid UUID format crash | Validasi input di awal function |
-| consultation_fee berubah antara booking flow | Fee diambil saat booking (snapshot), bukan dari state Flutter |
-| FCM tidak terkirim | Deferred — MVP tidak handle push notif. Notifikasi tersimpan di tabel 
-otifications |
+| PostgREST error format tidak konsisten dengan endpoint lain | ApiException mapper di Flutter handle semua format |
+| auth.uid() tidak available di function | Pastikan function punya security definer dan RLS policy yang sesuai |
+| Validasi complaint_note tidak se-expressif TypeScript regex | Validasi via length() dan char_length() di SQL |
+| Trigger is_booked conflict dengan function update | Function dan trigger idempotent — UPDATE is_booked = true dua kali tidak masalah |
 
 ---
 
@@ -180,36 +164,31 @@ otifications |
 |---|---|
 | **ERD** | docs/erd/erd_healh_pal.md — tabel ppointments, doctor_slots, 
 otifications |
-| **API Contract** | docs/api_contract/api_contract_health_pal.md — §6.1 Create Appointment |
-| **ADR ini** | Dokumen keputusan arsitektur |
-| **PRD** | docs/product/prd_health_pal.md — §6.5 Book Appointment |
-| **Code Review** | WAJIB cek: (1) atomic transaction dengan FOR UPDATE, (2) trigger is_booked, (3) consultation_fee_snapshot dari DB bukan dari request, (4) validasi complaint_note max 300 chars, (5) error response sesuai API Contract |
+| **API Contract** | docs/api_contract/api_contract_health_pal.md — 6.1 Create Appointment (update ke RPC) |
+| **Migration** | supabase/migrations/010_slot_booked_trigger.sql |
+| **PRD** | docs/product/prd_health_pal.md — 6.5 Book Appointment |
+| **Code Review** | WAJIB cek: (1) FOR UPDATE lock, (2) auth.uid() bukan parameter, (3) consultation_fee snapshot, (4) trigger is_booked |
 
 ---
 
 ## 7. Referensi
 
-- API Contract: docs/api_contract/api_contract_health_pal.md — §6.1
-- ERD: docs/erd/erd_healh_pal.md — ppointments, doctor_slots, 
-otifications, doctor_schedules
-- PRD: docs/product/prd_health_pal.md — §6.5 Book Appointment
-- Existing Migration: supabase/migrations/001_initial_schema.sql — appointments, doctor_slots, notifications tables
-- User Flow: docs/user_flow/USER_FLOW.md — Booking flow
-- ADR 009: Doctor Detail Redesign — slot selection pattern
+- API Contract: docs/api_contract/api_contract_health_pal.md — 6.1
+- ERD: docs/erd/erd_healh_pal.md — appointments, doctor_slots, notifications
+- PRD: docs/product/prd_health_pal.md — 6.5 Book Appointment
+- Migration: supabase/migrations/010_slot_booked_trigger.sql
+- Existing RPC pattern: LocRemoteDataSource.getNearbyClinics() — supabase.rpc()
 
 ---
 
 ## 8. Out of Scope
 
-1. **FCM Push Notification** — Edge Function hanya insert ke tabel 
-otifications. Push FCM via Firebase Admin SDK ditambahkan di sprint mendatang. Flutter tetap bisa menampilkan notifikasi in-app dari tabel 
-otifications.
+1. **FCM Push Notification** — Function hanya insert ke tabel 
+otifications. Push FCM via trigger atau job terpisah (sprint mendatang).
 
-2. **Edge Function cancel-appointment** — API Contract §6.4 mendefinisikan POST /functions/v1/cancel-appointment. Akan diimplementasikan di ADR terpisah.
+2. **cancel-appointment** — Akan diimplementasi di ADR terpisah dengan pola RPC yang sama.
 
-3. **Generate doctor_slots** — Slot di-generate via terpisah (Supabase cron / Edge Function). Ada di tabel doctor_slots dari migration 001, tapi logika generate-nya belum diimplementasi.
-
-4. **Validasi slot_date di masa lalu** — Edge Function tidak cek apakah slot_date sudah lewat. Flutter diharapkan hanya menampilkan slot masa depan.
+3. **Generate doctor_slots** — Slot sudah ada dari seed. Logika generate otomatis via cron deferred.
 
 ---
 

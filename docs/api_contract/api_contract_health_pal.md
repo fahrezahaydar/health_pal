@@ -1,5 +1,5 @@
-# API Contract — REST API Specifications
-## health_pal — Doctor Appointment Mobile Application
+﻿# API Contract â€” REST API Specifications
+## health_pal â€” Doctor Appointment Mobile Application
 
 | Field | Detail |
 |---|---|
@@ -64,15 +64,15 @@
 
 ```
 Content-Type: application/json
-apikey: <SUPABASE_ANON_KEY>              ← wajib di semua request
-Authorization: Bearer <access_token>    ← wajib untuk endpoint yang butuh auth
+apikey: <SUPABASE_ANON_KEY>              â† wajib di semua request
+Authorization: Bearer <access_token>    â† wajib untuk endpoint yang butuh auth
 ```
 
 > **Catatan Flutter:** `SUPABASE_ANON_KEY` disimpan di `.env` dan di-load via `flutter_dotenv`. Jangan hardcode di source code.
 
 ### Format Key JSON
 
-Seluruh request body dan response menggunakan **`snake_case`** — konsisten dengan nama kolom PostgreSQL dan Dart convention saat menggunakan `fromJson` factory.
+Seluruh request body dan response menggunakan **`snake_case`** â€” konsisten dengan nama kolom PostgreSQL dan Dart convention saat menggunakan `fromJson` factory.
 
 ### Standard Response Envelope
 
@@ -104,16 +104,16 @@ Semua Edge Function custom menggunakan envelope berikut:
 
 | Code | Makna |
 |---|---|
-| `200` | OK — GET berhasil |
-| `201` | Created — POST berhasil membuat resource |
-| `204` | No Content — DELETE / operasi tanpa response body |
-| `400` | Bad Request — validasi gagal / request tidak valid |
-| `401` | Unauthorized — token tidak ada atau expired |
-| `403` | Forbidden — token valid tapi tidak punya akses |
-| `404` | Not Found — resource tidak ditemukan |
-| `409` | Conflict — duplikat data (contoh: slot sudah dibooking) |
-| `422` | Unprocessable Entity — data valid secara format tapi gagal diproses |
-| `500` | Internal Server Error — error di sisi server |
+| `200` | OK â€” GET berhasil |
+| `201` | Created â€” POST berhasil membuat resource |
+| `204` | No Content â€” DELETE / operasi tanpa response body |
+| `400` | Bad Request â€” validasi gagal / request tidak valid |
+| `401` | Unauthorized â€” token tidak ada atau expired |
+| `403` | Forbidden â€” token valid tapi tidak punya akses |
+| `404` | Not Found â€” resource tidak ditemukan |
+| `409` | Conflict â€” duplikat data (contoh: slot sudah dibooking) |
+| `422` | Unprocessable Entity â€” data valid secara format tapi gagal diproses |
+| `500` | Internal Server Error â€” error di sisi server |
 
 ---
 
@@ -173,7 +173,7 @@ apikey: <SUPABASE_ANON_KEY>
 
 **Error Responses:**
 
-`400` — Email sudah terdaftar:
+`400` â€” Email sudah terdaftar:
 ```json
 {
   "code": 400,
@@ -182,7 +182,7 @@ apikey: <SUPABASE_ANON_KEY>
 }
 ```
 
-`422` — Format email tidak valid atau password terlalu pendek:
+`422` â€” Format email tidak valid atau password terlalu pendek:
 ```json
 {
   "code": 422,
@@ -199,7 +199,7 @@ apikey: <SUPABASE_ANON_KEY>
 POST /auth/v1/token?grant_type=password
 ```
 
-**Description:** Login user yang sudah terdaftar menggunakan email dan password. Setelah login sukses, **wajib panggil `GET /rest/v1/me`** (lihat §3.5) untuk mengambil `is_profile_complete` sebelum routing ke `/home` atau `/sign-up/create-profile`.
+**Description:** Login user yang sudah terdaftar menggunakan email dan password. Setelah login sukses, **wajib panggil `GET /rest/v1/me`** (lihat Â§3.5) untuk mengambil `is_profile_complete` sebelum routing ke `/home` atau `/sign-up/create-profile`.
 
 **Headers:**
 ```
@@ -235,11 +235,11 @@ apikey: <SUPABASE_ANON_KEY>
 }
 ```
 
-> **Catatan Flutter:** Response di atas **TIDAK** berisi `is_profile_complete`. Setelah menerima `access_token`, panggil `GET /rest/v1/me?select=*` (lihat §3.5) untuk mendapatkan profil lengkap termasuk `is_profile_complete`. Field ini krusial untuk routing decision: `true` → `/home`, `false` → `/sign-up/create-profile`.
+> **Catatan Flutter:** Response di atas **TIDAK** berisi `is_profile_complete`. Setelah menerima `access_token`, panggil `GET /rest/v1/me?select=*` (lihat Â§3.5) untuk mendapatkan profil lengkap termasuk `is_profile_complete`. Field ini krusial untuk routing decision: `true` â†’ `/home`, `false` â†’ `/sign-up/create-profile`.
 
 **Error Responses:**
 
-`400` — Email atau password salah:
+`400` â€” Email atau password salah:
 ```json
 {
   "code": 400,
@@ -248,7 +248,7 @@ apikey: <SUPABASE_ANON_KEY>
 }
 ```
 
-`400` — Email belum diverifikasi:
+`400` â€” Email belum diverifikasi:
 ```json
 {
   "code": 400,
@@ -298,7 +298,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`401` — Token tidak valid atau sudah expired:
+`401` â€” Token tidak valid atau sudah expired:
 ```json
 {
   "code": 401,
@@ -347,7 +347,7 @@ apikey: <SUPABASE_ANON_KEY>
 
 **Error Responses:**
 
-`400` — Refresh token tidak valid atau sudah digunakan:
+`400` â€” Refresh token tidak valid atau sudah digunakan:
 ```json
 {
   "code": 400,
@@ -379,7 +379,7 @@ apikey: <SUPABASE_ANON_KEY>
 }
 ```
 
-**Success Response `200`:** *(Supabase selalu return 200 meski email tidak ditemukan — demi keamanan)*
+**Success Response `200`:** *(Supabase selalu return 200 meski email tidak ditemukan â€” demi keamanan)*
 ```json
 {}
 ```
@@ -431,11 +431,11 @@ Authorization: Bearer <access_token>
 ]
 ```
 
-> **Catatan Flutter:** Response adalah array. Ambil elemen index `[0]`. Jika array kosong → user perlu setup profil (onboarding).
+> **Catatan Flutter:** Response adalah array. Ambil elemen index `[0]`. Jika array kosong â†’ user perlu setup profil (onboarding).
 
 **Error Responses:**
 
-`401` — Token tidak ada atau expired:
+`401` â€” Token tidak ada atau expired:
 ```json
 {
   "code": 401,
@@ -450,7 +450,7 @@ Authorization: Bearer <access_token>
 ```
 POST /rest/v1/user_profiles
 ```
-*(Untuk insert pertama kali — onboarding)*
+*(Untuk insert pertama kali â€” onboarding)*
 
 ```
 PATCH /rest/v1/user_profiles?auth_id=eq.<auth_uid>
@@ -458,18 +458,18 @@ PATCH /rest/v1/user_profiles?auth_id=eq.<auth_uid>
 *(Untuk update profil yang sudah ada)*
 
 **Description:**
-- `POST` — Dipanggil sekali setelah register, saat user selesai mengisi form onboarding.
-- `PATCH` — Dipanggil dari halaman Edit Profile.
+- `POST` â€” Dipanggil sekali setelah register, saat user selesai mengisi form onboarding.
+- `PATCH` â€” Dipanggil dari halaman Edit Profile.
 
 **Headers:**
 ```
 Content-Type: application/json
 apikey: <SUPABASE_ANON_KEY>
 Authorization: Bearer <access_token>
-Prefer: return=representation    ← agar response mengembalikan data yang baru di-upsert
+Prefer: return=representation    â† agar response mengembalikan data yang baru di-upsert
 ```
 
-**Request Body (POST — Onboarding):**
+**Request Body (POST â€” Onboarding):**
 ```json
 {
   "auth_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -481,7 +481,7 @@ Prefer: return=representation    ← agar response mengembalikan data yang baru 
 }
 ```
 
-**Request Body (PATCH — Edit Profile):**
+**Request Body (PATCH â€” Edit Profile):**
 ```json
 {
   "full_name": "Rina Kartika Dewi",
@@ -513,7 +513,7 @@ Prefer: return=representation    ← agar response mengembalikan data yang baru 
 
 **Error Responses:**
 
-`400` — Constraint violation (contoh: gender value tidak valid):
+`400` â€” Constraint violation (contoh: gender value tidak valid):
 ```json
 {
   "code": "23514",
@@ -540,7 +540,7 @@ POST /storage/v1/object/avatars/<user_id>/<filename>
 
 **Headers:**
 ```
-Content-Type: image/jpeg        ← atau image/png sesuai file
+Content-Type: image/jpeg        â† atau image/png sesuai file
 apikey: <SUPABASE_ANON_KEY>
 Authorization: Bearer <access_token>
 ```
@@ -561,7 +561,7 @@ https://<ref>.supabase.co/storage/v1/object/public/avatars/<user_id>/<filename>
 
 **Error Responses:**
 
-`400` — File terlalu besar (default limit Supabase 5MB):
+`400` â€” File terlalu besar (default limit Supabase 5MB):
 ```json
 {
   "error": "Payload too large",
@@ -616,7 +616,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`400` — Platform tidak valid:
+`400` â€” Platform tidak valid:
 ```json
 {
   "success": false,
@@ -646,7 +646,7 @@ Authorization: Bearer <access_token>
 GET /rest/v1/me?select=*
 ```
 
-**Description:** Mengambil data profil user yang sedang login secara singkat dan aman via **PostgREST view/alias `/me`**. RLS policy `auth.uid() = auth_id` menjamin user hanya bisa membaca profil miliknya sendiri. Endpoint ini **direkomendasikan** untuk dipanggil segera setelah login/signup (lihat §2.1, §2.2) untuk mengambil `is_profile_complete` — field yang krusial untuk routing decision di User Flow 4.1 (`/home` vs `/sign-up/create-profile`).
+**Description:** Mengambil data profil user yang sedang login secara singkat dan aman via **PostgREST view/alias `/me`**. RLS policy `auth.uid() = auth_id` menjamin user hanya bisa membaca profil miliknya sendiri. Endpoint ini **direkomendasikan** untuk dipanggil segera setelah login/signup (lihat Â§2.1, Â§2.2) untuk mengambil `is_profile_complete` â€” field yang krusial untuk routing decision di User Flow 4.1 (`/home` vs `/sign-up/create-profile`).
 
 **Cara kerja di PostgREST:**
 View `me` adalah wrapper tipis di atas `user_profiles` yang memfilter otomatis berdasarkan `auth.uid()`. Migrasi SQL-nya:
@@ -687,11 +687,11 @@ Authorization: Bearer <access_token>
 }
 ```
 
-> **Catatan Flutter:** Berbeda dengan §3.1 (`GET /rest/v1/user_profiles?auth_id=eq.<auth_uid>`) yang return **array**, endpoint ini return **object tunggal** (bukan array). Lebih simple untuk di-parse. Gunakan ini di `AppServices.init()` setelah refresh token / session restore.
+> **Catatan Flutter:** Berbeda dengan Â§3.1 (`GET /rest/v1/user_profiles?auth_id=eq.<auth_uid>`) yang return **array**, endpoint ini return **object tunggal** (bukan array). Lebih simple untuk di-parse. Gunakan ini di `AppServices.init()` setelah refresh token / session restore.
 
 **Error Responses:**
 
-`401` — Token tidak ada atau expired:
+`401` â€” Token tidak ada atau expired:
 ```json
 {
   "code": 401,
@@ -699,7 +699,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`200` dengan `{}` (empty object) — User belum punya profil. Redirect ke `/sign-up/create-profile`.
+`200` dengan `{}` (empty object) â€” User belum punya profil. Redirect ke `/sign-up/create-profile`.
 
 ---
 
@@ -713,7 +713,7 @@ Authorization: Bearer <access_token>
 GET /rest/v1/specializations?select=*&order=name.asc
 ```
 
-**Description:** Mengambil semua data spesialisasi dokter. Digunakan untuk filter chips di Loc tab. Data ini jarang berubah — **disarankan di-cache di Flutter** menggunakan `SharedPreferences` atau Hive.
+**Description:** Mengambil semua data spesialisasi dokter. Digunakan untuk filter chips di Loc tab. Data ini jarang berubah â€” **disarankan di-cache di Flutter** menggunakan `SharedPreferences` atau Hive.
 
 **Headers:**
 ```
@@ -784,7 +784,7 @@ Authorization: Bearer <access_token>
 | `full_name` | `ilike.*joko*` | Search nama dokter (case-insensitive) |
 | `specialization_id` | `eq.<uuid>` | Filter by spesialisasi (opsional) |
 | `order` | `rating_avg.desc` | Urutkan by rating tertinggi |
-| `limit` | `20` | Pagination — default 20 |
+| `limit` | `20` | Pagination â€” default 20 |
 | `offset` | `0` | Pagination offset |
 
 **Contoh URL lengkap:**
@@ -924,7 +924,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`400` — Koordinat tidak disertakan:
+`400` â€” Koordinat tidak disertakan:
 ```json
 {
   "success": false,
@@ -935,7 +935,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`400` — Radius melebihi batas maksimum:
+`400` â€” Radius melebihi batas maksimum:
 ```json
 {
   "success": false,
@@ -1000,7 +1000,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`200` dengan array kosong `[]` — Dokter tidak ditemukan atau tidak aktif. Flutter harus handle case ini dan tampilkan halaman 404/error.
+`200` dengan array kosong `[]` â€” Dokter tidak ditemukan atau tidak aktif. Flutter harus handle case ini dan tampilkan halaman 404/error.
 
 ---
 
@@ -1069,7 +1069,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`200` dengan `[]` — Tidak ada slot tersedia pada tanggal tersebut. Flutter tampilkan empty state "Tidak ada jadwal tersedia untuk tanggal ini."
+`200` dengan `[]` â€” Tidak ada slot tersedia pada tanggal tersebut. Flutter tampilkan empty state "Tidak ada jadwal tersedia untuk tanggal ini."
 
 ---
 
@@ -1079,7 +1079,7 @@ Authorization: Bearer <access_token>
 POST /rest/v1/rpc/get_nearby_clinics
 ```
 
-**Description:** Mengembalikan daftar klinik terdekat dari lokasi user berdasarkan koordinat GPS. Endpoint ini **distinct** dari §5.2 (`doctors-by-location`) — fokus pada **klinik sebagai entitas** (untuk Home Page section "Nearby Medical Centers" di wireframe 06), bukan daftar dokter. Menggunakan PostgreSQL function dengan Haversine formula (lihat ERD §8 untuk definisi function). RLS: public read (tidak perlu auth untuk melihat klinik).
+**Description:** Mengembalikan daftar klinik terdekat dari lokasi user berdasarkan koordinat GPS. Endpoint ini **distinct** dari Â§5.2 (`doctors-by-location`) â€” fokus pada **klinik sebagai entitas** (untuk Home Page section "Nearby Medical Centers" di wireframe 06), bukan daftar dokter. Menggunakan PostgreSQL function dengan Haversine formula (lihat ERD Â§8 untuk definisi function). RLS: public read (tidak perlu auth untuk melihat klinik).
 
 **Headers:**
 ```
@@ -1099,8 +1099,8 @@ Authorization: Bearer <access_token>
 
 | Field | Tipe | Wajib | Default | Keterangan |
 |---|---|---|---|---|
-| `user_lat` | `float` | Ya | — | Latitude lokasi user |
-| `user_lng` | `float` | Ya | — | Longitude lokasi user |
+| `user_lat` | `float` | Ya | â€” | Latitude lokasi user |
+| `user_lng` | `float` | Ya | â€” | Longitude lokasi user |
 | `radius_meters` | `int` | Tidak | `10000` | Radius pencarian dalam meter (max 50000) |
 
 **Success Response `200`:**
@@ -1137,14 +1137,14 @@ Authorization: Bearer <access_token>
 | `image_url` | `string?` | URL foto klinik |
 | `distance_meters` | `float` | Jarak dari lokasi user (meter) |
 | `doctor_count` | `int` | Jumlah dokter aktif di klinik |
-| `rating_avg` | `float` | Rating rata-rata (0.0 – 5.0) |
+| `rating_avg` | `float` | Rating rata-rata (0.0 â€“ 5.0) |
 | `review_count` | `int` | Jumlah review |
 | `category` | `string?` | Jenis fasilitas: `Hospital`, `Clinic`, dll. |
 | `duration_minutes` | `int` | Estimasi waktu tempuh (asumsi 30 km/jam) |
 
 **Error Responses:**
 
-`400` — Koordinat tidak disertakan:
+`400` â€” Koordinat tidak disertakan:
 ```json
 {
   "code": "MISSING_COORDINATES",
@@ -1152,7 +1152,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`400` — Radius melebihi batas:
+`400` â€” Radius melebihi batas:
 ```json
 {
   "code": "INVALID_RADIUS",
@@ -1160,7 +1160,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-> **Catatan:** Function `get_nearby_clinics` didefinisikan di ERD §8 dengan signature `(user_lat FLOAT8, user_lng FLOAT8, radius_meters INT DEFAULT 10000)`. Query ini menggunakan Haversine formula di SQL — bukan PostGIS — untuk kompatibilitas lebih luas.
+> **Catatan:** Function `get_nearby_clinics` didefinisikan di ERD Â§8 dengan signature `(user_lat FLOAT8, user_lng FLOAT8, radius_meters INT DEFAULT 10000)`. Query ini menggunakan Haversine formula di SQL â€” bukan PostGIS â€” untuk kompatibilitas lebih luas.
 
 ---
 
@@ -1174,7 +1174,7 @@ Authorization: Bearer <access_token>
 POST /functions/v1/create-appointment
 ```
 
-**Description:** Membuat booking appointment baru. Menggunakan Edge Function (bukan PostgREST langsung) karena proses ini memerlukan **atomic transaction**: (1) cek ulang `is_booked` slot, (2) insert `appointments`, (3) update `doctor_slots.is_booked = true`, (4) trigger notifikasi FCM — semua dalam satu transaksi untuk mencegah race condition double booking.
+**Description:** Membuat booking appointment baru. Menggunakan Edge Function (bukan PostgREST langsung) karena proses ini memerlukan **atomic transaction**: (1) cek ulang `is_booked` slot, (2) insert `appointments`, (3) update `doctor_slots.is_booked = true`, (4) trigger notifikasi FCM â€” semua dalam satu transaksi untuk mencegah race condition double booking.
 
 **Headers:**
 ```
@@ -1239,7 +1239,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`409` — Slot sudah dibooking orang lain (race condition):
+`409` â€” Slot sudah dibooking orang lain (race condition):
 ```json
 {
   "success": false,
@@ -1250,7 +1250,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`400` — `complaint_note` melebihi 300 karakter:
+`400` â€” `complaint_note` melebihi 300 karakter:
 ```json
 {
   "success": false,
@@ -1261,7 +1261,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`404` — Dokter atau slot tidak ditemukan:
+`404` â€” Dokter atau slot tidak ditemukan:
 ```json
 {
   "success": false,
@@ -1283,7 +1283,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`500` — Error transaksi database:
+`500` â€” Error transaksi database:
 ```json
 {
   "success": false,
@@ -1422,7 +1422,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`200` dengan `[]` — Appointment tidak ditemukan atau bukan milik user ini (RLS sudah handle di level DB).
+`200` dengan `[]` â€” Appointment tidak ditemukan atau bukan milik user ini (RLS sudah handle di level DB).
 
 ---
 
@@ -1432,7 +1432,7 @@ Authorization: Bearer <access_token>
 POST /functions/v1/cancel-appointment
 ```
 
-**Description:** Membatalkan appointment dengan status `pending` atau `upcoming`. Menggunakan Edge Function karena proses ini meliputi: (1) validasi status appointment, (2) update status ke `cancelled`, (3) set `doctor_slots.is_booked = false` (slot dikembalikan), (4) kirim notifikasi FCM pembatalan — semua dalam satu transaksi.
+**Description:** Membatalkan appointment dengan status `pending` atau `upcoming`. Menggunakan Edge Function karena proses ini meliputi: (1) validasi status appointment, (2) update status ke `cancelled`, (3) set `doctor_slots.is_booked = false` (slot dikembalikan), (4) kirim notifikasi FCM pembatalan â€” semua dalam satu transaksi.
 
 **Headers:**
 ```
@@ -1470,7 +1470,7 @@ Authorization: Bearer <access_token>
 
 **Error Responses:**
 
-`422` — Appointment sudah `completed` atau sudah `cancelled`:
+`422` â€” Appointment sudah `completed` atau sudah `cancelled`:
 ```json
 {
   "success": false,
@@ -1481,7 +1481,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`403` — Appointment bukan milik user ini:
+`403` â€” Appointment bukan milik user ini:
 ```json
 {
   "success": false,
@@ -1492,7 +1492,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-`404` — Appointment tidak ditemukan:
+`404` â€” Appointment tidak ditemukan:
 ```json
 {
   "success": false,
@@ -1516,12 +1516,12 @@ GET /rest/v1/appointments
   &limit=1
 ```
 
-**Description:** Mengambil appointment **terdekat** milik user yang berstatus `pending` atau `upcoming`. Digunakan untuk "Upcoming Treatment" card di Home Page (lihat wireframe 06 §4). Hanya return 1 item — appointment dengan tanggal paling dekat.
+**Description:** Mengambil appointment **terdekat** milik user yang berstatus `pending` atau `upcoming`. Digunakan untuk "Upcoming Treatment" card di Home Page (lihat wireframe 06 Â§4). Hanya return 1 item â€” appointment dengan tanggal paling dekat.
 
 **Catatan PostgreSQL/PostgREST:**
 - Filter `status=in.(pending,upcoming)` menggunakan IN syntax PostgREST untuk match multiple values
 - Order by nested column `doctor_slots.slot_date` via JOIN PostgREST
-- Karena ada JOIN ke `doctor_slots`, ordering di atas memerlukan alias PostgREST — jika gagal, fallback: order di Flutter side
+- Karena ada JOIN ke `doctor_slots`, ordering di atas memerlukan alias PostgREST â€” jika gagal, fallback: order di Flutter side
 
 **Headers:**
 ```
@@ -1586,7 +1586,7 @@ User tidak punya appointment aktif. Flutter render empty state di Home Page deng
 
 **Error Responses:**
 
-`401` — Token tidak ada atau expired:
+`401` â€” Token tidak ada atau expired:
 ```json
 {
   "code": 401,
@@ -1594,7 +1594,7 @@ User tidak punya appointment aktif. Flutter render empty state di Home Page deng
 }
 ```
 
-> **Catatan Flutter:** Profile ID bisa didapat dari `GET /rest/v1/me` (lihat §3.5). Disimpan di memory setelah login untuk efisiensi.
+> **Catatan Flutter:** Profile ID bisa didapat dari `GET /rest/v1/me` (lihat Â§3.5). Disimpan di memory setelah login untuk efisiensi.
 
 ---
 
@@ -1748,7 +1748,7 @@ Referensi cepat semua error code yang mungkin dikembalikan API, beserta handling
 | `400` | `INVALID_PLATFORM` | Platform FCM tidak valid | Log error, retry silent |
 | `400` | `MISSING_COORDINATES` | Koordinat GPS tidak dikirim | Minta izin lokasi ulang |
 | `400` | `INVALID_RADIUS` | Radius pencarian melebihi batas | Set radius ke default (5km) |
-| `401` | `UNAUTHORIZED` | Token expired atau tidak ada | Refresh token → retry; jika gagal → logout |
+| `401` | `UNAUTHORIZED` | Token expired atau tidak ada | Refresh token â†’ retry; jika gagal â†’ logout |
 | `403` | `FORBIDDEN` | Akses ditolak | Tampilkan snackbar error, jangan retry |
 | `404` | `NOT_FOUND` | Resource tidak ditemukan | Tampilkan halaman 404 / empty state |
 | `409` | `SLOT_ALREADY_BOOKED` | Slot sudah dipesan | Kembali ke halaman pilih slot, refresh data |
@@ -1795,9 +1795,9 @@ class ApiException implements Exception {
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
-| v1.0 | Juni 2026 | Initial release — 19 endpoint |
-| v1.0.1 | 13 Jun 2026 | **Showstopper fixes:** Hapus duplikat Section 7; tambah §3.5 `GET /me`; tambah §5.5 `get_nearby_clinics`; tambah §6.5 Get Upcoming Appointment; standarkan enum Gender ke `other`; standarkan nested key ke plural (PostgREST convention) |
-| v1.0.2 | 24 Jun 2026 | **Clinic Card v2:** §5.5 `get_nearby_clinics` — tambah `rating_avg`, `review_count`, `category`, `duration_minutes` di response |
+| v1.0 | Juni 2026 | Initial release â€” 19 endpoint |
+| v1.0.1 | 13 Jun 2026 | **Showstopper fixes:** Hapus duplikat Section 7; tambah Â§3.5 `GET /me`; tambah Â§5.5 `get_nearby_clinics`; tambah Â§6.5 Get Upcoming Appointment; standarkan enum Gender ke `other`; standarkan nested key ke plural (PostgREST convention) |
+| v1.0.2 | 24 Jun 2026 | **Clinic Card v2:** Â§5.5 `get_nearby_clinics` â€” tambah `rating_avg`, `review_count`, `category`, `duration_minutes` di response |
 
 ---
 
