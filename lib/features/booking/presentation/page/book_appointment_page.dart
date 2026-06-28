@@ -210,7 +210,6 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
   Widget _datePickerRow() {
     final now = DateTime.now();
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(12),
@@ -228,10 +227,8 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
           controlsTextStyle: AppTextTheme.titleLarge.copyWith(
             fontWeight: FontWeight.bold,
           ),
-
           disableModePicker: true,
           dynamicCalendarRows: true,
-          
           modePickerTextHandler:
               ({required DateTime monthDate, bool? isMonthPicker}) {
                 if (isMonthPicker == true) return null;
@@ -267,11 +264,16 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                     ? AppTextTheme.bodyMedium.copyWith(color: AppTheme.grey300)
                     : AppTextTheme.bodyMedium.copyWith(
                         color: AppTheme.grey500,
-                        fontWeight: .bold,
+                        fontWeight: FontWeight.bold,
                       );
+                final isLastDay = date.day ==
+                    DateTime(date.year, date.month + 1, 0).day;
+                final margin = isLastDay
+                    ? const EdgeInsets.fromLTRB(4, 4, 4, 8)
+                    : const EdgeInsets.all(4);
                 if (isSelected == true) {
                   return Container(
-                    margin: const EdgeInsets.all(4),
+                    margin: margin,
                     decoration: BoxDecoration(
                       color: AppTheme.primary,
                       borderRadius: BorderRadius.circular(8),
@@ -287,7 +289,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                   );
                 }
                 return Container(
-                  margin: const EdgeInsets.all(4),
+                  margin: margin,
                   alignment: Alignment.center,
                   child: Text('${date.day}', style: dayStyle),
                 );
