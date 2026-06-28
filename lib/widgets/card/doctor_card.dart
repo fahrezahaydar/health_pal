@@ -89,7 +89,7 @@ class DoctorCard extends StatelessWidget {
                         child: Text(
                           name,
                           style: AppTextTheme.headlineSmall,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -117,7 +117,6 @@ class DoctorCard extends StatelessWidget {
                   if (clinic != null) ...[
                     Row(
                       spacing: 4,
-
                       children: [
                         const Icon(
                           Icons.location_on,

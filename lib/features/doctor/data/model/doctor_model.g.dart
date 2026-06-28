@@ -25,6 +25,12 @@ _DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) => _DoctorModel(
   updatedAt: json['updated_at'] == null
       ? null
       : DateTime.parse(json['updated_at'] as String),
+  totalPatients: (json['total_patients'] as num?)?.toInt() ?? 0,
+  schedules:
+      (json['doctor_schedules'] as List<dynamic>?)
+          ?.map((e) => DoctorScheduleModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
   clinic: json['clinics'] == null
       ? null
       : ClinicModel.fromJson(json['clinics'] as Map<String, dynamic>),
@@ -51,6 +57,8 @@ Map<String, dynamic> _$DoctorModelToJson(_DoctorModel instance) =>
       'is_active': instance.isActive,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
+      'total_patients': instance.totalPatients,
+      'doctor_schedules': instance.schedules,
       'clinics': instance.clinic,
       'specializations': instance.specialization,
     };

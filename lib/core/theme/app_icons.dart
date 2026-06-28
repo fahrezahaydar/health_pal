@@ -45,6 +45,7 @@ class AppIcons {
   static const IconData myLocation = Iconsax.gpsStyle4;
   static const IconData wifiOff = Iconsax.wifi;
   static const IconData star = Iconsax.starStyle5;
+  static const IconData starFilled = Iconsax.star;
   static const IconData people = Iconsax.peopleStyle1;
   static const IconData map = Iconsax.map1Style1;
   static const IconData payments = Iconsax.wallet1Style3;
@@ -84,6 +85,7 @@ class AppIcons {
 
   // ── Dialog (Iconsax) ──
   static const IconData messageQuestion = Iconsax.messageQuestionStyle2;
+  static const IconData messages = Iconsax.messages2Style1;
 
   // ── Date Picker (Iconsax) ──
   static const IconData calendar = Iconsax.calendarStyle2;
@@ -91,6 +93,8 @@ class AppIcons {
 
   // ── User (Iconsax) ──
   static const IconData user = Iconsax.user;
+  static const IconData profile2user = Iconsax.profile2userStyle1;
+  static const IconData medal = Iconsax.medal;
 
   /// Semua icon untuk debugging/gallery.
   static const Map<String, IconData> allIcons = {

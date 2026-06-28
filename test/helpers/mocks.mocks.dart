@@ -16,22 +16,26 @@ import 'package:health_pal/features/auth/domain/entity/user_entity.dart' as _i8;
 import 'package:health_pal/features/auth/domain/repository/auth_repository.dart'
     as _i5;
 import 'package:health_pal/features/doctor/data/datasource/doctor_remote_datasource.dart'
-    as _i27;
-import 'package:health_pal/features/doctor/data/model/doctor_model.dart' as _i4;
-import 'package:health_pal/features/doctor/data/model/doctor_slot_model.dart'
     as _i28;
+import 'package:health_pal/features/doctor/data/model/doctor_model.dart' as _i4;
+import 'package:health_pal/features/doctor/data/model/doctor_schedule_model.dart'
+    as _i29;
+import 'package:health_pal/features/doctor/data/model/doctor_slot_model.dart'
+    as _i30;
 import 'package:health_pal/features/doctor/domain/entity/doctor_entity.dart'
     as _i25;
-import 'package:health_pal/features/doctor/domain/entity/doctor_slot_entity.dart'
+import 'package:health_pal/features/doctor/domain/entity/doctor_schedule_entity.dart'
     as _i26;
+import 'package:health_pal/features/doctor/domain/entity/doctor_slot_entity.dart'
+    as _i27;
 import 'package:health_pal/features/doctor/domain/repository/doctor_repository.dart'
     as _i24;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctor_detail_usecase.dart'
-    as _i30;
+    as _i32;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctor_slots_usecase.dart'
-    as _i31;
+    as _i33;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctors_usecase.dart'
-    as _i29;
+    as _i31;
 import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart'
     as _i23;
 import 'package:health_pal/features/home/data/datasource/home_remote_datasource.dart'
@@ -794,28 +798,51 @@ class MockDoctorRepository extends _i1.Mock implements _i24.DoctorRepository {
           as _i6.Future<_i7.Result<_i25.DoctorEntity>>);
 
   @override
-  _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>> getDoctorSlots(
+  _i6.Future<_i7.Result<List<_i26.DoctorScheduleEntity>>> getDoctorSchedules(
+    String? doctorId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorSchedules, [doctorId]),
+            returnValue:
+                _i6.Future<_i7.Result<List<_i26.DoctorScheduleEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i26.DoctorScheduleEntity>>>(
+                    this,
+                    Invocation.method(#getDoctorSchedules, [doctorId]),
+                  ),
+                ),
+            returnValueForMissingStub:
+                _i6.Future<_i7.Result<List<_i26.DoctorScheduleEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i26.DoctorScheduleEntity>>>(
+                    this,
+                    Invocation.method(#getDoctorSchedules, [doctorId]),
+                  ),
+                ),
+          )
+          as _i6.Future<_i7.Result<List<_i26.DoctorScheduleEntity>>>);
+
+  @override
+  _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>> getDoctorSlots(
     String? doctorId,
     DateTime? date,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getDoctorSlots, [doctorId, date]),
             returnValue:
-                _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i26.DoctorSlotEntity>>>(
+                _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i27.DoctorSlotEntity>>>(
                     this,
                     Invocation.method(#getDoctorSlots, [doctorId, date]),
                   ),
                 ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i26.DoctorSlotEntity>>>(
+                _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i27.DoctorSlotEntity>>>(
                     this,
                     Invocation.method(#getDoctorSlots, [doctorId, date]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>);
+          as _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>);
 
   @override
   _i6.Future<_i7.Result<int>> getAvailableSlotCount({
@@ -853,7 +880,7 @@ class MockDoctorRepository extends _i1.Mock implements _i24.DoctorRepository {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDoctorRemoteDataSource extends _i1.Mock
-    implements _i27.DoctorRemoteDataSource {
+    implements _i28.DoctorRemoteDataSource {
   @override
   _i6.Future<List<_i4.DoctorModel>> searchDoctors({
     String? specializationId,
@@ -897,21 +924,37 @@ class MockDoctorRemoteDataSource extends _i1.Mock
           as _i6.Future<_i4.DoctorModel>);
 
   @override
-  _i6.Future<List<_i28.DoctorSlotModel>> getDoctorSlots(
+  _i6.Future<List<_i29.DoctorScheduleModel>> getDoctorSchedules(
+    String? doctorId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDoctorSchedules, [doctorId]),
+            returnValue: _i6.Future<List<_i29.DoctorScheduleModel>>.value(
+              <_i29.DoctorScheduleModel>[],
+            ),
+            returnValueForMissingStub:
+                _i6.Future<List<_i29.DoctorScheduleModel>>.value(
+                  <_i29.DoctorScheduleModel>[],
+                ),
+          )
+          as _i6.Future<List<_i29.DoctorScheduleModel>>);
+
+  @override
+  _i6.Future<List<_i30.DoctorSlotModel>> getDoctorSlots(
     String? doctorId,
     DateTime? date,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getDoctorSlots, [doctorId, date]),
-            returnValue: _i6.Future<List<_i28.DoctorSlotModel>>.value(
-              <_i28.DoctorSlotModel>[],
+            returnValue: _i6.Future<List<_i30.DoctorSlotModel>>.value(
+              <_i30.DoctorSlotModel>[],
             ),
             returnValueForMissingStub:
-                _i6.Future<List<_i28.DoctorSlotModel>>.value(
-                  <_i28.DoctorSlotModel>[],
+                _i6.Future<List<_i30.DoctorSlotModel>>.value(
+                  <_i30.DoctorSlotModel>[],
                 ),
           )
-          as _i6.Future<List<_i28.DoctorSlotModel>>);
+          as _i6.Future<List<_i30.DoctorSlotModel>>);
 
   @override
   _i6.Future<int> getAvailableSlotCount({
@@ -932,7 +975,7 @@ class MockDoctorRemoteDataSource extends _i1.Mock
 /// A class which mocks [GetDoctorsUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGetDoctorsUseCase extends _i1.Mock implements _i29.GetDoctorsUseCase {
+class MockGetDoctorsUseCase extends _i1.Mock implements _i31.GetDoctorsUseCase {
   @override
   _i6.Future<_i7.Result<List<_i25.DoctorEntity>>> call({
     String? specializationId,
@@ -978,7 +1021,7 @@ class MockGetDoctorsUseCase extends _i1.Mock implements _i29.GetDoctorsUseCase {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockGetDoctorDetailUseCase extends _i1.Mock
-    implements _i30.GetDoctorDetailUseCase {
+    implements _i32.GetDoctorDetailUseCase {
   @override
   _i6.Future<_i7.Result<_i25.DoctorEntity>> call(String? doctorId) =>
       (super.noSuchMethod(
@@ -1004,30 +1047,30 @@ class MockGetDoctorDetailUseCase extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockGetDoctorSlotsUseCase extends _i1.Mock
-    implements _i31.GetDoctorSlotsUseCase {
+    implements _i33.GetDoctorSlotsUseCase {
   @override
-  _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>> call(
+  _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>> call(
     String? doctorId,
     DateTime? date,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#call, [doctorId, date]),
             returnValue:
-                _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i26.DoctorSlotEntity>>>(
+                _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i27.DoctorSlotEntity>>>(
                     this,
                     Invocation.method(#call, [doctorId, date]),
                   ),
                 ),
             returnValueForMissingStub:
-                _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>.value(
-                  _i9.dummyValue<_i7.Result<List<_i26.DoctorSlotEntity>>>(
+                _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>.value(
+                  _i9.dummyValue<_i7.Result<List<_i27.DoctorSlotEntity>>>(
                     this,
                     Invocation.method(#call, [doctorId, date]),
                   ),
                 ),
           )
-          as _i6.Future<_i7.Result<List<_i26.DoctorSlotEntity>>>);
+          as _i6.Future<_i7.Result<List<_i27.DoctorSlotEntity>>>);
 
   @override
   _i6.Future<_i7.Result<int>> callAvailableCount(

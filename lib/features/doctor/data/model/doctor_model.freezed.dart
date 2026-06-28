@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DoctorModel {
 
- String get id;@JsonKey(name: 'clinic_id') String get clinicId;@JsonKey(name: 'specialization_id') String get specializationId;@JsonKey(name: 'full_name') String get fullName;@JsonKey(name: 'photo_url') String? get photoUrl; String? get description;@JsonKey(name: 'experience_years') int get experienceYears; String? get education;@JsonKey(name: 'consultation_fee') double get consultationFee;@JsonKey(name: 'rating_avg') double get ratingAvg;@JsonKey(name: 'rating_count') int get ratingCount;@JsonKey(name: 'is_active') bool get isActive;@JsonKey(name: 'created_at') DateTime? get createdAt;@JsonKey(name: 'updated_at') DateTime? get updatedAt;// ── Nested Objects (dari PostgREST select=*,clinics(*),specializations(*)) ──
+ String get id;@JsonKey(name: 'clinic_id') String get clinicId;@JsonKey(name: 'specialization_id') String get specializationId;@JsonKey(name: 'full_name') String get fullName;@JsonKey(name: 'photo_url') String? get photoUrl; String? get description;@JsonKey(name: 'experience_years') int get experienceYears; String? get education;@JsonKey(name: 'consultation_fee') double get consultationFee;@JsonKey(name: 'rating_avg') double get ratingAvg;@JsonKey(name: 'rating_count') int get ratingCount;@JsonKey(name: 'is_active') bool get isActive;@JsonKey(name: 'created_at') DateTime? get createdAt;@JsonKey(name: 'updated_at') DateTime? get updatedAt;// ── v2.0 (ADR-009): New fields untuk Doctor Detail Page ──
+@JsonKey(name: 'total_patients') int get totalPatients;@JsonKey(name: 'doctor_schedules') List<DoctorScheduleModel> get schedules;// ── Nested Objects (dari PostgREST select=*,clinics(*),specializations(*)) ──
 // @JsonKey name WAJIB match nama tabel (plural) karena PostgREST
 // selalu pakai nama tabel sebagai JSON key untuk nested object.
 @JsonKey(name: 'clinics') ClinicModel? get clinic;@JsonKey(name: 'specializations') SpecializationModel? get specialization;
@@ -31,16 +32,16 @@ $DoctorModelCopyWith<DoctorModel> get copyWith => _$DoctorModelCopyWithImpl<Doct
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DoctorModel&&(identical(other.id, id) || other.id == id)&&(identical(other.clinicId, clinicId) || other.clinicId == clinicId)&&(identical(other.specializationId, specializationId) || other.specializationId == specializationId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.experienceYears, experienceYears) || other.experienceYears == experienceYears)&&(identical(other.education, education) || other.education == education)&&(identical(other.consultationFee, consultationFee) || other.consultationFee == consultationFee)&&(identical(other.ratingAvg, ratingAvg) || other.ratingAvg == ratingAvg)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.clinic, clinic) || other.clinic == clinic)&&(identical(other.specialization, specialization) || other.specialization == specialization));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DoctorModel&&(identical(other.id, id) || other.id == id)&&(identical(other.clinicId, clinicId) || other.clinicId == clinicId)&&(identical(other.specializationId, specializationId) || other.specializationId == specializationId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.experienceYears, experienceYears) || other.experienceYears == experienceYears)&&(identical(other.education, education) || other.education == education)&&(identical(other.consultationFee, consultationFee) || other.consultationFee == consultationFee)&&(identical(other.ratingAvg, ratingAvg) || other.ratingAvg == ratingAvg)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.totalPatients, totalPatients) || other.totalPatients == totalPatients)&&const DeepCollectionEquality().equals(other.schedules, schedules)&&(identical(other.clinic, clinic) || other.clinic == clinic)&&(identical(other.specialization, specialization) || other.specialization == specialization));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,clinicId,specializationId,fullName,photoUrl,description,experienceYears,education,consultationFee,ratingAvg,ratingCount,isActive,createdAt,updatedAt,clinic,specialization);
+int get hashCode => Object.hash(runtimeType,id,clinicId,specializationId,fullName,photoUrl,description,experienceYears,education,consultationFee,ratingAvg,ratingCount,isActive,createdAt,updatedAt,totalPatients,const DeepCollectionEquality().hash(schedules),clinic,specialization);
 
 @override
 String toString() {
-  return 'DoctorModel(id: $id, clinicId: $clinicId, specializationId: $specializationId, fullName: $fullName, photoUrl: $photoUrl, description: $description, experienceYears: $experienceYears, education: $education, consultationFee: $consultationFee, ratingAvg: $ratingAvg, ratingCount: $ratingCount, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, clinic: $clinic, specialization: $specialization)';
+  return 'DoctorModel(id: $id, clinicId: $clinicId, specializationId: $specializationId, fullName: $fullName, photoUrl: $photoUrl, description: $description, experienceYears: $experienceYears, education: $education, consultationFee: $consultationFee, ratingAvg: $ratingAvg, ratingCount: $ratingCount, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, totalPatients: $totalPatients, schedules: $schedules, clinic: $clinic, specialization: $specialization)';
 }
 
 
@@ -51,7 +52,7 @@ abstract mixin class $DoctorModelCopyWith<$Res>  {
   factory $DoctorModelCopyWith(DoctorModel value, $Res Function(DoctorModel) _then) = _$DoctorModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(name: 'clinic_id') String clinicId,@JsonKey(name: 'specialization_id') String specializationId,@JsonKey(name: 'full_name') String fullName,@JsonKey(name: 'photo_url') String? photoUrl, String? description,@JsonKey(name: 'experience_years') int experienceYears, String? education,@JsonKey(name: 'consultation_fee') double consultationFee,@JsonKey(name: 'rating_avg') double ratingAvg,@JsonKey(name: 'rating_count') int ratingCount,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt,@JsonKey(name: 'clinics') ClinicModel? clinic,@JsonKey(name: 'specializations') SpecializationModel? specialization
+ String id,@JsonKey(name: 'clinic_id') String clinicId,@JsonKey(name: 'specialization_id') String specializationId,@JsonKey(name: 'full_name') String fullName,@JsonKey(name: 'photo_url') String? photoUrl, String? description,@JsonKey(name: 'experience_years') int experienceYears, String? education,@JsonKey(name: 'consultation_fee') double consultationFee,@JsonKey(name: 'rating_avg') double ratingAvg,@JsonKey(name: 'rating_count') int ratingCount,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt,@JsonKey(name: 'total_patients') int totalPatients,@JsonKey(name: 'doctor_schedules') List<DoctorScheduleModel> schedules,@JsonKey(name: 'clinics') ClinicModel? clinic,@JsonKey(name: 'specializations') SpecializationModel? specialization
 });
 
 
@@ -68,7 +69,7 @@ class _$DoctorModelCopyWithImpl<$Res>
 
 /// Create a copy of DoctorModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? clinicId = null,Object? specializationId = null,Object? fullName = null,Object? photoUrl = freezed,Object? description = freezed,Object? experienceYears = null,Object? education = freezed,Object? consultationFee = null,Object? ratingAvg = null,Object? ratingCount = null,Object? isActive = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? clinic = freezed,Object? specialization = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? clinicId = null,Object? specializationId = null,Object? fullName = null,Object? photoUrl = freezed,Object? description = freezed,Object? experienceYears = null,Object? education = freezed,Object? consultationFee = null,Object? ratingAvg = null,Object? ratingCount = null,Object? isActive = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? totalPatients = null,Object? schedules = null,Object? clinic = freezed,Object? specialization = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,clinicId: null == clinicId ? _self.clinicId : clinicId // ignore: cast_nullable_to_non_nullable
@@ -84,7 +85,9 @@ as double,ratingCount: null == ratingCount ? _self.ratingCount : ratingCount // 
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,clinic: freezed == clinic ? _self.clinic : clinic // ignore: cast_nullable_to_non_nullable
+as DateTime?,totalPatients: null == totalPatients ? _self.totalPatients : totalPatients // ignore: cast_nullable_to_non_nullable
+as int,schedules: null == schedules ? _self.schedules : schedules // ignore: cast_nullable_to_non_nullable
+as List<DoctorScheduleModel>,clinic: freezed == clinic ? _self.clinic : clinic // ignore: cast_nullable_to_non_nullable
 as ClinicModel?,specialization: freezed == specialization ? _self.specialization : specialization // ignore: cast_nullable_to_non_nullable
 as SpecializationModel?,
   ));
@@ -183,10 +186,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'total_patients')  int totalPatients, @JsonKey(name: 'doctor_schedules')  List<DoctorScheduleModel> schedules, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DoctorModel() when $default != null:
-return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.clinic,_that.specialization);case _:
+return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.totalPatients,_that.schedules,_that.clinic,_that.specialization);case _:
   return orElse();
 
 }
@@ -204,10 +207,10 @@ return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'total_patients')  int totalPatients, @JsonKey(name: 'doctor_schedules')  List<DoctorScheduleModel> schedules, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)  $default,) {final _that = this;
 switch (_that) {
 case _DoctorModel():
-return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.clinic,_that.specialization);case _:
+return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.totalPatients,_that.schedules,_that.clinic,_that.specialization);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -224,10 +227,10 @@ return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'clinic_id')  String clinicId, @JsonKey(name: 'specialization_id')  String specializationId, @JsonKey(name: 'full_name')  String fullName, @JsonKey(name: 'photo_url')  String? photoUrl,  String? description, @JsonKey(name: 'experience_years')  int experienceYears,  String? education, @JsonKey(name: 'consultation_fee')  double consultationFee, @JsonKey(name: 'rating_avg')  double ratingAvg, @JsonKey(name: 'rating_count')  int ratingCount, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt, @JsonKey(name: 'total_patients')  int totalPatients, @JsonKey(name: 'doctor_schedules')  List<DoctorScheduleModel> schedules, @JsonKey(name: 'clinics')  ClinicModel? clinic, @JsonKey(name: 'specializations')  SpecializationModel? specialization)?  $default,) {final _that = this;
 switch (_that) {
 case _DoctorModel() when $default != null:
-return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.clinic,_that.specialization);case _:
+return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_that.photoUrl,_that.description,_that.experienceYears,_that.education,_that.consultationFee,_that.ratingAvg,_that.ratingCount,_that.isActive,_that.createdAt,_that.updatedAt,_that.totalPatients,_that.schedules,_that.clinic,_that.specialization);case _:
   return null;
 
 }
@@ -239,7 +242,7 @@ return $default(_that.id,_that.clinicId,_that.specializationId,_that.fullName,_t
 @JsonSerializable()
 
 class _DoctorModel extends DoctorModel {
-  const _DoctorModel({required this.id, @JsonKey(name: 'clinic_id') required this.clinicId, @JsonKey(name: 'specialization_id') required this.specializationId, @JsonKey(name: 'full_name') required this.fullName, @JsonKey(name: 'photo_url') this.photoUrl, this.description, @JsonKey(name: 'experience_years') required this.experienceYears, this.education, @JsonKey(name: 'consultation_fee') required this.consultationFee, @JsonKey(name: 'rating_avg') this.ratingAvg = 0.0, @JsonKey(name: 'rating_count') this.ratingCount = 0, @JsonKey(name: 'is_active') this.isActive = true, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, @JsonKey(name: 'clinics') this.clinic, @JsonKey(name: 'specializations') this.specialization}): super._();
+  const _DoctorModel({required this.id, @JsonKey(name: 'clinic_id') required this.clinicId, @JsonKey(name: 'specialization_id') required this.specializationId, @JsonKey(name: 'full_name') required this.fullName, @JsonKey(name: 'photo_url') this.photoUrl, this.description, @JsonKey(name: 'experience_years') required this.experienceYears, this.education, @JsonKey(name: 'consultation_fee') required this.consultationFee, @JsonKey(name: 'rating_avg') this.ratingAvg = 0.0, @JsonKey(name: 'rating_count') this.ratingCount = 0, @JsonKey(name: 'is_active') this.isActive = true, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, @JsonKey(name: 'total_patients') this.totalPatients = 0, @JsonKey(name: 'doctor_schedules') final  List<DoctorScheduleModel> schedules = const [], @JsonKey(name: 'clinics') this.clinic, @JsonKey(name: 'specializations') this.specialization}): _schedules = schedules,super._();
   factory _DoctorModel.fromJson(Map<String, dynamic> json) => _$DoctorModelFromJson(json);
 
 @override final  String id;
@@ -256,6 +259,15 @@ class _DoctorModel extends DoctorModel {
 @override@JsonKey(name: 'is_active') final  bool isActive;
 @override@JsonKey(name: 'created_at') final  DateTime? createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime? updatedAt;
+// ── v2.0 (ADR-009): New fields untuk Doctor Detail Page ──
+@override@JsonKey(name: 'total_patients') final  int totalPatients;
+ final  List<DoctorScheduleModel> _schedules;
+@override@JsonKey(name: 'doctor_schedules') List<DoctorScheduleModel> get schedules {
+  if (_schedules is EqualUnmodifiableListView) return _schedules;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_schedules);
+}
+
 // ── Nested Objects (dari PostgREST select=*,clinics(*),specializations(*)) ──
 // @JsonKey name WAJIB match nama tabel (plural) karena PostgREST
 // selalu pakai nama tabel sebagai JSON key untuk nested object.
@@ -275,16 +287,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DoctorModel&&(identical(other.id, id) || other.id == id)&&(identical(other.clinicId, clinicId) || other.clinicId == clinicId)&&(identical(other.specializationId, specializationId) || other.specializationId == specializationId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.experienceYears, experienceYears) || other.experienceYears == experienceYears)&&(identical(other.education, education) || other.education == education)&&(identical(other.consultationFee, consultationFee) || other.consultationFee == consultationFee)&&(identical(other.ratingAvg, ratingAvg) || other.ratingAvg == ratingAvg)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.clinic, clinic) || other.clinic == clinic)&&(identical(other.specialization, specialization) || other.specialization == specialization));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DoctorModel&&(identical(other.id, id) || other.id == id)&&(identical(other.clinicId, clinicId) || other.clinicId == clinicId)&&(identical(other.specializationId, specializationId) || other.specializationId == specializationId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.experienceYears, experienceYears) || other.experienceYears == experienceYears)&&(identical(other.education, education) || other.education == education)&&(identical(other.consultationFee, consultationFee) || other.consultationFee == consultationFee)&&(identical(other.ratingAvg, ratingAvg) || other.ratingAvg == ratingAvg)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.totalPatients, totalPatients) || other.totalPatients == totalPatients)&&const DeepCollectionEquality().equals(other._schedules, _schedules)&&(identical(other.clinic, clinic) || other.clinic == clinic)&&(identical(other.specialization, specialization) || other.specialization == specialization));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,clinicId,specializationId,fullName,photoUrl,description,experienceYears,education,consultationFee,ratingAvg,ratingCount,isActive,createdAt,updatedAt,clinic,specialization);
+int get hashCode => Object.hash(runtimeType,id,clinicId,specializationId,fullName,photoUrl,description,experienceYears,education,consultationFee,ratingAvg,ratingCount,isActive,createdAt,updatedAt,totalPatients,const DeepCollectionEquality().hash(_schedules),clinic,specialization);
 
 @override
 String toString() {
-  return 'DoctorModel(id: $id, clinicId: $clinicId, specializationId: $specializationId, fullName: $fullName, photoUrl: $photoUrl, description: $description, experienceYears: $experienceYears, education: $education, consultationFee: $consultationFee, ratingAvg: $ratingAvg, ratingCount: $ratingCount, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, clinic: $clinic, specialization: $specialization)';
+  return 'DoctorModel(id: $id, clinicId: $clinicId, specializationId: $specializationId, fullName: $fullName, photoUrl: $photoUrl, description: $description, experienceYears: $experienceYears, education: $education, consultationFee: $consultationFee, ratingAvg: $ratingAvg, ratingCount: $ratingCount, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, totalPatients: $totalPatients, schedules: $schedules, clinic: $clinic, specialization: $specialization)';
 }
 
 
@@ -295,7 +307,7 @@ abstract mixin class _$DoctorModelCopyWith<$Res> implements $DoctorModelCopyWith
   factory _$DoctorModelCopyWith(_DoctorModel value, $Res Function(_DoctorModel) _then) = __$DoctorModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(name: 'clinic_id') String clinicId,@JsonKey(name: 'specialization_id') String specializationId,@JsonKey(name: 'full_name') String fullName,@JsonKey(name: 'photo_url') String? photoUrl, String? description,@JsonKey(name: 'experience_years') int experienceYears, String? education,@JsonKey(name: 'consultation_fee') double consultationFee,@JsonKey(name: 'rating_avg') double ratingAvg,@JsonKey(name: 'rating_count') int ratingCount,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt,@JsonKey(name: 'clinics') ClinicModel? clinic,@JsonKey(name: 'specializations') SpecializationModel? specialization
+ String id,@JsonKey(name: 'clinic_id') String clinicId,@JsonKey(name: 'specialization_id') String specializationId,@JsonKey(name: 'full_name') String fullName,@JsonKey(name: 'photo_url') String? photoUrl, String? description,@JsonKey(name: 'experience_years') int experienceYears, String? education,@JsonKey(name: 'consultation_fee') double consultationFee,@JsonKey(name: 'rating_avg') double ratingAvg,@JsonKey(name: 'rating_count') int ratingCount,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt,@JsonKey(name: 'total_patients') int totalPatients,@JsonKey(name: 'doctor_schedules') List<DoctorScheduleModel> schedules,@JsonKey(name: 'clinics') ClinicModel? clinic,@JsonKey(name: 'specializations') SpecializationModel? specialization
 });
 
 
@@ -312,7 +324,7 @@ class __$DoctorModelCopyWithImpl<$Res>
 
 /// Create a copy of DoctorModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? clinicId = null,Object? specializationId = null,Object? fullName = null,Object? photoUrl = freezed,Object? description = freezed,Object? experienceYears = null,Object? education = freezed,Object? consultationFee = null,Object? ratingAvg = null,Object? ratingCount = null,Object? isActive = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? clinic = freezed,Object? specialization = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? clinicId = null,Object? specializationId = null,Object? fullName = null,Object? photoUrl = freezed,Object? description = freezed,Object? experienceYears = null,Object? education = freezed,Object? consultationFee = null,Object? ratingAvg = null,Object? ratingCount = null,Object? isActive = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? totalPatients = null,Object? schedules = null,Object? clinic = freezed,Object? specialization = freezed,}) {
   return _then(_DoctorModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,clinicId: null == clinicId ? _self.clinicId : clinicId // ignore: cast_nullable_to_non_nullable
@@ -328,7 +340,9 @@ as double,ratingCount: null == ratingCount ? _self.ratingCount : ratingCount // 
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,clinic: freezed == clinic ? _self.clinic : clinic // ignore: cast_nullable_to_non_nullable
+as DateTime?,totalPatients: null == totalPatients ? _self.totalPatients : totalPatients // ignore: cast_nullable_to_non_nullable
+as int,schedules: null == schedules ? _self._schedules : schedules // ignore: cast_nullable_to_non_nullable
+as List<DoctorScheduleModel>,clinic: freezed == clinic ? _self.clinic : clinic // ignore: cast_nullable_to_non_nullable
 as ClinicModel?,specialization: freezed == specialization ? _self.specialization : specialization // ignore: cast_nullable_to_non_nullable
 as SpecializationModel?,
   ));

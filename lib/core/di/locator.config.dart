@@ -66,6 +66,8 @@ import 'package:health_pal/features/doctor/domain/repository/doctor_repository.d
     as _i506;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctor_detail_usecase.dart'
     as _i430;
+import 'package:health_pal/features/doctor/domain/usecase/get_doctor_schedules_usecase.dart'
+    as _i1002;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctor_slots_usecase.dart'
     as _i151;
 import 'package:health_pal/features/doctor/domain/usecase/get_doctors_usecase.dart'
@@ -252,6 +254,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i430.GetDoctorDetailUseCase>(
       () => _i430.GetDoctorDetailUseCase(gh<_i506.DoctorRepository>()),
     );
+    gh.factory<_i1002.GetDoctorSchedulesUseCase>(
+      () => _i1002.GetDoctorSchedulesUseCase(gh<_i506.DoctorRepository>()),
+    );
     gh.factory<_i151.GetDoctorSlotsUseCase>(
       () => _i151.GetDoctorSlotsUseCase(gh<_i506.DoctorRepository>()),
     );
@@ -278,12 +283,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i372.NotificationCubit>(
       () => _i372.NotificationCubit(gh<_i411.GetNotificationsUseCase>()),
-    );
-    gh.factory<_i469.DoctorDetailCubit>(
-      () => _i469.DoctorDetailCubit(
-        gh<_i430.GetDoctorDetailUseCase>(),
-        gh<_i151.GetDoctorSlotsUseCase>(),
-      ),
     );
     gh.factory<_i995.GetNearbyClinicsUseCase>(
       () => _i995.GetNearbyClinicsUseCase(gh<_i754.LocRepository>()),
@@ -327,6 +326,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1053.SettingsCubit(
         gh<_i768.SettingsRepository>(),
         gh<_i605.AppServices>(),
+      ),
+    );
+    gh.factory<_i469.DoctorDetailCubit>(
+      () => _i469.DoctorDetailCubit(
+        gh<_i430.GetDoctorDetailUseCase>(),
+        gh<_i1002.GetDoctorSchedulesUseCase>(),
       ),
     );
     gh.factory<_i516.ProfileCubit>(

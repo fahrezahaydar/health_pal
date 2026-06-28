@@ -11,14 +11,13 @@ class ReviewsHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Reviews', style: AppTextTheme.titleLarge),
-        TextButton(
-          onPressed: null,
-          style: TextButton.styleFrom(
-            foregroundColor: AppTheme.grey400,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+        Text('Reviews', style: AppTextTheme.headlineLarge),
+        GestureDetector(
+          onTap: null,
+          child: Text(
+            'See All',
+            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey400),
           ),
-          child: const Text('See All'),
         ),
       ],
     );

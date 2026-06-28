@@ -12,27 +12,18 @@ class WorkingTimeSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
-        Text('Working Time', style: AppTextTheme.titleLarge),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.grey200),
-          ),
-          child: Text(
-            workingTimeDisplay ?? 'No schedule available',
-            style: AppTextTheme.bodySmall.copyWith(
-              fontStyle: workingTimeDisplay == null
-                  ? FontStyle.italic
-                  : FontStyle.normal,
-              color: workingTimeDisplay == null
-                  ? AppTheme.grey400
-                  : AppTheme.grey700,
-            ),
+        Text('Working Time', style: AppTextTheme.headlineLarge),
+        Text(
+          workingTimeDisplay ?? 'No schedule available',
+          style: AppTextTheme.bodySmall.copyWith(
+            fontStyle: workingTimeDisplay == null
+                ? FontStyle.italic
+                : FontStyle.normal,
+            color: workingTimeDisplay == null
+                ? AppTheme.grey400
+                : AppTheme.grey500,
           ),
         ),
       ],

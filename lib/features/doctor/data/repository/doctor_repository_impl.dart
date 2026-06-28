@@ -48,13 +48,15 @@ class DoctorRepositoryImpl implements DoctorRepository {
       final remote = await _remote.getDoctorDetail(doctorId);
       return Result.success(remote.toEntity());
     } catch (e) {
+      print(e);
       return Result.failure(const ErrorHandler().map(e));
     }
   }
 
   @override
   Future<Result<List<DoctorScheduleEntity>>> getDoctorSchedules(
-      String doctorId) async {
+    String doctorId,
+  ) async {
     try {
       final remote = await _remote.getDoctorSchedules(doctorId);
       return Result.success(remote.map((m) => m.toEntity()).toList());
