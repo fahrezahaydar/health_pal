@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -42,10 +44,12 @@ class _LocView extends StatefulWidget {
 class _LocViewState extends State<_LocView> {
   final _carouselController = ScrollController();
   String? _lastAutoScrolledId;
+  Timer? _snapTimer;
 
   @override
   void initState() {
     super.initState();
+    _carouselController.addListener(_onCarouselScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<LocCubit>().requestLocationAndLoad();
@@ -54,8 +58,16 @@ class _LocViewState extends State<_LocView> {
 
   @override
   void dispose() {
+    _snapTimer?.cancel();
+    _carouselController.removeListener(_onCarouselScroll);
     _carouselController.dispose();
     super.dispose();
+  }
+
+  void _onCarouselScroll() {
+    if (!_carouselController.hasClients) return;
+    _snapTimer?.cancel();
+    _snapTimer = Timer(const Duration(milliseconds: 80), _snapCarousel);
   }
 
   void _snapCarousel() {
@@ -128,33 +140,27 @@ class _LocViewState extends State<_LocView> {
   }) {
     return SizedBox(
       height: _kCarouselHeight,
-      child: NotificationListener<ScrollEndNotification>(
-        onNotification: (_) {
-          _snapCarousel();
-          return false;
+      child: ListView.builder(
+        controller: _carouselController,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(left: _kCardSpacing),
+        itemCount: clinics.length,
+        itemExtent: _kItemStep,
+        itemBuilder: (context, i) {
+          final c = clinics[i];
+          return Padding(
+            padding: const EdgeInsets.only(right: _kCardSpacing),
+            child: ClinicCard(
+              clinic: c,
+              width: _kCardWidth,
+              isSelected: c.id == selectedClinicId,
+              onTap: onTap != null ? () => onTap(c) : null,
+              onFavoriteTap: onFavoriteTap != null
+                  ? () => onFavoriteTap(c.id)
+                  : null,
+            ),
+          );
         },
-        child: ListView.builder(
-          controller: _carouselController,
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: _kCardSpacing),
-          itemCount: clinics.length,
-          itemExtent: _kItemStep,
-          itemBuilder: (context, i) {
-            final c = clinics[i];
-            return Padding(
-              padding: const EdgeInsets.only(right: _kCardSpacing),
-              child: ClinicCard(
-                clinic: c,
-                width: _kCardWidth,
-                isSelected: c.id == selectedClinicId,
-                onTap: onTap != null ? () => onTap(c) : null,
-                onFavoriteTap: onFavoriteTap != null
-                    ? () => onFavoriteTap(c.id)
-                    : null,
-              ),
-            );
-          },
-        ),
       ),
     );
   }
@@ -203,8 +209,7 @@ class _LocViewState extends State<_LocView> {
   ) {
     final cubit = context.read<LocCubit>();
 
-    if (selectedClinicId != null &&
-        selectedClinicId != _lastAutoScrolledId) {
+    if (selectedClinicId != null && selectedClinicId != _lastAutoScrolledId) {
       _lastAutoScrolledId = selectedClinicId;
       final idx = _findClinicIndex(selectedClinicId, clinics);
       if (idx >= 0) {
@@ -251,9 +256,9 @@ class _LocViewState extends State<_LocView> {
                 selectedClinicId: selectedClinicId,
                 onTap: (clinic) {
                   cubit.selectClinic(clinic.id);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(clinic.name)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(clinic.name)));
                 },
                 onFavoriteTap: (id) => cubit.toggleFavorite(id),
               ),
