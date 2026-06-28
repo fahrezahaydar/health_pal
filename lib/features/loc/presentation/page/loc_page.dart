@@ -4,15 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/button/primary_button.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
 import '../../domain/entity/clinic_entity.dart';
 import '../widget/loc_map_widget.dart';
+import '../widget/loc_permission_denied.dart';
 import '../widget/loc_skeleton.dart';
 import '../../../../widgets/card/clinic_card.dart';
 
@@ -60,9 +59,10 @@ class _LocViewState extends State<_LocView> {
       body: BlocBuilder<LocCubit, LocState>(
         builder: (context, state) {
           return switch (state) {
-            LocPermissionDenied(:final reason) => _permissionDenied(
-              context,
-              reason,
+            LocPermissionDenied(:final reason) => LocPermissionDeniedWidget(
+              reason: reason,
+              onRetry: () =>
+                  context.read<LocCubit>().requestLocationAndLoad(),
             ),
             LocError(:final message) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
@@ -191,71 +191,4 @@ class _LocViewState extends State<_LocView> {
     );
   }
 
-  Widget _permissionDenied(BuildContext context, String reason) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppTheme.lightPink,
-            ),
-            child: const Icon(
-              AppIcons.locationDisabled,
-              size: 60,
-              color: AppTheme.darkRed,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text('Izin Lokasi Diperlukan', style: AppTextTheme.titleLarge),
-          const SizedBox(height: 8),
-          Text(
-            reason,
-            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: LightFilledButton(
-              label: 'Izinkan Lokasi',
-              onTap: () => context.read<LocCubit>().requestLocationAndLoad(),
-            ),
-          ),
-          const SizedBox(height: 32),
-          const Row(
-            children: [
-              Expanded(child: Divider()),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text('atau', style: TextStyle(color: AppTheme.grey400)),
-              ),
-              Expanded(child: Divider()),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text('Cari Klinik Berdasarkan Kota', style: AppTextTheme.titleLarge),
-          const SizedBox(height: 12),
-          TextField(
-            decoration: const InputDecoration(
-              hintText: 'Masukkan nama kota',
-              prefixIcon: Icon(AppIcons.search),
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (city) {
-              if (city.trim().isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Mencari klinik di $city...')),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
 }
