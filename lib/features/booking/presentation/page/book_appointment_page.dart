@@ -230,6 +230,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
 
           disableModePicker: true,
           modePickerTextHandler: ({required DateTime monthDate, bool? isMonthPicker}) {
+            if (isMonthPicker == true) return null;
             const months = [
               'January', 'February', 'March', 'April', 'May', 'June',
               'July', 'August', 'September', 'October', 'November', 'December',
