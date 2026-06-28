@@ -551,6 +551,223 @@ Secara teori, user bisa cancel via raw `UPDATE appointments SET status='cancelle
 | Time-based cancel validation | 0 | ❌ No implementation, no PRD spec |
 | Error handling for FunctionException | 0 | ❌ ErrorHandler tidak cover |
 
+### 5.8 Detail Lanjutan — Cancel Appointment Atomicity (Re-Verification 29 Jun 2026)
+
+**Konteks:** Audit lanjutan difokuskan menjawab 2 pertanyaan:
+- (a) Apakah cancel via RPC/Edge Function **atomic** (booking + slot release dalam 1 transaction), atau via raw PostgREST update (rentan gap)?
+- (b) Apakah `cancelled_at` di-auto-set oleh server, atau harus dikirim client?
+
+#### 5.8.1 Bukti Kode Flutter — Cancel Call Path
+
+**Tombol "Batalkan" di UI** (`booking_detail_page.dart:244-312`):
+```dart
+// Line 244-253: tombol batal
+if (canCancel)
+  SizedBox(
+    width: double.infinity,
+    child: LightFilledButton(
+      label: 'Batalkan Appointment',
+      backgroundColor: AppTheme.darkRed,
+      onTap: () => _confirmCancel(context, appt),
+    ),
+  ),
+```
+
+**Handler `_confirmCancel`** (`booking_detail_page.dart:260-312`):
+```dart
+Future<void> _confirmCancel(BuildContext context, AppointmentEntity appt) async {
+  // ... dialog konfirmasi ...
+  if (confirmed != true || !context.mounted) return;
+  await AppLoadingDialog.show(context);
+  // ...
+  final cubit = context.read<BookingDetailCubit>();
+  await cubit.cancelAppointment(
+    appointmentId: appt.id,
+    cancellationReason: reasonController.text.trim().isEmpty
+        ? null
+        : reasonController.text.trim(),
+  );
+  // ...
+}
+```
+
+**Datasource `cancelAppointment`** (`booking_remote_datasource.dart:111-156`):
+```dart
+Future<AppointmentModel> cancelAppointment({
+  required String appointmentId,
+  String? cancellationReason,
+}) async {
+  final response = await _client.functions.invoke(
+    'cancel-appointment',                        // ← Edge Function path
+    body: {
+      'appointment_id': appointmentId,
+      'cancellation_reason': cancellationReason,
+    },
+  );
+  // ...
+}
+```
+
+**Verifikasi:** Flutter code menggunakan path **Edge Function invoke** (`_client.functions.invoke('cancel-appointment', ...)`), **BUKAN** raw update via `_client.from('appointments').update(...)`. **Intent developer sudah benar** — mereka bermaksud pakai atomic backend function. ❌ **TAPI** target Edge Function tidak ada di server (lihat §5.2 dan §5.8.2).
+
+#### 5.8.2 Bukti Backend — Edge Function & RPC Status
+
+| Check | Command | Result |
+|-------|---------|--------|
+| Edge Function files | `Get-ChildItem supabase/functions -Recurse` | **EMPTY** (no files) |
+| HTTP POST | `POST /functions/v1/cancel-appointment` | **404 Not Found** |
+| RPC functions | `select routine_name from information_schema.routines where routine_name ilike '%cancel%' and routine_schema = 'public'` | **0 rows** |
+| `pg_proc` | `select proname from pg_proc where proname ilike '%cancel%'` | **0 rows** |
+
+**Kesimpulan:** Tidak ada RPC `cancel_appointment`. Tidak ada Edge Function `cancel-appointment`. **Cancel hari ini bukan raw update — cancel hari ini benar-benar tidak bisa terjadi** (Flutter invoke 404 → `FunctionException`).
+
+#### 5.8.3 Bukti Schema — `cancelled_at` Column & Auto-Set Trigger
+
+**Kolom `cancelled_at`:**
+```sql
+-- information_schema.columns output
+column_name: cancelled_at
+data_type:  timestamp with time zone
+is_nullable: YES
+column_default: NULL      -- ⚠️ TIDAK ADA default value
+```
+
+**Semua trigger di tabel `appointments`:**
+
+| Trigger Name | Function | Event | Auto-set `cancelled_at`? |
+|--------------|----------|-------|:-----------------------:|
+| `trg_appointments_sync_slot` | `sync_slot_booking` | INSERT/UPDATE/DELETE | ❌ |
+| `trg_appointments_updated_at` | `set_updated_at` | UPDATE (BEFORE) | ❌ (cuma set `updated_at`) |
+| `trg_slot_booked_on_appointment` | `set_slot_booked_on_appointment` | INSERT (AFTER) | ❌ |
+| `trg_slot_unbooked_on_cancellation` | `set_slot_booked_on_appointment` | UPDATE OF status WHEN new.status='cancelled' | ❌ (cuma set slot `is_booked=false`) |
+
+**🔴 CRITICAL FINDING:** **TIDAK ADA trigger yang auto-set `cancelled_at = now()`** saat status berubah ke `'cancelled'`. Kolom `cancelled_at` ada dengan default `NULL` dan **harus di-set explicit** oleh caller (Edge Function, RPC, atau raw update).
+
+**Function source `set_slot_booked_on_appointment` (diverifikasi):**
+```sql
+-- pg_proc.prosrc output
+if tg_op = 'INSERT' then
+  update public.doctor_slots set is_booked = true where id = new.slot_id;
+  return new;
+elsif tg_op = 'UPDATE' and new.status = 'cancelled' then
+  update public.doctor_slots set is_booked = false where id = old.slot_id;
+  return new;
+end if;
+```
+
+Trigger ini handle **slot release** tapi **TIDAK** handle timestamp `cancelled_at` di row appointment.
+
+#### 5.8.4 Implikasi Gap Atomicity — Skenario Teoritis
+
+**Sample data aktual** (untuk ilustrasi):
+```sql
+-- Hasil query 29 Jun 2026
+appointment_id                      | status  | cancelled_at | slot_id                            | is_booked
+------------------------------------|---------|--------------|------------------------------------|----------
+432d07e1-78b7-4068-adca-ecedebd7249c | pending | null         | 3d82aa44-2fe8-4af7-96c7-099475990f3b | false
+d87f9e2d-d827-47a0-b550-312d8bd28468 | pending | null         | 3d82aa44-2fe8-4af7-96c7-099475990f3b | false
+```
+
+**Skenario 1 — Jika Edge Function Diimplementasikan (correct atomic path):**
+```
+[Flutter] POST /functions/v1/cancel-appointment {appointment_id, cancellation_reason}
+  ↓
+[Edge Function / RPC] BEGIN transaction
+  - SELECT ... FROM appointments WHERE id=X AND patient_id=Y AND status IN (pending, upcoming) FOR UPDATE
+  - UPDATE appointments SET status='cancelled', cancelled_at=now(), cancellation_reason=? WHERE id=X
+  - Trigger trg_slot_unbooked_on_cancellation fires → UPDATE doctor_slots SET is_booked=false
+  - INSERT INTO notifications ... (booking_cancelled)
+  COMMIT
+  ↓
+[Response] { success: true, data: {id, status, cancelled_at, cancellation_reason} }
+```
+✅ **Atomic, semua 4 perubahan dalam 1 transaction.** Slot release aman, `cancelled_at` ter-set, notification tercatat.
+
+**Skenario 2 — Jika Developer "Nakal" Pakai Raw Update 2 Statement Tanpa Transaction:**
+
+❌ **SALAH** — contoh kode hipotetis yang harus dihindari:
+```dart
+// ❌ JANGAN — 2 call terpisah, no transaction
+await _client.from('appointments').update({
+  'status': 'cancelled',
+  'cancelled_at': DateTime.now().toIso8601String(),
+  'cancellation_reason': reason,
+}).eq('id', appointmentId);
+
+await _client.from('doctor_slots').update({
+  'is_booked': false,
+}).eq('id', slotId);
+```
+
+**Gap analysis Skenario 2:**
+
+| Sub-skenario | State Akhir | Severity |
+|--------------|-------------|:--------:|
+| ✅ Kedua call sukses | status=cancelled, is_booked=false, cancelled_at ter-set | OK |
+| ⚠️ Call 1 sukses, call 2 gagal (network drop) | status=cancelled, **is_booked MASIH true** | 🔴 **SLOT LEAK** — slot dianggap booked selamanya sampai admin reset manual |
+| ⚠️ Call 1 sukses, app crash sebelum call 2 | Sama seperti di atas | 🔴 **SLOT LEAK** |
+| ⚠️ Call 1 gagal (network), call 2 sukses | status=pending, is_booked=false | 🟡 **INCONSISTENT** — slot available untuk user lain tapi appointment masih aktif (double booking risk jika user lain booking) |
+
+**Mitigasi yang SEBAIKNYA dilakukan (jika raw update dipaksakan):**
+
+Untungnya, DB triggers yang sudah ada (`trg_appointments_sync_slot` & `trg_slot_unbooked_on_cancellation`) **sudah handle slot release otomatis** saat row `appointments` di-UPDATE dengan `status='cancelled'`. Jadi **asalkan 1 statement raw update** yang set `status='cancelled'` (dengan `cancelled_at` di body), slot release akan terjadi via trigger secara atomic dalam transaction yang sama:
+
+```dart
+// ✅ Bisa, tapi BUKAN best practice — 1 statement, trigger handle slot release
+await _client.from('appointments').update({
+  'status': 'cancelled',
+  'cancelled_at': DateTime.now().toIso8601String(),
+  'cancellation_reason': reason,
+}).eq('id', appointmentId).eq('patient_id', patientId);
+```
+
+**Akan aman** karena PostgreSQL jalankan UPDATE + trigger dalam 1 implicit transaction. **TAPI** masih ada gap lain: tidak ada validasi ownership server-side (RLS `USING` clause handle, tapi `WITH CHECK` tidak ada — lihat M-1), tidak ada validasi status transition (user bisa update `cancelled → pending`), tidak ada FCM notification, dan **bisa di-bypass RLS** jika developer lupa pakai `.eq('patient_id', ...)`.
+
+#### 5.8.5 Verdict Detail Lanjutan
+
+| Aspek | Temuan | Verdict |
+|-------|--------|:-------:|
+| Cancel call path (Flutter) | `_client.functions.invoke('cancel-appointment', ...)` — Edge Function, **BUKAN raw update** | ✅ Intent benar |
+| Backend implementation | Edge Function 404, no RPC, no implementation | 🔴 Broken |
+| `cancelled_at` auto-set | **TIDAK ADA trigger** yang set `cancelled_at = now()` | 🔴 Missing |
+| Atomicity if implemented as single-statement raw update | Trigger DB sudah handle slot release via `trg_appointments_sync_slot` & `trg_slot_unbooked_on_cancellation` | 🟡 Mitigated (tapi bukan best practice) |
+| Atomicity if implemented as 2-statement raw update | **SLOT LEAK risk** atau **double booking risk** jika salah satu call gagal | 🔴 Vulnerable |
+
+**Kesimpulan:** Cancel saat ini **bukan raw update** (Flutter sudah benar). Tapi karena backend tidak ada, gap yang dievaluasi adalah: **(a) ketika implementor menambahkan Edge Function / RPC, mereka HARUS explicit set `cancelled_at` di SQL, dan (b) `cancelled_at` HARUS auto-set atau dibuat `DEFAULT now()` + di-trim oleh trigger untuk safety net.**
+
+#### 5.8.6 Rekomendasi Spesifik
+
+1. **Saat implement Edge Function / RPC `cancel_appointment`:**
+   ```sql
+   -- WAJIB ada explicit set
+   update appointments set
+     status = 'cancelled',
+     cancelled_at = now(),  -- ← explicit, jangan lupa
+     cancellation_reason = p_cancellation_reason
+   where id = p_appointment_id;
+   ```
+
+2. **Tambah safety net di DB** (alternatif/ tambahan — tidak replace #1):
+   ```sql
+   -- Migration 014: trigger auto-set cancelled_at
+   create or replace function public.set_cancelled_at()
+   returns trigger as $$
+   begin
+     if new.status = 'cancelled' and old.status <> 'cancelled' and new.cancelled_at is null then
+       new.cancelled_at = now();
+     end if;
+     return new;
+   end;
+   $$ language plpgsql;
+
+   create trigger trg_appointments_set_cancelled_at
+     before update on public.appointments
+     for each row execute function public.set_cancelled_at();
+   ```
+   Ini jaring pengaman jika developer lupa explicit set. **Lokal aman:** trigger ini `BEFORE UPDATE` — jika caller sudah set `cancelled_at`, trigger tidak override.
+
+3. **Avoid raw update dari Flutter.** Pakai RPC function (atomic) atau Edge Function. Jika dipaksa raw update, **WAJIB single-statement** + trust DB trigger untuk slot release.
+
 ---
 
 ## 6. Cross-Cutting Findings
@@ -613,6 +830,7 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 | **C-1** | **No DB-level double-booking protection.** Partial unique index `idx_appointments_active_slot` dari migration 010 tidak ter-apply. RPC `create_appointment` punya TOCTOU vulnerability (check `is_booked` lalu insert tanpa row lock). **Test confirmed: 2 INSERTs untuk slot sama dari patient berbeda keduanya sukses.** | `supabase/migrations/010_slot_booked_trigger.sql` (index creation), `010_slot_booked_trigger.sql:42-125` (RPC function) | 🔴 Critical |
 | **C-2** | **`cancel-appointment` Edge Function does not exist.** `supabase/functions/` kosong. HTTP POST return 404. Cancel flow 100% broken dari sisi backend. | `supabase/functions/cancel-appointment/` (tidak ada), `lib/features/booking/data/datasource/booking_remote_datasource.dart:111-156` (call site) | 🔴 Critical |
 | **C-3** | **`is_booked` inconsistent dengan appointments existing.** 2 slot di DB punya `is_booked = false` tapi punya multiple active appointments (4 dan 2 duplikat). Dampak: `getDoctorSlots` filter salah, slot dianggap available padahal booked. | DB existing data; trigger `trg_appointments_sync_slot` (001) dan `trg_slot_booked_on_appointment` (010) — kemungkinan trigger ditambahkan setelah data lama, atau ada reset manual | 🔴 Critical |
+| **C-4** | **No auto-set trigger untuk `cancelled_at` saat status berubah ke `'cancelled'`.** Kolom ada dengan default `NULL`, **tidak ada** trigger `BEFORE/AFTER UPDATE` yang set `cancelled_at = now()`. Dampak: jika backend cancel jadi diimplementasikan tapi developer lupa explicit set `cancelled_at` (atau pakai raw update tanpa field ini), row akan punya `status='cancelled'` tapi `cancelled_at=NULL` → `StatusTimeline` UI tidak bisa render timestamp pembatalan. **Safety net wajib** sebelum backend cancel jadi online. | DB schema (tidak ada trigger); `supabase/migrations/001_initial_schema.sql`, `010_slot_booked_trigger.sql` (tidak include) | 🔴 Critical |
 
 ### 7.2 🟡 Medium (Significant but Workaround Exists)
 
@@ -621,7 +839,7 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 | **M-1** | **No `WITH CHECK` on UPDATE RLS policy** untuk appointments. RLS hanya validate old row state, bukan new row state. User bisa flip status `cancelled` → `pending` jika somehow ada raw update path. | `supabase/migrations/001_initial_schema.sql:292-297` | 🟡 Medium |
 | **M-2** | **RPC custom error codes tidak ter-expose ke client.** `RAISE EXCEPTION 'SLOT_ALREADY_BOOKED'` jadi generic `P0001` → `FailureCode.serverError`. User tidak tahu apakah retry aman. | `supabase/migrations/010_slot_booked_trigger.sql:61-83`, `lib/core/network/error_handler.dart:55-61` | 🟡 Medium |
 | **M-3** | **`FunctionException` tidak di-handle di ErrorHandler.** Cancel flow (jika function existed) akan crash handler dengan `FailureCode.unknown`. | `lib/core/network/error_handler.dart:45-53` | 🟡 Medium |
-| **M-4** | **Cancel via direct PostgREST** (jika Flutter diubah untuk pakai raw update) tidak set `cancelled_at` dan `cancellation_reason`. Timeline UI akan kehilangan timestamp. | `lib/features/booking/data/datasource/booking_remote_datasource.dart` (jika refactored) | 🟡 Medium |
+| **M-4** | **Theoretical: raw update 2-statement tanpa transaction** — jika developer di masa depan implement cancel via raw PostgREST 2 statement (appointments lalu doctor_slots), `SLOT LEAK` risk (kalau call 2 gagal) atau `DOUBLE BOOKING` risk (kalau call 1 gagal setelah call 2 sukses). Mitigated selama pakai single-statement + DB trigger (`trg_appointments_sync_slot` handle slot release). **Bukan masalah saat ini** (Flutter pakai Edge Function invoke), tapi catatan preventive. | (Hypothetical future code) | 🟡 Medium |
 | **M-5** | **`cancelAppointment` fallback datasource** (booking_remote_datasource.dart:142-156) panggil `getAppointmentDetail(patientId: '', ...)` — empty patientId akan trigger RLS deny dan return null model. | `lib/features/booking/data/datasource/booking_remote_datasource.dart:142-156` | 🟡 Medium |
 
 ### 7.3 🟢 Low (Cosmetic / Future-Proofing)
@@ -631,7 +849,7 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 | **L-1** | No ON DELETE behavior di FK `appointments.patient_id`, `doctor_id`, `slot_id`. Jika parent di-delete, appointment akan restrict (default). | `supabase/migrations/001_initial_schema.sql:108-122` | 🟢 Low |
 | **L-2** | No FCM notification trigger di `create_appointment` RPC. Booking success notifikasi tidak otomatis terkirim (per PRD §9). | `supabase/migrations/010_slot_booked_trigger.sql:42-125` (no notification insert) | 🟢 Low |
 | **L-3** | Nested select `doctors(...)` di `getAppointmentHistory`/`getAppointmentDetail` tidak include `is_active` filter — doctor inactive masih muncul. | `lib/features/booking/data/datasource/booking_remote_datasource.dart:68, 95` | 🟢 Low |
-| **L-4** | No time-window validation untuk cancel (H-1 dll). PRD tidak specify, business decision needed. | (Not implemented) | 🟢 Low |
+| **L-4** | No time-window validation untuk cancel (H-1 dll). PRD tidak specify, business decision needed. Default sementara **60 menit** sebelum jadwal sampai Product Owner konfirmasi. | (Not implemented, planned in cancel RPC) | 🟢 Low |
 | **L-5** | Default ordering by `created_at DESC` — untuk booking history UX lebih baik sort by `doctor_slots.slot_date DESC` (terbaru berdasarkan jadwal, bukan waktu input). | `lib/features/booking/data/datasource/booking_remote_datasource.dart:78-80` | 🟢 Low |
 
 ---
@@ -643,9 +861,9 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 | **1. Get List Appointment** | **88/100** | 🟢 | RLS + filter OK, nested data OK; minor: error handling RLS deny not distinguishable |
 | **2. Get Detail Appointment** | **85/100** | 🟢 | RLS + filter + maybeSingle OK; minor: data integrity issue (slot `is_booked` inkonsisten) |
 | **3. Create Appointment & Slot Locking** | **30/100** | 🔴 | RPC ada, tapi TOCTOU rentan; partial unique index missing; data sample sudah terekspos bug |
-| **4. Cancel Appointment & Slot Release** | **10/100** | 🔴 | Edge Function 404; tidak ada RPC cancel; cancel flow 100% broken |
+| **4. Cancel Appointment & Slot Release** | **15/100** | 🔴 | Edge Function 404; tidak ada RPC cancel; `cancelled_at` no auto-set trigger; Flutter intent benar (Edge Function call, bukan raw update) tapi target tidak ada |
 | **Cross-Cutting (Error Handling, FCM, FK)** | **40/100** | 🔴 | FunctionException unhandled, no FCM trigger, no ON DELETE |
-| **Skor Keseluruhan Backend** | **58/100** | 🔴 | **TIDAK LAYAK production** untuk fitur booking — wajib fix C-1, C-2, C-3 sebelum release |
+| **Skor Keseluruhan Backend** | **55/100** | 🔴 | **TIDAK LAYAK production** untuk fitur booking — wajib fix C-1, C-2, C-3, C-4 sebelum release. *Skor turun dari 58 → 55 karena tambahan finding C-4 (cancelled_at auto-set).* |
 
 ### 8.1 Quick Verdict
 
@@ -653,9 +871,10 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 |-------|---------|
 | Get list & detail (read path) | ✅ Solid, minor improvements |
 | Create booking (write path) | 🔴 **RENTAN RACE CONDITION** — data sample bukti |
-| Cancel booking (write path) | 🔴 **COMPLETELY BROKEN** — endpoint tidak ada |
+| Cancel booking (write path) | 🔴 **COMPLETELY BROKEN** — endpoint tidak ada + cancelled_at no auto-set safety net |
+| Cancel Flutter intent | ✅ Benar (Edge Function path, bukan raw update) |
 | Data integrity `is_booked` | 🔴 Inkonsisten, perlu reconciliation |
-| Production readiness | 🔴 **TIDAK LAYAK** sampai C-1, C-2, C-3 di-fix |
+| Production readiness | 🔴 **TIDAK LAYAK** sampai C-1, C-2, C-3, C-4 di-fix |
 
 ---
 
@@ -675,20 +894,25 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
    - Note: `FOR UPDATE` di dalam RPC function yang dipanggil via PostgREST sudah cukup karena PostgREST call dalam transaction context.
 
 3. **M-3 Fix: Implementasi `cancel-appointment` backend**
-   - **Opsi A (preferred):** Buat RPC `cancel_appointment(p_appointment_id uuid, p_cancellation_reason text default null) returns jsonb` di migration `013_cancel_appointment_rpc.sql`:
+   - **Opsi A (preferred):** Buat RPC `cancel_appointment(p_appointment_id uuid, p_cancellation_reason text default null, p_min_cancel_minutes int default 60) returns jsonb` di migration `013_cancel_appointment_rpc.sql`:
      ```sql
      create or replace function public.cancel_appointment(
-       p_appointment_id uuid, p_cancellation_reason text default null
+       p_appointment_id uuid,
+       p_cancellation_reason text default null,
+       p_min_cancel_minutes int default 60
      ) returns jsonb language plpgsql as $$
      declare
        v_appt appointments%rowtype;
        v_patient_id uuid;
+       v_slot_date date;
+       v_slot_start time;
+       v_minutes_until_slot int;
      begin
        -- Lookup patient
        select id into v_patient_id from user_profiles where auth_id = auth.uid();
        if not found then raise exception 'USER_PROFILE_NOT_FOUND'; end if;
 
-       -- Lock row
+       -- Lock row (atomic with subsequent update)
        select * into v_appt from appointments
          where id = p_appointment_id and patient_id = v_patient_id
          for update;
@@ -697,24 +921,74 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
          raise exception 'INVALID_STATUS_TRANSITION';
        end if;
 
-       -- Update
+       -- Time-window validation (default 60 minutes — L-4 placeholder until PO confirms)
+       select slot_date, slot_start into v_slot_date, v_slot_start
+       from doctor_slots where id = v_appt.slot_id;
+       v_minutes_until_slot := extract(epoch from (v_slot_date + v_slot_start - now())) / 60;
+       if v_minutes_until_slot < p_min_cancel_minutes then
+         raise exception 'CANCEL_WINDOW_EXPIRED';
+       end if;
+
+       -- Atomic update (trigger fires slot release)
        update appointments set
          status = 'cancelled',
-         cancelled_at = now(),
+         cancelled_at = now(),                            -- explicit set
          cancellation_reason = p_cancellation_reason,
          updated_at = now()
        where id = p_appointment_id;
 
-       -- Trigger will release slot
-       return (...);
+       -- Insert notification (out-of-scope audit, optional)
+       -- insert into notifications (...) values (..., 'booking_cancelled', ...);
+
+       return jsonb_build_object(
+         'id', v_appt.id,
+         'status', 'cancelled',
+         'cancelled_at', now(),
+         'cancellation_reason', p_cancellation_reason
+       );
      end; $$;
      ```
-   - **Opsi B:** Buat Edge Function di `supabase/functions/cancel-appointment/index.ts` (TS/Deno)
-   - Update `booking_remote_datasource.dart:111-156` untuk call RPC (atau Edge Function) yang baru.
+   - **Opsi B:** Buat Edge Function di `supabase/functions/cancel-appointment/index.ts` (TS/Deno) — logic sama, tapi pakai Deno + supabase-js admin client.
+   - **Update `booking_remote_datasource.dart:111-156`** untuk call RPC baru:
+     ```dart
+     final response = await _client.rpc<Map<String, dynamic>>(
+       'cancel_appointment',
+       params: {
+         'p_appointment_id': appointmentId,
+         'p_cancellation_reason': cancellationReason,
+         'p_min_cancel_minutes': 60,  // L-4 placeholder
+       },
+     );
+     ```
+   - Fix juga fallback `getAppointmentDetail(patientId: '', ...)` (line 142-156) — pass actual `patientId` atau hapus fetch ulang (langsung emit `BookingDetailLoaded` dengan refetch dari cubit).
 
 4. **M-4 Fix: Reconcile `is_booked` inkonsisten data**
    - `update public.doctor_slots s set is_booked = exists (select 1 from public.appointments a where a.slot_id = s.id and a.status in ('pending', 'upcoming'));`
    - Jalankan sebagai one-off cleanup.
+
+5. **🔴 C-4 Fix: Tambah safety-net trigger untuk auto-set `cancelled_at`**
+   - **WAJIB** apply SEBELUM backend cancel jadi online, agar data konsisten walau developer lupa.
+   - Migration `014_auto_set_cancelled_at.sql`:
+     ```sql
+     create or replace function public.set_cancelled_at()
+     returns trigger as $$
+     begin
+       -- Auto-set cancelled_at hanya jika transisi ke 'cancelled' dan field masih NULL
+       if new.status = 'cancelled'
+          and (old.status is null or old.status <> 'cancelled')
+          and new.cancelled_at is null then
+         new.cancelled_at = now();
+       end if;
+       return new;
+     end;
+     $$ language plpgsql;
+
+     create trigger trg_appointments_set_cancelled_at
+       before update on public.appointments
+       for each row execute function public.set_cancelled_at();
+     ```
+   - **Idempotent** — jika caller (Edge Function / RPC) sudah explicit set `cancelled_at`, trigger tidak override (cek `new.cancelled_at is null`).
+   - **Backward compatible** — `BEFORE UPDATE`, jadi cancel RPC yang sudah explicit set `cancelled_at = now()` tetap jalan tanpa perubahan.
 
 ### 9.2 🟡 SHOULD (Significant)
 
@@ -733,9 +1007,9 @@ API Contract §6.1 response message: "Booking berhasil dibuat. Menunggu konfirma
 
 ## 10. Open Questions untuk Product Owner
 
-1. **Cancel window:** Apakah ada aturan H-1/H-0 untuk cancel? PRD tidak specify. Wireframe juga tidak. Konfirmasi apakah cancel di menit-menit terakhir boleh tanpa penalty.
-2. **Notification trigger:** Apakah booking success / cancel harus trigger FCM otomatis dari DB, atau via Edge Function terpisah? Schema tidak implementasi keduanya.
-3. **Direct cancel via PostgREST:** Apakah acceptable user cancel via raw update (tanpa Edge Function)? Jika ya, perlu trigger untuk auto-set `cancelled_at`.
+1. **Cancel window:** Apakah ada aturan H-1/H-0 untuk cancel? PRD tidak specify. Wireframe juga tidak. **Saran default sementara: 60 menit** sebelum jadwal (`p_min_cancel_minutes int default 60`) — cukup reasonable untuk klinik kecil, tidak terlalu restrictive untuk pasien. Konfirmasi: berapa menit sebelum jadwal cancel masih allowed?
+2. **Notification trigger:** Apakah booking success / cancel harus trigger FCM otomatis dari DB, atau via Edge Function terpisah? Schema tidak implementasi keduanya. Implementasi notifikasi `booking_cancelled` di dalam RPC `cancel_appointment` (lihat §9.1 #3) optional — bisa di-defer ke Edge Function.
+3. **Direct cancel via PostgREST:** Flutter saat ini TIDAK pakai raw update (verified §5.8.1 — pakai `_client.functions.invoke`). Tapi sebagai defense-in-depth, **C-4 fix** (trigger auto-set `cancelled_at`) recommended agar konsisten walau pun ada path raw update di masa depan.
 
 ---
 

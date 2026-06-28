@@ -161,20 +161,24 @@ Cross-check query di DB menemukan **2 slot** yang punya `is_booked = false` pada
 | 1 | **Reconcile `is_booked` untuk slot existing** — update `is_booked = true` untuk slot yang punya appointment aktif. Cleanup duplicate: untuk slot `0bd15209-...` (4 rows) dan `3d82aa44-...` (2 rows), set semua ke `cancelled` kecuali 1. | Backend (SQL) | One-off `supabase db query` atau migration `011_reconcile_is_booked.sql` | 🔴 Critical | ⬜ |
 | 2 | **Tambah partial unique index** `idx_appointments_active_slot` di tabel `appointments(slot_id) WHERE status IN ('pending', 'upcoming')`. **WAJIB** pakai `create unique index concurrently` untuk avoid blocking writes, dan **HARUS** dijalankan setelah step #1 selesai. | Backend (SQL) | Migration baru `011_appointments_active_slot_index.sql` | 🔴 Critical | ⬜ |
 | 3 | **Tambah `FOR UPDATE` row lock** di RPC `create_appointment` agar atomic check + insert. Ganti `select is_booked into v_slot_booked from public.doctor_slots where id = p_slot_id;` → `... FOR UPDATE;` | Backend (SQL) | Migration `012_create_appointment_for_update.sql` (re-create function) | 🔴 Critical | ⬜ |
-| 4 | **Implementasi `cancel_appointment` backend**. **Opsi A (preferred):** RPC function `cancel_appointment(p_appointment_id uuid, p_cancellation_reason text default null) returns jsonb` dengan validasi ownership, status transition, dan update `cancelled_at` + `cancellation_reason`. **Opsi B:** Edge Function `supabase/functions/cancel-appointment/index.ts`. | Backend (SQL) | Migration `013_cancel_appointment_rpc.sql` (Opsi A) atau `supabase/functions/cancel-appointment/index.ts` (Opsi B) | 🔴 Critical | ⬜ |
-| 5 | **Update Flutter datasource** untuk call endpoint cancel yang baru. Ganti `_client.functions.invoke('cancel-appointment', ...)` → `_client.rpc('cancel_appointment', params: {...})` (jika Opsi A) atau tetap `functions.invoke` tapi ke function yang baru di-deploy (jika Opsi B). Fix fallback `getAppointmentDetail(patientId: '', ...)` (line 142-156) yang punya bug empty patientId. | Flutter | `lib/features/booking/data/datasource/booking_remote_datasource.dart` line 111-156 | 🔴 Critical | ⬜ |
-| 6 | **Tambah `WITH CHECK` clause** di RLS UPDATE policy `appointments` agar new row state juga divalidasi. Saat ini hanya `USING` (old state). | Backend (SQL) | Migration `014_appointments_update_with_check.sql` | 🟡 Medium | ⬜ |
-| 7 | **Improve `ErrorHandler`** untuk map `P0001` (RAISE EXCEPTION) ke `FailureCode` yang spesifik berdasarkan substring `e.message` (SLOT_ALREADY_BOOKED, NOT_FOUND, dll). | Flutter | `lib/core/network/error_handler.dart` line 55-61 | 🟡 Medium | ⬜ |
-| 8 | **Tambah handling untuk `FunctionException`** di `ErrorHandler` (saat ini tidak ada). Pattern match `final FunctionException e => ...` dengan mapping berdasarkan HTTP status. | Flutter | `lib/core/network/error_handler.dart` line 45-53 | 🟡 Medium | ⬜ |
+| 4 | **Buat RPC/Edge Function `cancel_appointment` — atomic update `appointments.status` + `doctor_slots.is_booked` + auto-set `cancelled_at` + validasi ownership**. Lihat §"Detail Lanjutan Audit" — function **WAJIB**: (a) `SELECT ... FOR UPDATE` lock row, (b) `UPDATE appointments SET status='cancelled', cancelled_at=now(), cancellation_reason=?, updated_at=now()`, (c) trigger `trg_slot_unbooked_on_cancellation` otomatis release slot, (d) validasi ownership via `auth.uid()` → `user_profiles.id`, (e) validasi status transition `pending`/`upcoming` → `cancelled`, (f) return jsonb response. **Opsi A (preferred):** RPC `cancel_appointment(p_appointment_id uuid, p_cancellation_reason text default null, p_min_cancel_minutes int default 60) returns jsonb`. **Opsi B:** Edge Function `supabase/functions/cancel-appointment/index.ts`. | Backend (SQL/Edge Function) | `supabase/migrations/013_cancel_appointment_rpc.sql` (Opsi A) atau `supabase/functions/cancel-appointment/index.ts` (Opsi B) | 🔴 Critical | ⬜ |
+| 5 | **Ganti Flutter `cancelAppointment()` dari raw update / non-existent Edge Function ke panggil RPC `cancel_appointment` baru**. Ganti `_client.functions.invoke('cancel-appointment', ...)` → `_client.rpc('cancel_appointment', params: {'p_appointment_id': ..., 'p_cancellation_reason': ..., 'p_min_cancel_minutes': 60})`. Fix fallback `getAppointmentDetail(patientId: '', ...)` (line 142-156) yang punya bug empty patientId — pass actual `patientId` atau hapus fetch ulang (cubit akan re-fetch via `loadDetail` setelah cancel sukses). | Flutter | `lib/features/booking/data/datasource/booking_remote_datasource.dart` line 111-156 | 🔴 Critical | ⬜ |
+| 6 | **Tambah safety-net trigger `trg_appointments_set_cancelled_at`** yang auto-set `cancelled_at = now()` saat status transisi ke `'cancelled'` dan field masih NULL. **WAJIB** apply sebelum backend cancel jadi online. Idempotent — jika caller sudah explicit set, trigger tidak override. **Tambahan** untuk fix #4 — sebagai jaring pengaman agar `cancelled_at` konsisten walau developer lupa di RPC / pakai raw update. Detail di audit §5.8.6. | Backend (SQL) | Migration `014_auto_set_cancelled_at.sql` | 🔴 Critical | ⬜ |
+| 7 | **Tambah `WITH CHECK` clause** di RLS UPDATE policy `appointments` agar new row state juga divalidasi. Saat ini hanya `USING` (old state). | Backend (SQL) | Migration `015_appointments_update_with_check.sql` | 🟡 Medium | ⬜ |
+| 8 | **Improve `ErrorHandler`** untuk map `P0001` (RAISE EXCEPTION) ke `FailureCode` yang spesifik berdasarkan substring `e.message` (SLOT_ALREADY_BOOKED, NOT_FOUND, dll). | Flutter | `lib/core/network/error_handler.dart` line 55-61 | 🟡 Medium | ⬜ |
+| 9 | **Tambah handling untuk `FunctionException`** di `ErrorHandler` (saat ini tidak ada). Pattern match `final FunctionException e => ...` dengan mapping berdasarkan HTTP status. | Flutter | `lib/core/network/error_handler.dart` line 45-53 | 🟡 Medium | ⬜ |
+
+> **Catatan cancel window:** Item #4 (cancel RPC) akan diimplementasi dengan parameter `p_min_cancel_minutes int default 60` — **60 menit sebelum jadwal** dipakai sebagai placeholder sampai Product Owner konfirmasi aturan H-1/H-0 yang sebenarnya. Setelah konfirmasi, ubah default atau expose di UI sebagai policy. Implementasi di `cancel_appointment` RPC: `if (extract(epoch from (slot_date + slot_start - now())) / 60 < p_min_cancel_minutes) raise exception 'CANCEL_WINDOW_EXPIRED';`
 
 ### Urutan Eksekusi (Dependency)
 
 1. **#1** (cleanup) → **WAJIB sebelum** #2 (unique index)
 2. **#2** (partial unique index) → Independent setelah #1
 3. **#3** (FOR UPDATE) → Independent, bisa paralel dengan #4
-4. **#4** (cancel RPC) → Independent
+4. **#4** (cancel RPC) → Independent; **WAJIB sebelum** #6 (auto-set trigger) — karena trigger ini safety net for #4
 5. **#5** (Flutter update) → Tergantung #4 selesai
-6. **#6-#8** → Independent, polish
+6. **#6** (auto-set cancelled_at trigger) → Tergantung #4 (safety net for cancel flow)
+7. **#7-#9** → Independent, polish
 
 ---
 
@@ -184,7 +188,7 @@ Cross-check query di DB menemukan **2 slot** yang punya `is_booked = false` pada
 |---|----------|----------|:------:|
 | 1 | 2 user coba booking slot yang SAMA bersamaan (race condition) | Hanya 1 yang berhasil insert, yang lain dapat error `SLOT_ALREADY_BOOKED` (409) atau unique constraint violation | [ ] |
 | 2 | User yang sama double-klik "Konfirmasi Booking" 2x cepat | Hanya 1 appointment tercipta, yang lain dapat error | [ ] |
-| 3 | User cancel appointment status `pending` | Status jadi `cancelled`, `cancelled_at` terisi, slot kembali available untuk user lain | [ ] |
+| 3 | User cancel appointment status `pending` | Status jadi `cancelled`, `cancelled_at` terisi (server-side), slot kembali available untuk user lain | [ ] |
 | 4 | User cancel appointment status `upcoming` | Sama seperti #3 | [ ] |
 | 5 | User cancel appointment status `completed` | Ditolak dengan error `INVALID_STATUS_TRANSITION` (422) | [ ] |
 | 6 | User cancel appointment status `cancelled` (double-cancel) | Ditolak dengan error `INVALID_STATUS_TRANSITION` (422) | [ ] |
@@ -193,6 +197,9 @@ Cross-check query di DB menemukan **2 slot** yang punya `is_booked = false` pada
 | 9 | User query list appointments (semua status) | Hanya return appointments milik user tersebut, sort by `created_at DESC` | [ ] |
 | 10 | `is_booked` di `doctor_slots` sinkron dengan `appointments` active count | Setiap slot dengan appointment aktif punya `is_booked = true`; query `getDoctorSlots` tidak return slot yang sudah booked | [ ] |
 | 11 | 2 INSERTs langsung ke `appointments` table (bypass RPC) untuk slot sama | Partial unique index tolak yang ke-2 dengan error `unique_violation` (23505) | [ ] |
+| 12 | Cancel RPC dilakukan DAN trigger `trg_appointments_set_cancelled_at` auto-set `cancelled_at` jika NULL | Row `appointments.cancelled_at` selalu non-NULL setelah status jadi `cancelled`, walau caller lupa explicit set | [ ] |
+| 13 | User cancel appointment < 60 menit sebelum jadwal (default window) | Ditolak dengan error `CANCEL_WINDOW_EXPIRED` (placeholder — sesuaikan setelah Product Owner konfirmasi) | [ ] |
+| 14 | User cancel appointment ≥ 60 menit sebelum jadwal | Sukses, status jadi `cancelled`, `cancelled_at` terisi, slot ter-release | [ ] |
 
 ---
 
