@@ -223,6 +223,7 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
           currentDate: _selectedDate,
           firstDayOfWeek: 1,
           controlsHeight: 48,
+          disableModePicker: true,
           dayTextStyle: AppTextTheme.bodyMedium,
           selectedDayTextStyle: AppTextTheme.bodyMedium.copyWith(
             color: AppTheme.white,
@@ -237,6 +238,39 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
             color: AppTheme.grey500,
             fontWeight: FontWeight.w600,
           ),
+          dayBuilder: ({
+            required DateTime date,
+            TextStyle? textStyle,
+            BoxDecoration? decoration,
+            bool? isSelected,
+            bool? isDisabled,
+            bool? isToday,
+          }) {
+            final isWeekend = date.weekday == DateTime.saturday ||
+                date.weekday == DateTime.sunday;
+            final dayStyle = isWeekend
+                ? AppTextTheme.bodyMedium.copyWith(color: AppTheme.grey300)
+                : AppTextTheme.bodyMedium;
+            if (isSelected == true) {
+              return Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Text('${date.day}', style: AppTextTheme.bodyMedium.copyWith(
+                  color: AppTheme.white,
+                  fontWeight: FontWeight.bold,
+                )),
+              );
+            }
+            return Container(
+              margin: const EdgeInsets.all(4),
+              alignment: Alignment.center,
+              child: Text('${date.day}', style: dayStyle),
+            );
+          },
         ),
         value: [_selectedDate],
         onValueChanged: (dates) {
