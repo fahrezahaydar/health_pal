@@ -3,7 +3,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/entity/doctor_entity.dart';
-import '../../../domain/entity/doctor_slot_entity.dart';
+import '../../../domain/entity/doctor_schedule_entity.dart';
 
 sealed class DoctorDetailState extends Equatable {
   const DoctorDetailState();
@@ -22,33 +22,28 @@ class DoctorDetailLoading extends DoctorDetailState {
 
 class DoctorDetailLoaded extends DoctorDetailState {
   final DoctorEntity doctor;
-  final List<DoctorSlotEntity> sampleSlots;
-  final int availableSlotCount;
+  final List<DoctorScheduleEntity> schedules;
   final String? suggestedSlotId;
 
   const DoctorDetailLoaded({
     required this.doctor,
-    this.sampleSlots = const [],
-    this.availableSlotCount = 0,
+    this.schedules = const [],
     this.suggestedSlotId,
   });
 
   DoctorDetailLoaded copyWith({
     DoctorEntity? doctor,
-    List<DoctorSlotEntity>? sampleSlots,
-    int? availableSlotCount,
+    List<DoctorScheduleEntity>? schedules,
     String? suggestedSlotId,
   }) =>
       DoctorDetailLoaded(
         doctor: doctor ?? this.doctor,
-        sampleSlots: sampleSlots ?? this.sampleSlots,
-        availableSlotCount: availableSlotCount ?? this.availableSlotCount,
+        schedules: schedules ?? this.schedules,
         suggestedSlotId: suggestedSlotId ?? this.suggestedSlotId,
       );
 
   @override
-  List<Object?> get props =>
-      [doctor, sampleSlots, availableSlotCount, suggestedSlotId];
+  List<Object?> get props => [doctor, schedules, suggestedSlotId];
 }
 
 class DoctorDetailError extends DoctorDetailState {
