@@ -6,6 +6,22 @@
 
 ---
 
+## Task List (Run per Task)
+
+| Task | File | Deskripsi | Est. | Status |
+|------|------|-----------|------|--------|
+| **T1** | `loc_state.dart` | Hapus `selectedSpecialization`, `sortBy`. Tambah `searchKeyword`, `selectedClinicId` | 0.25 jam | ⏳ |
+| **T2** | `loc_cubit.dart` | Hapus `setFilter`, `setSortBy`, `_specializations`. Tambah `setSearchKeyword`, `selectClinic`. Update `_load()` | 0.5 jam | ⏳ |
+| **T3** | `loc_map_widget.dart` | Fullscreen layout, marker `Icons.location_on` (AppTheme.primary), selected state, smooth animation | 1.5 jam | ⏳ |
+| **T4** | `loc_page.dart` | **Full rewrite** - Stack layout, hapus slivers, tambah SearchBar + Carousel. Hapus AppBar total. | 3 jam | ⏳ |
+| **T5** | `clinic_card.dart` | Tambah `isSelected` parameter + visual highlight | 0.25 jam | ⏳ |
+| **T6** | — | `flutter analyze`, `build_runner`, visual verification | 1 jam | ⏳ |
+| | | **Total** | **6.5 jam** | |
+
+> Jalankan perintah: `Lanjut T1` / `Lanjut T2` / dst untuk eksekusi per task.
+
+---
+
 ## Ringkasan Perubahan
 
 | Aspek | Sebelum (v2.0) | Sesudah (v3.0) |
