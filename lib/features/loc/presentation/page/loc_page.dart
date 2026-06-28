@@ -1,9 +1,3 @@
-// lib/features/loc/presentation/page/loc_page.dart
-//
-// Halaman Loc (Nearby Clinics) — tab ke-3 bottom nav.
-// Per wireframe 07-location-search.md.
-// Pola: Stateless wrapper (BlocProvider) + Stateful view (logic + UI).
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,6 +14,11 @@ import '../bloc/loc_state.dart';
 import '../../domain/entity/clinic_entity.dart';
 import '../widget/loc_map_widget.dart';
 import '../../../../widgets/card/clinic_card.dart';
+
+const double _kCardWidth = 240;
+const double _kCardSpacing = 16;
+const double _kCarouselHeight = 210;
+const double _kItemStep = _kCardWidth + _kCardSpacing;
 
 class LocPage extends StatelessWidget {
   const LocPage({super.key});
@@ -41,6 +40,9 @@ class _LocView extends StatefulWidget {
 }
 
 class _LocViewState extends State<_LocView> {
+  final _carouselController = ScrollController();
+  String? _lastAutoScrolledId;
+
   @override
   void initState() {
     super.initState();
@@ -50,88 +52,50 @@ class _LocViewState extends State<_LocView> {
     });
   }
 
-  static const _radiusOptions = <double>[1, 3, 5, 10];
+  @override
+  void dispose() {
+    _carouselController.dispose();
+    super.dispose();
+  }
+
+  void _snapCarousel() {
+    if (!_carouselController.hasClients) return;
+    final offset = _carouselController.offset;
+    final snapped = (offset / _kItemStep).round() * _kItemStep;
+    final maxOffset = _carouselController.position.maxScrollExtent;
+    final clamped = snapped.clamp(0.0, maxOffset);
+    if (clamped != offset) {
+      _carouselController.animateTo(
+        clamped,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _scrollToIndex(int index) {
+    if (!_carouselController.hasClients) return;
+    final target = index * _kItemStep;
+    final maxOffset = _carouselController.position.maxScrollExtent;
+    final clamped = target.clamp(0.0, maxOffset);
+    _carouselController.animateTo(
+      clamped,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  int _findClinicIndex(String clinicId, List<ClinicEntity> clinics) {
+    return clinics.indexWhere((c) => c.id == clinicId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
-      appBar: AppBar(
-        backgroundColor: AppTheme.white,
-        elevation: 0,
-        title: Text('Klinik Terdekat', style: AppTextTheme.titleLarge),
-        actions: [
-          BlocBuilder<LocCubit, LocState>(
-            builder: (context, state) {
-              if (state is! LocLoaded) return const SizedBox.shrink();
-              return PopupMenuButton<double>(
-                tooltip: 'Ubah radius',
-                icon: Container(
-                  margin: const EdgeInsets.only(right: 12),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.paleBlue,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${state.radiusKm.toStringAsFixed(0)} km',
-                        style: AppTextTheme.labelSmall.copyWith(
-                          color: AppTheme.blue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        AppIcons.arrowDropDown,
-                        size: 12,
-                        color: AppTheme.blue,
-                      ),
-                    ],
-                  ),
-                ),
-                onSelected: (km) => context.read<LocCubit>().changeRadius(km),
-                itemBuilder: (_) => _radiusOptions
-                    .map(
-                      (km) => PopupMenuItem<double>(
-                        value: km,
-                        child: Text('$km km'),
-                      ),
-                    )
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
       body: BlocBuilder<LocCubit, LocState>(
         builder: (context, state) {
           return switch (state) {
-            LocInitial() || LocLoading() => Skeletonizer(
-              enabled: true,
-              child: _loaded(
-                context,
-                ClinicEntity.mock(),
-                10,
-                Position(
-                  latitude: -6.2088,
-                  longitude: 106.8456,
-                  accuracy: 0,
-                  altitude: 0,
-                  speed: 0,
-                  speedAccuracy: 0,
-                  heading: 0,
-                  timestamp: DateTime(2026, 6, 16),
-                  altitudeAccuracy: 0,
-                  headingAccuracy: 0,
-                ),
-              ),
-            ),
+            LocInitial() || LocLoading() => _loadingSkeleton(context),
             LocPermissionDenied(:final reason) => _permissionDenied(
               context,
               reason,
@@ -146,195 +110,172 @@ class _LocViewState extends State<_LocView> {
             ),
             LocLoaded(
               :final clinics,
-              :final radiusKm,
               :final currentPosition,
+              :final selectedClinicId,
             ) =>
-              _loaded(context, clinics, radiusKm, currentPosition),
+              _mapLayout(context, clinics, currentPosition, selectedClinicId),
           };
         },
       ),
     );
   }
 
-  static const _specializations = <String>[
-    'Semua',
-    'Umum',
-    'Gigi',
-    'Kulit',
-    'Anak',
-    'Mata',
-    'THT',
-    'Jantung',
-    'Saraf',
-  ];
+  Widget _clinicCarousel({
+    required List<ClinicEntity> clinics,
+    String? selectedClinicId,
+    void Function(ClinicEntity clinic)? onTap,
+    void Function(String clinicId)? onFavoriteTap,
+  }) {
+    return SizedBox(
+      height: _kCarouselHeight,
+      child: NotificationListener<ScrollEndNotification>(
+        onNotification: (_) {
+          _snapCarousel();
+          return false;
+        },
+        child: ListView.builder(
+          controller: _carouselController,
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(left: _kCardSpacing),
+          itemCount: clinics.length,
+          itemExtent: _kItemStep,
+          itemBuilder: (context, i) {
+            final c = clinics[i];
+            return Padding(
+              padding: const EdgeInsets.only(right: _kCardSpacing),
+              child: ClinicCard(
+                clinic: c,
+                width: _kCardWidth,
+                isSelected: c.id == selectedClinicId,
+                onTap: onTap != null ? () => onTap(c) : null,
+                onFavoriteTap: onFavoriteTap != null
+                    ? () => onFavoriteTap(c.id)
+                    : null,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-  Widget _loaded(
-    BuildContext context,
-    List<ClinicEntity> clinics,
-    double radiusKm,
-    Position currentPosition,
-  ) {
-    if (clinics.isEmpty) {
-      return _emptyState(context, radiusKm);
-    }
-    // Sprint 4 — S4.6: sort clinics based on sortBy state.
-    final sorted = List<ClinicEntity>.of(clinics);
-    final sortBy = context.read<LocCubit>().state is LocLoaded
-        ? (context.read<LocCubit>().state as LocLoaded).sortBy
-        : 'distance';
-    switch (sortBy) {
-      case 'name':
-        sorted.sort((a, b) => a.name.compareTo(b.name));
-      case 'doctor_count':
-        sorted.sort((a, b) => b.doctorCount.compareTo(a.doctorCount));
-      default:
-        sorted.sort((a, b) => a.distanceMeters.compareTo(b.distanceMeters));
-    }
-    return RefreshIndicator(
-      onRefresh: () => context.read<LocCubit>().refresh(),
-      child: CustomScrollView(
-        slivers: [
-          // Sprint 4.5 — M2+M3: Map View (40% screen height)
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 200,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: LocMapWidget(
-                  clinics: sorted,
-                  userLat: currentPosition.latitude,
-                  userLng: currentPosition.longitude,
-                  radiusKm: radiusKm,
-                  onMarkerTap: (clinic) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(clinic.name)));
-                  },
-                ),
-              ),
-            ),
-          ),
-          // Info banner
-          SliverToBoxAdapter(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: AppTheme.white,
-              child: Text(
-                '${clinics.length} klinik ditemukan dalam ${radiusKm.toStringAsFixed(0)} km',
-                style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey700),
-              ),
-            ),
-          ),
-          // Filter Chips
-          SliverToBoxAdapter(
-            child: Container(
-              width: double.infinity,
-              color: AppTheme.white,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: BlocBuilder<LocCubit, LocState>(
-                  buildWhen: (prev, curr) =>
-                      curr is LocLoaded &&
-                      (prev is! LocLoaded ||
-                          prev.selectedSpecialization !=
-                              curr.selectedSpecialization),
-                  builder: (context, state) {
-                    final selected = state is LocLoaded
-                        ? state.selectedSpecialization
-                        : null;
-                    return Row(
-                      children: _specializations.map((s) {
-                        final isSelected = s == 'Semua'
-                            ? selected == null
-                            : selected == s;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: FilterChip(
-                            label: Text(s),
-                            selected: isSelected,
-                            onSelected: (_) {
-                              context.read<LocCubit>().setFilter(
-                                s == 'Semua' ? null : s,
-                              );
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-          // Sort row
-          SliverToBoxAdapter(
+  Widget _loadingSkeleton(BuildContext context) {
+    final mock = ClinicEntity.mock();
+    return Skeletonizer(
+      enabled: true,
+      child: Stack(
+        children: [
+          LocMapWidget(clinics: mock, userLat: -6.2088, userLng: 106.8456),
+          SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: BlocBuilder<LocCubit, LocState>(
-                buildWhen: (prev, curr) =>
-                    curr is LocLoaded &&
-                    (prev is! LocLoaded || prev.sortBy != curr.sortBy),
-                builder: (context, state) {
-                  final sortBy = state is LocLoaded ? state.sortBy : 'distance';
-                  return Row(
-                    children: [
-                      const Icon(
-                        AppIcons.sort,
-                        size: 16,
-                        color: AppTheme.grey500,
-                      ),
-                      const SizedBox(width: 6),
-                      ...['distance', 'name', 'doctor_count'].map((value) {
-                        final label = switch (value) {
-                          'distance' => 'Jarak',
-                          'name' => 'Nama',
-                          'doctor_count' => 'Dokter',
-                          _ => value,
-                        };
-                        final isSelected = sortBy == value;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: ChoiceChip(
-                            label: Text(
-                              label,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            selected: isSelected,
-                            onSelected: (_) =>
-                                context.read<LocCubit>().setSortBy(value),
-                          ),
-                        );
-                      }),
-                    ],
-                  );
-                },
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search Clinic / Hospital',
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: AppTheme.white.withValues(alpha: 0.95),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-          // Clinic list
-          SliverList.separated(
-            itemCount: sorted.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (context, i) {
-              final c = sorted[i];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClinicCard(
-                  clinic: c,
-                  onFavoriteTap: () =>
-                      context.read<LocCubit>().toggleFavorite(c.id),
-                ),
-              );
-            },
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: _clinicCarousel(clinics: mock),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _mapLayout(
+    BuildContext context,
+    List<ClinicEntity> clinics,
+    Position currentPosition,
+    String? selectedClinicId,
+  ) {
+    final cubit = context.read<LocCubit>();
+
+    if (selectedClinicId != null &&
+        selectedClinicId != _lastAutoScrolledId) {
+      _lastAutoScrolledId = selectedClinicId;
+      final idx = _findClinicIndex(selectedClinicId, clinics);
+      if (idx >= 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _scrollToIndex(idx);
+        });
+      }
+    }
+
+    return Stack(
+      children: [
+        LocMapWidget(
+          clinics: clinics,
+          userLat: currentPosition.latitude,
+          userLng: currentPosition.longitude,
+          selectedClinicId: selectedClinicId,
+          onMarkerTap: (clinic) => cubit.selectClinic(clinic.id),
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search Clinic / Hospital',
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: AppTheme.white.withValues(alpha: 0.95),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onChanged: (keyword) => cubit.setSearchKeyword(keyword),
+            ),
+          ),
+        ),
+        if (clinics.isNotEmpty)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: _clinicCarousel(
+                clinics: clinics,
+                selectedClinicId: selectedClinicId,
+                onTap: (clinic) {
+                  cubit.selectClinic(clinic.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(clinic.name)),
+                  );
+                },
+                onFavoriteTap: (id) => cubit.toggleFavorite(id),
+              ),
+            ),
+          ),
+        if (clinics.isEmpty)
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 48),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: AppTheme.white.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Tidak ada klinik ditemukan',
+                style: AppTextTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -374,10 +315,6 @@ class _LocViewState extends State<_LocView> {
             ),
           ),
           const SizedBox(height: 32),
-          // Sprint 4 — S4.4: City input fallback (wireframe 07).
-          // Saat location denied, user bisa masukkan nama kota.
-          // Full implementation (geocoding → filter clinics by city)
-          // membutuhkan endpoint backend — deferred ke Sprint 5.
           const Row(
             children: [
               Expanded(child: Divider()),
@@ -402,44 +339,10 @@ class _LocViewState extends State<_LocView> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Mencari klinik di $city...')),
                 );
-                // TODO: implementasi city-based search (Sprint 5+)
-                // Butuh: geocoding API atau endpoint GET facilities?city=xxx
               }
             },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _emptyState(BuildContext context, double radiusKm) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              AppIcons.localHospital,
-              size: 80,
-              color: AppTheme.grey300,
-            ),
-            const SizedBox(height: 16),
-            Text('Tidak Ada Klinik', style: AppTextTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(
-              'Tidak ada klinik dalam radius ${radiusKm.toStringAsFixed(0)} km dari lokasimu. Coba perbesar radius.',
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.read<LocCubit>().requestLocationAndLoad(),
-              child: const Text('Coba lagi'),
-            ),
-          ],
-        ),
       ),
     );
   }
