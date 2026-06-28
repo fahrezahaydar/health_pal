@@ -224,7 +224,19 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
           firstDayOfWeek: 0,
           weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
           controlsHeight: 48,
+          controlsTextStyle: AppTextTheme.titleLarge.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+
           disableModePicker: true,
+          modePickerTextHandler: ({required DateTime monthDate, bool? isMonthPicker}) {
+            const months = [
+              'January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December',
+            ];
+            return months[monthDate.month - 1];
+          },
+
           dayTextStyle: AppTextTheme.bodyMedium,
           selectedDayTextStyle: AppTextTheme.bodyMedium.copyWith(
             color: AppTheme.white,
