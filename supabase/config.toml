@@ -260,8 +260,8 @@ inactivity_timeout = "1h"
 # [auth.web3.solana]
 # enabled = false
 
-# [edge_runtime]
-# enabled = false
+[edge_runtime]
+  enabled = true
 
 [analytics]
 enabled = false
