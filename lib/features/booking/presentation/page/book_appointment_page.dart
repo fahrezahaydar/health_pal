@@ -26,7 +26,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/button/primary_button.dart';
-import '../../../../widgets/card/appointment_date_picker.dart';
+import '../widget/appointment_date_picker.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/loader/dot_loader.dart';
 import '../bloc/booking/booking_bloc.dart';
@@ -169,7 +169,6 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppTheme.grey50,
           appBar: AppBar(
             backgroundColor: AppTheme.white,
             elevation: 0,
@@ -210,7 +209,6 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
     );
   }
 
-
   Widget _slotSection(BookingState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,18 +245,24 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
             ),
           )
         else
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: state.availableSlots.map<Widget>((slot) {
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: state.availableSlots.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              mainAxisExtent: 44, // adjust to your chip height
+            ),
+            itemBuilder: (context, index) {
+              final slot = state.availableSlots[index];
               final slotId = slot['id'] as String;
               final start = slot['startTime'] as String;
               final end = slot['endTime'] as String;
               final isSelected = state.selectedSlotId == slotId;
-              return ChoiceChip(
-                label: Text('$start - $end'),
-                selected: isSelected,
-                onSelected: (_) {
+              return InkWell(
+                onTap: () {
                   context.read<BookingBloc>().add(
                     BookingSlotSelected(
                       slotId: slotId,
@@ -267,8 +271,24 @@ class BookAppointmentViewState extends State<BookAppointmentView> {
                     ),
                   );
                 },
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+
+                    color: isSelected ? AppTheme.primary : AppTheme.grey50,
+                  ),
+                  child: Text(
+                    start,
+                    style: AppTextTheme.titleLarge.copyWith(
+                      color: isSelected ? AppTheme.white : AppTheme.grey500,
+                    ),
+                  ),
+                ),
               );
-            }).toList(),
+            },
           ),
       ],
     );

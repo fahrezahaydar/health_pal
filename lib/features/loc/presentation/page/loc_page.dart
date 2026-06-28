@@ -1,9 +1,9 @@
-import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/loader/error_section.dart';
@@ -35,7 +35,7 @@ class _LocView extends StatefulWidget {
 }
 
 class _LocViewState extends State<_LocView> {
-  final _pageController = PageController();
+  final _pageController = PageController(viewportFraction: 0.55);
   int _lastAutoScrolledIndex = -1;
 
   @override
@@ -61,8 +61,7 @@ class _LocViewState extends State<_LocView> {
           return switch (state) {
             LocPermissionDenied(:final reason) => LocPermissionDeniedWidget(
               reason: reason,
-              onRetry: () =>
-                  context.read<LocCubit>().requestLocationAndLoad(),
+              onRetry: () => context.read<LocCubit>().requestLocationAndLoad(),
             ),
             LocError(:final message) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
@@ -92,7 +91,6 @@ class _LocViewState extends State<_LocView> {
     String? selectedClinicId,
   ) {
     final cubit = context.read<LocCubit>();
-    final screenWidth = MediaQuery.of(context).size.width;
 
     if (selectedClinicId != null) {
       final idx = clinics.indexWhere((c) => c.id == selectedClinicId);
@@ -125,7 +123,7 @@ class _LocViewState extends State<_LocView> {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search Clinic / Hospital',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(AppIcons.search),
                 filled: true,
                 fillColor: AppTheme.white.withValues(alpha: 0.95),
                 border: OutlineInputBorder(
@@ -138,37 +136,24 @@ class _LocViewState extends State<_LocView> {
           ),
         ),
         if (clinics.isNotEmpty)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: CarouselSlider(
-                items: clinics.map((c) => Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: SizedBox(
-                    width: 240,
-                    child: ClinicCard(
-                      clinic: c,
-                      isSelected: c.id == selectedClinicId,
-                      onTap: () {
-                        cubit.selectClinic(c.id);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(c.name)),
-                        );
-                      },
-                      onFavoriteTap: () => cubit.toggleFavorite(c.id),
-                    ),
-                  ),
-                )).toList(),
-                options: CarouselOptions(
-                  height: 210,
-                  viewportFraction: (240 + 16) / screenWidth,
-                  enlargeCenterPage: false,
-                  enableInfiniteScroll: false,
-                  autoPlay: false,
-                  padEnds: false,
-                ),
-              ),
+          Positioned(
+            left: -92,
+            right: 0,
+            bottom: 24,
+            height: 260,
+            child: PageView.builder(
+              controller: _pageController,
+              padEnds: true,
+              itemCount: clinics.length,
+              onPageChanged: (index) {
+                cubit.selectClinic(clinics[index].id);
+              },
+              itemBuilder: (_, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ClinicCard(clinic: clinics[index]),
+                );
+              },
             ),
           ),
         if (clinics.isEmpty)
@@ -190,5 +175,4 @@ class _LocViewState extends State<_LocView> {
       ],
     );
   }
-
 }

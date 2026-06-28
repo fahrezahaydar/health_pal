@@ -33,36 +33,37 @@ class LocLoaded extends LocState {
   final List<ClinicEntity> clinics;
   final Position currentPosition;
   final double radiusKm;
-  final String? selectedSpecialization;
-  final String sortBy;
+  final String? searchKeyword;
+  final String? selectedClinicId;
 
   const LocLoaded({
     required this.clinics,
     required this.currentPosition,
     this.radiusKm = 10.0,
-    this.selectedSpecialization,
-    this.sortBy = 'distance',
+    this.searchKeyword,
+    this.selectedClinicId,
   });
 
   LocLoaded copyWith({
     List<ClinicEntity>? clinics,
     Position? currentPosition,
     double? radiusKm,
-    String? selectedSpecialization,
-    String? sortBy,
+    String? searchKeyword,
+    String? selectedClinicId,
+    bool clearSearch = false,
+    bool clearSelected = false,
   }) =>
       LocLoaded(
         clinics: clinics ?? this.clinics,
         currentPosition: currentPosition ?? this.currentPosition,
         radiusKm: radiusKm ?? this.radiusKm,
-        selectedSpecialization:
-            selectedSpecialization ?? this.selectedSpecialization,
-        sortBy: sortBy ?? this.sortBy,
+        searchKeyword: clearSearch ? null : (searchKeyword ?? this.searchKeyword),
+        selectedClinicId: clearSelected ? null : (selectedClinicId ?? this.selectedClinicId),
       );
 
   @override
   List<Object?> get props =>
-      [clinics, currentPosition, radiusKm, selectedSpecialization, sortBy];
+      [clinics, currentPosition, radiusKm, searchKeyword, selectedClinicId];
 }
 
 class LocError extends LocState {

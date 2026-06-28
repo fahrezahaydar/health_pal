@@ -39,6 +39,7 @@ class AppIcons {
   static const IconData localHospital = Iconsax.hospitalStyle3;
   static const IconData localHospitalOutlined = Iconsax.aiHospitalStyle5;
   static const IconData locationOn = Iconsax.location;
+  static const IconData locationOnFilled = Iconsax.locationStyle3;
   static const IconData locationOff = Iconsax.locationCrossStyle2;
   static const IconData locationDisabled = Iconsax.locationSlashStyle2;
   static const IconData phone = Iconsax.callCallingStyle1;

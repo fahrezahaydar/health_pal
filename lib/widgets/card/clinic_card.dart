@@ -15,12 +15,14 @@ class ClinicCard extends StatelessWidget {
     this.onTap,
     this.onFavoriteTap,
     this.width = 240,
+    this.isSelected = false,
   });
 
   final ClinicEntity clinic;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteTap;
   final double width;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,10 @@ class ClinicCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppTheme.grey200),
+            border: Border.all(
+              color: isSelected ? AppTheme.blue : AppTheme.grey200,
+              width: isSelected ? 2 : 1,
+            ),
           ),
           clipBehavior: Clip.hardEdge,
           child: Column(

@@ -9,6 +9,8 @@ environment:
 dependencies:
   bloc: ^9.2.0
   cached_network_image: ^3.4.1
+  calendar_date_picker2: ^3.0.0
+  carousel_slider_plus: ^7.1.2
   connectivity_plus: ^7.1.1
   equatable: ^2.0.8
   firebase_core: ^4.10.0

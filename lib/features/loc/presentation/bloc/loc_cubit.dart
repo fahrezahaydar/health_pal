@@ -23,6 +23,7 @@ class LocCubit extends Cubit<LocState> {
   double _radiusKm = 10.0;
   Position? _lastPosition;
   final Set<String> _favoriteIds = {};
+  List<ClinicEntity> _allClinics = [];
 
   /// Request lokasi + load clinics.
   /// Dipanggil dari initState page atau tombol "Izinkan Lokasi".
@@ -96,16 +97,38 @@ class LocCubit extends Cubit<LocState> {
     await _load(_lastPosition!, km);
   }
 
-  void setFilter(String? specialization) {
+  void setSearchKeyword(String keyword) {
     final current = state;
     if (current is! LocLoaded) return;
-    emit(current.copyWith(selectedSpecialization: specialization));
+    final filtered = keyword.isEmpty
+        ? _allClinics
+        : _allClinics.where((c) =>
+            c.name.toLowerCase().contains(keyword.toLowerCase()));
+    final marked = filtered.map((c) {
+      if (_favoriteIds.contains(c.id)) {
+        return ClinicEntity(
+          id: c.id, name: c.name, address: c.address,
+          city: c.city, latitude: c.latitude, longitude: c.longitude,
+          phone: c.phone, imageUrl: c.imageUrl,
+          distanceMeters: c.distanceMeters, doctorCount: c.doctorCount,
+          ratingAvg: c.ratingAvg, reviewCount: c.reviewCount,
+          category: c.category, durationMinutes: c.durationMinutes,
+          isFavorite: true, specializations: c.specializations,
+        );
+      }
+      return c;
+    }).toList();
+    emit(current.copyWith(
+      clinics: marked,
+      searchKeyword: keyword.isEmpty ? null : keyword,
+      clearSearch: keyword.isEmpty,
+    ));
   }
 
-  void setSortBy(String sortBy) {
+  void selectClinic(String clinicId) {
     final current = state;
     if (current is! LocLoaded) return;
-    emit(current.copyWith(sortBy: sortBy));
+    emit(current.copyWith(selectedClinicId: clinicId));
   }
 
   void toggleFavorite(String clinicId) {
@@ -154,31 +177,22 @@ class LocCubit extends Cubit<LocState> {
     );
     switch (result) {
       case Success<List<ClinicEntity>>(:final data):
-        final marked = data.map((c) {
+        _allClinics = data.map((c) {
           if (_favoriteIds.contains(c.id)) {
             return ClinicEntity(
-              id: c.id,
-              name: c.name,
-              address: c.address,
-              city: c.city,
-              latitude: c.latitude,
-              longitude: c.longitude,
-              phone: c.phone,
-              imageUrl: c.imageUrl,
-              distanceMeters: c.distanceMeters,
-              doctorCount: c.doctorCount,
-              ratingAvg: c.ratingAvg,
-              reviewCount: c.reviewCount,
-              category: c.category,
-              durationMinutes: c.durationMinutes,
-              isFavorite: true,
-              specializations: c.specializations,
+              id: c.id, name: c.name, address: c.address,
+              city: c.city, latitude: c.latitude, longitude: c.longitude,
+              phone: c.phone, imageUrl: c.imageUrl,
+              distanceMeters: c.distanceMeters, doctorCount: c.doctorCount,
+              ratingAvg: c.ratingAvg, reviewCount: c.reviewCount,
+              category: c.category, durationMinutes: c.durationMinutes,
+              isFavorite: true, specializations: c.specializations,
             );
           }
           return c;
         }).toList();
         emit(LocLoaded(
-          clinics: marked,
+          clinics: _allClinics,
           currentPosition: position,
           radiusKm: radiusKm,
         ));
