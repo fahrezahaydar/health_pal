@@ -2,7 +2,6 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart' show getIt;
 import '../../../../core/theme/app_icons.dart';
@@ -14,6 +13,7 @@ import '../bloc/loc_cubit.dart';
 import '../bloc/loc_state.dart';
 import '../../domain/entity/clinic_entity.dart';
 import '../widget/loc_map_widget.dart';
+import '../widget/loc_skeleton.dart';
 import '../../../../widgets/card/clinic_card.dart';
 
 class LocPage extends StatelessWidget {
@@ -78,63 +78,9 @@ class _LocViewState extends State<_LocView> {
               :final selectedClinicId,
             ) =>
               _mapLayout(context, clinics, currentPosition, selectedClinicId),
-            _ => _loadingSkeleton(context),
+            _ => const LocSkeleton(),
           };
         },
-      ),
-    );
-  }
-
-  Widget _loadingSkeleton(BuildContext context) {
-    final mock = ClinicEntity.mock();
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Skeletonizer(
-      enabled: true,
-      child: Stack(
-        children: [
-          LocMapWidget(clinics: mock, userLat: -6.2088, userLng: 106.8456),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search Clinic / Hospital',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: AppTheme.white.withValues(alpha: 0.95),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: CarouselSlider(
-                items: mock.map((c) => Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: SizedBox(
-                    width: 240,
-                    child: ClinicCard(clinic: c),
-                  ),
-                )).toList(),
-                options: CarouselOptions(
-                  height: 210,
-                  viewportFraction: (240 + 16) / screenWidth,
-                  enlargeCenterPage: false,
-                  enableInfiniteScroll: false,
-                  autoPlay: false,
-                  padEnds: false,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
