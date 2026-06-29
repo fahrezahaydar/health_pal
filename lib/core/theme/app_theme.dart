@@ -53,6 +53,21 @@ abstract final class AppTheme {
   static const Color paleBlue = Color(0xFF89CCDB);
   static const Color purple = Color(0xFF352261);
   static const Color orange = Color(0xFFF5AD7E);
+
+  // === STATUS BADGE (ADR-012) ===
+  // Pending = Orange
+  static const Color statusPendingBg = Color(0xFFFFF3E0);
+  static const Color statusPendingText = Color(0xFFE65100);
+  // Upcoming = Blue
+  static const Color statusUpcomingBg = Color(0xFFE3F2FD);
+  static const Color statusUpcomingText = Color(0xFF1565C0);
+  // Completed = Green
+  static const Color statusCompletedBg = Color(0xFFE8F5E9);
+  static const Color statusCompletedText = Color(0xFF2E7D32);
+  // Cancelled = Red
+  static const Color statusCancelledBg = Color(0xFFFFEBEE);
+  static const Color statusCancelledText = Color(0xFFC62828);
+
   // The FlexColorScheme defined light mode ThemeData.
   static ThemeData light =
       FlexThemeData.light(

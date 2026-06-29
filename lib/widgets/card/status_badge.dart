@@ -38,16 +38,16 @@ class StatusBadge extends StatelessWidget {
       };
 
   Color get backgroundColor => switch (status) {
-        BookingStatus.pending => AppTheme.grey100,
-        BookingStatus.upcoming => AppTheme.paleGreen,
-        BookingStatus.completed => AppTheme.paleBlue,
-        BookingStatus.cancelled => AppTheme.lightPink,
+        BookingStatus.pending => AppTheme.statusPendingBg,
+        BookingStatus.upcoming => AppTheme.statusUpcomingBg,
+        BookingStatus.completed => AppTheme.statusCompletedBg,
+        BookingStatus.cancelled => AppTheme.statusCancelledBg,
       };
 
   Color get textColor => switch (status) {
-        BookingStatus.pending => AppTheme.grey600,
-        BookingStatus.upcoming => AppTheme.deepTeal,
-        BookingStatus.completed => AppTheme.blue,
-        BookingStatus.cancelled => AppTheme.darkRed,
+        BookingStatus.pending => AppTheme.statusPendingText,
+        BookingStatus.upcoming => AppTheme.statusUpcomingText,
+        BookingStatus.completed => AppTheme.statusCompletedText,
+        BookingStatus.cancelled => AppTheme.statusCancelledText,
       };
 }
