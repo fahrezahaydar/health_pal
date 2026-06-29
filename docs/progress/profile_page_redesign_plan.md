@@ -301,11 +301,13 @@ Step 10: Manual verification (hot reload/restart)
 
 ---
 
-## Open Questions
+## Open Questions — Resolved
 
-1. **Format phone number di display** — Apakah perlu formatted (e.g., "+123 856 479 683") atau raw display? Saran: raw display dulu, formatting bisa ditambahkan jika diperlukan.
-2. **Validasi phone number di Edit Profile** — Apakah strict numeric-only atau allow +, -, spaces? Saran: allow +, digits, dan spaces (umum untuk nomor internasional).
-3. **Logout dialog — konsisten dengan SettingsPage?** — Saat ini SettingsPage pakai: title "Yakin ingin logout?", message "Anda akan keluar dari akun ini.". Apakah SettingsPage perlu diupdate juga ke copy baru? Saran: konsisten — semua logout dialog pakai copy wireframe baru.
+| # | Question | Decision | Detail |
+|---|----------|----------|--------|
+| 1 | Format phone display | **Raw** | Tampilkan persis dari DB, no formatting |
+| 2 | Phone validation | **Numeric only** | Hanya digit — tidak boleh +, -, spasi |
+| 3 | Logout copy konsisten? | **Ya, seragamkan** | SettingsPage logout dialog pakai copy yang sama: title 'Logout', message 'Are you sure you want to log out?', confirmLabel 'Yes, Logout', cancelLabel 'Cancel' |
 
 ---
 
