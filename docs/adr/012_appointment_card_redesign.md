@@ -106,7 +106,14 @@ Pertahankan layout row v1.0, cukup tambah action buttons di bawah info.
    | **Re-Book** (Completed) | Navigasi ke `DoctorDetailPage`/`BookAppointmentPage` dengan doctorId yang sama | ✅ **Existing flow** |
    | **Add Review** (Completed) | 🔴 Tombol visible tapi disabled/placeholder (konsisten ADR-009) | ❌ **Defer** |
 
-5. **API Contract Update (§6.2 Get Booking History):** Tambah `clinics(name)` di nested select doctors agar clinic name tersedia di response. Saat ini select clause adalah `doctors(id,full_name,photo_url,specializations(name))` — perlu tambah `clinics(name)`.
+5. **API Contract Update (§6.2 Get Booking History):** Tidak perlu perubahan — kode Flutter saat ini (`booking_remote_datasource.dart:68`) sudah include `clinics(name, address, phone)`. Dokumen API Contract §6.2 contoh query masih versi lama (tanpa `clinics`) — perlu di-update untuk sinkron.
+
+6. **Reschedule / Change Date — DEFER.** Fitur tidak masuk implementasi Appointment Card v2.0. Tombol disembunyikan sampai ada ADR + endpoint backend terpisah di sprint mendatang.
+
+7. **UpcomingAppointmentCard di Home Page — WIDGET TERPISAH.** `AppointmentCard` v2.0 (multi-row) hanya dipakai di Booking History List. Home Page tetap pakai `UpcomingAppointmentCard` existing yang lebih compact (tanpa action buttons). Alasan:
+   - Home Page card perlu compact agar muat di section "Upcoming Treatment" yang terbatas.
+   - Home Page hanya menampilkan 1 appointment terdekat — tidak perlu action buttons (cukup tap → detail).
+   - Tidak perlu mengubah `UpcomingAppointmentCard` — widget existing sudah memadai.
 
 ### Widget Interface Baru (Proposed)
 

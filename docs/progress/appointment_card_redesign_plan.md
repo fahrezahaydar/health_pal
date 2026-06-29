@@ -92,7 +92,7 @@ Semua field sudah tersedia di `AppointmentEntity`:
 | # | Item | File Target | Estimasi |
 |---|------|-------------|----------|
 | 2 | **Update `BookingHistoryPage`** — pass callbacks baru ke `AppointmentCard` | `booking_history_page.dart` | 5 menit |
-| 3 | **Update `HomePage` (Upcoming section)** — jika reuse `AppointmentCard`, update parameter | `home_page.dart` | 5 menit |
+| 3 | **HomePage `UpcomingAppointmentCard`** — **TIDAK TERSENTUH**. Keputusan ADR-012: widget terpisah, tidak reuse AppointmentCard di Home. | `home_page.dart` | — |
 
 ### 4.3 Status Badge Update
 
@@ -122,7 +122,7 @@ Cancel action akan memanggil `BookingDetailCubit.cancelAppointment` pattern yang
 3. Rewrite AppointmentCard (appointment_card.dart)
         │
         ▼
-4. Update consumer pages (booking_history_page.dart, home_page.dart)
+4. Update consumer page (booking_history_page.dart — pass callbacks)
         │
         ▼
 5. flutter analyze (verifikasi 0 issue)
@@ -169,8 +169,8 @@ Cancel action akan memanggil `BookingDetailCubit.cancelAppointment` pattern yang
 | ⬜ `AppointmentCard` | `lib/widgets/card/appointment_card.dart` | Rewrite total — layout v2.0 |
 | ⬜ `StatusBadge` | `lib/widgets/card/status_badge.dart` | Update colors (P=Orange, U=Blue, C=Green) |
 | ⬜ `BookingHistoryPage` | `lib/features/booking/presentation/page/booking_history_page.dart` | Pass callbacks baru ke AppointmentCard |
-| ⬜ `HomePage` | `lib/features/home/presentation/page/home_page.dart` | Jika reuse AppointmentCard, update parameter |
-| ⬜ `UpcomingAppointmentCard` | `lib/widgets/card/upcoming_appointment_card.dart` | Mungkin tidak tersentuh (widget terpisah) |
+| ❌ `HomePage` | `lib/features/home/presentation/page/home_page.dart` | Tidak tersentuh — pakai `UpcomingAppointmentCard` terpisah (ADR-012) |
+| ❌ `UpcomingAppointmentCard` | `lib/widgets/card/upcoming_appointment_card.dart` | Tidak tersentuh — widget terpisah, tidak reuse AppointmentCard |
 | ⬜ `BookingRemoteDataSource` | `lib/features/booking/data/datasource/booking_remote_datasource.dart` | Update select clause — tambah `clinics(name)` |
 | ❌ `AppointmentEntity/Model` | `lib/features/booking/` | Tidak tersentuh |
 | ❌ ERD / Database | — | Tidak tersentuh |
