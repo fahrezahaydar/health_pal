@@ -4,13 +4,13 @@
 // HomeRemoteDataSource / DoctorRemoteDataSource.
 //
 // Per API Contract §6:
-// - 6.1 create-appointment  → Edge Function (atomic transaction)
+// - 6.1 create-appointment  → RPC create_appointment (atomic transaction)
 // - 6.2 get history        → PostgREST list
 // - 6.3 get detail          → PostgREST single
-// - 6.4 cancel-appointment  → Edge Function (atomic transaction)
+// - 6.4 cancel-appointment  → RPC cancel_appointment (atomic transaction)
 //
-// Edge Function responses di-wrap di `{success, data, message}`.
 // PostgREST responses adalah array/list langsung.
+// RPC responses adalah jsonb langsung (tanpa envelope).
 //
 // Profile ID didapat dari argumen (bukan dari auth.currentUser.id langsung)
 // — untuk konsistensi dengan home datasource yang juga menerima profileId.
@@ -108,64 +108,41 @@ class BookingRemoteDataSource {
     return AppointmentModel.fromJson(result);
   }
 
-  // ── API §6.4 Cancel Appointment (Edge Function) ─────────────────────────
+  // ── API §6.4 Cancel Appointment (RPC) ────────────────────────────────────
+  /// Memanggil PostgreSQL function `cancel_appointment` via RPC.
+  /// `patient_id` di-resolve oleh function dari auth.uid().
+  /// Response langsung adalah partial appointment jsonb (tanpa envelope).
+  /// Setelah cancel, fetch full record untuk konsistensi UI.
   Future<AppointmentModel> cancelAppointment({
     required String appointmentId,
     String? cancellationReason,
   }) async {
-    final response = await _client.functions.invoke(
-      'cancel-appointment',
-      body: {
-        'appointment_id': appointmentId,
-        'cancellation_reason': cancellationReason,
+    final response = await _client.rpc<Map<String, dynamic>>(
+      'cancel_appointment',
+      params: {
+        'p_appointment_id': appointmentId,
+        if (cancellationReason != null && cancellationReason.isNotEmpty)
+          'p_cancellation_reason': cancellationReason,
       },
     );
 
-    final data = response.data;
-    if (data is! Map<String, dynamic>) {
-      throw const ApiException(
-        code: FailureCode.unknown,
-        message: 'Invalid response from cancel-appointment',
-      );
-    }
+    // RPC returns {id, status, cancelled_at, cancellation_reason, patient_id, ...}
+    final patientId = response['patient_id'] as String? ?? '';
 
-    if (data['success'] != true) {
-      final err = data['error'] as Map<String, dynamic>?;
-      throw ApiException(
-        code: _mapEdgeErrorCode(err?['code'] as String?),
-        message: err?['message'] as String? ?? 'Cancellation failed',
-      );
-    }
-
-    // Edge Function hanya return partial appointment, fetch full record
-    // untuk konsistensi dengan booking detail state.
+    // Fetch full record untuk konsistensi dengan booking detail state.
     return getAppointmentDetail(
-      patientId: '',
+      patientId: patientId,
       appointmentId: appointmentId,
     ).catchError((_) {
-      // Fallback: jika patientId kosong / RLS issue, return minimal model
+      // Fallback: jika fetch detail gagal (RLS issue), return minimal model
       return AppointmentModel(
         id: appointmentId,
-        patientId: '',
+        patientId: patientId,
         doctorId: '',
         slotId: '',
         status: 'cancelled',
         consultationFeeSnapshot: 0,
       );
     });
-  }
-
-  // ── Helper: map Edge Function error code → FailureCode ─────────────────
-  FailureCode _mapEdgeErrorCode(String? code) {
-    return switch (code) {
-      'SLOT_ALREADY_BOOKED' => FailureCode.conflict,
-      'VALIDATION_ERROR' => FailureCode.validationError,
-      'NOT_FOUND' => FailureCode.notFound,
-      'UNAUTHORIZED' => FailureCode.unauthorized,
-      'FORBIDDEN' => FailureCode.forbidden,
-      'INVALID_STATUS_TRANSITION' => FailureCode.validationError,
-      'TRANSACTION_FAILED' => FailureCode.serverError,
-      _ => FailureCode.serverError,
-    };
   }
 }
