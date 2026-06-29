@@ -4,6 +4,8 @@
 // Tab: Semua | Pending | Upcoming | Completed | Cancelled
 //
 // Pola: Stateless wrapper (BlocProvider) + view (UI dengan TabController).
+// Page membuat Cubit dan provide ke child; View adalah child yang
+// mengakses Cubit via context (karena View di-DALAM BlocProvider).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,14 +25,32 @@ import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
 import '../../../../widgets/card/appointment_card.dart';
 
-class BookingHistoryPage extends StatefulWidget {
+class BookingHistoryPage extends StatelessWidget {
   const BookingHistoryPage({super.key});
 
   @override
-  State<BookingHistoryPage> createState() => _BookingHistoryPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider<BookingHistoryCubit>(
+      create: (ctx) {
+        final cubit = getIt<BookingHistoryCubit>();
+        getIt<AppServices>().getCurrentProfileId().then((pid) {
+          cubit.loadHistory(pid ?? '');
+        });
+        return cubit;
+      },
+      child: const BookingHistoryView(),
+    );
+  }
 }
 
-class _BookingHistoryPageState extends State<BookingHistoryPage>
+class BookingHistoryView extends StatefulWidget {
+  const BookingHistoryView({super.key});
+
+  @override
+  State<BookingHistoryView> createState() => _BookingHistoryViewState();
+}
+
+class _BookingHistoryViewState extends State<BookingHistoryView>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final _scrollController = ScrollController();
@@ -73,33 +93,24 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BookingHistoryCubit>(
-      create: (ctx) {
-        final cubit = getIt<BookingHistoryCubit>();
-        getIt<AppServices>().getCurrentProfileId().then((pid) {
-          cubit.loadHistory(pid ?? '');
-        });
-        return cubit;
-      },
-      child: Scaffold(
-        backgroundColor: AppTheme.grey50,
-        appBar: AppBar(
-          backgroundColor: AppTheme.white,
-          elevation: 0,
-          title: Text('Booking History', style: AppTextTheme.titleLarge),
-          bottom: TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            labelColor: AppTheme.primary,
-            unselectedLabelColor: AppTheme.grey500,
-            indicatorColor: AppTheme.primary,
-            tabs: _tabs.map((t) => Tab(text: t.$1)).toList(),
-          ),
-        ),
-        body: TabBarView(
+    return Scaffold(
+      backgroundColor: AppTheme.grey50,
+      appBar: AppBar(
+        backgroundColor: AppTheme.white,
+        elevation: 0,
+        title: Text('Booking History', style: AppTextTheme.titleLarge),
+        bottom: TabBar(
           controller: _tabController,
-          children: _tabs.map((_) => _tabContent()).toList(),
+          isScrollable: true,
+          labelColor: AppTheme.primary,
+          unselectedLabelColor: AppTheme.grey500,
+          indicatorColor: AppTheme.primary,
+          tabs: _tabs.map((t) => Tab(text: t.$1)).toList(),
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: _tabs.map((_) => _tabContent()).toList(),
       ),
     );
   }
@@ -119,10 +130,8 @@ class _BookingHistoryPageState extends State<BookingHistoryPage>
                 message: 'Tidak ada appointment',
                 hint: 'Booking pertamamu akan muncul di sini',
               ),
-            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(
-              appointments,
-              hasMore,
-            ),
+            BookingHistoryLoaded(:final appointments, :final hasMore) =>
+              _list(appointments, hasMore),
             BookingHistoryError(:final message) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
               child: ErrorSection(
