@@ -62,23 +62,24 @@
 ## Component Breakdown
 
 | Component | Widget | Data Source |
-|---|---|---|
+|---|---|---|---|
 | Page Title | `Text` | "Booking History" |
 | Tabbar | `TabBar` (5 tabs) | `TabController(length: 5)` |
 | Tab Items | `Tab` | Semua, Pending, Upcoming, Completed, Canceled |
 | TabView | `TabBarView` | 5 halaman, masing-masing `ListView.builder` |
-| Appointment Card | `Container` + `InkWell` | `GET /rest/v1/appointments?patient_id=&status=` |
-| Status Badge | `Container` with color | Pending=🟡, Upcoming=🟢, Completed=🔵, Canceled=🔴 |
-| Doctor Photo | `Image.network` (circle, 40px) | `doctors.photo_url` |
+| Appointment Card | `AppointmentCard` (v2.0 — `docs/wireframe/22-appointment-card.md`) | `GET /rest/v1/appointments?patient_id=&status=` |
+| Status Badge | `StatusBadge` with updated colors | Pending=🟠, Upcoming=🔵, Completed=🟢, Canceled=🔴 |
+| Doctor Photo | `AppNetworkImage` (2:3 ratio, rounded) | `doctors.photo_url` |
+| Action Buttons | Dynamic `Row(2 Expanded Buttons)` | Conditional per status (lihat wireframe 22) |
 | Pagination | `ScrollController` | Infinite scroll, limit=20 |
 
-**Status Badge Colors:**
+**Status Badge Colors (v2.0 — lihat ADR-012 untuk detail):**
 | Status | Warna | Hex |
 |---|---|---|
-| Pending | Amber / Kuning | `#FFA726` |
-| Upcoming | Hijau | `#4CAF50` |
-| Completed | Biru | `#2196F3` |
-| Canceled | Merah / Abu | `#EF5350` / `#9E9E9E` |
+| Pending | Orange | `#FF9800` |
+| Upcoming | Blue | `#2196F3` |
+| Completed | Green | `#4CAF50` |
+| Canceled | Red / Abu | `#EF5350` / `#9E9E9E` |
 
 ---
 
