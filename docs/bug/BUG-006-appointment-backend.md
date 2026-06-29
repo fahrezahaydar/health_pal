@@ -158,7 +158,7 @@ Cross-check query di DB menemukan **2 slot** yang punya `is_booked = false` pada
 
 | # | Item | Kategori | File Target | Severity | Status |
 |---|------|----------|-------------|:--------:|:------:|
-| 1 | **Reconcile `is_booked` untuk slot existing** — update `is_booked = true` untuk slot yang punya appointment aktif. Cleanup duplicate: untuk slot `0bd15209-...` (4 rows) dan `3d82aa44-...` (2 rows), set semua ke `cancelled` kecuali 1. | Backend (SQL) | One-off `supabase db query` atau migration `011_reconcile_is_booked.sql` | 🔴 Critical | ⬜ |
+| 1 | **Reconcile `is_booked` untuk slot existing** — update `is_booked = true` untuk slot yang punya appointment aktif. Cleanup duplicate: untuk slot `0bd15209-...` (4 rows) dan `3d82aa44-...` (2 rows), set semua ke `cancelled` kecuali 1. | Backend (SQL) | One-off `supabase db query` atau migration `011_reconcile_is_booked.sql` | 🔴 Critical | ✅ Fixed (29 Jun) |
 | 2 | **Tambah partial unique index** `idx_appointments_active_slot` di tabel `appointments(slot_id) WHERE status IN ('pending', 'upcoming')`. **WAJIB** pakai `create unique index concurrently` untuk avoid blocking writes, dan **HARUS** dijalankan setelah step #1 selesai. | Backend (SQL) | Migration baru `011_appointments_active_slot_index.sql` | 🔴 Critical | ⬜ |
 | 3 | **Tambah `FOR UPDATE` row lock** di RPC `create_appointment` agar atomic check + insert. Ganti `select is_booked into v_slot_booked from public.doctor_slots where id = p_slot_id;` → `... FOR UPDATE;` | Backend (SQL) | Migration `012_create_appointment_for_update.sql` (re-create function) | 🔴 Critical | ⬜ |
 | 4 | **Buat RPC/Edge Function `cancel_appointment` — atomic update `appointments.status` + `doctor_slots.is_booked` + auto-set `cancelled_at` + validasi ownership**. Lihat §"Detail Lanjutan Audit" — function **WAJIB**: (a) `SELECT ... FOR UPDATE` lock row, (b) `UPDATE appointments SET status='cancelled', cancelled_at=now(), cancellation_reason=?, updated_at=now()`, (c) trigger `trg_slot_unbooked_on_cancellation` otomatis release slot, (d) validasi ownership via `auth.uid()` → `user_profiles.id`, (e) validasi status transition `pending`/`upcoming` → `cancelled`, (f) return jsonb response. **Opsi A (preferred):** RPC `cancel_appointment(p_appointment_id uuid, p_cancellation_reason text default null, p_min_cancel_minutes int default 60) returns jsonb`. **Opsi B:** Edge Function `supabase/functions/cancel-appointment/index.ts`. | Backend (SQL/Edge Function) | `supabase/migrations/013_cancel_appointment_rpc.sql` (Opsi A) atau `supabase/functions/cancel-appointment/index.ts` (Opsi B) | 🔴 Critical | ⬜ |
@@ -169,6 +169,14 @@ Cross-check query di DB menemukan **2 slot** yang punya `is_booked = false` pada
 | 9 | **Tambah handling untuk `FunctionException`** di `ErrorHandler` (saat ini tidak ada). Pattern match `final FunctionException e => ...` dengan mapping berdasarkan HTTP status. | Flutter | `lib/core/network/error_handler.dart` line 45-53 | 🟡 Medium | ⬜ |
 
 > **Catatan cancel window:** Item #4 (cancel RPC) akan diimplementasi dengan parameter `p_min_cancel_minutes int default 60` — **60 menit sebelum jadwal** dipakai sebagai placeholder sampai Product Owner konfirmasi aturan H-1/H-0 yang sebenarnya. Setelah konfirmasi, ubah default atau expose di UI sebagai policy. Implementasi di `cancel_appointment` RPC: `if (extract(epoch from (slot_date + slot_start - now())) / 60 < p_min_cancel_minutes) raise exception 'CANCEL_WINDOW_EXPIRED';`
+
+> **Hasil FIX #1 (29 Jun 2026):**
+> - **4 duplikat di-cancel** (3 untuk slot `0bd15209-...`, 1 untuk slot `3d82aa44-...`), **2 original di-keep** (1 per slot, yang paling awal `booked_at`)
+> - **`is_booked` di-reconcile** untuk 1936 slot — 0 inkonsistensi tersisa
+> - Verifikasi pasca-fix:
+>   - `group by slot_id having count(*) > 1 where status IN (pending,upcoming)` → **0 rows** ✅
+>   - `count where is_booked != exists(active appointments)` → **0 rows** ✅
+> - **Siap untuk FIX #2** (partial unique index).
 
 ### Urutan Eksekusi (Dependency)
 
