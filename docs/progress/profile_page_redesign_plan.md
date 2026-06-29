@@ -311,4 +311,30 @@ Step 10: Manual verification (hot reload/restart)
 
 ---
 
+## Todo List — FIX Items
+
+| ID | Deskripsi | File Target | Dependencies |
+|----|-----------|-------------|--------------|
+| FIX-1 | Migration SQL: `016_profile_phone_number.sql` — add `phone_number TEXT` to `user_profiles` | `supabase/migrations/016_profile_phone_number.sql` | None |
+| FIX-2 | Core Data Model: tambah `phoneNumber` field ke UserEntity + UserModel (fromJson, toJson, toEntity, fromEntity, props, copyWith, mock) | `lib/features/auth/domain/entity/user_entity.dart`, `lib/features/auth/data/model/user_model.dart` | None |
+| FIX-3 | Repository Chain: tambah `phoneNumber` param pass-through di ProfileRemoteDataSource.updateProfile → ProfileRepository interface → ProfileRepositoryImpl → UpdateProfileUseCase → EditProfileCubit.updateProfile | `lib/features/profile/data/datasource/profile_remote_datasource.dart`, `lib/features/profile/domain/repository/profile_repository.dart`, `lib/features/profile/data/repository/profile_repository_impl.dart`, `lib/features/profile/domain/usecase/update_profile_usecase.dart`, `lib/features/profile/presentation/bloc/edit_profile/edit_profile_cubit.dart`, `lib/features/profile/presentation/bloc/edit_profile/edit_profile_state.dart` | FIX-2 |
+| FIX-4 | Reusable Widgets: buat 3 widget baru — `ProfileHeader` (avatar + edit overlay + nama + phone), `ProfileMenuTile` (icon + label + chevron), `LogoutMenuTile` (icon merah + "Log Out" merah + confirmation dialog via AppConfirmDialog) | `lib/features/profile/presentation/widget/profile_header.dart`, `lib/features/profile/presentation/widget/profile_menu_tile.dart`, `lib/features/profile/presentation/widget/logout_menu_tile.dart` | None |
+| FIX-5 | Profile Page Rewrite: ganti layout sesuai wireframe v2.0 — ProfileHeader di atas, ListView dengan ProfileMenuTile + LogoutMenuTile, menu label updates (Notification→Notifications, T&C→Terms & Conditions, Help→Help & Support, Logout→Log Out), logout via AppConfirmDialog dengan copy baru | `lib/features/profile/presentation/page/profile_page.dart` | FIX-4 |
+| FIX-6 | Edit Profile Page: tambah field phone number input di bawah Full Name, validasi numeric-only, pre-fill dari user.phoneNumber, kirim di submit | `lib/features/profile/presentation/page/edit_profile_page.dart` | FIX-3 |
+| FIX-7 | Settings Page: unify logout dialog copy — title 'Logout', message 'Are you sure you want to log out?', confirmLabel 'Yes, Logout', cancelLabel 'Cancel' | `lib/features/settings/presentation/page/settings_page.dart` | None |
+| FIX-8 | Final Verification: `flutter analyze` (0 issues), `dart run build_runner build --force-jit` | — | All |
+
+---
+
+## Aturan Eksekusi
+
+1. **Satu fix per perintah** — Kerjakan FIX sesuai perintah "fix N" dari user (misal "fix 1", "fix 2", dst). Jangan mengerjakan fix lain yang belum diperintahkan.
+2. **Wajib `flutter analyze` 0 issues** — Sebelum menandai FIX selesai, jalankan `flutter analyze`. Jika ada issues, selesaikan dulu. Baru update status FIX.
+3. **Checklist + commit setiap fix** — Setiap FIX selesai: update checklist di section Todo List (tandai `✅`), lalu `git add` file-file yang terlibat + `git commit -m "fix(profile): FIX-N — deskripsi singkat"`.
+4. **Dilarang membuat file test** — Sesuai Sprint 1 Testing Policy di AGENTS.md: "TIDAK BOLEH membuat file test apapun selama implementasi feature." Test infra yang sudah ada di-skip.
+5. **Build runner setelah semua selesai** — `dart run build_runner build --force-jit` hanya dijalankan di FIX-8 (Final Verification), bukan di tiap FIX.
+6. **Update doc setelah selesai** — Setelah semua FIX selesai dan lolos `flutter analyze`, update status plan ini ke `✅ Done`.
+
+---
+
 *Dokumen ini adalah living document. Update status dan progress setelah implementasi.*
