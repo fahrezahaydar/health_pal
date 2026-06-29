@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
+import '../../../../core/network/result.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_icons.dart';
@@ -21,6 +22,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/loader/dot_loader.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
+import '../../domain/usecase/cancel_appointment_usecase.dart';
 import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
 import '../../../../widgets/card/appointment_card.dart';
@@ -98,13 +100,17 @@ class _BookingHistoryViewState extends State<BookingHistoryView>
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
-        title: Text('Booking History', style: AppTextTheme.titleLarge),
+        centerTitle: true,
+        title: Text('My Bookings', style: AppTextTheme.headlineLarge),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           labelColor: AppTheme.primary,
           unselectedLabelColor: AppTheme.grey500,
           indicatorColor: AppTheme.primary,
+          labelStyle: AppTextTheme.headlineSmall,
+          tabAlignment: TabAlignment.start,
+          unselectedLabelStyle: AppTextTheme.headlineSmall,
           tabs: _tabs.map((t) => Tab(text: t.$1)).toList(),
         ),
       ),
@@ -130,8 +136,10 @@ class _BookingHistoryViewState extends State<BookingHistoryView>
                 message: 'Tidak ada appointment',
                 hint: 'Booking pertamamu akan muncul di sini',
               ),
-            BookingHistoryLoaded(:final appointments, :final hasMore) =>
-              _list(appointments, hasMore),
+            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(
+              appointments,
+              hasMore,
+            ),
             BookingHistoryError(:final message) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
               child: ErrorSection(
@@ -165,6 +173,33 @@ class _BookingHistoryViewState extends State<BookingHistoryView>
             RoutePaths.bookingDetail.replaceAll(':appointmentId', appt.id),
             extra: appt,
           ),
+          onCancel: () async {
+            final useCase = getIt<CancelAppointmentUseCase>();
+            final result = await useCase(appointmentId: appt.id);
+            switch (result) {
+              case Success():
+                if (context.mounted) {
+                  context.read<BookingHistoryCubit>().refresh();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Appointment dibatalkan')),
+                  );
+                }
+              case Failure(:final message):
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(message)),
+                  );
+                }
+            }
+          },
+          onReBook: () => context.push(
+            RoutePaths.bookAppointment.replaceAll(':doctorId', appt.doctorId),
+            extra: {
+              'doctorId': appt.doctorId,
+              'doctorName': appt.doctorName,
+              'consultationFee': appt.consultationFeeSnapshot,
+            },
+          ),
         );
       },
     );
@@ -180,9 +215,13 @@ class _ListSkeletonContent extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, _) => const SizedBox(
-        height: 80,
-        child: Card(child: ListTile(title: Text('Loading'))),
+      itemBuilder: (_, _) => Container(
+        height: 220,
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.grey200),
+        ),
       ),
     );
   }
