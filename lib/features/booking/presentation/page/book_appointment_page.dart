@@ -41,12 +41,15 @@ class BookAppointmentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract extra params (passed via GoRouter).
-    final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
-    final doctorName = extra?['doctorName'] as String? ?? 'Dokter';
+    // Extract extra params (passed via GoRouter from DoctorDetailPage).
+    // Guard against type mismatch — extra should be Map<String, dynamic>?
+    // but if route order is wrong /booking/:doctorId can swallow /booking/success
+    final extra = GoRouterState.of(context).extra;
+    final extraMap = extra is Map<String, dynamic> ? extra : null;
+    final doctorName = extraMap?['doctorName'] as String? ?? 'Dokter';
     final consultationFee =
-        (extra?['consultationFee'] as num?)?.toDouble() ?? 0;
-    final suggestedSlotId = extra?['suggestedSlotId'] as String?;
+        (extraMap?['consultationFee'] as num?)?.toDouble() ?? 0;
+    final suggestedSlotId = extraMap?['suggestedSlotId'] as String?;
 
     return BlocProvider<BookingBloc>(
       create: (_) =>

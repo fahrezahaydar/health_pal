@@ -215,12 +215,10 @@ class AppRouter {
       // ═══════════════════════════
       // STACK — BOOKING
       // ═══════════════════════════
-      GoRoute(
-        path: '/booking/:doctorId',
-        name: 'bookAppointment',
-        builder: (_, state) =>
-            BookAppointmentPage(doctorId: state.pathParameters['doctorId']!),
-      ),
+      // NOTE: /booking/success HARUS sebelum /booking/:doctorId agar
+      // GoRouter match path spesifik dulu, bukan parameterized.
+      // Jika terbalik, push('/booking/success') di-match sebagai
+      // :doctorId='success' → extra jadi AppointmentEntity → TypeError.
       GoRoute(
         path: '/booking/success',
         name: 'bookingSuccess',
@@ -230,6 +228,12 @@ class AppRouter {
             appointment: extra is AppointmentEntity ? extra : null,
           );
         },
+      ),
+      GoRoute(
+        path: '/booking/:doctorId',
+        name: 'bookAppointment',
+        builder: (_, state) =>
+            BookAppointmentPage(doctorId: state.pathParameters['doctorId']!),
       ),
       GoRoute(
         path: '/booking-history/:appointmentId',
