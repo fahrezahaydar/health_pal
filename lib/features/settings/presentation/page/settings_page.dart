@@ -79,9 +79,10 @@ class _SettingsView extends StatelessWidget {
   Future<void> _confirmLogout(BuildContext context) async {
     final confirmed = await AppConfirmDialog.show(
       context,
-      title: 'Yakin ingin logout?',
-      message: 'Anda akan keluar dari akun ini.',
-      confirmLabel: 'Logout',
+      title: 'Logout',
+      message: 'Are you sure you want to log out?',
+      confirmLabel: 'Yes, Logout',
+      cancelLabel: 'Cancel',
     );
     if (confirmed == true && context.mounted) {
       await context.read<SettingsCubit>().logout();
