@@ -17,12 +17,12 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/dialog/app_confirm_dialog.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/app_divider.dart';
 import '../../../auth/domain/entity/user_entity.dart';
 import '../bloc/profile/profile_cubit.dart';
 import '../bloc/profile/profile_state.dart';
+import '../dialog/logout_bottom_modal.dart';
 import '../widget/logout_menu_tile.dart';
 import '../widget/profile_header.dart';
 import '../widget/profile_menu_tile.dart';
@@ -43,128 +43,128 @@ class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
   Future<void> _confirmLogout(BuildContext context) async {
-    final confirmed = await AppConfirmDialog.show(
+    await const LogOutBottomModal().showLogoutBottomSheet(
       context,
-      title: 'Logout',
-      message: 'Are you sure you want to log out?',
-      confirmLabel: 'Yes, Logout',
-      cancelLabel: 'Cancel',
+      onLogout: () {
+        Navigator.pop(context);
+        context.read<ProfileCubit>().logout();
+      },
     );
-    if (confirmed == true && context.mounted) {
-      await context.read<ProfileCubit>().logout();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.white,
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
-        title: Text('Profile', style: AppTextTheme.titleLarge),
+        centerTitle: true,
+        title: Text('Profile', style: AppTextTheme.headlineLarge),
       ),
-      body: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) {
-          return switch (state) {
-            ProfileInitial() || ProfileLoading() => Skeletonizer(
-              enabled: true,
-              child: _loaded(context, UserEntity.mock()),
-            ),
-            ProfileError(:final message) => Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ErrorSection(
-                      message: message,
+      body: RefreshIndicator(
+        onRefresh: () => context.read<ProfileCubit>().loadProfile(),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              BlocSelector<
+                ProfileCubit,
+                ProfileState,
+                (UserEntity, bool, String?)
+              >(
+                selector: (state) {
+                  final mock = UserEntity.mock();
+                  switch (state) {
+                    case ProfileError(:final message):
+                      return (mock, false, message);
+                    case ProfileLoaded(:final user):
+                      return (user, false, null);
+                    default:
+                      return (mock, true, null);
+                  }
+                },
+                builder: (context, state) {
+                  final (user, isLoading, error) = state;
+                  if (error != null) {
+                    return ErrorSection(
+                      message: error,
                       onRetry: () => context.read<ProfileCubit>().loadProfile(),
-                    ),
-                    const SizedBox(height: 24),
-                    LogoutMenuTile(
-                      onTap: () => _confirmLogout(context),
-                    ),
-                  ],
-                ),
+                    );
+                  } else {
+                    return Skeletonizer(
+                      enabled: isLoading,
+                      child: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: ProfileHeader(
+                              user: user,
+                              onEditAvatar: () =>
+                                  context.push(RoutePaths.editProfile),
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              ProfileMenuTile(
+                                icon: AppIcons.userEdit,
+                                label: 'Edit Profile',
+                                onTap: () async {
+                                  final changed = await context.push<bool>(
+                                    RoutePaths.editProfile,
+                                  );
+                                  if (changed == true && context.mounted) {
+                                    context.read<ProfileCubit>().loadProfile();
+                                  }
+                                },
+                              ),
+                              const AppDivider(),
+                              ProfileMenuTile(
+                                icon: AppIcons.favorite,
+                                label: 'Favorite',
+                                onTap: () => context.push(RoutePaths.favorite),
+                              ),
+                              const AppDivider(),
+                              ProfileMenuTile(
+                                icon: AppIcons.notification,
+                                label: 'Notifications',
+                                onTap: () => context.push(
+                                  RoutePaths.notificationSettings,
+                                ),
+                              ),
+                              const AppDivider(),
+                              ProfileMenuTile(
+                                icon: AppIcons.settings,
+                                label: 'Settings',
+                                onTap: () => context.push(RoutePaths.settings),
+                              ),
+                              const AppDivider(),
+                              ProfileMenuTile(
+                                icon: AppIcons.messageQuestion,
+                                label: 'Help & Support',
+                                onTap: () =>
+                                    context.push(RoutePaths.helpSupport),
+                              ),
+                              const AppDivider(),
+                              ProfileMenuTile(
+                                icon: AppIcons.securitySafe,
+                                label: 'Terms & Conditions',
+                                onTap: () =>
+                                    context.push(RoutePaths.termsAndConditions),
+                              ),
+                              const AppDivider(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
-            ),
-            ProfileLoaded(:final user) => _loaded(context, user),
-          };
-        },
-      ),
-    );
-  }
-
-  Widget _loaded(BuildContext context, UserEntity user) {
-    return RefreshIndicator(
-      onRefresh: () => context.read<ProfileCubit>().loadProfile(),
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ProfileHeader(
-            user: user,
-            onEditAvatar: () => context.push(RoutePaths.editProfile),
+              LogoutMenuTile(onTap: () => _confirmLogout(context)),
+            ],
           ),
-          const SizedBox(height: 24),
-          _menuList(context),
-          const SizedBox(height: 24),
-          LogoutMenuTile(onTap: () => _confirmLogout(context)),
-        ],
-      ),
-    );
-  }
-
-  Widget _menuList(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Column(
-        children: [
-          ProfileMenuTile(
-            icon: AppIcons.person,
-            label: 'Edit Profile',
-            onTap: () async {
-              final changed = await context.push<bool>(RoutePaths.editProfile);
-              if (changed == true && context.mounted) {
-                context.read<ProfileCubit>().loadProfile();
-              }
-            },
-          ),
-          const AppDivider(),
-          ProfileMenuTile(
-            icon: AppIcons.favorite,
-            label: 'Favorite',
-            onTap: () => context.push(RoutePaths.favorite),
-          ),
-          const AppDivider(),
-          ProfileMenuTile(
-            icon: AppIcons.notification,
-            label: 'Notifications',
-            onTap: () => context.push(RoutePaths.notificationSettings),
-          ),
-          const AppDivider(),
-          ProfileMenuTile(
-            icon: AppIcons.settings,
-            label: 'Settings',
-            onTap: () => context.push(RoutePaths.settings),
-          ),
-          const AppDivider(),
-          ProfileMenuTile(
-            icon: AppIcons.help,
-            label: 'Help & Support',
-            onTap: () => context.push(RoutePaths.helpSupport),
-          ),
-          const AppDivider(),
-          ProfileMenuTile(
-            icon: AppIcons.description,
-            label: 'Terms & Conditions',
-            onTap: () => context.push(RoutePaths.termsAndConditions),
-          ),
-        ],
+        ),
       ),
     );
   }

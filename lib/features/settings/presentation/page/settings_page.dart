@@ -18,6 +18,7 @@ import '../../../../core/router/route_paths.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../profile/presentation/dialog/logout_bottom_modal.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
 import '../../../../widgets/layouts/card_container.dart';
 import '../../../../widgets/loader/error_section.dart';
@@ -77,16 +78,13 @@ class _SettingsView extends StatelessWidget {
   }
 
   Future<void> _confirmLogout(BuildContext context) async {
-    final confirmed = await AppConfirmDialog.show(
+    await const LogOutBottomModal().showLogoutBottomSheet(
       context,
-      title: 'Logout',
-      message: 'Are you sure you want to log out?',
-      confirmLabel: 'Yes, Logout',
-      cancelLabel: 'Cancel',
+      onLogout: () {
+        Navigator.pop(context);
+        context.read<SettingsCubit>().logout();
+      },
     );
-    if (confirmed == true && context.mounted) {
-      await context.read<SettingsCubit>().logout();
-    }
   }
 
   @override
