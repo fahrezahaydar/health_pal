@@ -1,10 +1,11 @@
 // lib/features/profile/presentation/page/profile_page.dart
 //
-// Halaman Profile (Shell Tab 4). Per wireframe 14-profile.md.
-// - Avatar + nama + email
-// - Menu list: Edit Profile, Favorites, Notifications, Settings, Help, T&C, Logout
+// Halaman Profile (Shell Tab 4). Per wireframe 14-profile.md v2.0.
+// - ProfileHeader (avatar + edit overlay + nama + phone)
+// - Menu list: Edit Profile, Favorite, Notifications, Settings,
+//   Help & Support, Terms & Conditions, Log Out
 //
-// Pola: Stateless wrapper (BlocProvider) + StatefulWidget view (logic + UI).
+// Pola: Stateless wrapper (BlocProvider) + StatelessWidget view.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,12 +20,12 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/dialog/app_confirm_dialog.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/app_divider.dart';
-import '../../../../widgets/shared/app_network_image.dart';
-import '../../../../widgets/shared/avatar_initials.dart';
-import '../../../../widgets/shared/menu_item_tile.dart';
 import '../../../auth/domain/entity/user_entity.dart';
 import '../bloc/profile/profile_cubit.dart';
 import '../bloc/profile/profile_state.dart';
+import '../widget/logout_menu_tile.dart';
+import '../widget/profile_header.dart';
+import '../widget/profile_menu_tile.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -44,9 +45,10 @@ class _ProfileView extends StatelessWidget {
   Future<void> _confirmLogout(BuildContext context) async {
     final confirmed = await AppConfirmDialog.show(
       context,
-      title: 'Yakin ingin logout?',
-      message: 'Kamu akan keluar dari akun ini.',
-      confirmLabel: 'Logout',
+      title: 'Logout',
+      message: 'Are you sure you want to log out?',
+      confirmLabel: 'Yes, Logout',
+      cancelLabel: 'Cancel',
     );
     if (confirmed == true && context.mounted) {
       await context.read<ProfileCubit>().logout();
@@ -65,9 +67,9 @@ class _ProfileView extends StatelessWidget {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           return switch (state) {
-            ProfileInitial() || ProfileLoading() => const Skeletonizer(
+            ProfileInitial() || ProfileLoading() => Skeletonizer(
               enabled: true,
-              child: _ProfileSkeletonContent(),
+              child: _loaded(context, UserEntity.mock()),
             ),
             ProfileError(:final message) => Center(
               child: Padding(
@@ -80,7 +82,9 @@ class _ProfileView extends StatelessWidget {
                       onRetry: () => context.read<ProfileCubit>().loadProfile(),
                     ),
                     const SizedBox(height: 24),
-                    _logoutButton(context),
+                    LogoutMenuTile(
+                      onTap: () => _confirmLogout(context),
+                    ),
                   ],
                 ),
               ),
@@ -98,63 +102,14 @@ class _ProfileView extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _userCard(user),
-          const SizedBox(height: 16),
+          ProfileHeader(
+            user: user,
+            onEditAvatar: () => context.push(RoutePaths.editProfile),
+          ),
+          const SizedBox(height: 24),
           _menuList(context),
-          const SizedBox(height: 16),
-          _logoutButton(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _userCard(UserEntity user) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.grey200),
-      ),
-      child: Column(
-        children: [
-          // ── Avatar ──
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.grey200, width: 2),
-            ),
-            child: ClipOval(
-              child: user.avatarUrl != null
-                  ? AppNetworkImage(
-                      imageUrl: user.avatarUrl,
-                      width: 80,
-                      height: 80,
-                      iconData: Icons.person,
-                      iconSize: 32,
-                    )
-                  : AvatarInitials(
-                      name: user.fullName,
-                      size: 80,
-                    ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(user.fullName, style: AppTextTheme.titleLarge),
-          if (user.nickname != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              '@${user.nickname}',
-              style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-            ),
-          ],
-          const SizedBox(height: 4),
-          Text(
-            user.email,
-            style: AppTextTheme.bodySmall.copyWith(color: AppTheme.grey500),
-          ),
+          const SizedBox(height: 24),
+          LogoutMenuTile(onTap: () => _confirmLogout(context)),
         ],
       ),
     );
@@ -169,7 +124,7 @@ class _ProfileView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.person,
             label: 'Edit Profile',
             onTap: () async {
@@ -180,88 +135,37 @@ class _ProfileView extends StatelessWidget {
             },
           ),
           const AppDivider(),
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.favorite,
             label: 'Favorite',
             onTap: () => context.push(RoutePaths.favorite),
           ),
           const AppDivider(),
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.notification,
-            label: 'Notification',
+            label: 'Notifications',
             onTap: () => context.push(RoutePaths.notificationSettings),
           ),
           const AppDivider(),
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.settings,
             label: 'Settings',
             onTap: () => context.push(RoutePaths.settings),
           ),
           const AppDivider(),
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.help,
-            label: 'Help and Support',
+            label: 'Help & Support',
             onTap: () => context.push(RoutePaths.helpSupport),
           ),
           const AppDivider(),
-          MenuItemTile(
+          ProfileMenuTile(
             icon: AppIcons.description,
-            label: 'T & C',
+            label: 'Terms & Conditions',
             onTap: () => context.push(RoutePaths.termsAndConditions),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _logoutButton(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: () => _confirmLogout(context),
-      icon: const Icon(AppIcons.logout, color: AppTheme.darkRed),
-      label: const Text(
-        'Logout',
-        style: TextStyle(color: AppTheme.darkRed, fontWeight: FontWeight.w600),
-      ),
-      style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: AppTheme.darkRed),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-}
-
-class _ProfileSkeletonContent extends StatelessWidget {
-  const _ProfileSkeletonContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Column(
-            children: [
-              CircleAvatar(radius: 40),
-              SizedBox(height: 12),
-              Text('Full Name'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          height: 300,
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ],
     );
   }
 }
