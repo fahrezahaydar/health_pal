@@ -50,6 +50,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _nicknameController = TextEditingController();
+  final _phoneController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedGender;
   File? _newPhoto;
@@ -60,6 +61,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
     _initialUser = user;
     _nameController.text = user.fullName;
     _nicknameController.text = user.nickname ?? '';
+    _phoneController.text = user.phoneNumber ?? '';
     _selectedDate = user.dateOfBirth;
     _selectedGender = user.gender;
   }
@@ -68,6 +70,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
   void dispose() {
     _nameController.dispose();
     _nicknameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -113,10 +116,12 @@ class _EditProfileViewState extends State<_EditProfileView> {
     // Tampilkan loading dialog
     AppLoadingDialog.show(context);
 
+    final phone = _phoneController.text.trim();
     context.read<EditProfileCubit>().updateProfile(
       authId: authId,
       fullName: _nameController.text.trim(),
       nickname: _nicknameController.text.trim(),
+      phoneNumber: phone.isNotEmpty ? phone : null,
       dateOfBirth: _selectedDate != null
           ? '${_selectedDate!.year.toString().padLeft(4, '0')}-'
                 '${_selectedDate!.month.toString().padLeft(2, '0')}-'
@@ -222,6 +227,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
               required: true,
             ),
             const SizedBox(height: 12),
+            _phoneField(),
+            const SizedBox(height: 12),
             DatePickerField(
               label: 'Date of Birth',
               valueText: _formatDate(_selectedDate),
@@ -253,6 +260,42 @@ class _EditProfileViewState extends State<_EditProfileView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _phoneField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Phone Number', style: AppTextTheme.bodyMedium),
+        const SizedBox(height: 4),
+        TextFormField(
+          controller: _phoneController,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(
+            filled: true,
+            fillColor: AppTheme.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderSide: BorderSide(color: AppTheme.grey200),
+            ),
+          ),
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) return null;
+            final digits = v.trim();
+            if (!RegExp(r'^\d+$').hasMatch(digits)) {
+              return 'Hanya angka yang diperbolehkan';
+            }
+            if (digits.length < 8) {
+              return 'Minimal 8 digit';
+            }
+            if (digits.length > 15) {
+              return 'Maksimal 15 digit';
+            }
+            return null;
+          },
+        ),
+      ],
     );
   }
 
