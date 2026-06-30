@@ -4,6 +4,7 @@
 **Wireframe:** 14-profile.md (v2.0)
 **Status:** Draft
 **Target Sprint:** A7 (Sprint 2)
+**Status:** ✅ Done (all 8 FIX completed)
 
 ---
 
@@ -321,8 +322,8 @@ Step 10: Manual verification (hot reload/restart)
 | FIX-4 | ✅ Reusable Widgets: buat 3 widget baru — `ProfileHeader` (avatar + edit overlay + nama + phone), `ProfileMenuTile` (icon + label + chevron), `LogoutMenuTile` (icon merah + "Log Out" merah) | `lib/features/profile/presentation/widget/profile_header.dart`, `lib/features/profile/presentation/widget/profile_menu_tile.dart`, `lib/features/profile/presentation/widget/logout_menu_tile.dart` | None |
 | FIX-5 | ✅ Profile Page Rewrite: ganti layout sesuai wireframe v2.0 — ProfileHeader di atas, ListView dengan ProfileMenuTile + LogoutMenuTile, menu label updates (Notification→Notifications, T&C→Terms & Conditions, Help→Help & Support, Logout→Log Out), logout via AppConfirmDialog dengan copy baru | `lib/features/profile/presentation/page/profile_page.dart` | FIX-4 |
 | FIX-6 | ✅ Edit Profile Page: tambah field phone number input di bawah Nickname, validasi numeric-only (8-15 digit), pre-fill dari user.phoneNumber, kirim di submit | `lib/features/profile/presentation/page/edit_profile_page.dart` | FIX-3 |
-| FIX-7 | Settings Page: unify logout dialog copy — title 'Logout', message 'Are you sure you want to log out?', confirmLabel 'Yes, Logout', cancelLabel 'Cancel' | `lib/features/settings/presentation/page/settings_page.dart` | None |
-| FIX-8 | Final Verification: `flutter analyze` (0 issues), `dart run build_runner build --force-jit` | — | All |
+| FIX-7 | ✅ Settings Page: unify logout dialog copy — title 'Logout', message 'Are you sure you want to log out?', confirmLabel 'Yes, Logout', cancelLabel 'Cancel' | `lib/features/settings/presentation/page/settings_page.dart` | None |
+| FIX-8 | ✅ Final Verification: `flutter analyze` (0 issues, 6 pre-existing info), `dart run build_runner build --force-jit` (26 outputs) | — | All |
 
 ---
 
