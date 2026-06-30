@@ -39,6 +39,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String? dateOfBirth,
     String? gender,
     String? avatarUrl,
+    String? phoneNumber,
   }) async {
     try {
       final remote = await _remote.updateProfile(
@@ -48,6 +49,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         dateOfBirth: dateOfBirth,
         gender: gender,
         avatarUrl: avatarUrl,
+        phoneNumber: phoneNumber,
       );
       return Result.success(remote.toEntity());
     } catch (e) {

@@ -67,6 +67,7 @@ class ProfileRemoteDataSource {
     String? dateOfBirth,
     String? gender,
     String? avatarUrl,
+    String? phoneNumber,
   }) async {
     final body = <String, dynamic>{};
     if (fullName != null) body['full_name'] = fullName;
@@ -74,6 +75,7 @@ class ProfileRemoteDataSource {
     if (dateOfBirth != null) body['date_of_birth'] = dateOfBirth;
     if (gender != null) body['gender'] = gender;
     if (avatarUrl != null) body['avatar_url'] = avatarUrl;
+    if (phoneNumber != null) body['phone_number'] = phoneNumber;
 
     if (body.isEmpty) {
       // Nothing to update, return current profile

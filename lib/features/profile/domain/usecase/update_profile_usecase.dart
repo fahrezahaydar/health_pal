@@ -22,6 +22,7 @@ class UpdateProfileUseCase {
     String? dateOfBirth,
     String? gender,
     String? avatarUrl,
+    String? phoneNumber,
   }) {
     return _repository.updateProfile(
       authId: authId,
@@ -30,6 +31,7 @@ class UpdateProfileUseCase {
       dateOfBirth: dateOfBirth,
       gender: gender,
       avatarUrl: avatarUrl,
+      phoneNumber: phoneNumber,
     );
   }
 }

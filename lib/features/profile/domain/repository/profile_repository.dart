@@ -20,6 +20,7 @@ abstract class ProfileRepository {
     String? dateOfBirth,
     String? gender,
     String? avatarUrl,
+    String? phoneNumber,
   });
 
   /// API §3.3 — Upload avatar ke Supabase Storage, return public URL.

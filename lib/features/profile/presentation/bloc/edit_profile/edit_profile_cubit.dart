@@ -60,6 +60,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     String? nickname,
     String? dateOfBirth,
     String? gender,
+    String? phoneNumber,
     File? photo,
     required VoidCallback onSuccess,
     required void Function(String message) onError,
@@ -90,6 +91,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       dateOfBirth: dateOfBirth,
       gender: gender,
       avatarUrl: avatarUrl,
+      phoneNumber: phoneNumber,
     );
 
     switch (result) {
