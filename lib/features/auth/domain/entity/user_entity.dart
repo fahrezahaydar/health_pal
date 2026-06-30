@@ -9,6 +9,7 @@ class UserEntity extends Equatable {
   final String? avatarUrl;
   final DateTime? dateOfBirth;
   final String? gender;
+  final String? phoneNumber;
   final bool isProfileComplete;
 
   const UserEntity({
@@ -20,6 +21,7 @@ class UserEntity extends Equatable {
     this.avatarUrl,
     this.dateOfBirth,
     this.gender,
+    this.phoneNumber,
     this.isProfileComplete = false,
   });
 
@@ -29,6 +31,7 @@ class UserEntity extends Equatable {
         fullName: 'Loading Name',
         email: 'loading@email.com',
         nickname: 'Loading',
+        phoneNumber: '+123 456 789',
       );
 
   @override
@@ -41,6 +44,7 @@ class UserEntity extends Equatable {
         avatarUrl,
         dateOfBirth,
         gender,
+        phoneNumber,
         isProfileComplete,
       ];
 
@@ -53,6 +57,7 @@ class UserEntity extends Equatable {
     String? avatarUrl,
     DateTime? dateOfBirth,
     String? gender,
+    String? phoneNumber,
     bool? isProfileComplete,
   }) {
     return UserEntity(
@@ -64,6 +69,7 @@ class UserEntity extends Equatable {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       isProfileComplete: isProfileComplete ?? this.isProfileComplete,
     );
   }

@@ -9,6 +9,7 @@ class UserModel {
   final String? avatarUrl;
   final DateTime? dateOfBirth;
   final String? gender;
+  final String? phoneNumber;
   final bool isProfileComplete;
 
   const UserModel({
@@ -20,6 +21,7 @@ class UserModel {
     this.avatarUrl,
     this.dateOfBirth,
     this.gender,
+    this.phoneNumber,
     this.isProfileComplete = false,
   });
 
@@ -35,6 +37,7 @@ class UserModel {
           ? DateTime.parse(json['date_of_birth'] as String)
           : null,
       gender: json['gender'] as String?,
+      phoneNumber: json['phone_number'] as String?,
       isProfileComplete: json['is_profile_complete'] as bool? ?? false,
     );
   }
@@ -49,6 +52,7 @@ class UserModel {
       'avatar_url': avatarUrl,
       'date_of_birth': dateOfBirth?.toIso8601String(),
       'gender': gender,
+      'phone_number': phoneNumber,
       'is_profile_complete': isProfileComplete,
     };
   }
@@ -63,6 +67,7 @@ class UserModel {
       avatarUrl: avatarUrl,
       dateOfBirth: dateOfBirth,
       gender: gender,
+      phoneNumber: phoneNumber,
       isProfileComplete: isProfileComplete,
     );
   }
@@ -77,6 +82,7 @@ class UserModel {
       avatarUrl: entity.avatarUrl,
       dateOfBirth: entity.dateOfBirth,
       gender: entity.gender,
+      phoneNumber: entity.phoneNumber,
       isProfileComplete: entity.isProfileComplete,
     );
   }
