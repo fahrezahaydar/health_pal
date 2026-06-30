@@ -17,7 +17,7 @@ mixin _$AppointmentModel {
 
  String get id;@JsonKey(name: 'patient_id') String get patientId;@JsonKey(name: 'doctor_id') String get doctorId;@JsonKey(name: 'slot_id') String get slotId; String get status;// 'pending' | 'upcoming' | 'completed' | 'cancelled'
 @JsonKey(name: 'complaint_note') String? get complaintNote;@JsonKey(name: 'consultation_fee_snapshot') double get consultationFeeSnapshot;@JsonKey(name: 'booked_at') DateTime? get bookedAt;@JsonKey(name: 'confirmed_at') DateTime? get confirmedAt;@JsonKey(name: 'completed_at') DateTime? get completedAt;@JsonKey(name: 'cancelled_at') DateTime? get cancelledAt;@JsonKey(name: 'cancellation_reason') String? get cancellationReason;@JsonKey(name: 'created_at') DateTime? get createdAt;@JsonKey(name: 'updated_at') DateTime? get updatedAt;// ── Nested Objects (dari PostgREST nested select) ──
- AppointmentDoctorModel? get doctors; AppointmentSlotModel? get doctorSlots;
+ AppointmentDoctorModel? get doctors;@JsonKey(name: 'doctor_slots') AppointmentSlotModel? get doctorSlots;
 /// Create a copy of AppointmentModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -50,7 +50,7 @@ abstract mixin class $AppointmentModelCopyWith<$Res>  {
   factory $AppointmentModelCopyWith(AppointmentModel value, $Res Function(AppointmentModel) _then) = _$AppointmentModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(name: 'patient_id') String patientId,@JsonKey(name: 'doctor_id') String doctorId,@JsonKey(name: 'slot_id') String slotId, String status,@JsonKey(name: 'complaint_note') String? complaintNote,@JsonKey(name: 'consultation_fee_snapshot') double consultationFeeSnapshot,@JsonKey(name: 'booked_at') DateTime? bookedAt,@JsonKey(name: 'confirmed_at') DateTime? confirmedAt,@JsonKey(name: 'completed_at') DateTime? completedAt,@JsonKey(name: 'cancelled_at') DateTime? cancelledAt,@JsonKey(name: 'cancellation_reason') String? cancellationReason,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt, AppointmentDoctorModel? doctors, AppointmentSlotModel? doctorSlots
+ String id,@JsonKey(name: 'patient_id') String patientId,@JsonKey(name: 'doctor_id') String doctorId,@JsonKey(name: 'slot_id') String slotId, String status,@JsonKey(name: 'complaint_note') String? complaintNote,@JsonKey(name: 'consultation_fee_snapshot') double consultationFeeSnapshot,@JsonKey(name: 'booked_at') DateTime? bookedAt,@JsonKey(name: 'confirmed_at') DateTime? confirmedAt,@JsonKey(name: 'completed_at') DateTime? completedAt,@JsonKey(name: 'cancelled_at') DateTime? cancelledAt,@JsonKey(name: 'cancellation_reason') String? cancellationReason,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt, AppointmentDoctorModel? doctors,@JsonKey(name: 'doctor_slots') AppointmentSlotModel? doctorSlots
 });
 
 
@@ -194,7 +194,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors,  AppointmentSlotModel? doctorSlots)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors, @JsonKey(name: 'doctor_slots')  AppointmentSlotModel? doctorSlots)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppointmentModel() when $default != null:
 return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.status,_that.complaintNote,_that.consultationFeeSnapshot,_that.bookedAt,_that.confirmedAt,_that.completedAt,_that.cancelledAt,_that.cancellationReason,_that.createdAt,_that.updatedAt,_that.doctors,_that.doctorSlots);case _:
@@ -215,7 +215,7 @@ return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.statu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors,  AppointmentSlotModel? doctorSlots)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors, @JsonKey(name: 'doctor_slots')  AppointmentSlotModel? doctorSlots)  $default,) {final _that = this;
 switch (_that) {
 case _AppointmentModel():
 return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.status,_that.complaintNote,_that.consultationFeeSnapshot,_that.bookedAt,_that.confirmedAt,_that.completedAt,_that.cancelledAt,_that.cancellationReason,_that.createdAt,_that.updatedAt,_that.doctors,_that.doctorSlots);case _:
@@ -235,7 +235,7 @@ return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.statu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors,  AppointmentSlotModel? doctorSlots)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'patient_id')  String patientId, @JsonKey(name: 'doctor_id')  String doctorId, @JsonKey(name: 'slot_id')  String slotId,  String status, @JsonKey(name: 'complaint_note')  String? complaintNote, @JsonKey(name: 'consultation_fee_snapshot')  double consultationFeeSnapshot, @JsonKey(name: 'booked_at')  DateTime? bookedAt, @JsonKey(name: 'confirmed_at')  DateTime? confirmedAt, @JsonKey(name: 'completed_at')  DateTime? completedAt, @JsonKey(name: 'cancelled_at')  DateTime? cancelledAt, @JsonKey(name: 'cancellation_reason')  String? cancellationReason, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt,  AppointmentDoctorModel? doctors, @JsonKey(name: 'doctor_slots')  AppointmentSlotModel? doctorSlots)?  $default,) {final _that = this;
 switch (_that) {
 case _AppointmentModel() when $default != null:
 return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.status,_that.complaintNote,_that.consultationFeeSnapshot,_that.bookedAt,_that.confirmedAt,_that.completedAt,_that.cancelledAt,_that.cancellationReason,_that.createdAt,_that.updatedAt,_that.doctors,_that.doctorSlots);case _:
@@ -250,7 +250,7 @@ return $default(_that.id,_that.patientId,_that.doctorId,_that.slotId,_that.statu
 @JsonSerializable()
 
 class _AppointmentModel extends AppointmentModel {
-  const _AppointmentModel({required this.id, @JsonKey(name: 'patient_id') required this.patientId, @JsonKey(name: 'doctor_id') required this.doctorId, @JsonKey(name: 'slot_id') required this.slotId, required this.status, @JsonKey(name: 'complaint_note') this.complaintNote, @JsonKey(name: 'consultation_fee_snapshot') required this.consultationFeeSnapshot, @JsonKey(name: 'booked_at') this.bookedAt, @JsonKey(name: 'confirmed_at') this.confirmedAt, @JsonKey(name: 'completed_at') this.completedAt, @JsonKey(name: 'cancelled_at') this.cancelledAt, @JsonKey(name: 'cancellation_reason') this.cancellationReason, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, this.doctors, this.doctorSlots}): super._();
+  const _AppointmentModel({required this.id, @JsonKey(name: 'patient_id') required this.patientId, @JsonKey(name: 'doctor_id') required this.doctorId, @JsonKey(name: 'slot_id') required this.slotId, required this.status, @JsonKey(name: 'complaint_note') this.complaintNote, @JsonKey(name: 'consultation_fee_snapshot') required this.consultationFeeSnapshot, @JsonKey(name: 'booked_at') this.bookedAt, @JsonKey(name: 'confirmed_at') this.confirmedAt, @JsonKey(name: 'completed_at') this.completedAt, @JsonKey(name: 'cancelled_at') this.cancelledAt, @JsonKey(name: 'cancellation_reason') this.cancellationReason, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, this.doctors, @JsonKey(name: 'doctor_slots') this.doctorSlots}): super._();
   factory _AppointmentModel.fromJson(Map<String, dynamic> json) => _$AppointmentModelFromJson(json);
 
 @override final  String id;
@@ -270,7 +270,7 @@ class _AppointmentModel extends AppointmentModel {
 @override@JsonKey(name: 'updated_at') final  DateTime? updatedAt;
 // ── Nested Objects (dari PostgREST nested select) ──
 @override final  AppointmentDoctorModel? doctors;
-@override final  AppointmentSlotModel? doctorSlots;
+@override@JsonKey(name: 'doctor_slots') final  AppointmentSlotModel? doctorSlots;
 
 /// Create a copy of AppointmentModel
 /// with the given fields replaced by the non-null parameter values.
@@ -305,7 +305,7 @@ abstract mixin class _$AppointmentModelCopyWith<$Res> implements $AppointmentMod
   factory _$AppointmentModelCopyWith(_AppointmentModel value, $Res Function(_AppointmentModel) _then) = __$AppointmentModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(name: 'patient_id') String patientId,@JsonKey(name: 'doctor_id') String doctorId,@JsonKey(name: 'slot_id') String slotId, String status,@JsonKey(name: 'complaint_note') String? complaintNote,@JsonKey(name: 'consultation_fee_snapshot') double consultationFeeSnapshot,@JsonKey(name: 'booked_at') DateTime? bookedAt,@JsonKey(name: 'confirmed_at') DateTime? confirmedAt,@JsonKey(name: 'completed_at') DateTime? completedAt,@JsonKey(name: 'cancelled_at') DateTime? cancelledAt,@JsonKey(name: 'cancellation_reason') String? cancellationReason,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt, AppointmentDoctorModel? doctors, AppointmentSlotModel? doctorSlots
+ String id,@JsonKey(name: 'patient_id') String patientId,@JsonKey(name: 'doctor_id') String doctorId,@JsonKey(name: 'slot_id') String slotId, String status,@JsonKey(name: 'complaint_note') String? complaintNote,@JsonKey(name: 'consultation_fee_snapshot') double consultationFeeSnapshot,@JsonKey(name: 'booked_at') DateTime? bookedAt,@JsonKey(name: 'confirmed_at') DateTime? confirmedAt,@JsonKey(name: 'completed_at') DateTime? completedAt,@JsonKey(name: 'cancelled_at') DateTime? cancelledAt,@JsonKey(name: 'cancellation_reason') String? cancellationReason,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt, AppointmentDoctorModel? doctors,@JsonKey(name: 'doctor_slots') AppointmentSlotModel? doctorSlots
 });
 
 

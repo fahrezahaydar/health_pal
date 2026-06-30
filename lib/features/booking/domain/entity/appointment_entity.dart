@@ -7,6 +7,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 
+import '../../../../core/utils/date_formatter.dart';
+
 class AppointmentEntity extends Equatable {
   final String id;
   final String patientId;
@@ -47,15 +49,15 @@ class AppointmentEntity extends Equatable {
   });
 
   static AppointmentEntity mock() => AppointmentEntity(
-        id: 'sk-1',
-        patientId: 'sk-patient',
-        doctorId: 'sk-doctor',
-        slotId: 'sk-slot',
-        status: 'pending',
-        consultationFeeSnapshot: 0,
-        doctor: AppointmentDoctorEntity.mock(),
-        slot: AppointmentSlotEntity.mock(),
-      );
+    id: 'sk-1',
+    patientId: 'sk-patient',
+    doctorId: 'sk-doctor',
+    slotId: 'sk-slot',
+    status: 'pending',
+    consultationFeeSnapshot: 0,
+    doctor: AppointmentDoctorEntity.mock(),
+    slot: AppointmentSlotEntity.mock(),
+  );
 
   /// Derived: display name untuk doctor.
   String get doctorName => doctor?.fullName ?? 'Dokter';
@@ -92,23 +94,23 @@ class AppointmentEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        patientId,
-        doctorId,
-        slotId,
-        status,
-        complaintNote,
-        consultationFeeSnapshot,
-        bookedAt,
-        confirmedAt,
-        completedAt,
-        cancelledAt,
-        cancellationReason,
-        createdAt,
-        updatedAt,
-        doctor,
-        slot,
-      ];
+    id,
+    patientId,
+    doctorId,
+    slotId,
+    status,
+    complaintNote,
+    consultationFeeSnapshot,
+    bookedAt,
+    confirmedAt,
+    completedAt,
+    cancelledAt,
+    cancellationReason,
+    createdAt,
+    updatedAt,
+    doctor,
+    slot,
+  ];
 }
 
 class AppointmentDoctorEntity extends Equatable {
@@ -133,24 +135,24 @@ class AppointmentDoctorEntity extends Equatable {
   });
 
   static AppointmentDoctorEntity mock() => const AppointmentDoctorEntity(
-        id: 'sk-1',
-        fullName: 'Loading Doctor',
-        experienceYears: 0,
-        specializationName: 'Umum',
-        clinicName: 'Klinik',
-      );
+    id: 'sk-1',
+    fullName: 'Loading Doctor',
+    experienceYears: 0,
+    specializationName: 'Umum',
+    clinicName: 'Klinik',
+  );
 
   @override
   List<Object?> get props => [
-        id,
-        fullName,
-        photoUrl,
-        experienceYears,
-        specializationName,
-        clinicName,
-        clinicAddress,
-        clinicPhone,
-      ];
+    id,
+    fullName,
+    photoUrl,
+    experienceYears,
+    specializationName,
+    clinicName,
+    clinicAddress,
+    clinicPhone,
+  ];
 }
 
 class AppointmentSlotEntity extends Equatable {
@@ -165,10 +167,10 @@ class AppointmentSlotEntity extends Equatable {
   });
 
   static AppointmentSlotEntity mock() => AppointmentSlotEntity(
-        slotDate: DateTime(2024, 1, 15),
-        startTime: const TimeOfDay(hour: 9, minute: 0),
-        endTime: const TimeOfDay(hour: 9, minute: 30),
-      );
+    slotDate: DateTime(2024, 1, 15),
+    startTime: const TimeOfDay(hour: 9, minute: 0),
+    endTime: const TimeOfDay(hour: 9, minute: 30),
+  );
 
   String get startTimeDisplay {
     final h = startTime.hour.toString().padLeft(2, '0');
@@ -181,6 +183,9 @@ class AppointmentSlotEntity extends Equatable {
     final m = endTime.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
+
+  String get display =>
+      '${DateFormatter.toShortDate(slotDate)} - $startTimeDisplay';
 
   String get timeRangeDisplay => '$startTimeDisplay - $endTimeDisplay';
 

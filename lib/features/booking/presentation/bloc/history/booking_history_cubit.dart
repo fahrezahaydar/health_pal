@@ -22,8 +22,7 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
   String? _patientId;
   bool _isLoadingMore = false;
 
-  BookingHistoryCubit(this._getHistory)
-      : super(const BookingHistoryInitial());
+  BookingHistoryCubit(this._getHistory) : super(const BookingHistoryInitial());
 
   /// Initial load + filter by status. `status == null` means "Semua".
   Future<void> loadHistory(String patientId, {String? status}) async {
@@ -42,11 +41,18 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
     switch (result) {
       case Success(:final data):
         _offset += data.length;
-        emit(BookingHistoryLoaded(
-          appointments: data,
-          activeStatus: status,
-          hasMore: data.length >= _pageSize,
-        ));
+        for (var res in data) {
+          if (res.slot == null) {
+            print("Slot Null");
+          }
+        }
+        emit(
+          BookingHistoryLoaded(
+            appointments: data,
+            activeStatus: status,
+            hasMore: data.length >= _pageSize,
+          ),
+        );
       case Failure(:final message):
         emit(BookingHistoryError(message: message));
     }
@@ -77,10 +83,12 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
     switch (result) {
       case Success(:final data):
         _offset += data.length;
-        emit(current.copyWith(
-          appointments: [...current.appointments, ...data],
-          hasMore: data.length >= _pageSize,
-        ));
+        emit(
+          current.copyWith(
+            appointments: [...current.appointments, ...data],
+            hasMore: data.length >= _pageSize,
+          ),
+        );
       case Failure(:final message):
         emit(BookingHistoryError(message: message));
     }

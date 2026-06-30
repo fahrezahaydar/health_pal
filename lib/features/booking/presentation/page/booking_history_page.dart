@@ -10,7 +10,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/locator.dart';
 import '../../../../core/network/result.dart';
@@ -19,13 +18,12 @@ import '../../../../core/services/app_services.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../widgets/loader/dot_loader.dart';
 import '../../../../widgets/loader/error_section.dart';
 import '../../../../widgets/shared/empty_state_view.dart';
 import '../../domain/usecase/cancel_appointment_usecase.dart';
 import '../bloc/history/booking_history_cubit.dart';
 import '../bloc/history/booking_history_state.dart';
-import '../../../../widgets/card/appointment_card.dart';
+import '../widget/appointment_list.dart';
 
 class BookingHistoryPage extends StatelessWidget {
   const BookingHistoryPage({super.key});
@@ -114,114 +112,72 @@ class _BookingHistoryViewState extends State<BookingHistoryView>
           tabs: _tabs.map((t) => Tab(text: t.$1)).toList(),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: _tabs.map((_) => _tabContent()).toList(),
-      ),
-    );
-  }
-
-  Widget _tabContent() {
-    return BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
-      builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () => context.read<BookingHistoryCubit>().refresh(),
-          child: switch (state) {
-            BookingHistoryInitial() || BookingHistoryLoading() =>
-              const Skeletonizer(enabled: true, child: _ListSkeletonContent()),
-            BookingHistoryLoaded(:final appointments)
-                when appointments.isEmpty =>
-              const EmptyStateView(
-                icon: AppIcons.calendarToday,
-                message: 'Tidak ada appointment',
-                hint: 'Booking pertamamu akan muncul di sini',
+      body: BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
+        builder: (context, state) {
+          return RefreshIndicator(
+            onRefresh: () => context.read<BookingHistoryCubit>().refresh(),
+            child: switch (state) {
+              BookingHistoryLoaded(:final appointments)
+                  when appointments.isEmpty =>
+                const EmptyStateView(
+                  icon: AppIcons.calendarToday,
+                  message: 'Tidak ada appointment',
+                  hint: 'Booking pertamamu akan muncul di sini',
+                ),
+              BookingHistoryLoaded(:final appointments) => AppointmentList(
+                controller: _scrollController,
+                appointments: appointments,
+                onTap: (context, appt) => context.push(
+                  RoutePaths.bookingDetail.replaceAll(
+                    ':appointmentId',
+                    appt.id,
+                  ),
+                  extra: appt,
+                ),
+                onCancel: (context, appt) async {
+                  final useCase = getIt<CancelAppointmentUseCase>();
+                  final result = await useCase(appointmentId: appt.id);
+                  switch (result) {
+                    case Success():
+                      if (context.mounted) {
+                        context.read<BookingHistoryCubit>().refresh();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Appointment dibatalkan'),
+                          ),
+                        );
+                      }
+                    case Failure(:final message):
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(message)));
+                      }
+                  }
+                },
+                onReBook: (context, appt) => context.push(
+                  RoutePaths.bookAppointment.replaceAll(
+                    ':doctorId',
+                    appt.doctorId,
+                  ),
+                  extra: {
+                    'doctorId': appt.doctorId,
+                    'doctorName': appt.doctorName,
+                    'consultationFee': appt.consultationFeeSnapshot,
+                  },
+                ),
               ),
-            BookingHistoryLoaded(:final appointments, :final hasMore) => _list(
-              appointments,
-              hasMore,
-            ),
-            BookingHistoryError(:final message) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48),
-              child: ErrorSection(
-                message: message,
-                onRetry: () => context.read<BookingHistoryCubit>().refresh(),
+              BookingHistoryError(:final message) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: ErrorSection(
+                  message: message,
+                  onRetry: () => context.read<BookingHistoryCubit>().refresh(),
+                ),
               ),
-            ),
-          },
-        );
-      },
-    );
-  }
-
-  Widget _list(List appointments, bool hasMore) {
-    return ListView.separated(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      itemCount: appointments.length + (hasMore ? 1 : 0),
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        if (index >= appointments.length) {
-          return const Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(child: DotLoader()),
-          );
-        }
-        final appt = appointments[index];
-        return AppointmentCard(
-          appointment: appt,
-          onTap: () => context.push(
-            RoutePaths.bookingDetail.replaceAll(':appointmentId', appt.id),
-            extra: appt,
-          ),
-          onCancel: () async {
-            final useCase = getIt<CancelAppointmentUseCase>();
-            final result = await useCase(appointmentId: appt.id);
-            switch (result) {
-              case Success():
-                if (context.mounted) {
-                  context.read<BookingHistoryCubit>().refresh();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Appointment dibatalkan')),
-                  );
-                }
-              case Failure(:final message):
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(message)),
-                  );
-                }
-            }
-          },
-          onReBook: () => context.push(
-            RoutePaths.bookAppointment.replaceAll(':doctorId', appt.doctorId),
-            extra: {
-              'doctorId': appt.doctorId,
-              'doctorName': appt.doctorName,
-              'consultationFee': appt.consultationFeeSnapshot,
+              _ => AppointmentList.skeleton(),
             },
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ListSkeletonContent extends StatelessWidget {
-  const _ListSkeletonContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: 3,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (_, _) => Container(
-        height: 220,
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.grey200),
-        ),
+          );
+        },
       ),
     );
   }

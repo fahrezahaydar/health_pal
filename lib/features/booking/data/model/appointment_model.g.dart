@@ -40,10 +40,10 @@ _AppointmentModel _$AppointmentModelFromJson(Map<String, dynamic> json) =>
           : AppointmentDoctorModel.fromJson(
               json['doctors'] as Map<String, dynamic>,
             ),
-      doctorSlots: json['doctorSlots'] == null
+      doctorSlots: json['doctor_slots'] == null
           ? null
           : AppointmentSlotModel.fromJson(
-              json['doctorSlots'] as Map<String, dynamic>,
+              json['doctor_slots'] as Map<String, dynamic>,
             ),
     );
 
@@ -64,7 +64,7 @@ Map<String, dynamic> _$AppointmentModelToJson(_AppointmentModel instance) =>
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'doctors': instance.doctors,
-      'doctorSlots': instance.doctorSlots,
+      'doctor_slots': instance.doctorSlots,
     };
 
 _AppointmentDoctorModel _$AppointmentDoctorModelFromJson(

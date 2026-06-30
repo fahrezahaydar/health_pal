@@ -123,6 +123,7 @@ abstract final class AppTheme {
             ),
           ),
         ),
+
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppTheme.grey50,

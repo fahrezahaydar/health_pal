@@ -40,9 +40,11 @@ abstract class AppointmentModel with _$AppointmentModel {
     @JsonKey(name: 'patient_id') required String patientId,
     @JsonKey(name: 'doctor_id') required String doctorId,
     @JsonKey(name: 'slot_id') required String slotId,
-    required String status, // 'pending' | 'upcoming' | 'completed' | 'cancelled'
+    required String
+    status, // 'pending' | 'upcoming' | 'completed' | 'cancelled'
     @JsonKey(name: 'complaint_note') String? complaintNote,
-    @JsonKey(name: 'consultation_fee_snapshot') required double consultationFeeSnapshot,
+    @JsonKey(name: 'consultation_fee_snapshot')
+    required double consultationFeeSnapshot,
     @JsonKey(name: 'booked_at') DateTime? bookedAt,
     @JsonKey(name: 'confirmed_at') DateTime? confirmedAt,
     @JsonKey(name: 'completed_at') DateTime? completedAt,
@@ -53,7 +55,7 @@ abstract class AppointmentModel with _$AppointmentModel {
 
     // ── Nested Objects (dari PostgREST nested select) ──
     AppointmentDoctorModel? doctors,
-    AppointmentSlotModel? doctorSlots,
+    @JsonKey(name: 'doctor_slots') AppointmentSlotModel? doctorSlots,
   }) = _AppointmentModel;
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) =>
@@ -82,9 +84,8 @@ abstract class AppointmentDoctorModel with _$AppointmentDoctorModel {
 @freezed
 abstract class AppointmentSpecializationModel
     with _$AppointmentSpecializationModel {
-  const factory AppointmentSpecializationModel({
-    required String name,
-  }) = _AppointmentSpecializationModel;
+  const factory AppointmentSpecializationModel({required String name}) =
+      _AppointmentSpecializationModel;
 
   factory AppointmentSpecializationModel.fromJson(Map<String, dynamic> json) =>
       _$AppointmentSpecializationModelFromJson(json);
@@ -153,42 +154,42 @@ String _timeToJson(TimeOfDay value) {
 
 extension AppointmentModelX on AppointmentModel {
   AppointmentEntity toEntity() => AppointmentEntity(
-        id: id,
-        patientId: patientId,
-        doctorId: doctorId,
-        slotId: slotId,
-        status: status,
-        complaintNote: complaintNote,
-        consultationFeeSnapshot: consultationFeeSnapshot,
-        bookedAt: bookedAt,
-        confirmedAt: confirmedAt,
-        completedAt: completedAt,
-        cancelledAt: cancelledAt,
-        cancellationReason: cancellationReason,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        doctor: doctors?.toEntity(),
-        slot: doctorSlots?.toEntity(),
-      );
+    id: id,
+    patientId: patientId,
+    doctorId: doctorId,
+    slotId: slotId,
+    status: status,
+    complaintNote: complaintNote,
+    consultationFeeSnapshot: consultationFeeSnapshot,
+    bookedAt: bookedAt,
+    confirmedAt: confirmedAt,
+    completedAt: completedAt,
+    cancelledAt: cancelledAt,
+    cancellationReason: cancellationReason,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    doctor: doctors?.toEntity(),
+    slot: doctorSlots?.toEntity(),
+  );
 }
 
 extension AppointmentDoctorModelX on AppointmentDoctorModel {
   AppointmentDoctorEntity toEntity() => AppointmentDoctorEntity(
-        id: id,
-        fullName: fullName,
-        photoUrl: photoUrl,
-        experienceYears: experienceYears ?? 0,
-        specializationName: specializations?.name ?? 'Umum',
-        clinicName: clinics?.name ?? 'Klinik',
-        clinicAddress: clinics?.address,
-        clinicPhone: clinics?.phone,
-      );
+    id: id,
+    fullName: fullName,
+    photoUrl: photoUrl,
+    experienceYears: experienceYears ?? 0,
+    specializationName: specializations?.name ?? 'Umum',
+    clinicName: clinics?.name ?? 'Klinik',
+    clinicAddress: clinics?.address,
+    clinicPhone: clinics?.phone,
+  );
 }
 
 extension AppointmentSlotModelX on AppointmentSlotModel {
   AppointmentSlotEntity toEntity() => AppointmentSlotEntity(
-        slotDate: slotDate,
-        startTime: slotStart,
-        endTime: slotEnd,
-      );
+    slotDate: slotDate,
+    startTime: slotStart,
+    endTime: slotEnd,
+  );
 }
