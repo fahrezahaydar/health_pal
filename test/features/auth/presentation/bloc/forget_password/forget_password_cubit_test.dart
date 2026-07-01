@@ -38,7 +38,7 @@ void main() {
 
       test('calls onError on failure', () async {
         when(() => useCase('bad@test.com'))
-            .thenAnswer((_) async => Failure(FailureCode.serverError, 'Error sending'));
+            .thenAnswer((_) async => const Failure(FailureCode.serverError, 'Error sending'));
 
         var errorMsg = '';
         await cubit.sendEmail('bad@test.com',

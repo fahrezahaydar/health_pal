@@ -43,7 +43,7 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
         _offset += data.length;
         for (var res in data) {
           if (res.slot == null) {
-            print("Slot Null");
+            print('Slot Null');
           }
         }
         emit(

@@ -4,8 +4,8 @@ import 'package:health_pal/features/auth/domain/entity/user_entity.dart';
 void main() {
   group('UserEntity', () {
     test('Equatable props match constructor params', () {
-      final a = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 'e@e.com');
-      final b = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 'e@e.com');
+      const a = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 'e@e.com');
+      const b = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 'e@e.com');
       expect(a, b);
       expect(a.props.length, 10);
     });

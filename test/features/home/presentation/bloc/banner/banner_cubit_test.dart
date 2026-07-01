@@ -20,7 +20,7 @@ void main() {
       expect(c.state, isA<BannerLoaded>());
     });
     test('loadBanners error', () async {
-      when(() => u()).thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+      when(() => u()).thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadBanners();
       expect(c.state, isA<BannerError>());
     });

@@ -16,7 +16,7 @@ void main() {
   late BookingRepositoryImpl repo;
 
   setUpAll(() {
-    registerFallbackValue(AppointmentModel(
+    registerFallbackValue(const AppointmentModel(
       id: 'fb', patientId: 'fb', doctorId: 'fb', slotId: 'fb',
       status: 'pending', consultationFeeSnapshot: 0,
     ));
@@ -35,7 +35,7 @@ void main() {
         limit: any(named: 'limit'),
         offset: any(named: 'offset'),
       )).thenAnswer((_) async => [
-        AppointmentModel(id: 'a1', patientId: 'p1', doctorId: 'd1',
+        const AppointmentModel(id: 'a1', patientId: 'p1', doctorId: 'd1',
           slotId: 's1', status: 'upcoming', consultationFeeSnapshot: 150000),
       ]);
 
@@ -50,7 +50,7 @@ void main() {
         patientId: any(named: 'patientId'),
         appointmentId: any(named: 'appointmentId'),
       )).thenAnswer((_) async =>
-        AppointmentModel(id: 'a1', patientId: 'p1', doctorId: 'd1',
+        const AppointmentModel(id: 'a1', patientId: 'p1', doctorId: 'd1',
           slotId: 's1', status: 'upcoming', consultationFeeSnapshot: 150000));
 
       final result = await repo.getAppointmentDetail(
@@ -66,7 +66,7 @@ void main() {
         slotId: any(named: 'slotId'),
         complaintNote: any(named: 'complaintNote'),
       )).thenAnswer((_) async =>
-        AppointmentModel(id: 'a2', patientId: 'p1', doctorId: 'd1',
+        const AppointmentModel(id: 'a2', patientId: 'p1', doctorId: 'd1',
           slotId: 's1', status: 'pending', consultationFeeSnapshot: 150000));
 
       final result = await repo.createAppointment(
@@ -80,7 +80,7 @@ void main() {
       when(() => remote.cancelAppointment(
         appointmentId: any(named: 'appointmentId'),
         cancellationReason: any(named: 'cancellationReason'),
-      )).thenAnswer((_) async => AppointmentModel(
+      )).thenAnswer((_) async => const AppointmentModel(
         id: 'a1', patientId: 'p1', doctorId: 'd1',
         slotId: 's1', status: 'cancelled', consultationFeeSnapshot: 150000));
 

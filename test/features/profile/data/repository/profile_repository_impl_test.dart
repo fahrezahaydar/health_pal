@@ -19,7 +19,7 @@ void main() {
   late ProfileRepositoryImpl repo;
 
   setUpAll(() {
-    registerFallbackValue(UserModel(
+    registerFallbackValue(const UserModel(
       id: 'fb', authId: 'fb', fullName: 'fb', email: 'fb@fb.com'));
     registerFallbackValue(NotificationModel(
       id: 'fb', userId: 'fb', type: 'fb', title: 'fb', body: 'fb',
@@ -34,7 +34,7 @@ void main() {
   group('getProfile', () {
     test('returns UserEntity on success', () async {
       when(() => remote.getProfile()).thenAnswer((_) async =>
-        UserModel(id: 'u1', authId: 'a1', fullName: 'Test',
+        const UserModel(id: 'u1', authId: 'a1', fullName: 'Test',
           email: 'test@test.com'));
 
       final result = await repo.getProfile();
@@ -53,7 +53,7 @@ void main() {
         avatarUrl: any(named: 'avatarUrl'),
         phoneNumber: any(named: 'phoneNumber'),
       )).thenAnswer((_) async =>
-        UserModel(id: 'u1', authId: 'a1', fullName: 'Updated',
+        const UserModel(id: 'u1', authId: 'a1', fullName: 'Updated',
           email: 'test@test.com'));
 
       final result = await repo.updateProfile(authId: 'a1', fullName: 'Updated');

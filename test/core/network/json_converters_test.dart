@@ -9,7 +9,7 @@ import 'package:health_pal/core/network/json_converters.dart';
 
 void main() {
   group('DateOnlyJsonConverter', () {
-    final converter = const DateOnlyJsonConverter();
+    const converter = DateOnlyJsonConverter();
 
     group('fromJson', () {
       test('parses valid date string', () {
@@ -44,7 +44,7 @@ void main() {
   });
 
   group('TimeOnlyJsonConverter', () {
-    final converter = const TimeOnlyJsonConverter();
+    const converter = TimeOnlyJsonConverter();
 
     group('fromJson', () {
       test('parses valid time string with seconds', () {

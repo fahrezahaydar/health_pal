@@ -5,8 +5,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:health_pal/core/network/result.dart';
-import 'package:health_pal/features/loc/domain/entity/clinic_entity.dart';
 import 'package:health_pal/features/loc/domain/usecase/get_nearby_clinics_usecase.dart';
 import 'package:health_pal/features/home/presentation/bloc/nearby/nearby_cubit.dart';
 import 'package:health_pal/features/home/presentation/bloc/nearby/nearby_state.dart';

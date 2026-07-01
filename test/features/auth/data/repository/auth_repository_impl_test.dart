@@ -19,7 +19,6 @@ import 'package:health_pal/features/auth/data/datasource/auth_remote_datasource.
 import 'package:health_pal/features/auth/data/model/user_model.dart';
 import 'package:health_pal/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:health_pal/features/auth/domain/entity/user_entity.dart';
-import 'package:health_pal/features/auth/domain/repository/auth_repository.dart';
 
 class MockAuthRemote extends Mock implements AuthRemoteDataSource {}
 class MockAuthLocal extends Mock implements AuthLocalDataSource {}

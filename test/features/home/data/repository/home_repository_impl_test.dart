@@ -33,9 +33,9 @@ void main() {
   late HomeRepositoryImpl repo;
 
   setUpAll(() {
-    registerFallbackValue(BannerModel(id: 'fb', title: 'fb'));
-    registerFallbackValue(SpecializationModel(id: 'fb', name: 'fb'));
-    registerFallbackValue(UserProfileModel(id: 'fb', nickname: 'fb'));
+    registerFallbackValue(const BannerModel(id: 'fb', title: 'fb'));
+    registerFallbackValue(const SpecializationModel(id: 'fb', name: 'fb'));
+    registerFallbackValue(const UserProfileModel(id: 'fb', nickname: 'fb'));
   });
 
   setUp(() {
@@ -48,7 +48,7 @@ void main() {
   group('getBanners', () {
     test('returns banners on remote success and caches', () async {
       when(() => remote.fetchBanners()).thenAnswer((_) async => [
-            BannerModel(id: 'b1', title: 'B1'),
+            const BannerModel(id: 'b1', title: 'B1'),
           ]);
       when(() => local.cacheBanners(any())).thenAnswer((_) async {});
 
@@ -60,7 +60,7 @@ void main() {
     test('returns cached banners when remote fails', () async {
       when(() => remote.fetchBanners()).thenThrow(Exception('Network error'));
       when(() => local.getCachedBanners()).thenReturn([
-        BannerModel(id: 'cached', title: 'Cached'),
+        const BannerModel(id: 'cached', title: 'Cached'),
       ]);
 
       final result = await repo.getBanners();
@@ -102,7 +102,7 @@ void main() {
   group('getSpecializations', () {
     test('returns list on remote success', () async {
       when(() => remote.fetchSpecializations()).thenAnswer((_) async => [
-            SpecializationModel(id: 's1', name: 'Umum'),
+            const SpecializationModel(id: 's1', name: 'Umum'),
           ]);
       when(() => local.cacheSpecializations(any())).thenAnswer((_) async {});
 
@@ -116,7 +116,7 @@ void main() {
 
     test('returns profile on remote success', () async {
       when(() => remote.fetchUserProfile(authId)).thenAnswer((_) async =>
-          UserProfileModel(id: 'p1', nickname: 'Test', isProfileComplete: true));
+          const UserProfileModel(id: 'p1', nickname: 'Test', isProfileComplete: true));
       when(() => local.cacheUserProfile(any())).thenAnswer((_) async {});
 
       final result = await repo.getUserProfile(authId);
@@ -136,7 +136,7 @@ void main() {
       when(() => remote.fetchUserProfile(authId))
           .thenThrow(Exception('error'));
       when(() => local.getCachedUserProfile()).thenReturn(
-          UserProfileModel(id: 'cached', nickname: 'Cached'));
+          const UserProfileModel(id: 'cached', nickname: 'Cached'));
 
       final result = await repo.getUserProfile(authId);
       expect(result, isA<Success<UserProfileEntity>>());

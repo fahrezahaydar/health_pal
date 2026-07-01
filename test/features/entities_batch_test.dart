@@ -52,8 +52,8 @@ void main() {
       expect(e.workingTimeDisplay, 'No schedule available');
     });
     test('workingTimeDisplay with schedules', () {
-      final e = DoctorEntity(id: '1', clinicId: 'c', specializationId: 's', fullName: 'Dr', experienceYears: 0, consultationFee: 0, schedules: [
-        const DoctorScheduleEntity(id: 's1', doctorId: 'd1', dayOfWeek: 1, startTime: '08:00:00', endTime: '17:00:00'),
+      const e = DoctorEntity(id: '1', clinicId: 'c', specializationId: 's', fullName: 'Dr', experienceYears: 0, consultationFee: 0, schedules: [
+        DoctorScheduleEntity(id: 's1', doctorId: 'd1', dayOfWeek: 1, startTime: '08:00:00', endTime: '17:00:00'),
       ]);
       expect(e.workingTimeDisplay, contains('Senin'));
     });
@@ -83,15 +83,15 @@ void main() {
 
   group('C31 AppointmentEntity', () {
     test('Equatable', () {
-      final a = AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0);
-      final b = AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0);
+      const a = AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0);
+      const b = AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0);
       expect(a, b);
     });
     test('doctorName returns "Dokter" when doctor null', () {
-      expect(AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0).doctorName, 'Dokter');
+      expect(const AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0).doctorName, 'Dokter');
     });
     test('clinicName returns "Klinik" when doctor null', () {
-      expect(AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0).clinicName, 'Klinik');
+      expect(const AppointmentEntity(id: '1', patientId: 'p', doctorId: 'd', slotId: 's', status: 'pending', consultationFeeSnapshot: 0).clinicName, 'Klinik');
     });
   });
 }

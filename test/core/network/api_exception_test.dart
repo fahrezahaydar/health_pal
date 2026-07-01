@@ -10,7 +10,7 @@ import 'package:health_pal/core/network/api_exception.dart';
 void main() {
   group('ApiException', () {
     test('creates with required fields', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.notFound,
         message: 'Resource not found',
       );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('statusCode is null by default', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.serverError,
         message: 'Error',
       );
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('response is null by default', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.serverError,
         message: 'Error',
       );
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('can set statusCode and response', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.badRequest,
         message: 'Bad request',
         statusCode: 400,
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('toString format includes FailureCode enum', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.unauthorized,
         message: 'Token expired',
       );
@@ -56,7 +56,7 @@ void main() {
 
   group('ApiException implements Exception', () {
     test('can be caught as Exception', () {
-      final e = ApiException(
+      const e = ApiException(
         code: FailureCode.timeout,
         message: 'Timed out',
       );

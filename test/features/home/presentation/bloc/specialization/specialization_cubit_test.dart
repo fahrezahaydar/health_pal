@@ -20,7 +20,7 @@ void main() {
       expect(c.state, isA<SpecializationLoaded>());
     });
     test('load error', () async {
-      when(() => u()).thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+      when(() => u()).thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadSpecializations();
       expect(c.state, isA<SpecializationError>());
     });

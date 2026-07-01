@@ -27,7 +27,7 @@ void main() {
         lng: any(named: 'lng'),
         radiusKm: any(named: 'radiusKm'),
       )).thenAnswer((_) async => [
-        ClinicModel(id: 'c1', name: 'Klinik A', address: 'Jl. A',
+        const ClinicModel(id: 'c1', name: 'Klinik A', address: 'Jl. A',
           latitude: -6.2, longitude: 106.8),
       ]);
 

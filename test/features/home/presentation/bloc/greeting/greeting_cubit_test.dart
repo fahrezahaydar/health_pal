@@ -18,7 +18,7 @@ void main() {
     test('initial state', () => expect(cubit.state, const GreetingInitial()));
 
     test('loadProfile success emits GreetingLoaded', () async {
-      when(() => useCase('aid')).thenAnswer((_) async => Success(const UserProfileEntity(id: 'p', nickname: 'T', isProfileComplete: true)));
+      when(() => useCase('aid')).thenAnswer((_) async => const Success(UserProfileEntity(id: 'p', nickname: 'T', isProfileComplete: true)));
       final pid = await cubit.loadProfile('aid');
       expect(cubit.state, isA<GreetingLoaded>());
       expect((cubit.state as GreetingLoaded).nickname, 'T');
@@ -26,14 +26,14 @@ void main() {
     });
 
     test('loadProfile notFound emits GreetingNoProfile', () async {
-      when(() => useCase('aid')).thenAnswer((_) async => Failure(FailureCode.notFound, 'No profile'));
+      when(() => useCase('aid')).thenAnswer((_) async => const Failure(FailureCode.notFound, 'No profile'));
       final pid = await cubit.loadProfile('aid');
       expect(cubit.state, isA<GreetingNoProfile>());
       expect(pid, isNull);
     });
 
     test('loadProfile other error emits GreetingError', () async {
-      when(() => useCase('aid')).thenAnswer((_) async => Failure(FailureCode.serverError, 'Server error'));
+      when(() => useCase('aid')).thenAnswer((_) async => const Failure(FailureCode.serverError, 'Server error'));
       await cubit.loadProfile('aid');
       expect(cubit.state, isA<GreetingError>());
       expect((cubit.state as GreetingError).message, 'Server error');

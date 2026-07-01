@@ -8,7 +8,6 @@ import 'package:health_pal/core/services/cache_service.dart';
 import 'package:health_pal/core/services/shared_prefs.dart';
 import 'package:health_pal/features/home/data/datasource/home_local_datasource.dart';
 import 'package:health_pal/features/settings/data/repository/settings_repository_impl.dart';
-import 'package:health_pal/features/settings/domain/repository/settings_repository.dart';
 
 class MockSupabase extends Mock implements SupabaseClient {}
 class MockPrefs extends Mock implements SharedPrefService {}

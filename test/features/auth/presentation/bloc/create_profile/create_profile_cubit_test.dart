@@ -36,7 +36,7 @@ void main() {
           email: any(named: 'email'), password: any(named: 'password'),
           fullName: any(named: 'fullName'), nickname: any(named: 'nickname'),
           gender: any(named: 'gender'), dateOfBirth: any(named: 'dateOfBirth'),
-        )).thenAnswer((_) async => Success(UserEntity(id: 'u', authId: 'a', fullName: 'Test', email: 'a@b.com')));
+        )).thenAnswer((_) async => const Success(UserEntity(id: 'u', authId: 'a', fullName: 'Test', email: 'a@b.com')));
 
         await cubit.register();
         expect(cubit.state.status, CubitStatus.success);
@@ -47,7 +47,7 @@ void main() {
           email: any(named: 'email'), password: any(named: 'password'),
           fullName: any(named: 'fullName'), nickname: any(named: 'nickname'),
           gender: any(named: 'gender'), dateOfBirth: any(named: 'dateOfBirth'),
-        )).thenAnswer((_) async => Failure(FailureCode.serverError, 'Server error'));
+        )).thenAnswer((_) async => const Failure(FailureCode.serverError, 'Server error'));
 
         await cubit.register();
         expect(cubit.state.status, CubitStatus.failure);

@@ -30,9 +30,9 @@ void main() {
 
     group('signInWithEmail', () {
       test('emits [Loading, Success] when login succeeds', () async {
-        final user = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 't@t.com');
+        const user = UserEntity(id: '1', authId: 'a', fullName: 'T', email: 't@t.com');
         when(() => useCase('a@b.com', 'pass'))
-            .thenAnswer((_) async => Success(user));
+            .thenAnswer((_) async => const Success(user));
 
         await cubit.signInWithEmail('a@b.com', 'pass');
 
@@ -42,7 +42,7 @@ void main() {
 
       test('emits [Loading, Failure] when login fails', () async {
         when(() => useCase('a@b.com', 'wrong'))
-            .thenAnswer((_) async => Failure(FailureCode.unauthorized, 'Invalid'));
+            .thenAnswer((_) async => const Failure(FailureCode.unauthorized, 'Invalid'));
 
         await cubit.signInWithEmail('a@b.com', 'wrong');
 

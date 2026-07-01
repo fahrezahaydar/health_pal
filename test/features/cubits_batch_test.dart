@@ -12,7 +12,6 @@ import 'package:health_pal/features/booking/domain/usecase/get_appointment_histo
 import 'package:health_pal/features/booking/domain/usecase/cancel_appointment_usecase.dart';
 import 'package:health_pal/features/booking/presentation/bloc/booking/booking_bloc.dart';
 import 'package:health_pal/features/booking/presentation/bloc/booking/booking_event.dart';
-import 'package:health_pal/features/booking/presentation/bloc/booking/booking_state.dart';
 import 'package:health_pal/features/booking/presentation/bloc/detail/booking_detail_cubit.dart';
 import 'package:health_pal/features/booking/presentation/bloc/detail/booking_detail_state.dart';
 import 'package:health_pal/features/booking/presentation/bloc/history/booking_history_cubit.dart';
@@ -69,7 +68,7 @@ void main() {
     });
     test('loadDetail error', () async {
       final d = _MD(); final s = _MDS(); final c = DoctorDetailCubit(d, s);
-      when(() => d('d1')).thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+      when(() => d('d1')).thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadDetail('d1');
       expect(c.state, isA<DoctorDetailError>());
       c.close();
@@ -83,10 +82,10 @@ void main() {
       when(() => slots(any(), any())).thenAnswer((_) async => const Success(<DoctorSlotEntity>[]));
       when(() => create(doctorId: any(named:'doctorId'), slotId: any(named:'slotId'), complaintNote: any(named:'complaintNote')))
           .thenAnswer((_) async => const Success(AppointmentEntity(id:'a',patientId:'p',doctorId:'d',slotId:'s',status:'pending',consultationFeeSnapshot:0)));
-      b.add(BookingInitialized(doctorId:'d1'));
+      b.add(const BookingInitialized(doctorId:'d1'));
       await Future.delayed(const Duration(milliseconds: 50));
       // Set slot + submit
-      b.add(BookingSlotSelected(slotId:'s1'));
+      b.add(const BookingSlotSelected(slotId:'s1'));
       await Future.delayed(Duration.zero);
       b.add(const BookingSubmitted());
       await Future.delayed(const Duration(milliseconds: 50));
@@ -118,7 +117,7 @@ void main() {
     test('loadHistory error', () async {
       final u = _MGH(); final c = BookingHistoryCubit(u);
       when(() => u(patientId:any(named:'patientId'), status:any(named:'status'), limit:any(named:'limit'), offset:any(named:'offset')))
-          .thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+          .thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadHistory('p1');
       expect(c.state, isA<BookingHistoryError>());
       c.close();
@@ -139,7 +138,7 @@ void main() {
     });
     test('loadProfile error (BUG-002-FIX-3)', () async {
       final u = _MGPR(); final a = _MAppServices(); final c = ProfileCubit(u, a);
-      when(() => u()).thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+      when(() => u()).thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadProfile();
       expect(c.state, isA<ProfileError>());
       c.close();

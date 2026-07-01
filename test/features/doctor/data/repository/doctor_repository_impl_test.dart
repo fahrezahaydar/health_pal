@@ -21,7 +21,7 @@ void main() {
   late DoctorRepositoryImpl repo;
 
   setUpAll(() {
-    registerFallbackValue(DoctorModel(
+    registerFallbackValue(const DoctorModel(
       id: 'fb', clinicId: 'fb', specializationId: 'fb',
       fullName: 'fb', experienceYears: 0, consultationFee: 0,
     ));
@@ -40,7 +40,7 @@ void main() {
         limit: any(named: 'limit'),
         offset: any(named: 'offset'),
       )).thenAnswer((_) async => [
-        DoctorModel(id: 'd1', clinicId: 'c1', specializationId: 's1',
+        const DoctorModel(id: 'd1', clinicId: 'c1', specializationId: 's1',
           fullName: 'Dr. A', experienceYears: 5, consultationFee: 100000),
       ]);
 
@@ -64,7 +64,7 @@ void main() {
   group('getDoctorDetail', () {
     test('returns doctor entity on success', () async {
       when(() => remote.getDoctorDetail('d1')).thenAnswer((_) async =>
-        DoctorModel(id: 'd1', clinicId: 'c1', specializationId: 's1',
+        const DoctorModel(id: 'd1', clinicId: 'c1', specializationId: 's1',
           fullName: 'Dr. B', experienceYears: 10, consultationFee: 200000));
 
       final result = await repo.getDoctorDetail('d1');
@@ -75,7 +75,7 @@ void main() {
   group('getDoctorSchedules', () {
     test('returns schedule list on success', () async {
       when(() => remote.getDoctorSchedules('d1')).thenAnswer((_) async => [
-        DoctorScheduleModel(id: 'sch1', doctorId: 'd1',
+        const DoctorScheduleModel(id: 'sch1', doctorId: 'd1',
           dayOfWeek: 1, startTime: '08:00', endTime: '17:00'),
       ]);
 

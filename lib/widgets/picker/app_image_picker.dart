@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:health_pal/core/theme/app_icons.dart';
 
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/theme/app_text_theme.dart';

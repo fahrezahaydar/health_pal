@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../widgets/card/banner_card.dart';

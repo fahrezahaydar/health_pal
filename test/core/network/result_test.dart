@@ -39,7 +39,7 @@ void main() {
 
   group('Result.failure', () {
     test('returns Failure<T> with correct code and message', () {
-      final exception = ApiException(
+      const exception = ApiException(
         code: FailureCode.notFound,
         message: 'Not found',
       );
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('Failure.exception contains the original ApiException', () {
-      final exception = ApiException(
+      const exception = ApiException(
         code: FailureCode.serverError,
         message: 'Server error',
       );
@@ -62,7 +62,7 @@ void main() {
     });
 
     test('can be matched with switch (is Failure)', () {
-      final result = Result.failure(ApiException(
+      final result = Result.failure(const ApiException(
         code: FailureCode.timeout,
         message: 'Timeout',
       ));
@@ -81,7 +81,7 @@ void main() {
     test('switch exhaustiveness works for Success and Failure', () {
       final results = <Result<int>>[
         Result.success(1),
-        Result.failure(ApiException(
+        Result.failure(const ApiException(
           code: FailureCode.unknown, message: 'err')),
       ];
 

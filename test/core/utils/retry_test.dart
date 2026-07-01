@@ -20,7 +20,7 @@ void main() {
       var attempts = 0;
       final result = await withRetry(() async {
         attempts++;
-        if (attempts < 2) throw SocketException('no internet');
+        if (attempts < 2) throw const SocketException('no internet');
         return 'ok';
       }, maxRetries: 2);
       expect(result, 'ok');
@@ -43,7 +43,7 @@ void main() {
       await expectLater(
         withRetry(() async {
           attempts++;
-          throw SocketException('persistent');
+          throw const SocketException('persistent');
         }, maxRetries: 2),
         throwsA(isA<SocketException>()),
       );

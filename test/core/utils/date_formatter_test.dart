@@ -29,7 +29,7 @@ void main() {
     });
 
     test('toTimeOfDayString formats correctly', () {
-      final tod = TimeOfDay(hour: 14, minute: 30);
+      const tod = TimeOfDay(hour: 14, minute: 30);
       expect(DateFormatter.toTimeOfDayString(tod), '14:30');
     });
 
@@ -65,7 +65,7 @@ void main() {
       });
 
       test('toTimeOfDayStringOrDash returns formated time for non-null', () {
-        final tod = TimeOfDay(hour: 10, minute: 0);
+        const tod = TimeOfDay(hour: 10, minute: 0);
         expect(DateFormatter.toTimeOfDayStringOrDash(tod), '10:00');
       });
 

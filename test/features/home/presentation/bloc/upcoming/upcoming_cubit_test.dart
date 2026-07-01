@@ -20,7 +20,7 @@ void main() {
       expect(c.state, isA<UpcomingLoaded>());
     });
     test('load error', () async {
-      when(() => u('pid')).thenAnswer((_) async => Failure(FailureCode.serverError, 'err'));
+      when(() => u('pid')).thenAnswer((_) async => const Failure(FailureCode.serverError, 'err'));
       await c.loadUpcoming('pid');
       expect(c.state, isA<UpcomingError>());
     });
