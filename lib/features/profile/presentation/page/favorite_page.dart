@@ -30,11 +30,13 @@ class FavoritePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppTheme.white,
           elevation: 0,
+          centerTitle: true,
+          titleTextStyle: AppTextTheme.headlineLarge,
           leading: IconButton(
             icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text('Favorite', style: AppTextTheme.titleLarge),
+          title: const Text('Favorite'),
         ),
         body: BlocBuilder<FavoriteCubit, FavoriteState>(
           builder: (context, state) {

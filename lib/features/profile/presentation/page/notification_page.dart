@@ -46,10 +46,12 @@ class _NotificationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.white,
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
+        centerTitle: true,
+        titleTextStyle: AppTextTheme.headlineLarge,
         leading: IconButton(
           icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
@@ -102,8 +104,11 @@ class _NotificationView extends StatelessWidget {
       body: BlocBuilder<NotificationCubit, NotificationListState>(
         builder: (context, state) {
           return switch (state) {
-            NotificationInitial() || NotificationLoading() =>
-              const Skeletonizer(enabled: true, child: _NotificationSkeletonContent()),
+            NotificationInitial() ||
+            NotificationLoading() => const Skeletonizer(
+              enabled: true,
+              child: _NotificationSkeletonContent(),
+            ),
             NotificationLoaded(:final notifications)
                 when notifications.isEmpty =>
               _emptyState(),
@@ -202,7 +207,9 @@ class _NotificationSkeletonContent extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (_, _) => const SizedBox(
         height: 80,
-        child: Card(child: ListTile(title: Text('Loading'), subtitle: Text('Loading'))),
+        child: Card(
+          child: ListTile(title: Text('Loading'), subtitle: Text('Loading')),
+        ),
       ),
     );
   }

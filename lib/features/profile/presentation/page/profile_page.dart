@@ -43,13 +43,12 @@ class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
   Future<void> _confirmLogout(BuildContext context) async {
-    await const LogOutBottomModal().showLogoutBottomSheet(
-      context,
-      onLogout: () {
-        Navigator.pop(context);
-        context.read<ProfileCubit>().logout();
-      },
-    );
+    final profileCubit = context.read<ProfileCubit>();
+
+    final shouldLogout = await LogOutBottomModal.show(context);
+    if (!shouldLogout) return;
+
+    profileCubit.logout();
   }
 
   @override
@@ -60,7 +59,8 @@ class _ProfileView extends StatelessWidget {
         backgroundColor: AppTheme.white,
         elevation: 0,
         centerTitle: true,
-        title: Text('Profile', style: AppTextTheme.headlineLarge),
+        titleTextStyle: AppTextTheme.headlineLarge,
+        title: const Text('Profile'),
       ),
       body: RefreshIndicator(
         onRefresh: () => context.read<ProfileCubit>().loadProfile(),

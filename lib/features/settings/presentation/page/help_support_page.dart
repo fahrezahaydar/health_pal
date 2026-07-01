@@ -45,15 +45,17 @@ class HelpSupportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.grey50,
+      backgroundColor: AppTheme.white,
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
+        centerTitle: true,
+        titleTextStyle: AppTextTheme.headlineLarge,
         leading: IconButton(
           icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Help & Support', style: AppTextTheme.titleLarge),
+        title: const Text('Help & Support'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

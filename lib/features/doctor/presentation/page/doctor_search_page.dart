@@ -98,11 +98,13 @@ class DoctorSearchViewState extends State<DoctorSearchView> {
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
+        centerTitle: true,
+        titleTextStyle: AppTextTheme.headlineLarge,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppTheme.grey900),
           onPressed: () => context.pop(),
         ),
-        title: Text('Cari Dokter', style: AppTextTheme.titleLarge),
+        title: const Text('Cari Dokter'),
       ),
       body: Column(
         spacing: 16,

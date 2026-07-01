@@ -19,6 +19,7 @@ class AppIcons {
 
   // ── Auth & Profile ──
   static const IconData person = Iconsax.user;
+  static const IconData userEdit = Iconsax.userEdit;
   static const IconData email = Iconsax.smsStyle5;
   static const IconData lock = Iconsax.lockStyle1;
   static const IconData visibilityOff = Iconsax.eyeSlashStyle2;
@@ -27,6 +28,7 @@ class AppIcons {
   static const IconData settings = Iconsax.setting2Style1;
   static const IconData help = Iconsax.infoCircleStyle1;
   static const IconData description = Iconsax.documentText2;
+  static const IconData securitySafe = Iconsax.securitySafeStyle1;
   static const IconData favorite = Iconsax.heart;
 
   // ── Booking & Appointment ──
@@ -61,6 +63,7 @@ class AppIcons {
   static const IconData home = Iconsax.home;
   static const IconData location = Iconsax.location;
   static const IconData arrowRight = Iconsax.arrowRight01Style4;
+  static const IconData chevronRight = Iconsax.arrowRight02;
   static const IconData arrowDown = Iconsax.arrowDown01Style4;
   static const IconData arrowUp = Iconsax.arrowUp01Style4;
   static const IconData arrowDown02 = Iconsax.arrowDown02;

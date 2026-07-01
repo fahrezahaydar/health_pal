@@ -170,11 +170,13 @@ class _EditProfileViewState extends State<_EditProfileView> {
           appBar: AppBar(
             backgroundColor: AppTheme.white,
             elevation: 0,
+            centerTitle: true,
+            titleTextStyle: AppTextTheme.headlineLarge,
             leading: IconButton(
               icon: const Icon(AppIcons.arrowBack, color: AppTheme.grey900),
               onPressed: () => context.pop(),
             ),
-            title: Text('Edit Profile', style: AppTextTheme.titleLarge),
+            title: const Text('Edit Profile'),
           ),
           body: switch (state) {
             EditProfileInitial() || EditProfileLoading() => const Skeletonizer(

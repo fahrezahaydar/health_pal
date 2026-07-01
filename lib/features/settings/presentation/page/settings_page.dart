@@ -78,13 +78,12 @@ class _SettingsView extends StatelessWidget {
   }
 
   Future<void> _confirmLogout(BuildContext context) async {
-    await const LogOutBottomModal().showLogoutBottomSheet(
-      context,
-      onLogout: () {
-        Navigator.pop(context);
-        context.read<SettingsCubit>().logout();
-      },
-    );
+    final profileCubit = context.read<SettingsCubit>();
+
+    final shouldLogout = await LogOutBottomModal.show(context);
+    if (!shouldLogout) return;
+
+    profileCubit.logout();
   }
 
   @override
@@ -94,7 +93,9 @@ class _SettingsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         elevation: 0,
-        title: Text('Settings', style: AppTextTheme.titleLarge),
+        centerTitle: true,
+        titleTextStyle: AppTextTheme.headlineLarge,
+        title: const Text('Settings'),
       ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {

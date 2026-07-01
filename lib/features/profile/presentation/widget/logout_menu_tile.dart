@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/app_text_theme.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class LogoutMenuTile extends StatelessWidget {
-  const LogoutMenuTile({
-    super.key,
-    this.onTap,
-  });
+  const LogoutMenuTile({super.key, this.onTap});
 
   final VoidCallback? onTap;
 
@@ -15,18 +13,15 @@ class LogoutMenuTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Row(
+          spacing: 12,
           children: [
-            Icon(AppIcons.logout, size: 20, color: AppTheme.darkRed),
-            SizedBox(width: 12),
+            const Icon(AppIcons.logout, size: 24, color: AppTheme.darkRed),
             Text(
               'Log Out',
-              style: TextStyle(
-                color: AppTheme.darkRed,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTextTheme.bodyLarge.copyWith(color: AppTheme.darkRed),
             ),
           ],
         ),

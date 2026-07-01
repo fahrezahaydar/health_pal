@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../core/theme/app_text_theme.dart';
 import '../../core/theme/app_theme.dart';
@@ -27,13 +28,16 @@ class AvatarInitials extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: textStyle ??
-            AppTextTheme.titleLarge.copyWith(
-              color: AppTheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
+      child: Skeleton.ignore(
+        child: Text(
+          name.isNotEmpty ? name[0].toUpperCase() : '?',
+          style:
+              textStyle ??
+              AppTextTheme.titleLarge.copyWith(
+                color: AppTheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
       ),
     );
   }
