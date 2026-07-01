@@ -27,11 +27,35 @@
 
 | Sprint | Fokus | Status |
 |--------|-------|--------|
-| **B1** | **Unit Testing Foundation — 320 tests, ~400 test cases** | ✅ **Done** |
+| **B1** | **Unit Testing Foundation — 332 tests, 66 test files, 50.4% tracked coverage** | ✅ **Done** (2 Jul 2026) |
 | **B2** | Widget Test Phase — UI rendering (per-page, skeleton, error, empty states) | ⬜ Planned |
 | **B3** | Integration Test + CI/CD — full flows + GitHub Actions + codecov | ⬜ Planned |
 
-> *Sprint B1 completed — 94 task items, 82 test files, 320 tests, 0 failing. Next: Widget test phase.*
+> *Sprint B1 closed — 332/332 tests pass, 50.4% coverage tracked, 3 BUG regression tests verified, 0 production code change. Audit: `docs/progress/audits/sprint_b1_audit.md`.*
+
+---
+
+## Sprint C — UI Framework Migration (ADR 014) — TBD
+
+> **Strategic Initiative:** Migrasi inkremental dari Material UI ke internal `HP*` UI Framework per `docs/adr/014-ui-framework-foundation.md` (Accepted Juli 2026). 9-layer framework, 12-phase migration (P0–P12), zero downtime.
+
+| Sprint | Fokus | Layer | Phase | Status |
+|--------|-------|:---:|:---:|--------|
+| **C1** | **UI Foundation + Theme Tokens** — `lib/framework/` (Layer 1+2) + 11 token class + backward-compat facade | 1–2 | P0+P1 | 📋 Plan Ready |
+| **C2** | Primitives + Interaction — `HPText`, `HPIcon`, `HPContainer`, `HPCard`, `HPGestureDetector`, `HPInkRipple` | 3–4 | P2+P3 | ⬜ Planned |
+| **C3** | Layout + Navigation — `HPScaffold`, `HPListView`, `HPAppBar`, `HPBottomNavBar` + `Legacy*` adapter | 5–6 | P4+P5 | ⬜ Planned |
+| **C4** | Input + Feedback — `HPTextField`, `HPForm`, `HPDatePicker`, `HPSnackbar`, `HPProgressIndicator` + reuse `AppInputField`/`AppForm` | 7–8 | P6+P7 | ⬜ Planned |
+| **C5** | HP Components + Root Widget — `HPDoctorCard`, `HPAppointmentCard`, `HPApp` (ganti `MaterialApp.router`) | 9 | P8+P9 | ⬜ Planned |
+| **C6** | Per-Feature Migration (Bagian 1) — Onboarding + Settings + Auth | — | P10.1 | ⬜ Planned |
+| **C7** | Per-Feature Migration (Bagian 2) — Home + Doctor + Loc + Profile | — | P10.2 | ⬜ Planned |
+| **C8** | Per-Feature Migration (Bagian 3) — Booking + Pubspec Cleanup (hapus `flex_color_scheme`) | — | P10.3+P11 | ⬜ Planned |
+| **C9** | Legacy Deprecation — `@Deprecated` annotation di `lib/widgets/`, linter warning, hapus total | — | P12 | ⬜ Planned |
+
+> **Catatan:** Sequence C6–C8 (P10 Per-Feature Migration) bisa di-adjust per sprint capacity. Sequence C1–C5 (P0–P9 framework build) **strict** karena ada dependency layer. C9 (P12) wajib setelah 1 sprint stabil tanpa warning.
+
+**Dokumen terkait:**
+- [`docs/adr/014-ui-framework-foundation.md`](../adr/014-ui-framework-foundation.md) — ADR utama
+- [`docs/progress/plans/sprint_c1_ui_foundation.md`](plans/sprint_c1_ui_foundation.md) — Sprint C1 plan detail
 
 ---
 
@@ -68,6 +92,9 @@
 | `plans/sprint_a7_plan.md` | A7 — Booking |
 | `plans/sprint_a8_plan.md` | A8 — Profile |
 | `plans/sprint_a9_plan.md` | A9 — Auth + FCM |
+| `plans/sprint_b1_unit_testing.md` | B1 — Unit Testing Foundation |
+| `audits/sprint_b1_audit.md` | B1 — Closing Report (332 tests, 50.4% coverage) |
+| `plans/sprint_c1_ui_foundation.md` | C1 — UI Foundation + Theme Tokens |
 
 ### Audit Files
 

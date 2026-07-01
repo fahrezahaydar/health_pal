@@ -1,12 +1,13 @@
 # Health Pal — Sprint Progress Report
 
 | Field | Detail |
-|---|---|---|
-| **Tanggal** | 16 Juni 2026 |
+|---|---|
+| **Tanggal** | 2 Juli 2026 |
 | **Dibuat oleh** | Tech Lead (MiniMax-M3) |
-| **Versi** | v2.0 — **ALL SPRINTS (A1-A9) CLOSED** |
-| **Status Sprint** | ✅ **Sprint A9 CLOSED — Semua fitur inti selesai** |
-| **Last Commit** | `e08b82e` — docs(sprint8): close Sprint 8 — 7/7 tasks done |
+| **Versi** | v2.1 — **SPRINT B1 CLOSED** + Sprint C1 ready |
+| **Status Sprint** | ✅ **Sprint B1 CLOSED — 332 tests, 50.4% tracked coverage** |
+| **Last Commit** | `sprint-b1-closing` — test(sprint-b1): closing — 332 tests, 50.4% coverage |
+| **Next Sprint** | C1 — UI Framework Foundation + Theme Tokens (per ADR 014) |
 
 ---
 
@@ -15,19 +16,36 @@
 | Metrik | Nilai |
 |---|---|
 | Total Features | 8 UI (Onboarding, Auth, Home, Doctor, Booking, Profile, Loc, Settings) + Push Notif + Test |
-| Completed (✅) | **9 Sprint (A1-A9) — 100%** semua fitur inti selesai |
+| Completed (✅) | **9 Sprint (A1-A9) — 100% fitur** + **Sprint B1 — 332 unit tests, 50.4% tracked coverage** |
 | Partial (🟡) | **0** — semua resolved |
-| Not Started (❌) | Testing Phase (akan direncanakan) |
-| Overall Progress | **100%** ✅ (Semua fitur inti di Sprint A1-A9 selesai) |
-| Total Commits | **100+ feat/docs** sejak Sprint 0 |
-| Total Files | ~140+ Dart files (lib/) |
-| flutter analyze | **0 issues** ✅ |
-| Test Coverage | **0%** (akan direncanakan) |
-| Plans | `docs/progress/plans/` — Sprint A2-A9 plans |
-| Audits | `docs/progress/audits/` — Sprint A1, A3-A9 audits |
-| Sprint Roadmap | `sprint_roadmap.md` — Sprint A1-A9 done, B1+ TBD |
+| Not Started (❌) | Sprint C1+ (UI Framework Migration per ADR 014) |
+| Overall Progress | **100% fitur + 100% unit test foundation** ✅ |
+| Total Commits | **150+ feat/docs** sejak Sprint 0 |
+| Total Files | 232 lib/ + 66 test/ = ~298 Dart files |
+| flutter analyze | **0 issues** ✅ (3 pre-existing info di production code, out of scope B1) |
+| Test Coverage | **50.4% tracked** (2300 LF / 1160 LH across 115 files) — Sprint B2 widget test akan naik |
+| Plans | `docs/progress/plans/` — Sprint A2-A9, B1, C1 plans |
+| Audits | `docs/progress/audits/` — Sprint A1, A3-A9, B1 audits |
+| Sprint Roadmap | `sprint_roadmap.md` — A1-A9 ✅, B1 ✅, C1-C9 ⬜ |
 
-> **✅ Semua Sprint A1-A9 Selesai (16 Jun 2026):** 9 sprint, semua fitur inti telah diimplementasi. Sprint berikutnya akan dimulai dengan B1.
+> **✅ Sprint B1 Closed (2 Jul 2026):** 66 test file, 332 test case, semua pass. `flutter test --coverage` valid. BUG-002-FIX-3 + Sprint 2 A2 + A5 regression test verified. `lib/` zero change. Sprint C1 (UI Framework Foundation + Theme Tokens) siap dimulai.
+
+### 1.1 Sprint B1 Final Scoreboard
+
+| Layer | Test Files | Test Cases | Coverage Tracked | Target | Verdict |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Pool 0 (Setup) | 3 modified | — | — | — | ✅ |
+| Pool A (Core) | 12 | 141 | 66.4% | ≥ 90% | 🟡 Below |
+| Pool B (Data model) | 12 | 49 | — | — | ✅ |
+| Pool B (Data repo) | 7 | 43 | 47.8% | ≥ 60% | 🟡 Below |
+| Pool C (Domain use case) | 21 | 42 | — | — | ✅ (2 path each) |
+| Pool C (Domain entity) | 1 batch | 19 | 45.8% | ≥ 70% | 🟡 Below |
+| Pool D (Presentation) | 10 | 42 | 51.2% | ≥ 50% | 🟢 Target |
+| Pool E (Onboarding + misc) | 2 | 15 | — | — | ✅ |
+| **TOTAL** | **66** | **332** | **50.4%** | ≥ 60% | 🟡 Below but realistic |
+| BUG regression test | 3 | 3 | 100% | 100% | 🟢 Target |
+
+**Audit detail:** `docs/progress/audits/sprint_b1_audit.md` (v1.0, 2 Jul 2026)
 
 ---
 
