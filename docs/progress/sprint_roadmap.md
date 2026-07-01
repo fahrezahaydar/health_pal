@@ -27,10 +27,11 @@
 
 | Sprint | Fokus | Status |
 |--------|-------|--------|
-| **B1** | TBD — Review, Refactor, Optimization | ⬜ Planned |
-| **B2** | TBD — Additional Features | ⬜ Planned |
+| **B1** | **Unit Testing Foundation — 320 tests, ~400 test cases** | ✅ **Done** |
+| **B2** | Widget Test Phase — UI rendering (per-page, skeleton, error, empty states) | ⬜ Planned |
+| **B3** | Integration Test + CI/CD — full flows + GitHub Actions + codecov | ⬜ Planned |
 
-> *Testing Phase akan direncanakan di sprint mendatang setelah review kebutuhan.*
+> *Sprint B1 completed — 94 task items, 82 test files, 320 tests, 0 failing. Next: Widget test phase.*
 
 ---
 
